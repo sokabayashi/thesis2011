@@ -1,0 +1,207 @@
+\documentclass{amsbook}
+%\documentclass[11pt]{book}
+%\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,amssymb}
+\usepackage{verbatim}
+\usepackage{natbib}
+% 9/15 added this
+\usepackage{epsfig}
+% 9/15 and
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{subfigure}
+
+%\input{/Figures/test}    
+\graphicspath{{myfigures/}}
+
+% ----- Declare Math Operators
+
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator{\rint}{rint}
+\DeclareMathOperator{\conhull}{con}
+\DeclareMathOperator{\dom}{dom}
+%\newcommand{\lev}[1]{\textrm{lev}_{#1}}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\bd}{bd}
+\DeclareMathOperator{\intr}{int}
+\DeclareMathOperator{\rintr}{rint}
+\DeclareMathOperator{\con}{con}
+\DeclareMathOperator{\aff}{aff}
+\DeclareMathOperator{\epi}{epi}
+\DeclareMathOperator{\lev}{lev}
+
+% ----- Create Useful or More Evocative Shorcuts
+
+\newcommand{\parmspace}{\boldsymbol{\vartheta}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\statespace}{\mathcal{W}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\Q}{\mathcal{Q}}
+\newcommand{\given}{ \vert }
+\newcommand{\takes}{\colon}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\phee}{\varphi}
+\newcommand{\goesto}{\to}
+\newcommand{\W}{\mathsf{W}}
+\newcommand{\T}{\mathsf{T}}
+
+% ----- Some of Sai's additions
+\def\RR{{\mathbb R}}
+\def\ZZ{{\mathbb Z}}
+\def\XX{{\mathcal X}}
+\def\YY{{\mathcal Y}}
+\def\NN{{\mathcal N}}
+\def\LL{{\mathcal L}}
+\def\FF{{\mathcal F}}
+\def\Dfx{{\nabla f(x)}}
+\def\Dgx{{\nabla g(x)}}
+\def\sigu2{{\sigma_u^2}}
+\def\sige2{{\sigma_e^2}}
+\def\ySigy{{y\Sigma^{-1}y}}
+\def\yij{{y_{ij}}}
+\def\Xij{{X_{ij}}}
+\def\Xjk{{X_{jk}}}
+\def\Xkl{{X_{kl}}}
+\def\Xji{{X_{ji}}}
+\def\xij{{x_{ij}}}
+\def\Xb{{\boldsymbol{X}}}
+\def\xb{{\boldsymbol{x}}}
+\def\Xijb{{\boldsymbol{Xij}}}
+\newcommand{\deriv}[2]{\frac{d #1}{d #2}}
+\newcommand{\dderiv}[2]{\frac{d^2 #1}{d #2^2}}
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ppderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\ppmderiv}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
+\newcommand{\etaMLE}{\hat{\eta}_{\textrm{MLE}}}
+\def\betak{{\beta_k}}
+\def\betak1{{\beta_{k+1}}}
+\def\etak1{{\eta_{k+1}}}
+\def\xk1{{x_{k+1}}}
+
+
+% Charlie's
+\newcommand{\set}[1]{\{\,#1\,\}}
+\newcommand{\real}{\mathbb{R}}
+
+% ----- If there has to white space force it to the bottom of the page
+
+\raggedbottom
+
+% ----- Allow chapters to be in table of contents without numbers
+\newcommand{\chapterX}[1]{\chapter*{#1
+        \markboth{#1}{#1}}%
+        \addcontentsline{toc}{chapter}{#1}
+}
+
+% ----- Make the Bibliography and Citations look right -----
+\usepackage{natbib}
+\renewcommand\bibname{References}
+\renewcommand\bibsection{\chapterX{\bibname}}
+
+% ----- For Double Spacing, or any Variant -----
+\usepackage{setspace}
+
+%%  \setstretch{2}
+
+% ----- Fix chapter titles and title page back to single spacing -----
+% \let\origmakechapterhead\@makechapterhead
+% \let\origmakeschapterhead\@makeschapterhead
+% \renewcommand{\@makechapterhead}[1]{\begin{singlespace}\origmakechapterhead{#1}\end{singlespace}}
+% \renewcommand{\@makeschapterhead}[1]{\begin{singlespace}\origmakeschapterhead{#1}\end{singlespace}}
+
+% \let\origmaketitle\maketitle
+% \renewcommand\maketitle{\begin{singlespace}\origmaketitle\end{singlespace}}
+
+% \let\origtitlepage\titlepage
+% \let\origendtitlepage\endtitlepage
+% \renewenvironment{titlepage}{\origtitlepage\setstretch{1}}{\origendtitlepage}
+
+% ----- Theorem Environments
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% ----- Define Example Environment
+
+\newtheoremstyle{ex}%
+ {3pt}%
+ {3pt}%
+ {}%
+ {}%
+ {\itshape}%
+ {.}%
+ {.5em}%
+ {\thmname{#1}\thmnumber{ \it #2}\thmnote{ \rm(#3)}}%
+\theoremstyle{ex}
+\newtheorem{exampleA}{Example} 
+\newenvironment{example}[1][]  
+ {\renewcommand\qedsymbol{$\diamond$}
+ \begin{exampleA}[#1]
+ \pushQED{\qed}}
+  {\popQED\end{exampleA}}
+
+% ----- Theorem Environment Numbering
+
+\numberwithin{theorem}{chapter}
+\numberwithin{corollary}{chapter}
+\numberwithin{equation}{chapter}
+\numberwithin{prop}{chapter}
+\numberwithin{lemma}{chapter}
+\numberwithin{remark}{chapter}
+\numberwithin{exampleA}{chapter}
+
+% ----- Title
+
+\title{Parameter Estimation in Social Network Models}
+\author{Saisuke Okabayashi \\ Department of Statistics \\ University of Minnesota}
+\date{May 13, 2009}
+%\institution{University of Minnesota}
+
+\begin{document}
+
+ \maketitle
+
+\begin{abstract}
+Exponential random graph models have increasingly become the model of choice for social networks.  Parameter estimation via maximum likelihood for these models can be difficult when the log likelihood is expensive to compute.  Recently, Markov chain Monte Carlo methods have been implemented into software packages based on \citeauthor{Geyer:1992}'s \citeyearpar{Geyer:1992} MCMCMLE algorithm.  Theory guarantees convergence under certain conditions when starting from any value, but in practice such an algorithm may labor to converge when given a poor starting value.  We present a line search algorithm that converges to the maximum likelihood estimator (MLE) of a regular exponential family when the MLE exists and is unique.  Unlike other algorithms, this algorithm utilizes first derivative information only, evaluating neither the log likelihood function itself nor derivatives of higher order than first.
+\end{abstract}
+
+
+
+%%%%%%% BLANK PAGE %%%%%%%%%%
+\setcounter{page}{0}
+\thispagestyle{empty}
+
+%%%%%%%%%%%%% CH 1.  INTRO %%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Social Network Modeling}
+\setstretch{1.5} 
+\input{Background-color.tex}
+% DEFINITIONS OF CONCEPTS
+\input{Background-theorems.tex}
+
+%%%%%%%%%%%%% CH 2.  ALGORITHM CONVERGENCE %%%%%%%%%%%%%%%%%%%%%%%%%
+\setstretch{1}
+\chapter{New Algorithm and its Convergence}
+\setstretch{1.5}
+\input{Linesearch.tex}
+
+
+
+
+\bibliographystyle{apalike}
+\bibliography{References}
+\end{document}

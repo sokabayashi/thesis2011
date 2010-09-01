@@ -1,0 +1,564 @@
+\section{Algorithm Outline}
+We propose a simple algorithm based on Theorem \ref{Thm:MLE of ERGM} that converges to the MLE of a regular exponential family when the MLE exists and is unique.  It avoids evaluation of the the likelihood and uses the gradient to direct the search as well as indicate how far the current estimate is from the true MLE.  The algorithm is a line search with updates of the form
+\begin{align*}
+	\eta_{k+1} &= \eta_k + \alpha_k p_k
+\end{align*}
+where $\alpha_k$ is the \emph{step length}, and $p_k$ is the \emph{search direction}.
+ 
+We use the notation established earlier, $\ell(\eta)$ for the log-likelihood, and $\nabla \ell( \eta)$ for the gradient of the log-likelihood. The algorithm is as follows:
+
+% ALGORITHM 
+
+Get an initial value, $\eta_0$.\\ 
+Set $k=0$. \\
+Set $p_k = \nabla \ell( \eta_k)$, the direction of steepest ascent. \\
+\textbf{while}  $\parallel \nabla \ell( \eta_k) \parallel > \epsilon$ \\ 
+\hspace{4mm} \indent	 \textbf{Find} the step size $\alpha_k$ that satisfies the \textit{curvature condition}
+\begin{align*}
+	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
+\end{align*}
+\indent for some $0 < c < 1$.  This condition requires $\alpha_k$ to fall within the acceptable region in Figure \ref{F:alpha_region}. \\
+
+\begin{figure}[!h]
+\centering
+    \scalebox{.4}{\input{myfigures/alphamax.pstex_t}}
+	\caption{The curvature condition for $\alpha$.}
+\label{F:alpha_region}
+\end{figure}
+
+$\eta_{k+1} = \eta_k + \alpha_k p_k$.\\
+\indent $\nabla \ell( \eta_{k+1}) = g( y _{obs}) - \E_{\eta_{k+1}}g(Y)$.\\
+\indent \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction. \\
+\indent $k = k + 1$.  \\
+\textbf{end(while)}
+
+In the next section we present a proof that this algorithm converges to the MLE.  We will also explore how to specify the new search direction $p_{k+1}$.
+
+\section{Proof of Algorithm Convergence}
+In order to be consistent with the optimization literature, we approach our algorithm in this section from the perspective of a minimization problem. \citep{Fletcher, NW}.  We wish to minimize a real-valued objective function $f$ defined on $\RR^n$.  For convenience, we define $f_k = f(x_k)$ and $\nabla f_k = \nabla f( x_k )$ where $x_k$ is the $k$-the iteration of $x$ in our search, $x \in \RR^n$.  
+
+%%%%%%%%%%% BEGIN THEOREM %%%%%%%%%%%%%%
+\begin{theorem}[Zoutendijk's condition] \label{Thm:Line Search}
+Consider any line search of the form 
+\begin{align}
+	x_{k+1} &= x_k + \alpha_k p_k \label{E:x_update}
+\end{align}
+used to minimize the objective function $f$, where \eqref{E:x_update} satisfies the following assumptions:
+\begin{enumerate}
+\item The \emph{step length} $\alpha_k$ is greater than $0$ (assuming $\nabla f_k \neq 0$, in which case $x_k$ is already the solution and the search is complete)
+\item The \emph{search direction} $p_k$ is a non-zero \emph{descent direction}, that is, $\nabla f_k^T p_k < 0$.  Equivalently, the angle $\theta_k$ between the search direction $p_k$ and  steepest descent direction $-\nabla f_k$ is less than 90 degrees.  
+\item The step length $\alpha_k$ satisfies the following \emph{curvature condition}:
+\begin{align}
+	c \nabla f(x_k)^T p_k &\leq \nabla f( x_k + \alpha_k p_k)^T p_k \leq 0 \label{E:Wolfe-mod}
+\end{align}
+for $0 < c < 1$.
+\end{enumerate}
+
+In addition, suppose that the objective function $f$ satisfies the following assumptions:
+\begin{enumerate}
+	\item The objective function $f$ is bounded below in $\RR^n$.
+	\item The objective function $f$ is strictly convex.
+	\item The objective function $f$ is continuously differentiable in an open set $\NN$ containing the level set $\mathcal{L} = \{x: f(x) \leq f(x_0)\}$, where $x_0$ is the starting point of the iteration.% (the level set is bounded).
+	\item The objective function $f$ is \emph{Lipschitz continuously differentiable} on $\NN$, that is, there exists a constant $L > 0$ such that
+	\begin{align}
+		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || \quad \text{for all $x, \tilde{x} \in \NN$}. \label{E:Lipschitz}
+	\end{align} 
+
+\end{enumerate}
+
+Then 
+\begin{align}
+	\sum_{k \geq 0} \cos^2 \theta_k || \nabla f_k ||^2 < \infty. \label{E:Z's}
+\end{align}
+We will refer to the above result \eqref{E:Z's} as \emph{Zoutendijk's condition} \citep[p43]{NW}. 
+\end{theorem}
+%%%%%%%%%%% END THEOREM %%%%%%%%%%%%%%
+
+
+%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
+\begin{figure}[!h]
+\centering
+\scalebox{.4}{\input{myfigures/Wolfe-mod.pstex_t}}
+\caption{The curvature condition \eqref{E:Wolfe-mod} for $\alpha$.}
+\label{F:Wolfe-mod}
+\end{figure}
+
+%%%%%%%%%%% PROOF %%%%%%%%%%%%%%
+\begin{proof}
+We will find it useful to define $\theta_k$, $\alpha_{c_k}$, and $\alpha_{min_k}$ as follows: 
+\begin{align}
+%	\theta_k &= \cos^{-1} \left( \frac{ -\nabla f_k^T p_k }{ ||\nabla f_k|| \, ||p_k||} \right) \label{E:cosine} \\
+	\nabla f( x_k + \alpha_{c_k} p_k)^T p_k &= c \nabla f(x_k)^T p_k \label{E:alphac} \\
+	\nabla f( x_k + \alpha_{min_k} p_k)^T p_k &= 0 \label{E:alphamin} 
+\end{align}
+These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
+%These values are illustrated on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.  Equation \eqref{E:alphamin} defines $\alpha_{min_k}$ to be the step size that would make the gradient at $x_{k+1}$ equal to zero and hence minimizes $f(x_{k+1})$, equation \eqref{E:alphac} defines \alpha_{c_k} to be the step size that would make the gradient at $x_{k+1}$ equal to 
+
+By the strict convexity of $f$ and Theorem 2.14 in \citet[p47]{Rockafellar}, 
+\begin{align}
+   f(x) < f(y) + \bigl[ \nabla f(x) \bigr]^T (x - y)
+        \label{E:subgrad}
+\end{align}
+for all $x$, $y$.
+
+Substituting $x_k + \alpha_{c_k} p_k$ for $x$ and $x_k$ for $y$ in \eqref{E:subgrad},
+\begin{align}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) +  \bigl[ \nabla f(x_k + \alpha_{c_k} p_k) \bigr]^T \alpha_{c_k} p_k. \notag \\
+	\intertext{Applying \eqref{E:alphac} to the right hand side of the above gives}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k. \label{E:b-less-a}
+	\end{align}	
+(See points $a$ and $b$ in Figure \ref{F:Wolfe-mod}).
+
+By strict convexity, the objective function $f$ is monotonically decreasing for any $\alpha_k$ such that $\alpha_{c_k} \leq \alpha_k \leq \alpha_{min_k}$ (in Figure \ref{F:Wolfe-mod}, see points $b$ and $c$).  That is,
+	% the objective function will be sandwiched between the $f$-coordinates of points $b$ and $c$, or that}
+\begin{align}
+	f( x_k + \alpha_{min}p_k) &\leq f( x_k + \alpha_k p_k) \leq f( x_k + \alpha_{c_k} p_k). \label{E:f-sandwich}
+\end{align}
+	
+Combining the second inequality of \eqref{E:f-sandwich} with \eqref{E:b-less-a}, we have that	\begin{align}
+	f( x_k + \alpha_k p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k,  \label{E:decrease}
+	\intertext{which can be rearranged as}
+	f(x_k)-f( x_k + \alpha_k p_k ) &>  -\alpha_{c_k} c \nabla f(x_k)^T p_k. \label{E:f-lb}
+\end{align}
+This last inequality \eqref{E:f-lb} expresses a lower bound for the decrease in our objective function at each step (the right-hand side is positive since $\nabla f(x_k)^T p_k < 0$ by assumption of the descent direction for $p_k$).  It is this lower bound that we will use to cover the distance to the minimum of the objective function.  
+%Note that although \eqref{E:f-lb} is in terms of the objective function itself, it is derived directly from conditions \eqref{E:Wolfe-mod} that only involve the gradient $\nabla f_k$ so we have avoided the expensive evaluation of the objective function.  
+
+%INSERT PROOF HERE that uses WolfeB and Lipschitz
+We now turn our attention to \eqref{E:alphac},
+\begin{align}
+	\nabla f( \underbrace{x_k + \alpha_{c_k} p_k}_{x_{c_k}} )^T p_k &= c \nabla f(x_k)^T p_k. \notag
+\end{align}
+Subtracting $\nabla f_k^T p_k$ from both sides,
+\begin{align}
+	\left( \nabla f( {x_{c_k}} ) - \nabla f(x_k) \right )^T p_k &= ( c - 1 ) \nabla f_k^T p_k.  \label{E:c-1}
+\end{align}
+We will return to this last equation \eqref{E:c-1} shortly.  From the Lipschitz condition \eqref{E:Lipschitz} applied to $x_{c_k}$ and $x_k$, we have that for some $L > 0$,
+\begin{align}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || x_{c_k} - x_k || \notag
+\intertext{or}
+|| \nabla f_{c_k} - \nabla f_k || &\leq L || \alpha_{c_k} p_k ||. \notag	
+\end{align}
+
+Multiplying both sides by $\lVert p_k \rVert$ gives
+\begin{align}
+|| \nabla f_{c_k} - \nabla f_k || \cdot ||p_k || &\leq \alpha_{c_k} L || p_k ||^2 \notag \\
+\intertext{and by Cauchy-Schwarz this implies}
+%\sqrt{ ( \nabla f_{c_k} - \nabla f_k )^T ( \nabla f_{c_k} - \nabla f_k ) p_k^T p_k } &\leq \alpha_{c_k} L || p_k ||^2 \notag \\
+%\sqrt{ ( \nabla f_{c_k} - \nabla f_k )^T p_k ( \nabla f_{c_k} - \nabla f_k )^T  p_k } &\leq \alpha_{c_k} L || p_k ||^2 \notag \\
+( \nabla f(x_{c_k}) - \nabla f(x_k) )^T p_k & \leq || \nabla f_{c_k} - \nabla f_k || \cdot ||p_k || \label{E:from-Lipschitz} \\ 
+	&\leq \alpha_{c_k} L || p_k ||^2. \notag
+\end{align}
+Substituting \eqref{E:c-1} into the left-hand side of this last inequality \eqref{E:from-Lipschitz} gives
+\begin{align}
+( c - 1 ) \nabla f_k^T p_k &\leq \alpha_{c_k} L || p_k ||^2 \notag\\
+\intertext{or}
+-\alpha_{c_k} &\leq \frac{( 1 - c )}{L} \frac{ \nabla f_k^T p_k}{ || p_k ||^2}. \label{E:-alpha}
+\end{align}
+
+%%%%%%
+%%%%%%
+
+%In order to prove global convergence, we must show that $|| \nabla f( x_k) || \to 0$ as $k \to \infty$.
+This is an upper bound on $-\alpha_{c_k}$ which we will apply shortly.
+Returning to our lower bound decrease inequality \eqref{E:decrease}, we write out the first $k+1$ steps:
+\begin{align}
+	f( \underbrace{x_0 + \alpha_0 p_0}_{x_1} ) &< f(x_0) + \alpha_{c_0} c \nabla f(x_0)^T p_0 \notag\\
+	f( x_2 ) &< f(x_1) + \alpha_{c_1} c \nabla f(x_1)^T p_1 \notag \\
+	\ldots \notag \\
+	f( x_{k} ) &< f(x_{k-1}) + \alpha_{c_{k-1}} c \nabla f(x_{k-1})^T p_{k-1} \notag \\
+	f( x_{k+1} ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k \label{E:to telescope}
+\end{align}
+Telescoping the right-hand side of \eqref{E:to telescope},
+\begin{align}
+	f( x_{k+1} ) &< f(x_0) + c \sum_{j=0}^{k} \alpha_{c_j} \nabla f(x_j)^T p_j \notag\\
+	\intertext{or}
+%        \label{E:elmer-fudd}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} (-\alpha_{c_j}) \nabla f(x_j)^T p_j. \notag
+\end{align}
+Noting that we restricted $\nabla f(x_j)^T p_j < 0$, we can substitute our upper bound \eqref{E:-alpha} for $-\alpha_{c_j}$ in the right-hand side above,
+\begin{align}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} \frac{ \nabla f(x_j)^T p_j}{ || p_j ||^2 } \nabla f(x_j)^T p_j \notag \\
+	\intertext{which simplies to}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} \frac{ (\nabla f_j^T p_j)^2}{ || p_j ||^2 }. \notag
+%   \label{E:charlie-brown}
+\end{align}
+
+Because $f(x)$ is bounded below by assumption, there exists some $M < \infty$ such that $f(x_0) - f(x_{k+1}) < M$ for all $k$. Then rearranging the above yields,
+%\begin{align}
+%	\sum_{j=0}^{k} -\alpha_{c_j} c \nabla f(x_j)^T p_j &< M < \infty. \label{E:sum -alpha}
+%\end{align}
+%The above convergent series looks similar to an intermediate step in Zoutendijk's result \eqref{E:Z's} and we look to mimic parts of this proof \citet[p43--44]{NW} to attain convergence.
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{k}   \frac{ ( \nabla f_j^T p_j )^2}{ || p_j ||^2 } &< M < \infty.
+ \end{align*}
+The angle $\theta_j$ is the angle between the search direction $p_k$ and steepest descent direction $-\nabla f_k$ and can be expressed by $\cos \theta_j = \frac{ -\nabla f_j^T p_j}{||\nabla f_j|| \, || p_j||}$.  Substituting this into the equation above and taking $k \to \infty$,
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f_j||^2 &< \infty.\\
+	\intertext{Since $0 < c < 1$,}
+	\sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f_j||^2 &< \infty. 
+\end{align*}
+\end{proof}
+%%%%%%%%%%% END PROOF %%%%%%%%%%%%%%
+
+\begin{corollary}[Line Search Convergence] \label{Cor:Convergence}
+Consider any line search of the form \eqref{E:x_update} 
+\begin{align*}
+	x_{k+1} &= x_k + \alpha_k p_k 
+\end{align*}
+used to minimize the objective function $f$, where \eqref{E:x_update} and $f$ satisfy the assumptions in Theorem \eqref{Thm:Line Search}.  In addition, suppose that for some $\delta > 0$ for all $k$,  
+\begin{align*}
+\cos \theta_k \geq \delta > 0.
+\end{align*}
+ Then 
+\begin{align*}
+	\lim_{k \to \infty} || \nabla f_k || &= 0.
+\end{align*}
+\end{corollary}
+
+\begin{proof}
+The convergent series in Zoutendijk's condition \eqref{E:Z's} implies that 
+\begin{align*}
+	\cos^2 \theta_k || \nabla f_k ||^2 &\to 0 \text{ as } k \to \infty.
+\end{align*}
+With the additional restriction on the search direction $p_k$ such that $\cos \theta_k \geq \delta > 0$ for some choice of $\delta$, for all choices of $k$, we get the desired convergence result of
+\begin{align*}
+	\lim_{k \to \infty} || \nabla f_k || &= 0.
+\end{align*}
+\end{proof}
+
+
+%%%%%%%% Applicability of Algorithm to ERGM
+\section{Applicability of Algorithm to ERGMs}
+We must show that ERGMs fulfill the required conditions of the search algorithm we describe.  As discussed earlier, we will only be considering ERGMs that are regular exponential families with minimal representation, where the MLE exists and is unique.  
+
+The log-likelihood function $\ell(\eta)$ is well behaved on the interior of the parameter space $\Xi = \RR^q$---it is proper, continuous, continuously differentiable and strictly concave, thus fulfilling conditions 1 and 2 for the objective function of the search algorithm.  
+
+To check the other conditions, we focus on the properties of $\ell(\eta)$ on level sets of the form
+$$
+   \lev_{\geq \alpha} \ell = \set{ \eta \in \Xi : \ell(\eta) \geq \ell(\alpha) }.
+$$
+Because the MLE exists and is unique, there exists a level set $\lev_{\geq \alpha} \ell$ which contains exactly one point, the MLE.  This level set is non-empty and bounded by any neighborhood of the MLE.  By Corollary \ref{Cor:bounded lev}, the level sets $\lev_{\geq \alpha} \ell$ will be bounded for \emph{every} $\alpha$.  Since $\ell(\eta)$ is continuous on $\RR^q$, by Theorem \ref{Thm:lsc epi}, the level sets $\lev_{\geq \alpha} \ell$ are all closed.  Combined with being bounded, the level sets $\lev_{\geq \alpha} \ell$ are thus all compact.  
+
+By restriction on the search direction $p_k$ to be an ascent direction and step size $\alpha_k > 0$, the algorithm will always step uphill on the log-likelihood, and thus is confined to the level set $\lev_{\geq \eta_0} \ell$, where $\eta_0$ is the starting point of our iteration.  By Proposition \ref{Prop:convex lev}, this level set is convex, and thus we need only confirm Lipschitz continuous differentiablility with respect to this set.
+
+This level set $\lev_{\geq \eta_0} \ell$ is contained in the interior of the natural parameter space since $\Xi$ is open and hence equal to its interior.  By Theorem \ref{Thm:infinitely-differentiable}, $\ell(\eta)$ is infinitely differentiable on an open set containing $\lev_{\geq \eta_0} \ell$, thus fulfilling condition 3.
+
+By Corollary \ref{Cor:Lipschitzian}, the gradient of the log-likelihood $\nabla \ell(\eta)$ is Lipschitizian relative to the compact level set $\lev_{\geq \eta_0} \ell$, thus meeting condition 4.
+
+If we now consider the infinite sequence $\{\eta_k\}$ from our search algorithm confined to the compact level set $\lev_{\geq \eta_0} \ell$, it must have a convergent subsequence $\{\eta_{k_l}\}$ such that
+\begin{align*}
+	\eta_{k_l} \to \hat{\eta}
+\end{align*}
+for some limit point $\hat{\eta}$.  By the continuity of $\eta \mapsto \nabla \ell(\eta)$ and the convergence of our line search by Corollary \ref{Cor:Convergence},
+\begin{align*}
+	\nabla \ell(\hat{\eta}) = 0
+\end{align*}
+and thus the limit point $\hat{\eta}$ is the MLE.
+
+Then for every subsequence, we can choose a convergent subsubsequence, each of which must converge to $\hat{\eta}$ which is the unique MLE by assumption.  Thus the whole sequence converges to the MLE,  
+\begin{align*}
+	\eta_{k} \to \hat{\eta}.
+\end{align*}
+
+%%%%%%%% ADD CONJUGATE GRADIENT SECTION IN NEXT VERSION
+\section{Refinements of Algorithm}
+In the previous sections, we restricted our search direction $p_k$ to be a descent direction so that $\nabla f_k^T p_k < 0$, or that the angle $\theta_k$ between the search direction $p_k$ and steepest descent direction $-\nabla f_k$ is less than 90 degrees.  However, this still leaves open many possibilities for the choice of $p_k$ in the next iteration.  In addition, we have specified in the curvature condition \eqref{E:Wolfe-mod} that $0 < c < 1$, but it would be useful to know if certain values of $c$ are better than others for our setting of an exponential family.
+
+\citet{NW} argue against the general use of a pure steepest descent algorithm and present conjugate gradient methods as an alternative, though they admit that the rate of convergence for general convex or nonlinear functions is not thoroughly understood.  The method determines search directions ``on the fly" so that there is little overlap among them, akin to finding linearly independent vectors.  In the simple setting of a convex \emph{quadratic} objective function (which we do not have)in $n$ dimensions, it can be shown that the algorithm will find the solution in at most $n$ steps.  For the strictly convex function setting that we consider, \citeauthor{NW} describe the non-linear conjugate gradient methods, Polak-Ribi\`{e}re and  Fletcher-Reeves.  The variant of the Polak-Ribi\`{e}re method that we consider, which \citeauthor{NW} refer to as PR+, fulfills our descent direction criteria and thus our proof of convergence to the minimum will still apply, though we may wish to explore the efficiency of this algorithm further.  The PR+ update for search directions is as follows:
+
+\begin{align*}
+	\gamma_{k+1}^{PR} &= \max \left( 0, \frac{ [ \nabla f( x_{k+1}) ]^T( \nabla f( x_{k+1} ) - \nabla f( x_k) )  }{ \parallel \nabla f( x_k) \parallel^2 } \right )\\
+	p_{k+1} &= -\nabla f( x_{k+1}) + \gamma_{k+1}^{PR} \, p_k.\\
+\end{align*}
+Note that when $\gamma_{k+1}^{PR} = 0$, $p_{k+1}$ will be just $-\nabla f( x_{k+1})$, the direction of steepest descent.
+
+%\subsection{Conjugate Directions}
+%background on this before getting to gradients
+%\subsection{Conjugate Gradient}
+
+We now turn our attention to the optimal step size $\alpha_k$ when our objective function is the log-likelihood of an exponential family.  We look to maximize $\ell( \eta_{k+1})$ with respect to $\alpha_k$.
+Then
+\begin{align*}
+	\ell( \etak1 ) &= \etak1^T g(y) - c( \etak1 ) \\
+				  &= ( \eta_k + \alpha_k p_k)^T g(y) - c( \etak1 )
+\end{align*}
+Taking the derivative of $\ell( \etak1)$ with respect to $\alpha_k$,
+\begin{align*}
+	\deriv{\ell( \etak1 )}{\alpha_k} &= p_k^T g(y) - \E_{\etak1}g(Y)^T \deriv{}{\alpha_k} (\eta_k + \alpha_k p_k ) \\
+	&= p_k^T g(y) - \E_{\etak1}g(Y)^T p_k \\
+%	&= ( g(y) - \E_{\etak1} g(Y) )^T p_k \\
+	&= ( g(y) - \E_{\etak1} g(Y) )^T p_k \\
+	&= \nabla \ell(\etak1)^T p_k.
+\end{align*}
+
+Thus we find that the value of $\alpha_k$ that will set 
+\begin{align*}
+	\nabla \ell( \etak1 )^T p_k = 0 
+\end{align*}
+is the maximizing step size to take in the search direction $p_k$.  Looking at our curvature condition \eqref{E:Wolfe-mod} adapted here for an exponential family log-likelihood,
+\begin{align}
+	 0 \leq  \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k, \label{E:logcurvature}
+\end{align}
+our result suggests that by choosing $c$ to be small, say 0.2,  we will be taking a step that comes close to maximizing our log-likelihood along the search direction.
+
+%% Sai 1/19/10 -- newly add below
+We can further show that $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k$ is a strictly convex and thus monotonically decreasing function of $\alpha_k$.    
+\begin{align*}
+	\deriv{ \nabla \ell( \eta_k + \alpha_k p_k )^T p_k }{\alpha_k} &= p^T \nabla^2 \ell ( \eta_k + \alpha_k p_k )^T p_k \\
+	&= p_k^T \left [ - \Var_{\eta_{k+1}} g(Y) \right ] p_k
+	< 0.
+\end{align*}
+This will help us determine what methods may be suitable when looking for an $\alpha_k$ that meets our curvature condition.
+
+%\subsection{Application of Search Algorithms}
+%In this section, we show that a regular exponential family satisfies the assumptions required by Theorem \eqref{Thm:Line Search} and -----CG----- so that they can be applied.
+
+
+\subsection{Example: Logistic Regression}
+We illustrate the application of our algorithm in the case of a logistic regression.  The response variables are Bernoulli trials with mean vector $p$.  The Bernoulli trials can be expressed as   
+\begin{align*}
+	P( Y_i = y_i ) &= p_i^{y_i} ( 1- p_i)^{1-y_i}	\quad \text{for $i = 1, \ldots, n$} \\
+%	\theta = M \beta
+\end{align*}
+Reparameterizing this into its canonical exponential family form,
+\begin{align*}
+	P( Y_i = y_i ) &= \left( \frac{p_i}{1-p_i} \right )^{y_i} ( 1- p_i) \\
+				  &  = (1-p_i) \exp \left [ y_i \log \left( \frac{p_i}{1-p_i} \right )     \right ].
+\end{align*}
+The natural parameter then is $\theta_i = \log \left( \frac{p_i}{1-p_i} \right )$, which in a logistic regression is modeled as a linear function of the predictors $1, x_1, \ldots, x_{q-1}$ so that
+\begin{align*}
+	\theta_i &= \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \cdots + \beta_{q-1} x_{q-1,\,i} = \beta^T x_i
+\end{align*}
+where $\beta = (\beta_0, \ldots, \beta_{q-1} )^T$ and $x_i = ( 1, x_{1i}, \ldots, x_{q-1, i})^T$.  
+Defining the model matrix $M$ to be an $n \times q$ matrix with the $x_i$ as rows, we can then express $\theta = M \beta$ so that 
+\begin{align*}
+	P( Y = y ) &= \frac{1}{\kappa (M\beta) } \exp \left [ y^T (M\beta) \right ] \notag \\
+			&= \frac{1}{\kappa (M\beta) } \exp \left [ \beta^T (M^Ty) \right ]
+\end{align*}
+which is an exponential family with $\beta$ as the natural parameter vector and $M^T y$ the vector of statistics, with log-likelihood 
+\begin{align*}
+		 \ell(\beta) &=  \beta^T (M^T y_{obs}) - \log \kappa(\beta). 
+\end{align*}
+Applying our properties of exponential families, our first derivative is
+\begin{align*}
+	\nabla \ell( \beta ) &=  M^T y_{obs} - \E_{\beta}(M^TY) = M^T( y _{obs} - \E_{\beta}(Y) ).
+\end{align*}
+
+\vspace{0.70cm}
+
+\subsection{Implementation in R}
+
+We generate 100 random draws from a 7-dimensional multivariate normal distribution with mean 0 and a covariance matrix $\Sigma$ specified by 
+\begin{align*}
+	\Sigma = \left(\begin{array}{cccc}
+			1 	   & 0.5 	& \cdots & 0.5 \\
+			0.5    & 1 		& \cdots & 0.5 \\ 
+			\vdots & \vdots 	& \ddots & \vdots \\ 
+			0.5 	   & 0.5 	& \cdots & 1
+			\end{array}\right)
+\end{align*}
+%We construct our model matrix, $M$, to be a column of 1's followed by the draws from the multivariate normal distribution so that it is a $100 \times 8$ matrix. 
+
+We specify our true parameter to arbitrarily be $\beta = (0, 2, 2, 1, 1, 0, 0)^T$.  We use this true value of $\beta$ to generate our observed Bernoulli trials, $y$.  
+
+We arbitrarily pick our initial value $\beta_0 = ( 5, 4, 3, 2, 1, 0, -1, -2)^T$ and run our line search algorithm  and compare our results with the MLE found from the logistic regression.
+Note that for a size of only $n = 100$, the MLE of $\beta$ may not resemble the true $\beta$ very closely though of course the asymptotic properties of MLEs dictate that as $n \to \infty$, the MLE of $\beta$ will converge in distribution to a normal distribution with the true $\beta$ as its mean.  
+ 
+%\noindent \phantom{--} index \phantom{----} $\alpha_k$  \phantom{--} $\parallel \nabla \ell( \beta_k) \parallel$ \phantom{} $\parallel \nabla \ell( \betak1) \parallel$ \phantom{--} $\theta_k$ \phantom{--} OK? \phantom{----} $\gamma_k$ \phantom{----} $k$
+
+% latex table generated in R 2.8.1 by xtable 1.5-5 package
+% Tue Apr 21 11:39:34 2009
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{rrrrrrlrr}
+  \hline
+ & index & $\alpha_k$ & $\parallel \nabla \ell( \beta_k) \parallel$ & $\parallel \nabla \ell( \betak1) \parallel$ & $\theta_k$ & OK & $\gamma_k$ & k \\ 
+  \hline
+1 & 0 & 0.51 & 32.99 & 12.68 & 145.2 & LG & -1.00 & 0 \\ 
+  2 & 1 & 0.26 & 32.99 & 8.65 & 122.8 & LG & -1.00 & 0 \\ 
+  3 & 2 & 0.13 & 32.99 & 10.81 & 77.0 & OK & 0.03 & 1 \\ 
+  4 & 3 & 0.26 & 10.81 & 8.94 & 138.6 & LG & 0.03 & 1 \\ 
+  5 & 4 & 0.14 & 10.81 & 5.40 & 31.8 & SM & 0.03 & 1 \\ 
+  6 & 5 & 0.20 & 10.81 & 3.79 & 85.8 & OK & 0.09 & 2 \\ 
+  7 & 6 & 0.27 & 3.79 & 2.32 & 52.2 & SM & 0.09 & 2 \\ 
+  8 & 7 & 0.40 & 3.79 & 2.58 & 88.2 & OK & 0.32 & 3 \\ 
+  9 & 8 & 0.53 & 2.58 & 5.83 & 130.9 & LG & 0.32 & 3 \\ 
+  10 & 9 & 0.27 & 2.58 & 2.63 & 117.7 & LG & 0.32 & 3 \\ 
+  11 & 10 & 0.14 & 2.58 & 1.27 & 74.0 & OK & 0.11 & 4 \\ 
+  12 & 11 & 0.28 & 1.27 & 0.73 & 69.0 & SM & 0.11 & 4 \\ 
+  13 & 12 & 0.41 & 1.27 & 1.12 & 101.7 & LG & 0.11 & 4 \\ 
+  14 & 13 & 0.34 & 1.27 & 0.89 & 88.8 & OK & 0.56 & 5 \\ 
+  15 & 14 & 0.41 & 0.89 & 0.86 & 115.4 & LG & 0.56 & 5 \\ 
+  16 & 15 & 0.21 & 0.89 & 0.43 & 73.5 & OK & 0.04 & 6 \\ 
+  17 & 16 & 0.42 & 0.43 & 0.53 & 127.0 & LG & 0.04 & 6 \\ 
+  18 & 17 & 0.21 & 0.43 & 0.21 & 74.8 & OK & 0.13 & 7 \\ 
+  19 & 18 & 0.42 & 0.21 & 0.28 & 105.4 & LG & 0.13 & 7 \\ 
+  20 & 19 & 0.22 & 0.21 & 0.14 & 66.6 & SM & 0.13 & 7 \\ 
+  21 & 20 & 0.32 & 0.21 & 0.20 & 92.6 & LG & 0.13 & 7 \\ 
+  22 & 21 & 0.27 & 0.21 & 0.17 & 81.8 & OK & 0.63 & 8 \\ 
+  23 & 22 & 0.32 & 0.17 & 0.09 & 95.0 & LG & 0.63 & 8 \\ 
+  24 & 23 & 0.17 & 0.17 & 0.07 & 33.7 & SM & 0.63 & 8 \\ 
+  25 & 24 & 0.25 & 0.17 & 0.06 & 62.7 & SM & 0.63 & 8 \\ 
+  26 & 25 & 0.29 & 0.17 & 0.07 & 81.6 & OK & 0.23 & 9 \\ 
+  27 & 26 & 0.33 & 0.07 & 0.05 & 103.8 & LG & 0.23 & 9 \\ 
+  28 & 27 & 0.17 & 0.07 & 0.03 & 46.5 & SM & 0.23 & 9 \\ 
+  29 & 28 & 0.25 & 0.07 & 0.03 & 81.4 & OK & 0.23 & 10 \\ 
+  30 & 29 & 0.33 & 0.03 & 0.03 & 112.9 & LG & 0.23 & 10 \\ 
+  31 & 30 & 0.17 & 0.03 & 0.01 & 50.9 & SM & 0.23 & 10 \\ 
+  32 & 31 & 0.25 & 0.03 & 0.02 & 93.6 & LG & 0.23 & 10 \\ 
+  33 & 32 & 0.21 & 0.03 & 0.01 & 74.4 & OK & 0.12 & 11 \\ 
+  34 & 33 & 0.26 & 0.01 & 0.01 & 79.7 & OK & 0.51 & 12 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+% latex table generated in R 2.8.1 by xtable 1.5-5 package
+% Tue Apr 21 11:58:23 2009
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{rrrrrrrrr}
+  \hline
+ & (Intercept) & x1 & x2 & x3 & x4 & x5 & x6 & x7 \\ 
+  \hline
+True $\beta$ & 0.000 & 2.000 & 2.000 & 1.000 & 1.000 & 0.000 & 0.000 & 0.000 \\ 
+   Logistic $\beta$ & 0.635 & 5.949 & 1.273 & 0.180 & 1.006 & 1.536 & -2.252 & -0.472 \\ 
+  Line Search $\beta$  & 0.639 & 5.970 & 1.276 & 0.180 & 1.009 & 1.541 & -2.261 & -0.474 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+It took our algorithm 33 iterations to get $\parallel \nabla \ell( \beta_k ) \parallel < 0.01$ and arrive at an estimate for the MLE that matched the value found by the logistic regression.  Over this process, our algorithm used 13 different search directions $p_k$ so we are spending about 3 iterations looking for a suitable step size $\alpha_k$ that fulfill the condition \eqref{E:logcurvature}.  As discussed earlier, we used $c=0.2$ in \eqref{E:logcurvature}, but attained similar results for other small values of $c$.  We are currently implementing a simple bisection search to find $\alpha_k$, using the last accepted step sizes as the initial end points for the next search iteration.  
+
+%\section{Next Steps}
+%The obvious next step is to apply the algorithm to more complicated exponential families where the expectation of the statistic may require MCMC to calculate.  This will require devising a sampler from a discrete network distribution, a problem that has only been lightly explored \citep{Morris:2008}.  Also, we may wish to make our algorithm more efficient---it is likely that the method for finding acceptable step sizes could be improved, and while the conjugate gradient updated appeared to work well in our example by using only 13 search directions in an 8-dimensional problem, we have not studied the convergence properties of this method thoroughly.
+
+%Beyond this, the area of social network modeling is rich with interesting problems.  As we saw in our discussion of network statistics, the problem of parameter estimation is intertwined with the question of model specification.  There are a number of open questions regarding model specification and comparison that may be worthwhile to pursue.  
+
+\section{Monte Carlo in Curvature condition}
+For most applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC methods.  However, our algorithm depends on quantities based on these approximations in the curvature condition \eqref{E:logcurvature}
+\begin{align*}
+	 0 \leq  \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
+\end{align*}
+as well as the stop condition for the algorithm, that $\parallel \nabla \ell( \eta_k ) \parallel < \epsilon$.  How then can we know if these conditions are met if we only have approximations of these quantities to work with?
+
+We approach this problem by introducing confidence intervals, requiring that we meet the conditions with 95\% confidence.  We begin first with curvature condition, where we look for an $\alpha_k$ such that 
+\begin{align}
+\nabla \ell( \eta_k + \alpha_k p_k)^T p_k \geq 0 \label{E:curveL}
+\end{align}
+and
+\begin{align}
+	c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \geq 0 \label{E:curveR}
+\end{align}
+with 95\% confidence.  We approximate standard errors of each of the above quantities via the Delta method as follows:
+
+First we note that
+\begin{align*}
+\nabla \ell( \eta_k + \alpha_k p_k)^T p_k &=  [ g(y_{obs}) - E_{\eta_{k+1}}g(Y)]^T p_k \\
+		&\approx  \left [ g(y_{obs}) - \frac{1}{m}\sum g(Y_i)\right ]^T p_k.
+\end{align*}
+where $Y_1, \ldots, Y_n$ are draws from an ERGM with parameter $\eta_{k+1}$.
+
+By the Markov chain central limit theorem, if we have certain regularity CONDITIONS which will hold under the situations we are interested in and defining $\hat{\mu} = \frac{1}{m}\sum g(Y_i)$, then 
+\begin{align*}
+	\hat{\mu} \overset{\D}{\to} N( \mu, \sigma^2/m).
+\end{align*} 
+
+Now we are ready to apply the Delta method, which states that if
+\begin{align*}
+	\sqrt{n}( B - \beta) \overset{\D}{\to} N(0, \Sigma),
+\end{align*}
+and the gradient of the function $h(B)$ is defined, then
+\begin{align*}
+	\sqrt{n}( h(B) - h(\beta) ) \stackrel{\D}{\to} N \left (0, [\nabla h(\beta)]^T  \, \Sigma  \, \nabla h(\beta) \right ).
+\end{align*}
+
+
+Defining $\hat{\mu}_k = \frac{1}{m}\sum g(Y_{\eta_k, \, i})$ and $\hat{\mu}_{k+1} = \frac{1}{m}\sum g(Y_{\eta_{k+1}, \, i})$, the estimates for the quantities in \eqref{E:curveL} and \eqref{E:curveR} are
+\begin{align*}
+ 	\left [ g(y_{obs}) - \hat{\mu}_{k+1} \right ]^T p_k
+\end{align*}
+and
+\begin{align*}
+	c \left [ g(y_{obs}) - \hat{\mu}_k \right ]^T p_k - \left [ g(y_{obs}) - \hat{\mu}_{k+1} \right ]^T p_k \\
+	= (c-1) g(y_{obs})^T p_k + \hat{\mu}_{k+1}^T p_k - c \hat{\mu}_{k}^T p_k 
+\end{align*}
+which will have variance estimates of 
+\begin{align*}
+	  \frac{1}{m} p_k^T \, \Sigma_{k+1} \, p_k    
+\end{align*}
+and
+\begin{align*}
+	 \frac{1}{m} p_k^T \, \Sigma_{k+1} \, p_k + \frac{c^2}{m} p_k^T \, \Sigma_{k} \, p_k    
+\end{align*}
+
+%the function
+%\begin{align*}
+%	h( \hat{\mu}) = \left [ g(y_{obs}) - \hat{\mu} \right ]^T p_k
+%\end{align*}
+%and its gradient 
+%\begin{align*}
+%	\nabla h( \hat{\mu}) = -  p_k
+%\end{align*}
+%so that 
+%\begin{align*}
+%	\Var h( \hat{\mu}) = p_k ]^T \Sigma p_k = p_k^T \, \Sigma \, p_k.    
+%\end{align*}
+Then for \eqref{E:curveL}, an approximate 95\% confidence lower bound for $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k$ is given by 
+\begin{align*}
+	\left [ g(y_{obs}) - \hat{\mu}_{k+1} \right ]^T p_k - 1.645 \frac{1}{m} p_k^T \, \Sigma \, p_k 
+\end{align*}
+and for \eqref{E:curveR},
+\begin{align*}
+	(c-1) g(y_{obs})^T p_k + \hat{\mu}_{k+1}^T p_k - c \hat{\mu}_{k}^T p_k - 1.645 \left( \frac{1}{m} p_k^T \, \Sigma_{k+1} \, p_k + \frac{c^2}{m} p_k^T \, \Sigma_{k} \, p_k \right ) 
+\end{align*}
+
+\textbf{Logistic example -- DO I EVEN NEED THIS HERE?}
+
+Returning to our logistic regression example, recall that we used the relation that
+\begin{align*}
+	\nabla \ell (\beta_k) = M^T(y_{obs} - E_{\beta_k}Y) 
+\end{align*}
+which, defining $\hat{\mu}_k = \frac{1}{m} \sum Y_i$, is approximated by
+\begin{align*}
+	M^T (y_{obs} - \hat{\mu}_k ).
+\end{align*} 
+Thus a 95\% confidence lower bound for \eqref{E:curveL} can be expressed as
+\begin{align*}
+	\left [ M^T (y_{obs} - \hat{\mu}_{k+1} ) \right ]^T p_k - 1.645 \left ( \frac{1}{m} [ M p_k ]^T  s^2_k M p_k \right ) ^{\frac{1}{2}}.
+\end{align*}
+Similarly, a 95\% confidence lower bound for \eqref{E:curveR} can be expressed as
+\begin{align*}
+	c \, \left [ M^T (y_{obs} - \hat{\mu}_k ) \right ]^T p_k - \left [ M^T (y_{obs} - \hat{\mu}_{k+1} ) \right ]^T p_k - 1.645 \left ( \frac{1}{m} [ M p_k ]^T  ( c^2 \, s_k^2 + s_{k+1}^2 ) M p_k \right ) ^{\frac{1}{2}}.
+\end{align*}
+
+where $s_k^2$ is the sample variance of $Y_1, \ldots, Y_n$ generated from i.i.d. Bernoulli distributions with probability vector $\frac{1}{1 + e^{-M \beta_k}}$.  We can use the sample variance here because we do in fact have independent and identical draws.  In general, however, we would need to use a method like consistent batch means to estimate the MCSE.  
+
+\subsection{Potts models}
+Description of Potts models
+
+As such, the Potts models are discrete state space exponential families, just like social network models.  These models have been well-studied in the literature and we have a reliable MCMC engine ... also, there is no issue of choice of canonical statistics and goodness of fit or degeneracy.
+
+\subsubsection{MCMC-MLE, in practice}
+Charlie's swindle slides?
+
+\subsubsection{Newton-Raphson}
+
+\subsection{init.seq}
+
+\subsection{Estimate a standard error for $\parallel \nabla \ell( \beta_k ) \parallel$ }
+As discussed earlier, the exit condition from our algorithm relies upon $\parallel \nabla \ell( \beta_k ) \parallel$.  We will again need to rely upon the delta method to estimate standard errors for this quantity.
+
+\subsection{Mahalanobis distance}
+
+\subsection{Convergence under uncertainty?}
+Approach: each iteration is a Markov chain with state BLAH.  Then using standard MC theory, show convergence to equilibrium distribution (must show that it exists, and that MC converges to this).
+
+Well, after looking through MC books and books on random perturbations, this began to look really hard.  shelving for now.
+
+\subsection{Improved search}
+
+
+
