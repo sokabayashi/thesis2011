@@ -119,10 +119,10 @@
 % ----- Fix chapter titles and title page back to single spacing -----
 % \let\origmakechapterhead\@makechapterhead
 % \let\origmakeschapterhead\@makeschapterhead
-% \renewcommand{\@makechapterhead}[1]{\begin{singlespace}\origmakechapterhead{#1}\end
-{singlespace}}
-% \renewcommand{\@makeschapterhead}[1]{\begin{singlespace}\origmakeschapterhead{#1}\end
-{singlespace}}
+% \renewcommand{\@makechapterhead}[1]{\begin{singlespace}\origmakechapterhead{#1}
+%\end{singlespace}}
+% \renewcommand{\@makeschapterhead}[1]{\begin{singlespace}\origmakeschapterhead{#1}
+%\end{singlespace}}
 
 % \let\origmaketitle\maketitle
 % \renewcommand\maketitle{\begin{singlespace}\origmaketitle\end{singlespace}}
@@ -148,7 +148,7 @@
 
 % ----- Title
 
-\title{Line Search Algorithm for Maximizing Loglikelihood of Exponential Families}
+\title{Algorithm for Maximizing Loglikelihood of Exponential Families}
 \author{Saisuke Okabayashi \\ Department of Statistics \\ University of Minnesota}
 %\date{May 13, 2009}
 %\institution{University of Minnesota}
@@ -758,8 +758,7 @@ to handle.  For example, \texttt{as.integer(2\textasciicircum31)} returns \textt
 
 \begin{figure}[!h]
 \centering
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
-graph9-hull}
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-hull}
 \caption{Sufficient statistics of 9-node graph gradiated by frequency of occurrence.  
 Grey perimeter is the convex hull, orange points are points that fall on the boundary, 
 red points are extreme points of hull.  
@@ -1097,10 +1096,8 @@ when kindly told to start their searches from $(25, -5)$, \texttt{optim} converg
 converges to $(24.564363, -6.683482)$ with log-likelihood $-8.078339$.  
 \begin{figure}[!h]
 \centering
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
-graph9-contour-wide}
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
-graph9-contour-narrow}
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-contour-wide}
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-contour-narrow}
 \caption{Contour plot of log-likelihood when $y_{obs} = (21,4)$.  The log-likelihood 
 function is nearly flat near the maximum point of $(28.83, -7.75)$ before dropping of 
 rapidly.  Points such as $(24.44, -6.65)$ have nearly the same value for log-
@@ -1282,8 +1279,7 @@ Is $y_{obs}$ in the sample?
 
 \begin{figure}[!h]
 \centering
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
-contour31-50}
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/contour31-50}
 \caption{Contour plot of log-likelihood when $y_{obs} = (31, 50)$.  Using a steepest 
 ascent algorithm to find a direction of recession is not very efficient because the 
 updates will zigzag up the log likelihood with very small steps.}
