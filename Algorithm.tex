@@ -119,8 +119,10 @@
 % ----- Fix chapter titles and title page back to single spacing -----
 % \let\origmakechapterhead\@makechapterhead
 % \let\origmakeschapterhead\@makeschapterhead
-% \renewcommand{\@makechapterhead}[1]{\begin{singlespace}\origmakechapterhead{#1}\end{singlespace}}
-% \renewcommand{\@makeschapterhead}[1]{\begin{singlespace}\origmakeschapterhead{#1}\end{singlespace}}
+% \renewcommand{\@makechapterhead}[1]{\begin{singlespace}\origmakechapterhead{#1}\end
+{singlespace}}
+% \renewcommand{\@makeschapterhead}[1]{\begin{singlespace}\origmakeschapterhead{#1}\end
+{singlespace}}
 
 % \let\origmaketitle\maketitle
 % \renewcommand\maketitle{\begin{singlespace}\origmaketitle\end{singlespace}}
@@ -359,11 +361,18 @@ Newton algorithm, starting at the true parameter value).
 
 \newpage
 \section{Degeneracy, non-existence of MLEs, and GDORs}
-This begins an entirely new area of research.  Up until now, we have assumed the existence of a unique MLE.  However, an MLE is not guaranteed to exist.
+This begins an entirely new area of research.  Up until now, we have assumed the 
+existence of a unique MLE.  However, an MLE is not guaranteed to exist.
 
-There have been three overlapping approaches to this issue: \citet{Handcock:Degeneracy} appears to be the first to define ``model degeneracy" from a theoretical view for social network models, \citet{Rinaldo:2009} and \citet{Geyer:gdor} explored the non-existence of MLEs for exponential families in general, with \citet{Rinaldo:2009} focusing on a 9-node social network model and \citet{Geyer:gdor} expanding on several different generalized linear models.
+There have been three overlapping approaches to this issue: \citet{Handcock:Degeneracy} 
+appears to be the first to define ``model degeneracy" from a theoretical view for 
+social network models, \citet{Rinaldo:2009} and \citet{Geyer:gdor} explored the non-
+existence of MLEs for exponential families in general, with \citet{Rinaldo:2009} 
+focusing on a 9-node social network model and \citet{Geyer:gdor} expanding on several 
+different generalized linear models.
 
-Example of a degenerate social network model is in \citet{statnet-tutorial}.  As summarized by \citet{Rinaldo:2009}, model degeneracy refers to instances where
+Example of a degenerate social network model is in \citet{statnet-tutorial}.  As 
+summarized by \citet{Rinaldo:2009}, model degeneracy refers to instances where
 
 \begin{enumerate}
 \item Random graphs generated from the fitted model lack variability, often only 
@@ -409,7 +418,8 @@ which finally leads to the result in equation (5) p. 268 that
 
 
 \section{Thm 2.2 in Geyer:1990, 7/23/10}
-Charlie's GDOR theorems rely heavily upon some results from his thesis \citep{Geyer:1990}.  Adapted here 
+Charlie's GDOR theorems rely heavily upon some results from his thesis \citep{Geyer:
+1990}.  Adapted here 
 using the notation from his GDOR paper,
 \begin{theorem}
 \begin{align*}
@@ -651,7 +661,8 @@ form of the relative density previously defined with respect to $\psi$,
 s } }.
 \end{align*}
 This form is starting to look familiar, in particular, the denominator is from 
-Theorem 2.2 from \citet{Geyer:1990} except with $\inner{y,\delta}$ instead of $b$ (where this 
+Theorem 2.2 from \citet{Geyer:1990} except with $\inner{y,\delta}$ instead of $b$ 
+(where this 
 $y$ is the dummy variable in the density, not the observed data).  So what happens as 
 $s \to \infty$?  
 
@@ -672,17 +683,21 @@ the density).
 \delta}.
 	\end{cases}
 \end{align*}
-For $\delta$ a DOR but not DOC, we need to show that the $P_{\theta+s\delta}(Y \in H) \to 1$ 
+For $\delta$ a DOR but not DOC, we need to show that the $P_{\theta+s\delta}(Y \in H) 
+\to 1$ 
 as $s \to \infty$, where $H = \set{w \in \RR^p: \inner{w-y_{obs},d}=0}$.
 \begin{align*}
  P_{\theta+s\delta}(Y \in H) &= \int_H e^{\inner{y, \theta+s\delta - \psi} - c(\theta
 +s\delta) + c(\psi)} \, d\psi \\
-		&= \E_\psi \left \{ I_H e^{\inner{y, \theta - \psi} +c(\psi) - [c(\theta+s\delta) -s\inner{y,\delta}]} \right 
+		&= \E_\psi \left \{ I_H e^{\inner{y, \theta - \psi} +c(\psi) - [c(\theta+s
+\delta) -s\inner{y,\delta}]} \right 
 \}\\
-		&= \E_\psi \left \{ I_H  \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } } 
+		&= \E_\psi \left \{ I_H  \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner
+{y,\delta} } } 
 		e^{\inner{y, \theta - \psi} -c(\theta)+c(\psi)}  \right \}.
 \end{align*}
-Since the indicator function, $I_H$, fixes $\inner{ y, \delta}$ to be a constant, it can pulled out of the expectation, so that 
+Since the indicator function, $I_H$, fixes $\inner{ y, \delta}$ to be a constant, it 
+can pulled out of the expectation, so that 
 \begin{align*}
 		 P_{\theta+s\delta}(Y \in H)
 		 &= \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } }
@@ -699,7 +714,8 @@ Then applying Theorem 2.2 from Geyer:1990,
  \end{align*}
  as $s \to \infty$.  
  
- That this probability is strictly increasing follows directly from the DOR property which requires $\ell( \theta+s
+ That this probability is strictly increasing follows directly from the DOR property 
+which requires $\ell( \theta+s
 \delta)$ to be strictly increasing.   
 \end{proof}
 
@@ -708,14 +724,19 @@ Then applying Theorem 2.2 from Geyer:1990,
 \section{Graphs of 5, 6, 7, 8, and 9 Nodes}
 We want some toy examples to work with.  Some obvious ones:
 \begin{itemize}
-\item \citet{Handcock:Degeneracy} works with a 7-node graph with (edges, two-stars) as statistics.
-\item \citet{Rinaldo:2009} works primary with a 9-node graph with (edges, triangles), but also with 7-node graph with (edges, triangles) and also with the same (edges, two-stars) that \citet{Handcock:Degeneracy} uses.
+\item \citet{Handcock:Degeneracy} works with a 7-node graph with (edges, two-stars) as 
+statistics.
+\item \citet{Rinaldo:2009} works primary with a 9-node graph with (edges, triangles), 
+but also with 7-node graph with (edges, triangles) and also with the same (edges, two-
+stars) that \citet{Handcock:Degeneracy} uses.
 \end{itemize}
 
 \subsection{Some Basics}
 Why these choices of graphs?  9 nodes is not many at all!
 
-For an undirected graph with $n$-nodes, there are $n \choose 2$ dyads.  For each dyad, an edge may be present or absent, so there are $2^{n \choose 2}$ possible graphs to consider.\\
+For an undirected graph with $n$-nodes, there are $n \choose 2$ dyads.  For each dyad, 
+an edge may be present or absent, so there are $2^{n \choose 2}$ possible graphs to 
+consider.\\
 
 \begin{table}[ht]
 \caption{Combinatorics for undirected graphs}
@@ -732,32 +753,49 @@ Nodes & Possible Edges & Total Graphs \\ [1ex]
 \end{tabular}
 \end{table}
 
-So, while a 5-node graph seems manageable, a 9-node graph is already getting difficult to handle.  For example, \texttt{as.integer(2\textasciicircum31)} returns \texttt{NA}.  
+So, while a 5-node graph seems manageable, a 9-node graph is already getting difficult 
+to handle.  For example, \texttt{as.integer(2\textasciicircum31)} returns \texttt{NA}.  
 
 \begin{figure}[!h]
 \centering
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-hull}
-\caption{Sufficient statistics of 9-node graph gradiated by frequency of occurrence.  Grey perimeter is the convex hull, orange points are points that fall on the boundary, red points are extreme points of hull.  
-Note that points like $(21,4)$, while very close to the boundary are actually on the interior ($(21, 3.857)$ is on the boundary).
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
+graph9-hull}
+\caption{Sufficient statistics of 9-node graph gradiated by frequency of occurrence.  
+Grey perimeter is the convex hull, orange points are points that fall on the boundary, 
+red points are extreme points of hull.  
+Note that points like $(21,4)$, while very close to the boundary are actually on the 
+interior ($(21, 3.857)$ is on the boundary).
 }
 %\label{F:pottsimage}
 \end{figure}
 
 \subsection{What are useful plots to look at?}
 
-The point of using a two-dimensional sufficient statistic is that they lend easily to plots.  So what are the plots to look at?
+The point of using a two-dimensional sufficient statistic is that they lend easily to 
+plots.  So what are the plots to look at?
 
-One plot of interest will be that of the sufficient statistics, performed by both \citet{Handcock:Degeneracy} and \citet{Rinaldo:2009}.  This requires enumerating all possible graphs and counting the sufficient statistics combination for each, a computing intensive task (my version for the 9-node graph is in \texttt{/Tako/RCode/GDOR/Triangles/CountTriC-mcl.R}.  It required employing bitwise arithmetic in C and parallel computing using the package \texttt{mclapply} across an 8-core computer and took 1 hour to complete).
+One plot of interest will be that of the sufficient statistics, performed by both 
+\citet{Handcock:Degeneracy} and \citet{Rinaldo:2009}.  This requires enumerating all 
+possible graphs and counting the sufficient statistics combination for each, a 
+computing intensive task (my version for the 9-node graph is in \texttt{/Tako/RCode/
+GDOR/Triangles/CountTriC-mcl.R}.  It required employing bitwise arithmetic in C and 
+parallel computing using the package \texttt{mclapply} across an 8-core computer and 
+took 1 hour to complete).
 
 
 \subsection{\citet{Handcock:Degeneracy}}
 
 
-What values of $\theta$ are \textbf{not} going to be interesting (realistic)?  \textbf{The emphasis is on what parameter values will give unrealistic graphs, not necessarily problematic from a theoretical perspective.  Unrealistic = uninteresting.}  \\
+What values of $\theta$ are \textbf{not} going to be interesting (realistic)?  \textbf
+{The emphasis is on what parameter values will give unrealistic graphs, not necessarily 
+problematic from a theoretical perspective.  Unrealistic = uninteresting.}  \\
 
-On the parameter space ($\theta_1-\theta_2$ plane), plot light-dark shades corresponding to the probability of observing 
+On the parameter space ($\theta_1-\theta_2$ plane), plot light-dark shades 
+corresponding to the probability of observing 
 	\begin{itemize}
-		\item empty graphs (that is, $P_\theta(X=0)$).  The dark regions correspond to high probability.  So, these values of $\theta$ are probably not very interesting or realistic.
+		\item empty graphs (that is, $P_\theta(X=0)$).  The dark regions correspond to 
+high probability.  So, these values of $\theta$ are probably not very interesting or 
+realistic.
 		\item full graphs (that is, $P_\theta(X=1)$)
 		\item minimal 2-star graphs
 		\item maximal 2-stars graphs
@@ -765,36 +803,56 @@ On the parameter space ($\theta_1-\theta_2$ plane), plot light-dark shades corre
 		\item exactly 1-edge graphs
 		\item missing 2 edge graphs
 		\item exactly 2-edge graphs
-		\item \textbf{Combine} all of the above graphs.  The dark regions are unrealistic.  So what is left as light corresponds to parameter values that may be of interest in practice.  This only leaves about one quarter of the parameter space, what Handcock calls the ``effective" natural parameter space.
+		\item \textbf{Combine} all of the above graphs.  The dark regions are 
+unrealistic.  So what is left as light corresponds to parameter values that may be of 
+interest in practice.  This only leaves about one quarter of the parameter space, what 
+Handcock calls the ``effective" natural parameter space.
 	\end{itemize}
 	
 
-For the 7-node graph with edges \& two-stars, there are 144 distinct pairs of sufficient statistics.  22 pairs of statistics are on the boundary (all on bottom curve of hull).  \textbf{These correspond to graphs with the minimum possible number of 2-stars for the given number of edges}.
+For the 7-node graph with edges \& two-stars, there are 144 distinct pairs of 
+sufficient statistics.  22 pairs of statistics are on the boundary (all on bottom curve 
+of hull).  \textbf{These correspond to graphs with the minimum possible number of 2-
+stars for the given number of edges}.
 
-\textbf{Main point: $\mu$-parameter space is better.}  The axes are the sufficient statistics,  the feasible parameter space is the same as the convex hull.  Just inside the boundary of the hull corresponds to parameter values which generate the uninteresting graphs (he calls ``near-degenerate").
+\textbf{Main point: $\mu$-parameter space is better.}  The axes are the sufficient 
+statistics,  the feasible parameter space is the same as the convex hull.  Just inside 
+the boundary of the hull corresponds to parameter values which generate the 
+uninteresting graphs (he calls ``near-degenerate").
 
-\textbf{One plot of interest: } Figure 4c, p 24.  ``Stealth-bomber" region of non-degenerate models with realizable MLEs superimposed.  
+\textbf{One plot of interest: } Figure 4c, p 24.  ``Stealth-bomber" region of non-
+degenerate models with realizable MLEs superimposed.  
 
 \subsection{8/29/10: Perhaps the final prize?}
-In the natural parameter space, a plot that shows CI towards each face?  not unlike Handcock's cumulative plot in goal, but with more solid theoretical justification.  Now, just thinking about this for a minute, this plot as I describe it is impossible, certainly as a single plot.  
-\subsubsection{Natural vs. mean parameter space}.  So if we do mean parameter space, I came up with some single dot that represented the lower-95\% confidence bound.  What the hell does that mean????
+In the natural parameter space, a plot that shows CI towards each face?  not unlike 
+Handcock's cumulative plot in goal, but with more solid theoretical justification.  
+Now, just thinking about this for a minute, this plot as I describe it is impossible, 
+certainly as a single plot.  
+\subsubsection{Natural vs. mean parameter space}. So if we do mean parameter space, I 
+came up with some single dot that represented the lower-95\% confidence bound.  What 
+does that mean????
 
 \section{\citet{Rinaldo:2009} and Shanon Entropy plots}  
 What's the point of the entropy plot?
 
 \newpage
 \section{Tangent and Normal Cones}
-In order to pursue the GDOR approach further, we also need to explore the theory of computational geometry/convex analysis.
-The \texttt{rcdd} package in R \citep{rcdd} fortunately(!) does all the work for us but we should know what it is doing.
+In order to pursue the GDOR approach further, we also need to explore the theory of 
+computational geometry/convex analysis.
+The \texttt{rcdd} package in R \citep{rcdd} fortunately(!) does all the work for us but 
+we should know what it is doing.
 
 \subsection{V-representation}
 $m = c(l \quad b \quad V )$.
 
 First column: $l$, either 0 or 1.  A zero means nonnegative coefficients only.    
 
-Second column: $b$, either 0 or 1.  A one means that the point in this row is included in the linear combination of points across rows summing to 1.
+Second column: $b$, either 0 or 1.  A one means that the point in this row is included 
+in the linear combination of points across rows summing to 1.
 
-When the we have the data in the form (edges, triangles, count of graphs), then the first two columns of this data determine the set of interest.  To complete the V-representation of the set, we simple put
+When the we have the data in the form (edges, triangles, count of graphs), then the 
+first two columns of this data determine the set of interest.  To complete the V-
+representation of the set, we simple put
 
 $m = c(0, 1, edges, triangles )$
 
@@ -804,17 +862,25 @@ $m = c(0, 1, edges, triangles )$
 The H-representation is a set of inequalities with form $(l \quad b \quad -A)$, where
 $Ax \leq b$ ... 
 
-First column: $l$.  Either 0 or 1.  A zero means inequality, $Ax \leq b$, a one means equality, $Ax = b$.
+First column: $l$.  Either 0 or 1.  A zero means inequality, $Ax \leq b$, a one means 
+equality, $Ax = b$.
 
 Second column: $b$.  
 
 \subsection{H-rep to V-rep and back again} 
 
-Going back and forth between the H-rep and V-rep is not an entirely trivial process---we rely upon the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}.  Charlie of course does this for us with the \texttt{scdd} function in the \texttt{rcdd} package.
+Going back and forth between the H-rep and V-rep is not an entirely trivial process---
+we rely upon the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}.  
+Charlie of course does this for us with the \texttt{scdd} function in the \texttt{rcdd} 
+package.
 
 \subsection{For polyhedral convex sets}
-from GDOR: ``The \emph{relative interior} of a convex set $C$, denoted $\rintr C$, is its interior relative to its affine hull \citep{Geyer:gdor, Rockafellar:1970}.  Every nonempty convex set has a nonempty relative interior."
-``We say a vector $\delta$ is a \emph{generic direction of recession} (GDOR) if $\delta \in \rintr N_C(y)$ and $N_C(y)$ is not a vector subspace, where $C$ is the convex support and $y$ an observed value of the natural statistic such that $y \in C$.
+from GDOR: ``The \emph{relative interior} of a convex set $C$, denoted $\rintr C$, is 
+its interior relative to its affine hull \citep{Geyer:gdor, Rockafellar:1970}.  Every 
+nonempty convex set has a nonempty relative interior."
+``We say a vector $\delta$ is a \emph{generic direction of recession} (GDOR) if $\delta 
+\in \rintr N_C(y)$ and $N_C(y)$ is not a vector subspace, where $C$ is the convex 
+support and $y$ an observed value of the natural statistic such that $y \in C$.
 
 The tangent cone of a convex set $C$ at a point $x \in C$ is
 \begin{align*}
@@ -827,17 +893,24 @@ Normal cone
 			&= \{ w: \inner{ w, y-x } \leq 0: y \in C \}  \\
 			&= \{ w: \inner{ w, v } \leq 0: v \in T_C(x) \}.
 \end{align*}
-For \emph{polyhedral} convex set, we can represent the convex set $C$ with a set of inequalities and equalities.
+For \emph{polyhedral} convex set, we can represent the convex set $C$ with a set of 
+inequalities and equalities.
 \begin{align*}
-	C = \{ x: \inner{a_i, x} \leq b_i, i \in I \text{ and } \inner{a_i, x} = b_i, i \in E \}.
+	C = \{ x: \inner{a_i, x} \leq b_i, i \in I \text{ and } \inner{a_i, x} = b_i, i 
+\in E \}.
 \end{align*}
-(This is the H-representation.)  Then, to find the tangent cone at at particular point $x \in C$, 
+(This is the H-representation.)  Then, to find the tangent cone at at particular point 
+$x \in C$, 
 \begin{align*}
-	C = \{ x: \inner{a_i, x} \leq 0, i \in A \text{ and } \inner{a_i, x} = b_i, i \in E \},
+	C = \{ x: \inner{a_i, x} \leq 0, i \in A \text{ and } \inner{a_i, x} = b_i, i \in 
+E \},
 \end{align*}
-where $A = \{ i \in I: \inner{a_i,x} = b_i\}$.  Essentially, we take the active set of inequality constraints (the set $A$), drop the inactive constraints.  Finally, $x$ is made the new origin (hence the $b_i$ are gone).
+where $A = \{ i \in I: \inner{a_i,x} = b_i\}$.  Essentially, we take the active set of 
+inequality constraints (the set $A$), drop the inactive constraints.  Finally, $x$ is 
+made the new origin (hence the $b_i$ are gone).
 
-Then the V-representation of the normal cone can just be gotten direction from this representation of the tangent cone,
+Then the V-representation of the normal cone can just be gotten direction from this 
+representation of the tangent cone,
 \begin{align*}
 	N_C(x) = \pos( \{ a_i: i \in A \cup E\} \cup \{ - a_i: i \in E \} ).
 \end{align*}
@@ -937,24 +1010,36 @@ boundary.minimal <- q2d( out$output[ ,-c(1,2) ] )
 \section{Tangent and Normal Cones using rcdd}
 
 \section{MLEs -- 8/10/10}
-For 9 nodes, the sample space has a manageable size (about 68B different graphs).  So, we can explicitly evaluate the log-likelihood function.  In this special setting, we can in fact calculate MLEs for all possible values of the observed data.
-When the observed graph is in the relative interior of the convex hull, this should be straightforward---we have the objective function, find the maximizing value.
+For 9 nodes, the sample space has a manageable size (about 68B different graphs).  So, 
+we can explicitly evaluate the log-likelihood function.  In this special setting, we 
+can in fact calculate MLEs for all possible values of the observed data.
+When the observed graph is in the relative interior of the convex hull, this should be 
+straightforward---we have the objective function, find the maximizing value.
 
 If we use the log-likelihood as the objective function,
 \begin{align*}
 	\ell( \theta) &= \inner{t(y_{obs}), \theta} - \log \kappa( \theta ) \\
-				&=  \inner{t(y_{obs}), \theta} - \log \sum_{y \in \YY}e^{\inner{t(y),\theta}}.
+				&=  \inner{t(y_{obs}), \theta} - \log \sum_{y \in \YY}e^{\inner{t(y),
+\theta}}.
 \end{align*}
-  Since we have already enumerated all 444 possible graphs, counting how many times each occurs, we can simplify this further, 
+  Since we have already enumerated all 444 possible graphs, counting how many times 
+each occurs, we can simplify this further, 
 \begin{align*}
-	\ell( \theta) &= \inner{t(y_{obs}), \theta} - \log \sum_{t \in \T}e^{\inner{t,\theta}} \nu(t),
+	\ell( \theta) &= \inner{t(y_{obs}), \theta} - \log \sum_{t \in \T}e^{\inner{t,
+\theta}} \nu(t),
 \end{align*}
-where $\nu(t)$ is the frequency of occurrence of statistic $t$ for all the graphs in $\YY$.  Since $|\TT| = 444$ is much less than $|\YY|$, the calculating will be much quicker.
-Because we are also concerned about overflow possibilities where $e^x$ can become too large (See Charlie's arithmetic.pdf slides), we can make a simple adjustment for this, 
+where $\nu(t)$ is the frequency of occurrence of statistic $t$ for all the graphs in $
+\YY$.  Since $|\TT| = 444$ is much less than $|\YY|$, the calculating will be much 
+quicker.
+Because we are also concerned about overflow possibilities where $e^x$ can become too 
+large (See Charlie's arithmetic.pdf slides), we can make a simple adjustment for this, 
 \begin{align*}
-	\ell( \theta) &=  \inner{t(y_{obs}), \theta} - a - \log \sum_{t \in \TT}e^{\inner{t,\theta}-a}\nu(t),
+	\ell( \theta) &=  \inner{t(y_{obs}), \theta} - a - \log \sum_{t \in \TT}e^{\inner
+{t,\theta}-a}\nu(t),
 \end{align*}
-where $a = \max_y \inner{t(y),\theta}$.  If we use the \texttt{trust} package, we will also need to supply first and second derivatives of the objective function (\texttt{optim} doesn't need these).  We have seen this before,
+where $a = \max_y \inner{t(y),\theta}$.  If we use the \texttt{trust} package, we will 
+also need to supply first and second derivatives of the objective function (\texttt
+{optim} doesn't need these).  We have seen this before,
 \begin{align*}
 	\nabla \ell( \theta ) &= t(y_{obs}) - \nabla \log \kappa \\
 						&=  t(y_{obs}) - \E_\theta t(Y). 
@@ -964,14 +1049,20 @@ and
 	\nabla^2 \ell( \theta ) &= - \nabla^2 \log \kappa = - \Var_\theta t(Y)\\
 					&= -I(\theta),
 \end{align*}
-where $I(\theta)$ is Fisher information.  So, we need to come up with formulas for $\E_\theta t(Y)$ and $\Var_\theta t(Y)$.  From standard probability theory, 
+where $I(\theta)$ is Fisher information.  So, we need to come up with formulas for $\E_
+\theta t(Y)$ and $\Var_\theta t(Y)$.  From standard probability theory, 
 \begin{align*}
 \E_\theta t(Y) &= \sum_{y\in Y} t(y) P( Y = y )\\
-				&= \sum_{y\in Y} t(y) \frac{1}{\kappa(\theta)} e^{\inner{t(y),\theta }} = \frac{1}{\kappa(\theta)} \sum_{y\in Y} t(y)  e^{\inner{t(y),\theta }} \\
-				&= \frac{1}{\kappa(\theta)} \sum_{t\in \TT} t  e^{\inner{t,\theta }}\nu(t) \\
-				&= \frac{1}{\sum_{t\in \TT} e^{\inner{t,\theta }}\nu(t)} \sum_{t\in \TT} t  e^{\inner{t,\theta }}\nu(t) \\
-				&= \frac{1}{e^a\sum_{t\in \TT} e^{\inner{t,\theta}-a}\nu(t)} e^a\sum_{t\in \TT} t  e^{\inner{t,\theta}-a}\nu(t) \\
-				&= \frac{1}{\sum_{t\in \TT} e^{\inner{t,\theta}-a}\nu(t)} \sum_{t\in \TT} t  e^{\inner{t,\theta}-a}\nu(t).
+				&= \sum_{y\in Y} t(y) \frac{1}{\kappa(\theta)} e^{\inner{t(y),
+\theta }} = \frac{1}{\kappa(\theta)} \sum_{y\in Y} t(y)  e^{\inner{t(y),\theta }} \\
+				&= \frac{1}{\kappa(\theta)} \sum_{t\in \TT} t  e^{\inner{t,\theta }}
+\nu(t) \\
+				&= \frac{1}{\sum_{t\in \TT} e^{\inner{t,\theta }}\nu(t)} \sum_{t\in 
+\TT} t  e^{\inner{t,\theta }}\nu(t) \\
+				&= \frac{1}{e^a\sum_{t\in \TT} e^{\inner{t,\theta}-a}\nu(t)} e^a\sum_
+{t\in \TT} t  e^{\inner{t,\theta}-a}\nu(t) \\
+				&= \frac{1}{\sum_{t\in \TT} e^{\inner{t,\theta}-a}\nu(t)} \sum_{t\in 
+\TT} t  e^{\inner{t,\theta}-a}\nu(t).
 \end{align*}
 For $\Var_\theta t(Y)$, we again begin with the definition, 
 \begin{align*}
@@ -982,7 +1073,8 @@ For $\Var_\theta t(Y)$, we again begin with the definition,
 \end{align*}
 This can be handled similarly in R.
 
-Note that since $\nabla(\theta) = - I(\theta)$ as well, it may be worth keeping this calculation around in case we become more interested in $I(\theta)$.
+Note that since $\nabla(\theta) = - I(\theta)$ as well, it may be worth keeping this 
+calculation around in case we become more interested in $I(\theta)$.
 Charlie says that when $\hat{\theta}$ is the MLE in the B-N completion,
 \begin{align*}
 	I(\hat{\theta}) \delta &= 0 \\
@@ -991,63 +1083,111 @@ Charlie says that when $\hat{\theta}$ is the MLE in the B-N completion,
 where $\tau$ is the vector along the relevant face orthogonal to the GDOR $\delta$.
 
 \subsection{Optimization issues --- 8/12/10}
-Because we can evaluate the normalizing constant, we should be able to optimization in the traditional way using \texttt{trust} or \texttt{optim} in R.  Yet what we found is that for points such as (21,4) which are very close to the boundary of the convex hull, these methods fail to converge.  The function is strictly convex---theory guarantees us this---but from a practical standpoint, the log-likelihood looks completely flat.  
+Because we can evaluate the normalizing constant, we should be able to optimization in 
+the traditional way using \texttt{trust} or \texttt{optim} in R.  Yet what we found is 
+that for points such as (21,4) which are very close to the boundary of the convex hull, 
+these methods fail to converge.  The function is strictly convex---theory guarantees us 
+this---but from a practical standpoint, the log-likelihood looks completely flat.  
 
-Expanding out the log-likelihood on a grid with grid sizes $0.01 \times 0.05$, gets us an estimated MLE at $(28.83, -7.75)$ with log-likelihood $-8.077761$.  But \texttt{optim} and \texttt{trust} both fail to converge when starting from $(0,0)$.   Even when kindly told to start their searches from $(25, -5)$, \texttt{optim} converges to $(24.443317, -6.653155)$ with a log-likelihood value of $-8.078375$, and \texttt{trust} converges to $(24.564363, -6.683482)$ with log-likelihood $-8.078339$.  
+Expanding out the log-likelihood on a grid with grid sizes $0.01 \times 0.05$, gets us 
+an estimated MLE at $(28.83, -7.75)$ with log-likelihood $-8.077761$.  But \texttt
+{optim} and \texttt{trust} both fail to converge when starting from $(0,0)$.   Even 
+when kindly told to start their searches from $(25, -5)$, \texttt{optim} converges to $
+(24.443317, -6.653155)$ with a log-likelihood value of $-8.078375$, and \texttt{trust} 
+converges to $(24.564363, -6.683482)$ with log-likelihood $-8.078339$.  
 \begin{figure}[!h]
 \centering
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-contour-wide}
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-contour-narrow}
-\caption{Contour plot of log-likelihood when $y_{obs} = (21,4)$.  The log-likelihood function is nearly flat near the maximum point of $(28.83, -7.75)$ before dropping of rapidly.  Points such as $(24.44, -6.65)$ have nearly the same value for log-likelihood. }
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
+graph9-contour-wide}
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
+graph9-contour-narrow}
+\caption{Contour plot of log-likelihood when $y_{obs} = (21,4)$.  The log-likelihood 
+function is nearly flat near the maximum point of $(28.83, -7.75)$ before dropping of 
+rapidly.  Points such as $(24.44, -6.65)$ have nearly the same value for log-
+likelihood. }
 %\label{F:pottsimage}
 \end{figure}
 
-\textbf{8/12: Question:  Find the GDOR for the face that this point is close to.  what happens to $\ell(\theta + s \delta)$?}
+\textbf{8/12: Question:  Find the GDOR for the face that this point is close to.  what 
+happens to $\ell(\theta + s \delta)$?}
 
 \section{Face points}
-For a given observed value $y_{obs}$, finding the sample points on the face on which this point lies is not as easy as I initially thought.
+For a given observed value $y_{obs}$, finding the sample points on the face on which 
+this point lies is not as easy as I initially thought.
 
 \section{MLE in LCM (Limiting Conditional Model)}
 
-The point $(21,4)$, which we have been using, is in fact not on the surface.  The point $(21, 27/7) \approx (21, 3.857)$ is on the face.  Theory and our efforts in R say that the MLE does not exist.  According to \citet{Geyer:gdor}, the MLE exists in the Barndorff-Nielsen completion.  
+The point $(21,4)$, which we have been using, is in fact not on the surface.  The point 
+$(21, 27/7) \approx (21, 3.857)$ is on the face.  Theory and our efforts in R say that 
+the MLE does not exist.  According to \citet{Geyer:gdor}, the MLE exists in the 
+Barndorff-Nielsen completion.  
 \begin{itemize}
-\item What is the LCM?  Sure, you've got some formulas.  But equate the formulas again with what is actually happening.  Go back to \citet[Theorem~6]{Geyer:gdor}.  LCM is defined on p. 271.
+\item What is the LCM?  Sure, you've got some formulas.  But equate the formulas again 
+with what is actually happening.  Go back to \citet[Theorem~6]{Geyer:gdor}.  LCM is 
+defined on p. 271.
 
-From p. 277.  ``We constrain certain components of the response vector to their observed values.  This can be achieved by removing those components from the response vector and proceeding as if the resulting subvector were the entire response vector."
+From p. 277.  ``We constrain certain components of the response vector to their 
+observed values.  This can be achieved by removing those components from the response 
+vector and proceeding as if the resulting subvector were the entire response vector."
 \item How to find the MLE in this completion?
 \end{itemize}
-The second point I can address now---restrict the sample space for graphs to those on the face on which the observed point lies (never mind that we cannot in practice observed this non-integer statistic).  Then find the MLE.  WHY IS THIS THE THING TO DO?  How does this relate to conditional probabilities?
+The second point I can address now---restrict the sample space for graphs to those on 
+the face on which the observed point lies (never mind that we cannot in practice 
+observed this non-integer statistic).  Then find the MLE.  WHY IS THIS THE THING TO DO?  
+How does this relate to conditional probabilities?
 
-From p. 278.  ``This LCM produced by deleting some components of the response will always be non-identifiable, because $\delta$ will always be a direction of constancy for the LCM and there may be other directions of constancy."
+From p. 278.  ``This LCM produced by deleting some components of the response will 
+always be non-identifiable, because $\delta$ will always be a direction of constancy 
+for the LCM and there may be other directions of constancy."
 
-So now you've found $\hat{\theta}$, the MLE in the LCM.  Now what?  Look at $\ell(\hat{\theta} + s \delta)$.
+So now you've found $\hat{\theta}$, the MLE in the LCM.  Now what?  Look at $\ell(\hat
+{\theta} + s \delta)$.
 
 \subsection{Charlie comes to talk in my office 8/17/10}
 \begin{itemize}
-\item The space for direction of constancy in the LCM is spanned by the GDORs of the original model
+\item The space for direction of constancy in the LCM is spanned by the GDORs of the 
+original model
 \item New idea.  Running two optimizations simultaneously from same sampler.
 	\begin{itemize}
-		\item First optim is for the original model.  Find the MLE using our algorithm.
-		\item Suppose sample size is 100K, and we've determined (HOW?  the big issue) that 10K points are on the face.  Well, we can also do the optim on the LCM by just using these 10K points as the whole space!  Clever!
+		\item First optim is for the original model.  Find the MLE using our 
+algorithm.
+		\item Suppose sample size is 100K, and we've determined (HOW?  the big issue) 
+that 10K points are on the face.  Well, we can also do the optim on the LCM by just 
+using these 10K points as the whole space!  Clever!
 		\item Determining which points are on the face.
 	\end{itemize}
-\item I've made a mistake in determining my sample space for LCM.  \textbf{Make sure sample space is a convex set}.  That was the error I made for a single point---I just took the boundary of the tangent cone, but this is not correct.  Charlie says: Use \texttt{linearity}.
+\item I've made a mistake in determining my sample space for LCM.  \textbf{Make sure 
+sample space is a convex set}.  That was the error I made for a single point---I just 
+took the boundary of the tangent cone, but this is not correct.  Charlie says: Use 
+\texttt{linearity}.
 \end{itemize}
 
 \section{Confidence intervals}
-Once we have found $\hat{\theta}$, the MLE in the LCM, we can then go about constructing one-sided CIs.  \textbf{(This is the end goal of all this work, and yet it is unclear to me how to present it for a multidimensional parameter}.  Need to read Charlie's supplemental paper, \citet{geyer:2008}.)
+Once we have found $\hat{\theta}$, the MLE in the LCM, we can then go about 
+constructing one-sided CIs.  \textbf{(This is the end goal of all this work, and yet it 
+is unclear to me how to present it for a multidimensional parameter}.  Need to read 
+Charlie's supplemental paper, \citet{geyer:2008}.)
 
 If $\hat{\theta}$ is the MLE in the LCM, then so is $\hat{\theta} + \gamma$, where
-$\gamma \in \Gamma_{\lim}$, the constancy space of the LCM (which is spanned by the GDOR of the original model).
+$\gamma \in \Gamma_{\lim}$, the constancy space of the LCM (which is spanned by the 
+GDOR of the original model).
 
-Look at what happens to $\ell(\hat{\theta} + \gamma + s \delta)$ as $s$ increases.  Should go off to $+\infty$.  Find the value of $s$ for which $P_{\hat{\theta} + \gamma + s \delta}(Y \in H )$, the probability that the distribution allocates to the event that a sample falls on the face of interest, is 5\%. (Confusing logic of why this is 5\% and not 95\%.  Charlie reasoned it out in his office.  write this up ).
+Look at what happens to $\ell(\hat{\theta} + \gamma + s \delta)$ as $s$ increases.  
+Should go off to $+\infty$.  Find the value of $s$ for which $P_{\hat{\theta} + \gamma 
++ s \delta}(Y \in H )$, the probability that the distribution allocates to the event 
+that a sample falls on the face of interest, is 5\%. (Confusing logic of why this is 5\
+% and not 95\%.  Charlie reasoned it out in his office.  write this up ).
 
 \section{MCMC sampling}
-\citet[p. 11]{Handcock:Degeneracy} says, ``if the MCMC is based on a near degenerate model then the convex hull of the sampled statistics will be a small subset of the convex hull of the model."
+\citet[p. 11]{Handcock:Degeneracy} says, ``if the MCMC is based on a near degenerate 
+model then the convex hull of the sampled statistics will be a small subset of the 
+convex hull of the model."
 
 \textbf{Try this out on a 9-node graph: 8/15/10.}
 
-Yes, of course Handcock is correct.  We can see this without even going to the sampler. Using the MLE of $(28.83, -7.75)$ calculated for the observed statistics of $(21,4)$, we generate the following probabilities:
+Yes, of course Handcock is correct.  We can see this without even going to the sampler. 
+Using the MLE of $(28.83, -7.75)$ calculated for the observed statistics of $(21,4)$, 
+we generate the following probabilities:
 \begin{verbatim}
 > prob.data[ prob.data$prob > 0.01, ]
     edges triangles       prob
@@ -1059,53 +1199,82 @@ Yes, of course Handcock is correct.  We can see this without even going to the s
      edges  triangles       prob 
 86.0000000 24.0000000  0.9896627 
 \end{verbatim}
-These are not empty or full graphs, but these are the graphs on the face to which $(21,4)$ is very close.  So, assume we have the ideal sampler, we'll be seeing these 4 points nearly 99\% of the time.  
+These are not empty or full graphs, but these are the graphs on the face to which 
+$(21,4)$ is very close.  So, assume we have the ideal sampler, we'll be seeing these 4 
+points nearly 99\% of the time.  
 
-But at this point, I think Charlie would ask, ``But what's wrong with that??"  The MLE is doing the right thing!  
+But at this point, I think Charlie would ask, ``But what's wrong with that??"  The MLE 
+is doing the right thing!  
 
 \section{Working with a sample}
 
-It is easy to construct an MC sampler for this toy example where we have described the full space.  We know that there are 444 possible network statistics and can calculate the probability of observing each.  So, we can just use the \texttt{sample()} function from R (actually, I use \texttt{sample.init()}, even easier).
+It is easy to construct an MC sampler for this toy example where we have described the 
+full space.  We know that there are 444 possible network statistics and can calculate 
+the probability of observing each.  So, we can just use the \texttt{sample()} function 
+from R (actually, I use \texttt{sample.init()}, even easier).
 
 Charlie says to use \texttt{scdd} sparingly.
 
 \section{STILL TO DO -- 8/15/10}
 
 \begin{itemize}
-\item Write to file a mapping of network statistics--(21,4)--to observed graph index, g.  The function is already written \texttt{/Tako/RCode/GDOR/Triangles/FindGraphforFixedEdgesC.R}.
+\item Write to file a mapping of network statistics--(21,4)--to observed graph index, 
+g.  The function is already written \texttt{/Tako/RCode/GDOR/Triangles/
+FindGraphforFixedEdgesC.R}.
 \item SUPER martingale?
 \end{itemize}
 
 from the last meeting with Charlie:
 \begin{itemize}
 \item what happens to H-rep inequalities when you go from 5 to 7 to 9 nodes?
-\item Find the Ncone which is the DOR.  then, move along the DOR and keep sampling until 5\% of the sample is on H.
-\item when sampling, is obs outside the chull of the sample?  if so, you know you have go along steepest ascent direction.
-\item Algorithm R from Charlie's Thesis, Ch 2?  GDOR from linear programming?  should be easier because Charlie says at the time he didn't know how to handle ... what case?  hmm.  something to do with infinite or unbounded.
+\item Find the Ncone which is the DOR.  then, move along the DOR and keep sampling 
+until 5\% of the sample is on H.
+\item when sampling, is obs outside the chull of the sample?  if so, you know you have 
+go along steepest ascent direction.
+\item Algorithm R from Charlie's Thesis, Ch 2?  GDOR from linear programming?  should 
+be easier because Charlie says at the time he didn't know how to handle ... what case?  
+hmm.  something to do with infinite or unbounded.
 \end{itemize}
 
 \section{8/24/10: Charlie comes to my office}
-Gradient ascent method does not appear to be working---lots of zigzagging.  Excessive zigzagging, and not moving efficiently to where we need to go.  For $y_{obs} = (31,50)$, starting at $\theta = (0,0)$, the MLE in the LCM is found to be $\hat{\theta} = (0, 0.0239735)$ and the normal/GDOR is $(6, -1)$ (that gives a slope of $-1/6 \approx -1.667$).  To get 5\% of the distribution on the face (consisting of 3 pts, $(30,44)$ and $(32,56)$ sandwiching $y_{obs}$), we a need to use a $\theta$ of about $(9.11, -1.49)$.
+Gradient ascent method does not appear to be working---lots of zigzagging.  Excessive 
+zigzagging, and not moving efficiently to where we need to go.  For $y_{obs} = 
+(31,50)$, starting at $\theta = (0,0)$, the MLE in the LCM is found to be $\hat{\theta} 
+= (0, 0.0239735)$ and the normal/GDOR is $(6, -1)$ (that gives a slope of $-1/6 \approx 
+-1.667$).  To get 5\% of the distribution on the face (consisting of 3 pts, $(30,44)$ 
+and $(32,56)$ sandwiching $y_{obs}$), we a need to use a $\theta$ of about $(9.11, 
+-1.49)$.
 
 \begin{itemize}
 \item What does the log likelihood look like?  Done.  See contour plot.
-\item If I run a regression through the $\theta$ points that I sample from, I get a slope of $-0.1758399$.  What gives??  Why is this not the same as the GDOR?
+\item If I run a regression through the $\theta$ points that I sample from, I get a 
+slope of $-0.1758399$.  What gives??  Why is this not the same as the GDOR?
 \end{itemize}
 
-OK, so now for Charlie's real suggestions.  Phase I refers to the computational geometry aspect of the problem to identify the face.  This is done with the rcdd package, working with normal and tangent cones, etc.  \textbf{It knows nothing about the likelihood function}.  Phase II occurs after the face has been identified, and is the maximization of the likelihood on this face.
+OK, so now for Charlie's real suggestions.  Phase I refers to the computational 
+geometry aspect of the problem to identify the face.  This is done with the rcdd 
+package, working with normal and tangent cones, etc.  \textbf{It knows nothing about 
+the likelihood function}.  Phase II occurs after the face has been identified, and is 
+the maximization of the likelihood on this face.
 
-So far I have been just doing maximum likelihood (via gradient ascent).  I choose my search direction $p_k$ to be the steepest ascent direction.  But here Charlie is suggesting a vector in the normal cone.  Hmm!  
+So far I have been just doing maximum likelihood (via gradient ascent).  I choose my 
+search direction $p_k$ to be the steepest ascent direction.  But here Charlie is 
+suggesting a vector in the normal cone.  Hmm!  
 \begin{enumerate}
 \item Draw sample.
 \item Find the tangent and normal cones relative to $y_{obs}$.  
-\item Choose a vector in the normal cone to be $p_k$.  Perhaps the average of the boundary rays (recall that the boundary rays can be DOR but not GDOR).
-\item Move in the direction of $p_k$.  How much?  Who knows!  A lot.  We're going to treat it like a GDOR.
-\item Resample.  Are there any rays outside of the \emph{cumulative} tangent cone to date?  If $p_k$ was an actual GDOR, there would not be!  
+\item Choose a vector in the normal cone to be $p_k$.  Perhaps the average of the 
+boundary rays (recall that the boundary rays can be DOR but not GDOR).
+\item Move in the direction of $p_k$.  How much?  Who knows!  A lot.  We're going to 
+treat it like a GDOR.
+\item Resample.  Are there any rays outside of the \emph{cumulative} tangent cone to 
+date?  If $p_k$ was an actual GDOR, there would not be!  
 \item Make the new tangent cone, and hence normal cone.  
 \end{enumerate}
 
 \section{8/29/10: outline of algorithm}
-Do gradient search optimization, with every 3rd search direction chosen by regression.  This search direction should approximate GDOR.
+Do gradient search optimization, with every 3rd search direction chosen by regression.  
+This search direction should approximate GDOR.
 
 Is $y_{obs}$ in the sample?
 
@@ -1113,8 +1282,11 @@ Is $y_{obs}$ in the sample?
 
 \begin{figure}[!h]
 \centering
-\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/contour31-50}
-\caption{Contour plot of log-likelihood when $y_{obs} = (31, 50)$.  Using a steepest ascent algorithm to find a direction of recession is not very efficient because the updates will zigzag up the log likelihood with very small steps.}
+\includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/
+contour31-50}
+\caption{Contour plot of log-likelihood when $y_{obs} = (31, 50)$.  Using a steepest 
+ascent algorithm to find a direction of recession is not very efficient because the 
+updates will zigzag up the log likelihood with very small steps.}
 %\label{F:pottsimage}
 \end{figure}
 
@@ -1123,19 +1295,24 @@ Charlie took off, so some questions that I was pondering.
 \subsection{Got 10\%.  Now what?}
 We got 10\% of our sample on what we believe is the face.  
 
-\textbf{Q: Why wouldn't we use the normal cone from this face as our next search direction?}
-I think we should.  But if we are using uniroot, this will give us an infinite step size so be careful what you wish for!
+\textbf{Q: Why wouldn't we use the normal cone from this face as our next search 
+direction?}
+I think we should.  But if we are using uniroot, this will give us an infinite step 
+size so be careful what you wish for!
 
-We look to find the MLE in LCM using this subsample.  So, we now compute a new search direction
+We look to find the MLE in LCM using this subsample.  So, we now compute a new search 
+direction
 \begin{align*}
-	p_{k+1}^{LCM} = \nabla \ell^{LCM}(\theta_{k+1}) = t(y_{obs}) - \E_{\theta_{k+1}, LCM}t(Y)
+	p_{k+1}^{LCM} = \nabla \ell^{LCM}(\theta_{k+1}) = t(y_{obs}) - \E_{\theta_{k+1}, 
+LCM}t(Y)
 \end{align*}
 Bridge sampling, reverse logistic regression, Tan, P. McCullaugh, Ming.
 
 
 \section{Next steps, as I see it on 8/31/10:}
 \begin{enumerate}
-\item Make sure every case works---$y_{obs}$ on any boundary, extreme pt.  Even points like (21,4).  The algorithm needs to be generalized.  Record some pictures!
+\item Make sure every case works---$y_{obs}$ on any boundary, extreme pt.  Even points 
+like (21,4).  The algorithm needs to be generalized.  Record some pictures!
 \item Turn on MC for estimation of gradient.  
 \item MCMC?  Can we use the ergm sampler?
 \item 3-dimensional statistics?
