@@ -1,0 +1,119 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsbsy,amsmath,amsthm,amssymb,verbatim,color}
+
+\usepackage{geometry}
+\geometry{hmargin=1in,vmargin={1in,1in},footskip=.5in}
+\usepackage[numbers]{natbib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{center}
+{\LARGE{\textbf{Social Computing: Constructing a}}} 
+
+\vspace*{2mm}
+{\LARGE{\textbf{Social Network Model}}}
+
+\vspace{0.25in}
+{\large{\textbf{Saisuke Okabayashi}}} \\
+\vspace{0.05in}
+{\large{{University of Minnesota, Department of Statistics}}}\\
+\end{center}
+
+%``clearly identifies the area of focus and applicability to Facebook"
+
+\section{Background}
+Is it possible to build a mathematical model that captures the behavioral tendencies of individuals in how they form relationships?
+
+Studies of social networks typically look to identify gender, age, ethnicity, and other individual-specific attributes to explain which relationships form.  However, potential relationships cannot be studied in isolation; rather, relationships form in an interdependent manner, necessitating a ``network" perspective that recognizes relationship structures as factors in the analysis.  
+In accordance with this perspective, sociologists have developed descriptive statistics of network structures to correspond to social theory.  For example, the frequency of triangles, 
+%One of the simplest relationship structure is a triangle, 
+in which each individual in a group of three individuals has relationships with the other two,
+may reflect the tendency of individuals to form \textit{transitive} relationships, where because $A$ is friends with $B$ and $B$ is friends with $C$, $A$ is friends with $C$.  %These measures can be used to characterize an observed network data set, capturing qualities beyond the individual specific attributes.
+
+%%%%%% STATISTICAL MODEL $$$$$$$
+A statistical model provides further clarity of the underlying forces that shape the structure of an observed network.   
+For example, an alternative theory to transitivity is that the frequency of triangles reflects the tendency of individuals to form relationships with others of the same gender.  A good statistical model can see past the noise in the data to identify if one or both of these forces are important.   
+In addition, models can simulate new random networks whose distributions retain essential characteristics of the observed network.  Researchers can use these to further test hypotheses about the process of relationship formation.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Potential applicability of research to Facebook}
+Facebook could employ statistical models to complement their current network analyses.  The simulation of new random networks could provide a framework for testing the effectiveness of an advertising campaign; if the performance of a proposed advertising strategy can be approximated for a given network data set, this approach will give a \textit{distribution} of results, which may be useful in assessing the strategy's viability.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Research goals: model calibration and degeneracy}
+We restrict our attention to networks at one point in time where relationships are either present or absent---like a snapshot of a friendship network on Facebook.  \textit{Exponential random graph models} (ERGM) are the most commonly used framework for modeling social networks and are the focus of our research.  The attractiveness of ERGMs stems from their flexibility in allowing one to handpick \textit{network statistics}, or relationship structures of interest, which determine the model.  The model then only requires values for \textit{parameters}, which are akin to coefficients in linear regression, to fully define it.  
+
+%\subsection{A new algorithm for calibrating social network models}
+Our first area of research is to develop a new algorithm for calibrating a social network model to data by determining appropriate values for the parameters.  The goal is to find the \textit{maximum likelihood estimates} (MLE), the parameter values which maximize the probability of generating the observed data.  Due to the complexity of the underlying phenomenon, finding MLEs requires computer simulation techniques called \textit{Markov chain Monte Carlo} (MCMC) to estimate quantities of interest.  Software packages such as \texttt{statnet} in the \texttt{R} platform have only recently implemented methods based on \citeauthor{Geyer:1992}'s (\citeyear{Geyer:1992}) MCMC-MLE algorithm \citep{statnet:R}.  In practice, MCMC-MLE is an iterative technique: given an initial guess of the parameter values, the algorithm uses MCMC to approximate the model which is then used to find an improved guess.  However, the algorithm has shown to be sensitive to the initial guess and struggles to converge to the MLE when the guess is poor.
+%The MCMCMLE algorithm uses MCMC to estimate a ratio of two models with different parameter values and then uses conventional optimization methods on this resulting ratio.  
+
+We apply MCMC in a different way than the MCMC-MLE algorithm, employing it to estimate the optimal \textit{search direction} for our next guess of the parameter values.  The algorithm proceeds by iterating through these search directions.  Even when given a poor initial guess, we have established criteria guaranteeing that it will still make sufficient progress towards the MLE.  
+
+%Because our line search algorithm is less efficient than the MCMCMLE algorithms when in close proximity to the MLE, we believe it can be used to complement the MCMCMLE methods; our line search algorithm could be used initially and then after sufficient progress has been made, a switch can be made to the MCMCMLE algorithm.
+
+%\subsection{Model degeneracy}
+Our second area of research is to devise remedies for network model pathologies.
+Researchers have occasionally encountered undesirable behavior with these models that extends beyond the difficulties of model calibration, ranging from cases where the MLE does not exist to cases where a properly fitted model simulates new random networks that look nothing like the original \citep{Rinaldo:2009}.  Such phenomena have loosely been referred to as problems of model ``degeneracy" and typically arise from a poor combination of network statistics that were chosen to specify the model.
+%---just because one \textit{can} build a model from any choice of network statistics, does not mean one should.
+
+Most attempts to address these problems have focused on introducing new sets of network statistics that appear to circumvent the pathologies described \citep{Hunter:2006, Morris:2008}.  We would like to conduct a deeper exploration of the underlying issues, which revolve around the geometric properties of the space defined by the selected network statistics.  In the particularly troublesome case where the MLE does not exist, our goal is to provide confidence intervals for appropriate values of the parameters, extending \citeauthor{Geyer:gdor}'s (\citeyear{Geyer:gdor}) methods on generalized linear model to social network models. 
+
+%Even when the models have been well-calibrated (the MLEs have been well approximated), researchers have discovered that they may exhibit a particularly troubling pathological behavior: the model may generate only networks that look nothing like the original data!  In these situations, the simulated networks are often fully connected or nearly empty.  The phenomenon has been referred to under the broader umbrella of model ``degeneracy", a term which is associated with this and other model construction problems.
+
+%In this case, the pathology is brought on by a poor combination of network statistics in specifying the model.  While the researcher may have had good reason for being interested in the particular network structures, like chemical compounds that individually may be harmless but are dangerous together, the resulting model produce undesirable results.  
+
+%The deeper issue is that the underlying geometry of the parameter space for social network models is not well understood.  Existing theory describes conditions when MLEs will not exist, 
+
+%Clarify definitions, 
+
+%\textit{network structures} triangles, k-stars
+
+%The science of building models that can capture such complex behaviors of the collective individual decisions
+
+%\section{Design and methodology}
+\section{Progress to date and schedule for completion}
+We have completed a proof for the convergence of the line search algorithm we described above in a deterministic setting (e.g., logistic regression).  Further, we have empirical evidence based on numerous simulations that the method converges for a random (e.g., MCMC) setting.  A proof of this convergence is still being pursued.  
+
+For our research in degeneracy, we have completed an examination of the relevant literature in convex analysis and exponential families.  We are now exploring toy examples with known solutions.  
+
+We expect to complete research in the above areas by May 2011.
+
+\newpage
+\bibliographystyle{apalike}
+\bibliography{References}
+
+%\begin{thebibliography}{77}
+
+%
+%\bibitem{kend}
+%Kendall, W. S. 2004.
+%\newblock Geometric ergodicity and perfect simulation,
+%\newblock {\sl Electronic Communications in Probability}, 9:140--151.
+
+%
+
+%\bibitem{jones}
+%Jones, G. L. (2004)
+%\newblock On the {M}arkov chain central limit theorem,
+%\newblock {\sl Probability Surveys}, 1:299--320.
+
+%
+%\bibitem{jone:hobe:2004}
+%Jones, G. L. and Hobert, J. P. (2004).
+%\newblock Sufficient burn-in for {G}ibbs samplers for a hierarchical random effects model, 
+%\newblock {\sl The Annals of Statistics}, 32:784--817.
+
+%\bibitem{prop:wils:1996} 
+%Propp, J. G. and Wilson, D. B. (1996).
+%\newblock Exact sampling with coupled {M}arkov chains and applications to statistical mechanics,
+%\newblock {\sl Random Structures and Algorithms}, 9:223--252.
+% 
+%\end{thebibliography}
+
+
+
+
+\end{document}
+%:
