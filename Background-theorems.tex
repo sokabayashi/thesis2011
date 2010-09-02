@@ -1,0 +1,365 @@
+\section{Definitions and Theorems}
+
+We will need to state some definitions and theorems to further discuss the conditions for finding MLEs for ERGMs.
+
+%convex set - 
+\begin{definition}
+A set $C \subset \RR^n$ is \textbf{convex} if it includes for every pair of points the line segment that joins them.  In other words, if for every choice of $x_0, x_1 \in C$, one has $[x_0, x_1] \subset C$, or
+\begin{align*}
+	(1 - \tau) x_0 + \tau x_1 \in C \quad \text{for all $\tau \in (0,1)$}
+\end{align*}
+\citep{Rockafellar}.
+\end{definition}
+
+%convex function - 
+\begin{definition}
+An extended real-valued function $f$ on a convex set $C$ is a \textbf{convex function} relative to $C$ if for every choice of $x_0, x_1 \in C$, one has 
+\begin{align*}
+	f( (1-\lambda) x_0 + \lambda x_1) \leq (1- \lambda) f(x_0) + \lambda f(x_1) \quad \text{for all $\lambda \in (0,1)$}
+\end{align*}
+and $f$ is strictly convex relative to $C$ if this inequality is strict for points $x_0 \neq x_1$
+\citep{Rockafellar}.
+\end{definition}
+
+\begin{definition}
+The \textbf{epigraph} of $f$ is the set
+\begin{align*}
+	\textrm{epi} f = \{(x, \alpha ) \in \RR^n \times \RR | \alpha \geq f(x) \}
+\end{align*}
+The epigraphs consist of all the points of $\RR^{n+1}$ lying on or above the graph of $f$
+\citep{Rockafellar}.
+\end{definition}
+
+% dom f
+\begin{definition}
+The \textbf{effective domain} of a function $f:\RR^n \to \bar{\RR}$ is the set
+\begin{align*}
+	\dom f = \{ x \in \RR^n | f(x) < \infty \}
+\end{align*}
+\citep{Rockafellar}.
+\end{definition}
+
+
+% proper
+\begin{definition}
+A convex function $f$ is said to be \textbf{proper} if its epigraph is non-empty and contains no vertical lines, i.e. $f(x) < \infty$ for at least one $x$ and $f(x) > - \infty$ for every $x$
+\citep{Rockafellar:1970}.
+\end{definition}
+
+%convex hull - 
+\begin{definition}
+The \textbf{convex hull} of a set $C \subset \RR^n$, denoted by \conhull C$, is the smallest convex set that includes $C$
+\citep{Rockafellar}.
+\end{definition}
+
+
+%convex support -
+\begin{definition}
+Let $Y$ be distributed as an ERGM as defined in \eqref{E:ERGM}.  If $C$ is the smallest closed convex set such that the natural statistic $g(Y) \in C$ with probability one under some distribution in the family, in which case this holds for all distributions in the family, then $C$ is called the \textbf{convex support} of the family \citep{Barndorff, Geyer:1990}.  Here,
+\begin{align*}
+	C = \conhull g(S)
+\end{align*}
+where $g(S) = \{ g(s) \: s \in S \}$ and $S = 2^E$, where $E$ are edge indices in the graph and $2 = \{0,1\}$.
+\end{definition}
+
+
+%cone - A cone is a set $\FF$ with the property that for all $x \in \FF$,
+%\begin{align*}
+%	x \in \FF \Rightarrow \alpha x \in \FF, \quad \text{for all $\alpha \geq 0$.}
+%\end{align*}
+
+%tangent cone - The tangent cone of a set $C \subset \RR^n$ at a point $x \in C$, denoted $T_C(x)$, is the set of all vectors $v$ such that there exists a sequence $\tau_n \downarrow 0$ and a sequence $x_n$ in $C$ converging to $x$ such that 
+%\begin{align*}
+%	\frac{x_n - x}{\tau_n} \to v
+%\end{align*}
+%\citep{Geyer:2001}
+
+%normal cone - The \textit{regular normal cone} of a set $C \subset \RR^n$ at a point $x \in C$, denoted $\hat{N}_C(x)$, is the set of all vectors $v$ such that  
+%\begin{align*}
+%	\langle v, y -x \rangle \leq o( |y -x | ), 	\quad y \in C.
+%\end{align*}
+%The \textit{normal cone} of a set $C \subset \RR^n$ at a point $x \in C$, denoted $N_C(x)$, is the set of all vectors $v$ such that there exists a sequence $x_n$ in $C$ converging to $x$ and a sequence $v_n \to v$ with $v_n \in \hat{N}_C(x_n)$.
+%\citep{Geyer:2001}
+
+%polar - 
+
+
+%level set 
+\begin{definition}
+A \textbf{level set} of a function $f$ is the set of $x$ such that
+\begin{align*} 
+	\lev_{\leq \alpha} f = \{ x \in \RR^n | f(x) \leq \alpha \}
+\end{align*}
+\citep{Rockafellar}.  For convex functions we will typically be interested in $\lev_{\leq \alpha} f$, for concave functions we will typically be interested in $\lev_{\geq \alpha} f$, defined similarly.
+\end{definition}
+
+%\begin{definition}
+%A function $f:\RR^n \to \bar{\RR}$ is \textbf{(lower) level-bounded} if for every $\alpha \in \RR$, the set $\lev_{\leq \alpha} f$ is bounded (possibly empty)
+%\citep{Rockafellar}[p. 11].
+%\end{definition}
+
+
+%lower limit \citet[p8]{Rockafellar}
+%lower limit of $f$
+%\begin{align*}
+%	\liminf_{x\to \bar{x}} f(x) = \lim_{\delta \searrow 0} \left [ \inf_{ x\in B(\bar{x}, \delta )} f(x) \right ]
+%\end{align*}
+
+%lower semincontinuous 
+\begin{definition}
+The function $f$ is \textbf{lower semicontinuous (lsc)} at $\bar{x}$ if
+\begin{align*}
+	\liminf_{x\to \bar{x}} f(x) \geq f(\bar{x})
+\end{align*}
+\citep[p8]{Rockafellar}.  If a function $f$ is continuous at $\bar{x}$, it is lsc at $\bar{x}$.
+\end{definition}
+
+%affine set - 
+
+%affine hull - 
+\begin{definition}
+The \textbf{affine hull} of a convex set $C$ is the smallest affine set that includes $C$.  It is the set of all affine combinations of elements of $C$, that is,
+\begin{align*}
+	\aff(C) = \left \{ \sum_{i=1}^{k} \alpha_i x_i | x_i \in C, \, \alpha_i \in \RR, \, \sum_{i=1}^{k} \alpha_i = 1, \, k = 1, 2, \ldots \right \}
+\end{align*}
+\citep{Rockafellar}.
+\end{definition}
+
+\begin{definition}
+For a set $C \subset \RR^n$, the interior of $C$ is defined to be
+\begin{align*}
+%	\cl \, C &= \text{closure of $C$}  = \{ x | \, \forall V \in \NN(x), \, V \cap C \neq \emptyset \}
+	\intr \, C &= \{ x | \, \exists V \in \NN(x), \, V \subset C \} 
+%	\bd \, C &= \text{boundary of $C$}  = \cl C  \backslash \intr C
+\end{align*}
+	where $V \in \NN(x) =$ the collection of all neighborhoods of $x$.  The \textbf{relative interior} of $C$, $\rintr \, C$, is the interior of $C$ relative to its affine hull
+\citep{Rockafellar}.
+\end{definition}
+
+%direction of constancy
+%direction of recession
+\begin{definition}
+A vector $\delta$ is a \textbf{direction of recession} of a concave function $\ell$ if for every $\eta \in \Xi$, the function $\ell(\eta + s \delta)$ is a nondecreasing function of $s$.
+
+A vector $\delta$ is a \textbf{direction of constancy} of a convex or concave function $\ell$ if for every $\eta \in \Xi$, the function $\ell(\eta + s \delta)$ is a constant function of $s$.  
+
+Note that every direction of constancy is a direction of recession
+\citep{Geyer:2009}.
+\end{definition}
+
+%minimal - 
+\begin{definition}
+An exponential family is said to be \textbf{minimal} if the log likelihood has no direction of constancy  
+\citep{Geyer:2009}.  Alternatively, the representation of an ERGM random variable $Y$ defined by \eqref{E:ERGM} is said to be minimal if neither the natural statistics $g(y)$s nor the $\eta$s satisfy a linear constraint \citep{tpe}.
+\end{definition}
+
+% full, regular
+\begin{definition}
+An exponential family is \textbf{full} if its natural parameter space is as large as possible, as defined in \eqref{E:paramspace} 
+\begin{align*}
+   \Xi &= \{ \eta \in \RR^q : \kappa(\eta) < \infty \}.  
+\end{align*}
+If, in addition, the natural parameter space $\Xi$ is a $q$-dimensional \textit{open} set, the exponential family is said to be \textbf{regular}.  The natural parameter space for an ERGM is $\RR^q$ since $\kappa(\eta)$ is a finite sum of finite values.  Thus ERGMs are regular.
+\end{definition}
+
+%steep
+
+%Lipschitz
+\begin{definition}
+A function $f$ is \textbf{Lipschitz continuously differentiable} on an open set $N$ if there exists a constant $L > 0$ such that
+	\begin{align*}
+		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || \quad \text{for all $x, \tilde{x} \in N$}
+	\end{align*}
+	\citep{NW}.
+\end{definition}
+
+
+
+%%%%%%%%%%%%%%%%% SECTION %%%%%%%%%%%
+
+%\section{Theorems for Line Search Algorithm}
+
+%\begin{theorem}[Theorem 10.4, p. 86 from \citet{Rockafellar:1970}] \label{Thm:Lipschitzian}
+%Let $f$ be a proper convex function, and let $S$ be any closed bounded subset of $\dom \, f$.  Then $f$ is Lipschitzian relative to $S$.
+%\end{theorem}
+
+\begin{theorem}[Theorem 1.6 from \citet{Rockafellar}] \label{Thm:lsc epi}
+ The following properties of a function $f: \RR^n \to \bar{\RR}$ are equivalent:
+ \begin{enumerate}
+	\item $f$ is lower semicontinuous on $\RR^n$
+	\item the epigraph set $\epi f$ is closed in $\RR^n \times \RR$
+	\item the level sets of type $\lev_{\leq \alpha} f$ are all closed in $\RR^n$
+ \end{enumerate}
+%This means that the function is continuous with the exception of jump discontinuities (left and right limits exist, but are not equal) where the open point is on the upper piece and the solid point is on the lower piece.
+\end{theorem}
+
+%\begin{theorem}[Theorem 1.9 from \citet{Rockafellar}] \label{Thm:compact}
+%	Suppose $f:\RR^n \to \bar{\RR}$ is lower semi-continuous, level-bounded and proper.  Then the value $\inf f$ is finite and the set argmin $f$ is nonempty and compact.
+%\end{theorem}
+
+\begin{prop}[Proposition 2.7 in \citet{Rockafellar}] \label{Prop:convex lev}
+For a concave function $f: \RR^n \to \bar{\RR}$ all level sets of type $\lev_{\geq \alpha} f$ and $\lev_{> \alpha} f$ are convex.
+\end{prop}
+
+\begin{corollary}[Corollary 8.7.1 in \citet{Rockafellar:1970}, p. 70] \label{Cor:bounded lev}
+Let $f$ be a closed proper convex function.  If the level set $\lev_{\leq \alpha} f$ is non-empty and bounded for one $\alpha$, it is bounded for every $\alpha$.
+\end{corollary}
+
+\begin{lemma}[ Lemma 2.7.1 from \citet{tsh}]
+The natural parameter space of an exponential family is convex.
+\end{lemma}
+
+\begin{theorem}[ Theorem 4.1 from \citet{tpe}] \label{Thm:infinitely-differentiable}
+For any integrable function $f$ and any $\eta$ in the interior of $\Xi$, the natural parameter space of $\eta$, the integral,
+\begin{align}
+	\int f(x) \exp [ \eta^Tg(x) ] d\mu(x)
+\end{align}
+is continuous and has derivatives of all orders with respect to the $\eta$'s, and these can be obtained by differentiating under the integral sign.	Here $\mu$ is a measure such that $\int \exp [ \eta^Tg(x) - c(\eta)] d\mu(x) = 1$.
+\end{theorem}
+
+\begin{corollary} \label{Cor:infinitely-differentiable}
+Then (assuming $\Xi$ is nonempty) define
+$$
+   p_\eta(x) = \frac{1}{\kappa(\eta)} \exp [ \eta^T g(x) ]
+$$
+For each $\eta \in \Xi$, the function $p_\eta$ is a probability density
+function with respect to $\mu$, and for any function real-valued function $f$,
+$$
+   E_\eta\{ f(X) \} = \int f(x) \exp [ \eta^T g(x) - c(\eta) ] \, d \mu(x)
+$$
+(assuming the expectation exists).  Then for
+any $\eta_0$ in the interior of $\Xi$ and
+for any function $f$ such that $E_{\eta_0}\{ f(X) \}$ is finite, the
+function $\eta \mapsto E_\eta\{ f(X) \}$ is infinitely differentiable at
+$\eta_0$ and derivatives can be obtained by differentiating under the integral
+sign.  
+\end{corollary}
+
+\begin{corollary} \label{Cor:Lipschitzian}
+Let the function $p_\eta$ and $\Xi$ be defined as above.  Then for
+any $\eta_0$ in the interior of $\Xi$ and
+for any function $f$ such that $E_{\eta_0}\{ f(X) \}$ is finite, the derivatives of the function $\eta \mapsto E_\eta\{ f(X) \}$ are Lipschitzian relative to any \emph{compact} subset of the interior of $\Xi$.
+\end{corollary}
+This follows by the continuity of the derivative and the subsequent application of the mean value theorem over a compact set which guarantees the maximum and minimum values are attained.
+
+\begin{corollary} \label{Cor:ExpFam_Deriv}
+For 
+the ERGM described by \eqref{E:ERGM},
+\begin{align}
+	\E_\eta(g_j(Y)) &= \pderiv{c(\eta)}{\eta_j}  \label{E:Expectation}\\
+%	\intertext{and}
+	\Cov_\eta  ( g_j(Y), g_k(Y)  ) &= \ppmderiv{ c(\eta) }{\eta_j}{\eta_k} \label{E:Cov}
+\end{align}
+
+Then defining the gradient operator $\nabla = \left [ \pderiv{}{\eta_j} \right ]$,
+\begin{align*}
+	\E_\eta(g(Y)) &= \nabla c(\eta)	\\
+	\Var_\eta(g(Y)) &= \nabla^2 c( \eta ). 	\label{E:Varmat}
+\end{align*}
+\end{corollary}
+
+%\begin{proof}
+%Beginning with
+%\begin{align*}
+%&\int \exp [ \eta^Tg(x) - c(\eta)] d\mu(x) = 1,
+%\intertext{we take partial derivatives of each side so that}
+%\pderiv{}{\eta_j} &\int \exp [ \eta^Tg(x) - c(\eta)] d\mu(x) = 0
+%\end{align*}
+
+%By the previous corollary, we can differentiate under the integral sign so that,
+%\begin{align*}
+%&\int \pderiv{}{\eta_j}\exp [ \eta^Tg(x)] \exp [- c(\eta)] d\mu(x) = 0 \\
+%&\int g_j(x) \exp [ \eta^Tg(x)]\exp [- c(\eta)]  - \pderiv{}{\eta_j} c( \eta) \exp [ \eta^Tg(x)] \exp [- c(\eta)] d\mu(x) = 0 \\
+%&E_\eta g_j(X)  - \pderiv{}{\eta_j} c( \eta) \cdot 1 = 0 \\
+%&E_\eta g_j(X) = \pderiv{c(\eta)}{\eta_j} 
+%\end{align*}
+%which is the first result.  To get the second result, we take the partial derivative of this first result with respect to $\eta_k$, so that
+%\begin{align*}
+%	\ppmderiv{c(\eta)}{\eta_j}{\eta_k}  &= \pderiv{}{\eta_k}\int g_j(x) \exp [ \eta^Tg(x)]\exp [- c(\eta)] d\mu(x) \\
+%	&= \int g(x)_j \pderiv{}{\eta_k} \exp [ \eta^Tg(x)]\exp [- c(\eta)] d\mu(x) \\
+%	&= \int g(x)_j \bigg ( g(x)_k \exp [ \eta^T g(x)]\exp [- c(\eta)] \notag \\ &-  \pderiv{c( \eta)}{\eta_k}  \exp [ \eta^Tg(x)] \exp [- c(\eta)] \bigg ) d\mu(x) \\
+%	&= E_\eta(g_j(X) g_k(X))-  E_\eta(g_k(X)) \cdot E_\eta(g_j(X)) \\
+%	&= \Cov_\eta( g_j(X), g_k(X) )
+%\end{align*}
+%as desired.
+%\end{proof}
+
+\begin{theorem} \label{Thm:loglike concave}
+The log-likelihood function
+\begin{align*}
+	\ell( \eta ) = \eta^T g(y) - c( \eta)
+\end{align*}
+for a full exponential family is concave with respect to the parameter $\eta$.  The log-likelihood is strictly concave if and only if the family is minimal \citep{Geyer:gdor}.
+\end{theorem}
+
+%\begin{trivlist}
+%\item \textbf{Comment by Charlie:}
+%This theorem, as stated, is false.  Fortunately, your proof doesn't prove this.
+%So you proof is not incorrect.  See my thesis for the correct version.
+%By the condition for equality in H\"{o}lder's inequality, the log likelihood
+%fails to be strictly convex if and only if $(\eta_1 - \eta_2)^T g(X)$ is
+%almost surely constant with respect to any distribution in the exponential
+%family.  If is an additional condition (usually called ``minimality'' of
+%the exponential family) that one does not have $\zeta^T g(X)$ almost surely
+%constant for any nonzero vector $\zeta$ or equivalently that $\nabla^2 c(\eta)$
+%is a strictly positive definite matrix for any $\eta$ in the interior of
+%$\Xi$ (assuming that the interior is nonempty).
+%\end{trivlist}
+
+%\begin{proof}
+%(Partial) The first term in the log-likelihood, $\eta^T g(y)$, is linear and thus concave and convex.  It remains to show then that the second term, $-c( \eta)$, is concave, or that $c( \eta)$ is convex.  That is, we wish to show that
+%\begin{align*}
+%	c( \alpha \eta_1 + (1-\alpha) \eta_2 ) &\leq \alpha c( \eta_1) + (1-\alpha)c(\eta_2) \qquad \text{for $0 \leq \alpha \leq 1$},\\
+%	\intertext{or that}
+%	\exp \{ c(\alpha \eta_1 + (1-\alpha) \eta_2) \} &\leq \exp \{ \alpha c( \eta_1) \} \exp \{ (1-\alpha)c(\eta_2) \}.
+%\end{align*}
+
+%Working with the left-hand side of the expression above,
+%\begin{align*}
+%	\exp \{ c(\alpha \eta_1 + (1-\alpha) \eta_2) \} &= \kappa( \alpha \eta_1 + ( 1- \alpha) \eta_2 ) \\
+%	&= \int \exp \{ \alpha \eta_1 + (1-\alpha) \eta_2)^T g(x) \} d\mu(x) \\
+%	&= \int \exp \{ \alpha \eta_1^T g(w) \} \exp \{(1-\alpha)\eta_2^T g(x) \} d\mu(x)	\\
+%	&= \int \left (e^{ \eta_1^T g(w)} \right )^\alpha  \left ( e ^{ \eta_2^T g(w) } \right )^{1-\alpha} d\mu(x) \\
+%	\intertext{H\"{o}lder's inequality states that for $p$, $q > 0$,}
+%	\int a_k b_k d\mu(x) &\leq \left ( \int a_k^p d\mu(x) \right )^{\frac{1}{p}} \left ( \int b_k^q d\mu(x) \right )^{\frac{1}{q}}.
+%	\intertext{Letting $p = 1/\alpha$ and $q = 1 / (1- \alpha)$ and applying this inequality, our last expression becomes}
+%	&\leq \left( \int e^{ \eta_1^T g(w)} d\mu(x) \right )^\alpha  \left ( \int e ^{ \eta_2^T g(w) } d\mu(x) \right )^{1-\alpha} \\
+%	&= \kappa( \eta_1 )^\alpha \kappa( \eta_2) ^{1 - \alpha} \\
+%	&= \exp \left ( \log \left \{ \kappa( \eta_1 )^\alpha \kappa( \eta_2) ^{1 - \alpha} \right \} \right )\\
+%	&= \exp \left ( \alpha \log \kappa( \eta_1 ) + (1 - \alpha) \log \kappa( \eta_2) \right )\\
+%	&= \exp \{ \alpha c( \eta_1 ) \} \exp \{ (1 - \alpha) c( \eta_2) \}.
+%\end{align*}
+%as desired.
+%\end{proof}
+
+\begin{theorem}[Existence and Uniqueness of MLE]
+For a regular exponential family, if $y$ is the observed data, $g(y)$ the natural statistic, $C$ the convex support, then the MLE exists and is unique if and only
+if $g(y) \in \rintr \, C$ \citep{Barndorff}[Corollary 9.6].
+\end{theorem}
+Equivalently, \citet{Geyer:gdor} approaches the existence and uniqueness of the MLE from the perspective of directions of constancy and recession of the log-likelihood, as follows:
+
+\begin{theorem}[Theorem 4, \citep{Geyer:gdor}]
+For a full exponential family with convex support $C$ and observed value of the natural statistic $g(y)$ such that $g(y) \in C$, the MLE exists if and only if every direction of recession is a direction of constancy.  
+\end{theorem}
+
+When the MLE does not exist for an exponential family, and thus there exists a direction of recession that is not a direction of constancy, \citet{Geyer:2009} shows that the MLE exists in the \textit{limiting condition model}, which is itself an exponential family in which the MLE will always exist.  
+
+\begin{theorem}[MLE Expectation Equation] \label{Thm:MLE of ERGM}
+For the ERGM described by \eqref{E:ERGM}, the MLE for $\eta$, $\etaMLE$, will be attained when
+\begin{align}
+	E_{\etaMLE} g_j(Y) = g_j(y)
+\end{align}
+provided the MLE exists.  This result is sometimes referred to as the Expectation equation.
+\end{theorem}
+
+%\begin{proof}
+%We take the log-likelihood \eqref{E:loglike},
+%\begin{align*}
+%	\ell( \eta ) &= \eta^T g(y) - \log \kappa( \eta)
+%	\intertext{set the first partial derivative equal to zero and solve for $\eta$ that fulfills this condition.  By the previous theorem, since we know that \eqref{E:loglike} is strictly concave, we know that we will have found the maximum.}
+%	\pderiv{\ell}{\eta_j} &= g_j(y) - \pderiv{c(\eta)}{\eta_j} \stackrel{set}{=} 0 \\
+%	\pderiv{}{\eta_j}c(\eta) &= g_j(y) \\
+%	E_{\etaMLE} g_j(Y) &= g_j(y)
+%\end{align*}
+%as desired.
+%\end{proof}
