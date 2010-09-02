@@ -1254,6 +1254,52 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 
 \newpage
 \section{LCM MLE Algorithm}
+\noindent Get an initial value, $\eta_1$.  The observed data, $y_{obs}$, is of course known.\\ 
+\textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{1}$.\\
+Make a V-rep from this sample.\\
+Reduce the sample using \texttt{redundant}.\\
+These non-redundant vertices are the convex hull. Store them in \texttt{ty.hull}.\\
+
+\noindent \textbf{Estimate} $\nabla \ell( \eta_1)$, the direction of steepest ascent, and $\lVert \nabla \ell( \eta_1) \rVert$ using the sample.\\
+Set $p_1 = \nabla \ell( \eta_1)$. \\
+Set $k=2$, $LCM.k=1$. \\
+
+\noindent \textbf{while}  $\lVert \nabla \ell( \eta_k) \rVert > \epsilon$? \\ 
+\hspace{4mm} \indent	 \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
+\begin{align*}
+	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
+\end{align*}
+\indent for some $0 < c < 1$.  This is not as easy a problem as it may seem---\\
+\indent CJG thinks simulated tempering will be required to do this well.\\
+
+$\eta_{k+1} = \eta_k + \alpha_k p_k$.\\
+\indent \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.\\
+\indent Make a V-rep from this sample.\\
+\indent Reduce the sample using \texttt{redundant}.\\
+\indent Combine non-redundant sample with \texttt{ty.hull} and apply \texttt{redundant} again.\\
+
+\indent \textbf{H-rep} from reduced sample \texttt{scdd}.  \\
+\indent \indent Is $y_{obs}$ outside the convex hull of the sample?\\
+\indent \indent \textbf{Yes.}  Keep sampling.  Skip to estimating $\nabla \ell( \eta_{k+1})$.\\
+\indent \indent \textbf{No, it's inside.}  Then MLE exists, finding it should be straightforward.\\  \indent \indent Skip to estimating $\nabla \ell( \eta_{k+1})$.\\
+\indent \indent \textbf{No, it's on the border.}  Then 
+\indent \indent \begin{enumerate}
+\item either the MLE exists but we got a sample that just touches $y_{obs}$, 
+\item the MLE does not exist since $y_{obs}$ is itself on the border of the convex hull of the entire sample space.
+\end{enumerate}
+
+\indent \indent We will assume for now that (1) is not possible when we have 10\% of the sample touching $y_{obs}$.  It would seem very unlikely that we would have such a large number of points hitting $y_{obs}$ and points on its perceived face but not beyond it.\\
+\indent \indent So, we are in case (2), the MLE does not exist.\\
+\indent \indent Apply the function \texttt{linearity} on the rays formed from the cumulative convex hull relative, \texttt{ty.hull}, relative to $y_obs$.  \\
+\indent \indent \texttt{linearity} returns only 1 point.  We have either a single-point face, or, we haven't sampled enough yet so we're only touching one point ($y_{obs}$) of the face.
+
+\indent \indent \texttt{linearity} returns multiple points.
+
+
+\indent Calculate $\nabla \ell( \eta_{k+1})$.\\
+\indent \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction. \\
+\indent $k = k + 1$.  \\
+\textbf{end while}\\
 
 
 Do gradient search optimization, with every 3rd search direction chosen by regression.  
