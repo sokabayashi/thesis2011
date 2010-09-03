@@ -83,10 +83,12 @@
 \newcommand{\ppderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
 \newcommand{\ppmderiv}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
 \newcommand{\etaMLE}{\hat{\eta}_{\textrm{MLE}}}
+\newcommand{\yobs}{y_{\textrm{obs}}}
 \def\betak{{\beta_k}}
 \def\betak1{{\beta_{k+1}}}
 \def\etak1{{\eta_{k+1}}}
 \def\xk1{{x_{k+1}}}
+
 
 
 % Charlie's
@@ -113,6 +115,8 @@
 
 % ----- For Double Spacing, or any Variant -----
 \usepackage{setspace}
+
+\usepackage[vlined]{algorithm2e}
 
 %  \setstretch{1.5}
 
@@ -165,7 +169,7 @@ Our curvature condition is as follows:
 $\theta_{current} = \theta_0$, some initial value of $\theta$.\\ 
 Calculate
 \begin{align*}
-	\nabla \ell( \theta_{current} ) &\approx t( y_{obs}) - \frac{1}{m} \sum_{i=1}^m t
+	\nabla \ell( \theta_{current} ) &\approx t( \yobs) - \frac{1}{m} \sum_{i=1}^m t
 ( Y_i)
 \end{align*}
 where $Y_i$ are MCMC draws from the distribution with parameter $\theta_{current}$.
@@ -178,7 +182,7 @@ where $Y_i$ are MCMC draws from the distribution with parameter $\theta_{current
 \indent Guess a value for $\alpha_k$ (bisection search).  Then
 \begin{align*}
 	\theta_{prop} &= \theta_{current} + \alpha_k p_k \\
-	\nabla \ell( \theta_{prop} ) &\approx t( y_{obs}) - \frac{1}{m} \sum_{i=1}^m t
+	\nabla \ell( \theta_{prop} ) &\approx t( \yobs) - \frac{1}{m} \sum_{i=1}^m t
 ( Y_i)
 \end{align*}
 \indent where $Y_i$ are MCMC draws from the distribution with parameter $\theta_
@@ -293,7 +297,7 @@ where $FI$ is the Fisher Information matrix, equal to $\left [  \nabla^2 \ell
 How do we calculate FI?
 Recall that 
 \begin{align*}
-	\nabla \ell (\theta) &= t(y_{obs}) - \E_{\theta} t(Y) \\
+	\nabla \ell (\theta) &= t(\yobs) - \E_{\theta} t(Y) \\
 	\nabla^2 \ell (\theta) &= - \Var_{\theta} t(Y)
 \end{align*}
 We estimate $\Var_{\theta} t(Y)$ via MCMC, by calculating $t(Y)$ at each batch as 
@@ -685,7 +689,7 @@ the density).
 \end{align*}
 For $\delta$ a DOR but not DOC, we need to show that the $P_{\theta+s\delta}(Y \in H) 
 \to 1$ 
-as $s \to \infty$, where $H = \set{w \in \RR^p: \inner{w-y_{obs},d}=0}$.
+as $s \to \infty$, where $H = \set{w \in \RR^p: \inner{w-\yobs,d}=0}$.
 \begin{align*}
  P_{\theta+s\delta}(Y \in H) &= \int_H e^{\inner{y, \theta+s\delta - \psi} - c(\theta
 +s\delta) + c(\psi)} \, d\psi \\
@@ -1024,14 +1028,14 @@ This should be straightforward---we have the objective function, find the maximi
 
 If we use the log-likelihood as the objective function,
 \begin{align*}
-	\ell( \theta) &= \inner{t(y_{obs}), \theta} - \log \kappa( \theta ) \\
-				&=  \inner{t(y_{obs}), \theta} - \log \sum_{y \in \YY}e^{\inner{t(y),
+	\ell( \theta) &= \inner{t(\yobs), \theta} - \log \kappa( \theta ) \\
+				&=  \inner{t(\yobs), \theta} - \log \sum_{y \in \YY}e^{\inner{t(y),
 \theta}}.
 \end{align*}
   Since we have already enumerated all 444 possible graphs, counting how many times 
 each occurs, we can simplify this further, 
 \begin{align*}
-	\ell( \theta) &= \inner{t(y_{obs}), \theta} - \log \sum_{t \in \T}e^{\inner{t,
+	\ell( \theta) &= \inner{t(\yobs), \theta} - \log \sum_{t \in \T}e^{\inner{t,
 \theta}} \nu(t),
 \end{align*}
 where $\nu(t)$ is the frequency of occurrence of statistic $t$ for all the graphs in $
@@ -1040,15 +1044,15 @@ quicker.
 Because we are also concerned about overflow possibilities where $e^x$ can become too 
 large (See Charlie's arithmetic.pdf slides), we can make a simple adjustment for this, 
 \begin{align*}
-	\ell( \theta) &=  \inner{t(y_{obs}), \theta} - a - \log \sum_{t \in \TT}e^{\inner
+	\ell( \theta) &=  \inner{t(\yobs), \theta} - a - \log \sum_{t \in \TT}e^{\inner
 {t,\theta}-a}\nu(t),
 \end{align*}
 where $a = \max_y \inner{t(y),\theta}$.  If we use the \texttt{trust} package, we will 
 also need to supply first and second derivatives of the objective function (\texttt
 {optim} doesn't need these).  We have seen this before,
 \begin{align*}
-	\nabla \ell( \theta ) &= t(y_{obs}) - \nabla \log \kappa \\
-						&=  t(y_{obs}) - \E_\theta t(Y). 
+	\nabla \ell( \theta ) &= t(\yobs) - \nabla \log \kappa \\
+						&=  t(\yobs) - \E_\theta t(Y). 
 \end{align*}
 and
 \begin{align*}
@@ -1105,7 +1109,7 @@ converges to $(24.564363, -6.683482)$ with log-likelihood $-8.078339$.
 \centering
 \includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-contour-wide}
 \includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/graph9-contour-narrow}
-\caption{Contour plot of log-likelihood when $y_{obs} = (21,4)$.  The log-likelihood 
+\caption{Contour plot of log-likelihood when $\yobs = (21,4)$.  The log-likelihood 
 function is nearly flat near the maximum point of $(28.83, -7.75)$ before dropping of 
 rapidly.  Points such as $(24.44, -6.65)$ have nearly the same value for log
 likelihood. }
@@ -1115,12 +1119,12 @@ likelihood. }
 \textbf{8/12: Question:  Find the GDOR for the face that this point $(21,4)$ is close to.  what happens to $\ell(\theta + s \delta)$?}
 
 \section{Face points}
-For a given observed value $y_{obs}$, finding the sample points on the face on which 
+For a given observed value $\yobs$, finding the sample points on the face on which 
 this point lies is not as easy as I initially thought.
 
 \section{MLE in LCM (Limiting Conditional Model)}
 
-When $y_{obs}$ is on the boundary of the convex hull of the sample space, theory (and our efforts in R!) say that the MLE does not exist.  According to \citet{Geyer:gdor}, the MLE exists in the Barndorff-Nielsen completion.  
+When $\yobs$ is on the boundary of the convex hull of the sample space, theory (and our efforts in R!) say that the MLE does not exist.  According to \citet{Geyer:gdor}, the MLE exists in the Barndorff-Nielsen completion.  
 \begin{itemize}
 \item What is the Limiting Conditional Model?  Sure, you've got some formulas.  But equate the formulas again 
 with what is actually happening.  Go back to \citet[Theorem~6]{Geyer:gdor}.  LCM is 
@@ -1201,7 +1205,7 @@ INSERT PICTURE.  can do better than this one.
 \begin{figure}[!h]
 \centering
 \includegraphics[height=3.75in,width=4.5in]{/Users/saipuck/Tako/RCode/GDOR/Figures/contour31-50}
-\caption{Contour plot of log-likelihood when $y_{obs} = (31, 50)$.  Using a steepest 
+\caption{Contour plot of log-likelihood when $\yobs = (31, 50)$.  Using a steepest 
 ascent algorithm to find a direction of recession is not very efficient because the 
 updates will zigzag up the log likelihood with very small steps.}
 %\label{F:pottsimage}
@@ -1217,11 +1221,11 @@ original model
 \item New idea.  Running two optimizations simultaneously from same sampler.
 \end{itemize}
 
-For $y_{obs} = 
+For $\yobs = 
 (31,50)$, starting at $\theta = (0,0)$, the MLE in the LCM is found to be $\hat{\theta} 
 = (0, 0.0239735)$ and the normal/GDOR is $(6, -1)$ (that gives a slope of $-1/6 \approx 
 -1.667$).  To get 5\% of the distribution on the face (consisting of 3 pts, $(30,44)$ 
-and $(32,56)$ sandwiching $y_{obs}$), we a need to use a $\theta$ of about $(9.11, 
+and $(32,56)$ sandwiching $\yobs$), we a need to use a $\theta$ of about $(9.11, 
 -1.49)$.
 
 \begin{itemize}
@@ -1242,7 +1246,7 @@ search direction $p_k$ to be the steepest ascent direction.  But here Charlie is
 suggesting a vector in the normal cone.  Hmm!  
 \begin{enumerate}
 \item Draw sample.
-\item Find the tangent and normal cones relative to $y_{obs}$.  
+\item Find the tangent and normal cones relative to $\yobs$.  
 \item Choose a vector in the normal cone to be $p_k$.  Perhaps the average of the 
 boundary rays (recall that the boundary rays can be DOR but not GDOR).
 \item Move in the direction of $p_k$.  How much?  Who knows!  A lot.  We're going to 
@@ -1254,59 +1258,79 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 
 \newpage
 \section{LCM MLE Algorithm}
-\noindent Get an initial value, $\eta_1$.  The observed data, $y_{obs}$, is of course known.\\ 
-\textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{1}$.\\
-Make a V-rep from this sample.\\
-Reduce the sample using \texttt{redundant}.\\
-These non-redundant vertices are the convex hull. Store them in \texttt{ty.hull}.\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% try using algorithm
+\noindent \begin{algorithm}[H]
+\dontprintsemicolon
+\SetKwFunction{redundant}{redundant}
+\SetKwFunction{scdd}{scdd}
+\SetKwFunction{linearity}{linearity}
+\SetKwFunction{tyhull}{ty.hull}
+\SetKwFunction{faceprop}{face.prop}
+\SetKw{Sample}{Sample}
+\SetKw{Estimate}{Estimate}
+\SetKw{Calculate}{Calculate}
+\SetKw{Find}{Find}
+\SetKw{Question}{Question}
+\SetKw{Set}{Set}
 
-\noindent \textbf{Estimate} $\nabla \ell( \eta_1)$, the direction of steepest ascent, and $\lVert \nabla \ell( \eta_1) \rVert$ using the sample.\\
-Set $p_1 = \nabla \ell( \eta_1)$. \\
-Set $k=2$, $LCM.k=1$. \\
+Get an initial value, $\eta_1$.  The observed data, $\yobs$, is of course known.\;
+\Sample $Y_1, \ldots, Y_m$ from the distribution at $\eta_{1}$.\;
+Make a V-rep from this sample and reduce using \redundant.  The result are the vertices of the convex hull. Store them in \tyhull.\;
+\Estimate $\nabla \ell( \eta_1)$ and $\lVert \nabla \ell( \eta_1) \rVert$ using the sample.\;
+\Set $p_1 = \nabla \ell( \eta_1)$. \;
+\Set $k=2$, $LCM.k=1$, \texttt{LCM.flag=FALSE}. \;
 
-\noindent \textbf{while}  $\lVert \nabla \ell( \eta_k) \rVert > \epsilon$? \\ 
-\hspace{4mm} \indent	 \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
+\While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}{
+\Find a step size $\alpha_k$ that satisfies the \textit{curvature condition}
 \begin{align*}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
 \end{align*}
-\indent for some $0 < c < 1$.  This is not as easy a problem as it may seem---\\
-\indent CJG thinks simulated tempering will be required to do this well.\\
-
-$\eta_{k+1} = \eta_k + \alpha_k p_k$.\\
-\indent \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.\\
-\indent Make a V-rep from this sample.\\
-\indent Reduce the sample using \texttt{redundant}.\\
-\indent Combine non-redundant sample with \texttt{ty.hull} and apply \texttt{redundant} again.\\
-
-\indent \textbf{H-rep} from reduced sample \texttt{scdd}.  \\
-\indent \indent Is $y_{obs}$ outside the convex hull of the sample?\\
-\indent \indent \textbf{Yes.}  Keep sampling.  Skip to estimating $\nabla \ell( \eta_{k+1})$.\\
-\indent \indent \textbf{No, it's inside.}  Then MLE exists, finding it should be straightforward.\\  \indent \indent Skip to estimating $\nabla \ell( \eta_{k+1})$.\\
-\indent \indent \textbf{No, it's on the border.}  Then 
-\indent \indent \begin{enumerate}
-\item either the MLE exists but we got a sample that just touches $y_{obs}$, 
-\item the MLE does not exist since $y_{obs}$ is itself on the border of the convex hull of the entire sample space.
+for some $0 < c < 1$.  CJG thinks simulated tempering will be required to do this well.
+\BlankLine
+$\eta_{k+1} = \eta_k + \alpha_k p_k$.\;
+\Sample $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.\;
+Make a V-rep from this sample and reduce using \texttt{redundant}.\;
+Combine reduced sample with \tyhull and apply \redundant again.\;
+Get \textbf{H-rep} from reduced sample by using \scdd.\;
+\BlankLine
+\Question: Is $\yobs$ outside the convex hull of the sample?\;
+\uIf{Yes, $\yobs$ is outside the convex hull}{  Keep sampling.  Skip to estimating $\nabla \ell( \eta_{k+1})$.
+}
+\uElseIf{No, $\yobs$ is inside the convex hull}{  Then the MLE exists, finding it should be straightforward.  Skip to estimating $\nabla \ell( \eta_{k+1})$.\\
+}
+\uElse{No, it's on the border.  In which case, either
+\begin{enumerate}
+\item the MLE exists but we got a sample that just touches $\yobs$, 
+\item the MLE does not exist since $\yobs$ is itself on the border of the convex hull of the entire sample space.\;
 \end{enumerate}
+\Find the empirical face: apply the function \linearity on the rays formed from the cumulative convex hull relative, \tyhull, relative to $\yobs$.\;
+\Calculate \faceprop, the proportion of the sample that falls on this face.
 
-\indent \indent We will assume for now that (1) is not possible when we have 10\% of the sample touching $y_{obs}$.  It would seem very unlikely that we would have such a large number of points hitting $y_{obs}$ and points on its perceived face but not beyond it.\\
-\indent \indent So, we are in case (2), the MLE does not exist.\\
-\indent \indent Apply the function \texttt{linearity} on the rays formed from the cumulative convex hull relative, \texttt{ty.hull}, relative to $y_obs$.  \\
-\indent \indent \texttt{linearity} returns only 1 point.  We have either a single-point face, or, we haven't sampled enough yet so we're only touching one point ($y_{obs}$) of the face.
+\uIf{$\faceprop < 10\%$}
+{	Keep sampling!	Regardless of what case we're in.\;}
+\uElse{
+We've got $> 10\%$ of the sample falling on this face!\;
+We assume that (1) above is not possible when we have 10\% of the sample on $\yobs$ or the estimated face.  So, we are in case (2): \textbf{the MLE does not exist.}\;
 
-\indent \indent \texttt{linearity} returns multiple points.
+\BlankLine
+\noindent \Question: how many points does \linearity return?\;
+\uIf{only 1 point}
+{We have either a single-point face. WHAT TO DO?\;
+}
+\uElse{
+\textbf{multiple points}.\;
+}
+}
+}
+\BlankLine
+Calculate $\nabla \ell( \eta_{k+1})$.\;
+\Find the new search direction $p_{k+1}$, which must be an ascent direction.\;
+$k = k + 1$.\;
+}
+\end{algorithm}
 
-
-\indent Calculate $\nabla \ell( \eta_{k+1})$.\\
-\indent \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction. \\
-\indent $k = k + 1$.  \\
-\textbf{end while}\\
-
-
-Do gradient search optimization, with every 3rd search direction chosen by regression.  
-This search direction should approximate GDOR.
-
-Is $y_{obs}$ in the sample?
-
+\newpage
 \subsection{Got 10\%.  Now what?}
 
 \textbf{Q: Why wouldn't we use the normal cone from this face as our next search 
@@ -1317,14 +1341,14 @@ size so be careful what you wish for!
 We look to find the MLE in LCM using this subsample.  So, we now compute a new search 
 direction
 \begin{align*}
-	p_{k+1}^{LCM} = \nabla \ell^{LCM}(\theta_{k+1}) = t(y_{obs}) - \E_{\theta_{k+1}, 
+	p_{k+1}^{LCM} = \nabla \ell^{LCM}(\theta_{k+1}) = t(\yobs) - \E_{\theta_{k+1}, 
 LCM}t(Y)
 \end{align*}
 
 \newpage
 \section{Next steps, as I see it on 8/31/10:}
 \begin{enumerate}
-\item Make sure every case works---$y_{obs}$ on any boundary, extreme pt.  Even points 
+\item Make sure every case works---$\yobs$ on any boundary, extreme pt.  Even points 
 like (21,4).  The algorithm needs to be generalized.  Record some pictures!
 \item Turn on MC for estimation of gradient.  
 \item MCMC?  Can we use the ergm sampler?
