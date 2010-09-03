@@ -13,6 +13,8 @@
 
 %\input{/Figures/test}    
 \graphicspath{{myfigures/}}
+%\usepackage{algorithmicx}
+\usepackage{algpseudocode}
 
 % ----- Declare Math Operators
 
@@ -116,7 +118,6 @@
 % ----- For Double Spacing, or any Variant -----
 \usepackage{setspace}
 
-\usepackage[vlined]{algorithm2e}
 
 %  \setstretch{1.5}
 
@@ -1259,76 +1260,85 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 \newpage
 \section{LCM MLE Algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% try using algorithm
-\noindent \begin{algorithm}[H]
-\dontprintsemicolon
-\SetKwFunction{redundant}{redundant}
-\SetKwFunction{scdd}{scdd}
-\SetKwFunction{linearity}{linearity}
-\SetKwFunction{tyhull}{ty.hull}
-\SetKwFunction{faceprop}{face.prop}
-\SetKw{Sample}{Sample}
-\SetKw{Estimate}{Estimate}
-\SetKw{Calculate}{Calculate}
-\SetKw{Find}{Find}
-\SetKw{Question}{Question}
-\SetKw{Set}{Set}
+\noindent \begin{algorithmic}
+\State Get an initial value, $\eta_1$.  The observed data, $\yobs$, is of course known.
+\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{1}$.
+\State Make a V-rep from this sample and reduce using \texttt{redundant}.  The result are the vertices of the convex hull. Store them in $ty.hull$.
+\State \textbf{Estimate} $\nabla \ell( \eta_1)$ and $\lVert \nabla \ell( \eta_1) \rVert$ using the sample.\\
+\State Set $p_1 = \nabla \ell( \eta_1)$. 
+\State Set $k=2$, $LCM.k=1$, $LCM.flag$=FALSE. 
 
-Get an initial value, $\eta_1$.  The observed data, $\yobs$, is of course known.\;
-\Sample $Y_1, \ldots, Y_m$ from the distribution at $\eta_{1}$.\;
-Make a V-rep from this sample and reduce using \redundant.  The result are the vertices of the convex hull. Store them in \tyhull.\;
-\Estimate $\nabla \ell( \eta_1)$ and $\lVert \nabla \ell( \eta_1) \rVert$ using the sample.\;
-\Set $p_1 = \nabla \ell( \eta_1)$. \;
-\Set $k=2$, $LCM.k=1$, \texttt{LCM.flag=FALSE}. \;
-
-\While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}{
-\Find a step size $\alpha_k$ that satisfies the \textit{curvature condition}
+\While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
+\State \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
 \begin{align*}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
 \end{align*}
-for some $0 < c < 1$.  CJG thinks simulated tempering will be required to do this well.
-\BlankLine
-$\eta_{k+1} = \eta_k + \alpha_k p_k$.\;
-\Sample $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.\;
-Make a V-rep from this sample and reduce using \texttt{redundant}.\;
-Combine reduced sample with \tyhull and apply \redundant again.\;
-Get \textbf{H-rep} from reduced sample by using \scdd.\;
-\BlankLine
-\Question: Is $\yobs$ outside the convex hull of the sample?\;
-\uIf{Yes, $\yobs$ is outside the convex hull}{  Keep sampling.  Skip to estimating $\nabla \ell( \eta_{k+1})$.
-}
-\uElseIf{No, $\yobs$ is inside the convex hull}{  Then the MLE exists, finding it should be straightforward.  Skip to estimating $\nabla \ell( \eta_{k+1})$.\\
-}
-\uElse{No, it's on the border.  In which case, either
-\begin{enumerate}
-\item the MLE exists but we got a sample that just touches $\yobs$, 
-\item the MLE does not exist since $\yobs$ is itself on the border of the convex hull of the entire sample space.\;
-\end{enumerate}
-\Find the empirical face: apply the function \linearity on the rays formed from the cumulative convex hull relative, \tyhull, relative to $\yobs$.\;
-\Calculate \faceprop, the proportion of the sample that falls on this face.
+\State for some $0 < c < 1$.  
+\Comment{CJG thinks simulated tempering will work best.}\\
 
-\uIf{$\faceprop < 10\%$}
-{	Keep sampling!	Regardless of what case we're in.\;}
-\uElse{
-We've got $> 10\%$ of the sample falling on this face!\;
-We assume that (1) above is not possible when we have 10\% of the sample on $\yobs$ or the estimated face.  So, we are in case (2): \textbf{the MLE does not exist.}\;
+\State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
+\State Sample $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.
+\State Make a V-rep from this sample and reduce using \texttt{redundant}.
+\State Combine reduced sample with $ty.hull$ and apply \texttt{redundant} again.
+\State Get \textbf{H-rep} from reduced sample by using \texttt{scdd}.\\
 
-\BlankLine
-\noindent \Question: how many points does \linearity return?\;
-\uIf{only 1 point}
-{We have either a single-point face. WHAT TO DO?\;
+\State \textbf{Question}: Is $\yobs$ outside the convex hull of the sample?
+\If{Yes, $\yobs$ is outside the convex hull}
+	\State  Keep sampling.  Skip to estimating $\nabla \ell( \eta_{k+1})$.
+\ElsIf{No, $\yobs$ is inside the convex hull}
+	\State Then the MLE exists, finding it should be straightforward.  Skip to
+	\State estimating $\nabla \ell( \eta_{k+1})$.
+\Else 
+	\State No, it's on the border.  In which case, either
+	\State (1) the MLE exists but we got a sample that just touches $\yobs$, 
+	\State (2) the MLE does not exist since $\yobs$ is itself on the border of the 
+	\State convex hull of the entire sample space.\\
+
+	\State \textbf{Find} the empirical face: apply the function \texttt{linearity} on the rays formed 
+	\State from the cumulative convex hull relative, $ty.hull$, relative to $\yobs$.
+	\State \textbf{Calculate} $face.prop$, the proportion of the sample that falls on
+	\State this face.\\
+
+	\If{$face.prop < 10\%$}
+		\State	Keep sampling!	Regardless of what case we're in.
+	\Else
+		\State We've got $> 10\%$ of the sample falling on this face!
+		\State Assume that (1) above is not possible when we have 10\% of the 
+		\State sample on $\yobs$ or the estimated face.  So, we are in case (2): 
+		\State \textbf{the MLE does not exist.}\\
+
+		\State \textbf{Set} $LCM.flag$ = TRUE.
+		\State \textbf{Calculate} the normal cone to $\yobs$.
+		\State \textbf{Question:} how many points does \texttt{linearity} return?
+		\If{only 1 point}
+			\State We have either a single-point face. WHAT TO DO?
+		\Else
+			\State \textbf{multiple points.}
+			\State \textbf{Find} all points from sample on this face.
+			\State \textbf{Calculate} probability at each point, aggregate.  Print out.
+		\EndIf
+	\EndIf
+\EndIf\\
+\State Calculate $\nabla \ell( \eta_{k+1})$.
+\If{ $LCM.flag$ == FALSE }
+	\State $\nabla \ell( \eta_{k+1}) \approx \yobs - \bar{Y}_m$
+\Else{
+	\State $\nabla \ell( \eta_{k+1}) \approx \yobs - \bar{Y}_m^{LCM}$
 }
-\uElse{
-\textbf{multiple points}.\;
-}
-}
-}
-\BlankLine
-Calculate $\nabla \ell( \eta_{k+1})$.\;
-\Find the new search direction $p_{k+1}$, which must be an ascent direction.\;
-$k = k + 1$.\;
-}
-\end{algorithm}
+\EndIf\\
+
+\State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction.
+\If{ $k \geq 12$ \textbf{and} $k \mod 3==0$ \textbf{and} $LCM.flag$==FALSE}
+	\State Run regression on last 9 points.
+	\State Set $p_k = $ regression slope.
+\EndIf\\
+
+\State $k = k + 1$
+\If{$LCM.flag$==TRUE}
+	\State $LCM.k = LCM.k + 1$
+\EndIf
+\EndWhile
+\end{algorithmic}
 
 \newpage
 \subsection{Got 10\%.  Now what?}
