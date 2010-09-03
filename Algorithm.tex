@@ -1277,7 +1277,7 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 \Comment{CJG thinks simulated tempering will work best.}\\
 
 \State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
-\State Sample $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.
+\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.
 \State Make a V-rep from this sample and reduce using \texttt{redundant}.
 \State Combine reduced sample with $ty.hull$ and apply \texttt{redundant} again.
 \State Get \textbf{H-rep} from reduced sample by using \texttt{scdd}.\\
@@ -1286,13 +1286,13 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 \If{Yes, $\yobs$ is outside the convex hull}
 	\State  Keep sampling.  Skip to estimating $\nabla \ell( \eta_{k+1})$.
 \ElsIf{No, $\yobs$ is inside the convex hull}
-	\State Then the MLE exists, finding it should be straightforward.  Skip to
+	\State The MLE exists, finding it should be straightforward.  Skip to
 	\State estimating $\nabla \ell( \eta_{k+1})$.
 \Else 
 	\State No, it's on the border.  In which case, either
 	\State (1) the MLE exists but we got a sample that just touches $\yobs$, 
 	\State (2) the MLE does not exist since $\yobs$ is itself on the border of the 
-	\State convex hull of the entire sample space.\\
+	\State convex hull of the \emph{entire} sample space.\\
 
 	\State \textbf{Find} the empirical face: apply the function \texttt{linearity} on the rays formed 
 	\State from the cumulative convex hull relative, $ty.hull$, relative to $\yobs$.
@@ -1300,7 +1300,7 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 	\State this face.\\
 
 	\If{$face.prop < 10\%$}
-		\State	Keep sampling!	Regardless of what case we're in.
+		\State	Keep sampling!	We need more points.
 	\Else
 		\State We've got $> 10\%$ of the sample falling on this face!
 		\State Assume that (1) above is not possible when we have 10\% of the 
@@ -1311,30 +1311,40 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 		\State \textbf{Calculate} the normal cone to $\yobs$.
 		\State \textbf{Question:} how many points does \texttt{linearity} return?
 		\If{only 1 point}
-			\State We have either a single-point face. WHAT TO DO?
+			\State We have a single-point face (assuming (1) not possible).
 		\Else
 			\State \textbf{multiple points.}
+			\State But does this need to be handled differently??
 			\State \textbf{Find} all points from sample on this face.
 			\State \textbf{Calculate} probability at each point, aggregate.  Print out.
 		\EndIf
 	\EndIf
 \EndIf\\
-\State Calculate $\nabla \ell( \eta_{k+1})$.
+\State \textbf{Calculate} $\nabla \ell( \eta_{k+1})$ as follows: \label{Calc:nabla}
 \If{ $LCM.flag$ == FALSE }
 	\State $\nabla \ell( \eta_{k+1}) \approx \yobs - \bar{Y}_m$
 \Else{
-	\State $\nabla \ell( \eta_{k+1}) \approx \yobs - \bar{Y}_m^{LCM}$
+	\State $\nabla \ell( \eta_{k+1}) \approx \yobs - \bar{Y}_m^{LCM}$.
 }
 \EndIf\\
 
 \State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction.
-\If{ $k \geq 12$ \textbf{and} $k \mod 3==0$ \textbf{and} $LCM.flag$==FALSE}
+\If{$LCM.flag$ == FALSE and $k$ large enough and divisible by 3}
 	\State Run regression on last 9 points.
 	\State Set $p_k = $ regression slope.
+\ElsIf{$LCM.flag$ == TRUE}
+	\If{ $LCM.k$ is 1 or divisible by 3}
+		\State Set $p_k = $ normal cone direction.
+	\ElsIf{ $LCM.k$ is large enough and divisible by 4}
+		\State Run regression on last 6 points.
+		\State Set $p_k = $ regression slope.
+	\EndIf
+\Else
+	\State Set $p_k = \nabla \ell( \eta_{k+1})$.
 \EndIf\\
 
 \State $k = k + 1$
-\If{$LCM.flag$==TRUE}
+\If{$LCM.flag$ == TRUE}
 	\State $LCM.k = LCM.k + 1$
 \EndIf
 \EndWhile
