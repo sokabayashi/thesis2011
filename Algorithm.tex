@@ -1261,12 +1261,14 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 \section{LCM MLE Algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \noindent \begin{algorithmic}
-\State Get an initial value, $\eta_1$.  The observed data, $\yobs$, is of course known.
+\State Get an initial value, $\eta_1$.  The observed data, $\yobs$, is known.
 \State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{1}$.
-\State Make a V-rep from this sample and reduce using \texttt{redundant}.  The result are the vertices of the convex hull. Store them in $ty.hull$.
+\State Make a V-rep from this sample and reduce using \texttt{unique} followed by \texttt{redundant}.  The result are the vertices of the convex hull. Store them in $ty.hull$.
 \State \textbf{Estimate} $\nabla \ell( \eta_1)$ and $\lVert \nabla \ell( \eta_1) \rVert$ using the sample.\\
 \State Set $p_1 = \nabla \ell( \eta_1)$. 
-\State Set $k=2$, $LCM.k=1$, $LCM.flag$=FALSE. 
+\State Set $k=2$, $LCM.k=1$, $LCM.flag$ = FALSE. 
+\State $on.boundary$ = FALSE, $on.interior$ = FALSE.
+\State Set $face.cutoff = 0.30$.
 
 \While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
 \State \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
@@ -1278,16 +1280,21 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 
 \State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
 \State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution at $\eta_{k+1}$.
-\State Make a V-rep from this sample and reduce using \texttt{redundant}.
+\State Make a V-rep from this sample and reduce using \texttt{unique} and \texttt{redundant}.
 \State Combine reduced sample with $ty.hull$ and apply \texttt{redundant} again.
+\State Get \textbf{normal cone} of $ty.hull$.
 \State Get \textbf{H-rep} from reduced sample by using \texttt{scdd}.\\
 
-\State \textbf{Question}: Is $\yobs$ outside the convex hull of the sample?
+\State \textbf{Question}: Is $\yobs$ outside the convex hull of the sample?  Use H-rep.
 \If{Yes, $\yobs$ is outside the convex hull}
-	\State  Keep sampling.  Skip to estimating $\nabla \ell( \eta_{k+1})$.
+	\State  Keep sampling.  
+	\State $on.boundary$ = FALSE.
+	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
 \ElsIf{No, $\yobs$ is inside the convex hull}
-	\State The MLE exists, finding it should be straightforward.  Skip to
-	\State estimating $\nabla \ell( \eta_{k+1})$.
+	\State \textbf{The MLE exists}.  Finding it should be straightforward, (except when 
+	\State it isn't ...) 
+	\State $on.boundary$ = FALSE, $on.interior$ = TRUE.
+	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
 \Else 
 	\State No, it's on the border.  In which case, either
 	\State (1) the MLE exists but we got a sample that just touches $\yobs$, 
@@ -1298,26 +1305,15 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 	\State from the cumulative convex hull relative, $ty.hull$, relative to $\yobs$.
 	\State \textbf{Calculate} $face.prop$, the proportion of the sample that falls on
 	\State this face.\\
-
-	\If{$face.prop < 10\%$}
+\newpage
+	\If{$face.prop < face.cutoff$}
 		\State	Keep sampling!	We need more points.
 	\Else
-		\State We've got $> 10\%$ of the sample falling on this face!
-		\State Assume that (1) above is not possible when we have 10\% of the 
-		\State sample on $\yobs$ or the estimated face.  So, we are in case (2): 
-		\State \textbf{the MLE does not exist.}\\
-
+		\State We've got $> face.cutoff$ of the sample falling on this face!
+		\State Assume that (1) above is not possible when we have a significant 
+		\State portion of sample on $\yobs$ or the estimated face.  
+		\State So, we are in case (2):  \textbf{the MLE does not exist.}\\
 		\State \textbf{Set} $LCM.flag$ = TRUE.
-		\State \textbf{Calculate} the normal cone to $\yobs$.
-		\State \textbf{Question:} how many points does \texttt{linearity} return?
-		\If{only 1 point}
-			\State We have a single-point face (assuming (1) not possible).
-		\Else
-			\State \textbf{multiple points.}
-			\State But does this need to be handled differently??
-			\State \textbf{Find} all points from sample on this face.
-			\State \textbf{Calculate} probability at each point, aggregate.  Print out.
-		\EndIf
 	\EndIf
 \EndIf\\
 \State \textbf{Calculate} $\nabla \ell( \eta_{k+1})$ as follows: \label{Calc:nabla}
@@ -1329,16 +1325,15 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 \EndIf\\
 
 \State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction.
-\If{$LCM.flag$ == FALSE and $k$ large enough and divisible by 3}
-	\State Run regression on last 9 points.
+\If{$LCM.flag$ == FALSE and $on.interior$ == FALSE and $k$ divisible by 5}
+	\State Find a ncone direction from the normal cone by averaging.
+	\State Set $p_k = $ ncone direction.
+\ElsIf{$LCM.flag$ == FALSE and $k \geq 9$  and divisible by 3}
+	\State Run regression on last 8 points.
 	\State Set $p_k = $ regression slope.
-\ElsIf{$LCM.flag$ == TRUE}
-	\If{ $LCM.k$ is 1 or divisible by 3}
-		\State Set $p_k = $ normal cone direction.
-	\ElsIf{ $LCM.k$ is large enough and divisible by 4}
-		\State Run regression on last 6 points.
+\ElsIf{ $LCM.flag$ == TRUE and $LCM.k \geq 8$ and divisible by 4}
+		\State Run regression on last 5 points.
 		\State Set $p_k = $ regression slope.
-	\EndIf
 \Else
 	\State Set $p_k = \nabla \ell( \eta_{k+1})$.
 \EndIf\\
@@ -1365,7 +1360,6 @@ direction
 LCM}t(Y)
 \end{align*}
 
-\newpage
 \section{Next steps, as I see it on 8/31/10:}
 \begin{enumerate}
 \item Make sure every case works---$\yobs$ on any boundary, extreme pt.  Even points 
