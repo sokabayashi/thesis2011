@@ -1305,7 +1305,7 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 	\State from the cumulative convex hull relative, $ty.hull$, relative to $\yobs$.
 	\State \textbf{Calculate} $face.prop$, the proportion of the sample that falls on
 	\State this face.\\
-\newpage
+%\newpage
 	\If{$face.prop < face.cutoff$}
 		\State	Keep sampling!	We need more points.
 	\Else
@@ -1319,9 +1319,8 @@ date?  If $p_k$ was an actual GDOR, there would not be!
 \State \textbf{Calculate} $\nabla \ell( \eta_{k+1})$ as follows: \label{Calc:nabla}
 \If{ $LCM.flag$ == FALSE }
 	\State $\nabla \ell( \eta_{k+1}) \approx \yobs - \bar{Y}_m$
-\Else{
+\Else
 	\State $\nabla \ell( \eta_{k+1}) \approx \yobs - \bar{Y}_m^{LCM}$.
-}
 \EndIf\\
 
 \State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction.
