@@ -153,7 +153,7 @@
 
 % ----- Title
 
-\title{Algorithm for Maximizing Loglikelihood of Exponential Families}
+\title{Algorithm for Maximizing the Likelihood of Exponential Families}
 \author{Saisuke Okabayashi \\ Department of Statistics \\ University of Minnesota}
 %\date{May 13, 2009}
 %\institution{University of Minnesota}
@@ -1358,6 +1358,80 @@ direction
 	p_{k+1}^{LCM} = \nabla \ell^{LCM}(\theta_{k+1}) = t(\yobs) - \E_{\theta_{k+1}, 
 LCM}t(Y)
 \end{align*}
+
+\section{Problematic interior points 9/9/10}
+Points like $(21,4)$ are on the relative interior of the convex hull, barely.  Although maximizing the log likelihood when this point is the observed data can be a little difficult as described earlier, the MLE nonetheless must exist.  Using the \texttt{trust} package in R, we estimate the MLE to be $\hat{\theta}_{MLE} = (28.85685, -7.75672)$. 
+
+Our new LCM algorithm has a particularly difficult time with this point as the observed data because there is a good chance it will determine that the point is on the boundary of the entire sample space, and thus the MLE will not exist!
+
+Why does this happen?  
+
+As the algorithm proceeds uphill on the likelihood function, it's possible that for a value of $\theta = (35.3408851 -9.556440)$, all 10,000 points from the MC sample will fall on the six integer-coordinate points on the line segment from $(20,0)$ to $(25,20)$.  According to such a sample, $(21,4)$ is on this line segment.  Therefore, according to the algorithm, these six points form a face on the boundary of the convex hull.
+
+The algorithm will then proceed by maximizing the likelihood on this restricted set of the empirical face, which typically involves moving in a direction orthogonal to what it thought was a direction of recession in the original problem.  The parameter value that sets the expected value with respect to the distribution on this restricted sample space equal to the observed value of $(21,4)$ is the MLE of this LCM, which we will denote $\hat{\theta}_{LCM}$.  In this case, we calculate this to be $(35.3831787, -9.387266)$.  So, we have
+
+\begin{align*}
+	\hat{\theta}_{MLE} &= (28.85685, -7.75672)\\
+	\hat{\theta}_{LCM} &= (35.3831787, -9.387266),
+\end{align*}
+
+which are quite different distributions!
+
+But all is not lost, for two reasons:
+\begin{enumerate}
+\item The ``fake" LCM parameter estimate, when we account for a direction of constancy in this LCM, are actually very close to the MLE.
+\item The ``fake" LCM parameter estimate, combined with the ``fake" LCM sample space, assign almost identical probabilities to the sample points as the MLE distribution!
+\end{enumerate}
+
+Pursuing (1) further, we know a direction of constancy for the LCM, $\gamma_{lim}$, is in fact the normal to the empirical face, so any vector in the direction of $(4,-1)$.  Then we claim that 
+\begin{align*}
+	\hat{\theta}_{LCM} + \gamma_{lim}\\
+	= 	\hat{\theta}_{LCM} + k \, (4,-1)\\
+\end{align*}
+will actually be close to the MLE.  Of course, we don't know what magnitude to use, but if we had perfect knowledge and chose $k = -1.631582$ to match the edge coordinate exactly, we would get
+\begin{align*}
+	\hat{\theta}_{LCM} + k \, (4,-1)= (28.856852 -7.755684)
+\end{align*}
+where we see that the triangle parameter is in fact very close to that of the MLE.
+
+For (2), if we compare what probabilities our ``fake" LCM distribution gives to the empirical face points and compare to the probabilities that the MLE would give to these points in the original model, we see that they are quite close!
+
+% latex table generated in R 2.11.1 by xtable 1.5-6 package
+% Fri Sep 10 13:22:25 2010
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{rrrrr}
+  \hline
+ & Edges & Triangles & LCM & MLE \\ 
+  \hline
+1 & 20 & 0 & 0.3414 & 0.3425 \\ 
+  2 & 22 & 8 & 0.2019 & 0.2009 \\ 
+  3 & 21 & 4 & 0.3914 & 0.3911 \\ 
+  4 & 23 & 12 & 0.0566 & 0.0561 \\ 
+  5 & 24 & 16 & 0.0081 & 0.0080 \\ 
+  6 & 25 & 20 & 0.0005 & 0.0005 \\ 
+   \hline
+   &  &  & 1.0000 & 0.9990 \\ 
+\end{tabular}
+\end{center}
+\end{table}
+
+The sum of the absolute value of differences is only $0.0031$ on the face points.  If we include the additional 0.001 probability on points that our fake LCM distribution excludes, that is a difference in probability of $0.0041$.  
+
+So, we have done something completely wrong---we've gotten very different looking parameter estimates on a very different sample space.  And yet the distributions are remarkably similar!
+
+MORAL OF THE STORY: BAD PARAMETERS BUT GOOD PROBABILITIES.
+
+SO, how do the CI look?
+
+Well, remember that for LCM's we are looking to construct one-sided CIs.  But here, what happens if we go off to infinity in this supposed direction of recession?  The log-likelihood will eventually dip back down!  So, we can constructed two-sided CI's, I think.  But, my calculations got me something that seems pointlessly wide: 
+\begin{align*}
+ (3.503179,  -1.417266 )\\
+ (71.22318,  -18.34727 ).
+\end{align*}
+
+
+ANOTHER IDEA: how about an additional sample after finding what we are certain is the face, just to see if the sample changes?  In this case, it's possible that we might ``recover" more points from the sample space, perhaps even ones that will correct our wrong conclusion of a boundary point, or even just to recover more points on the face.
 
 \section{Next steps, as I see it on 8/31/10:}
 \begin{enumerate}
