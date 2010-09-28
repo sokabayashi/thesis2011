@@ -839,6 +839,17 @@ does that mean??  What's the interpretation of this??
 \section{\citet{Rinaldo:2009} and Shanon Entropy plots}  
 What's the point of the entropy plot?
 
+Rationale (according to a talk by Rinaldo): ``Degeneracy occurs when the probability mass is spread over a small number of network statistics, so degenerate distributions will tend to correspond to values of $\theta$ for which the entropy function is small."
+
+Three comments
+\begin{itemize}
+\item Large portions of the natural parameter space corresponds to points of low entropy.
+\item Entropy values can change by large amounts for points close together in the parameter space.
+\item There is structure in the entropy plot that can be characterized by the directions of recession.
+\end{itemize}
+
+I actually am not sure what their result is; is it that non-existence of MLEs can be characterized in terms of the entropy plots?
+
 \newpage
 \section{A Bit of Computational Geometry}
 In order to pursue the GDOR approach further, we also need to explore the theory of 
@@ -1433,12 +1444,27 @@ Well, remember that for LCM's we are looking to construct one-sided CIs.  But he
 
 ANOTHER IDEA: how about an additional sample after finding what we are certain is the face, just to see if the sample changes?  In this case, it's possible that we might ``recover" more points from the sample space, perhaps even ones that will correct our wrong conclusion of a boundary point, or even just to recover more points on the face.
 
+\section{Three-dimensional sample space --- 9/18/10}
+We can make our problem more interesting by adding another statistic---the number of two-stars---to our natural parameter vector.  DEFINE two-stars.
+
+This should make the prospect of finding faces more interesting since now they can be zero, one, or two-dimensional.
+
+\begin{itemize}
+\item Count table of edges, triangles, two-stars.  Done and verified, 9/17/10.
+\item 3D plot?  misc3d?
+\item Calc and save MLE info to file.
+\item convex hull, faces, functions for finding normal cones, etc.
+\end{itemize}
+
+It is tempting to just draw the whole polygon.  However, as I've already seen, the 3D picture might not actually be so useful for looking at the entire space if one of the dimensions is 3x larger than the others (two stars vs. triangles).  What we actually want is to zoom in on the surface of the polygon at a certain point.
+http://www.cs.cmu.edu/~learning/
+
 \section{Next steps, as I see it on 8/31/10:}
 \begin{enumerate}
 \item Make sure every case works---$\yobs$ on any boundary, extreme pt.  Even points 
-like (21,4).  The algorithm needs to be generalized.  Record some pictures!
-\item Turn on MC for estimation of gradient.  
-\item MCMC?  Can we use the ergm sampler?
+like (21,4).  The algorithm needs to be generalized.  \textbf{Record some pictures!}
+\item Turn on MC for estimation of gradient.  9/12/10.  not too bad!  appears to work just fine.
+\item MCMC?  Can we use the ergm sampler?  This might be terrible.  In fact, it might be worth conducting a study of how much the MCMC sample differs from the perfect MC sampler.
 \item 3-dimensional statistics?
 \item Bridge sampling, reverse logistic regression, Tan, P. McCullaugh, Ming.
 \item simulated tempering.
