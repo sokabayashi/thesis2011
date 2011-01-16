@@ -1,0 +1,86 @@
+\documentclass[oneside]{myumnStatThesis}
+%\usepackage{epsfig}
+
+
+
+
+\author{Saisuke Okabayashi}
+\adviser{Charles J. Geyer}
+%\coadviser{Co-Adviser Name Here}
+\title{Maximum Likelihood in Exponential Families with Complex Dependence}
+\month{April}
+\year{2011}
+% Month and Year of Degree Clearance, NOT necessarily when you defended
+
+\begin{document}
+
+%\makesignaturepage % required
+\maketitlepage % required
+\makecopyrightpage % recommended, required if registering copyright
+
+\frontmatter
+
+%\begin{acknowledgementspage} % optional
+%I owe all of my success to Alicia who is awesome.
+%\end{acknowledgementspage}
+
+\begin{abstract}
+
+I did some stuff.
+
+
+\end{abstract}
+
+\tableofcontents % required
+
+\newpage
+\chapter*{List of Tables}
+\addcontentsline{toc}{chapter}{List of Tables}
+{\def\chapter*#1{}
+\listoftables}
+
+\newpage
+\chapter*{List of Figures}
+\addcontentsline{toc}{chapter}{List of Figures}
+{\def\chapter*#1{}
+\listoffigures}
+
+
+\mainmatter
+
+\chapter{Introduction}
+%\input{Introduction}
+
+\chapter{Background Exponential Family Theory}\label{S:}
+%\input{Background}
+
+%\chapter{Implications of Geometric Ergodicity}\label{sec:implications}
+%\input{DriftAndMinor}
+%
+%\chapter{Geometric Ergodicity for the Gibbs Sampler}\label{sec:gibbs}
+%\input{Gibbs}
+%
+%\chapter{Examples and Applications}\label{sec:examples}
+%\input{Examples}
+
+
+% References don't have to be double spaced either
+\setstretch{1.3}
+\bibliographystyle{ims}
+\bibliography{References}
+
+
+% text in appendices may be single spaced, if desired
+\setstretch{1.3} % to 1.3 spacing
+\appendix
+
+%\chapter{Proofs of Chapter \ref{sec:gibbs} Results}\label{sec:app1}
+%\input{GibbsProofs}
+%
+%\chapter{Proofs of Chapter \ref{sec:examples} Results}\label{sec:app2}
+%\input{ExampleProofs}
+
+
+
+
+\end{document}
