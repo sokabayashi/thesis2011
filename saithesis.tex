@@ -1,6 +1,42 @@
 \documentclass[oneside]{myumnStatThesis}
 %\usepackage{epsfig}
+\graphicspath{{Figures/}}
+\usepackage{graphicx}
+\usepackage{epsfig,color}
 
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\I}{I}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\bd}{bd}
+\DeclareMathOperator{\intr}{int}
+\DeclareMathOperator{\rintr}{rint}
+\DeclareMathOperator{\con}{con}
+\DeclareMathOperator{\aff}{aff}
+\DeclareMathOperator{\epi}{epi}
+\DeclareMathOperator{\lev}{lev}
+
+\def\RR{{\mathbb R}}
+\def\ZZ{{\mathbb Z}}
+\def\D{{\mathcal D}}
+\def\XX{{\mathcal X}}
+\def\YY{{\mathcal Y}}
+\def\NN{{\mathcal N}}
+\newcommand{\deriv}[2]{\frac{d #1}{d #2}}
+\newcommand{\dderiv}[2]{\frac{d^2 #1}{d #2^2}}
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ppderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\ppmderiv}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
+\newcommand{\fatdot}{\,\cdot\,}
+\newcommand{\inner}[1]{\langle #1 \rangle}
+\newcommand{\set}[1]{\{\, #1 \,\}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\etaMLE}{\hat{\eta}_{\textrm{MLE}}}
+\newcommand{\betaMLE}{\hat{\beta}_{\textrm{MLE}}}
 
 
 
@@ -16,19 +52,14 @@
 
 %\makesignaturepage % required
 \maketitlepage % required
-\makecopyrightpage % recommended, required if registering copyright
-
-\frontmatter
-
+%\makecopyrightpage % recommended, required if registering copyright
+%\frontmatter
 %\begin{acknowledgementspage} % optional
 %I owe all of my success to Alicia who is awesome.
 %\end{acknowledgementspage}
 
 \begin{abstract}
-
-I did some stuff.
-
-
+\input{abstract}
 \end{abstract}
 
 \tableofcontents % required
@@ -50,29 +81,1265 @@ I did some stuff.
 
 \chapter{Introduction}
 %\input{Introduction}
+Exponential families are commonly used to model phenomena with dependent structure, 
+where the outcomes of the response variable of interest are in fact dependent on one another.  For example, the Ising 
+model \citep{Ising,Potts} is an exponential family model that has been used to model ferromagnetism.  A realized 
+sample from this model is depicted in Figure~\ref{F:pottsimage}, where neighboring pixels (representing atoms in a crystal lattice)
+are more likely to have the same color.  We explore this model further in Section~\ref{S:Examples:Ising}.
+Other examples of phenomena with dependent structure modeled with exponential families include
+plant ecology \citep{Besag:1974,Besag:1975}, 
+friendship networks \citep{Wasserman:1996,advancesp*,Goodreau:2009}, 
+protein-protein interaction networks \citep{Saul:2007},
+and the lifetime fitness of plants \citep{Shaw:2008}.
+  
 
-\chapter{Background Exponential Family Theory}\label{S:}
+\begin{figure}
+\begin{center}
+\includegraphics[width=4.5in,keepaspectratio]{potts}
+\end{center}
+\caption{A realized sample from an Ising model on a $32 \times 32$ lattice with $\eta = \left(0, \log(1 + \sqrt{2}) 
+\right)^T$.  This value of $\eta$ corresponds to the phase transition point, where the sample images are mostly one 
+color with small but significant portions of the other color.  There is no preference for the dominant color to be 
+white or black.}
+\label{F:pottsimage}
+\end{figure}
+
+The appeal of exponential families in these settings stems from their simplicity and maximum entropy property \citep{Jaynes:1978,Geyer:1992}.
+By choosing statistics of interest on the data, one fully specifies a model that gives the 
+most reasonable inference possible derived solely from those statistics.  Furthermore, exponential families have been 
+well-studied \citep{Barndorff,Brown:1986} and utilized over the decades and have desirable properties such as a 
+strictly concave likelihood function.
+
+\section{Parameter estimation methods in exponential families}
+Calculating the maximum likelihood estimators (MLE) for exponential families when dependence is complex, however, 
+remains a challenging problem because the likelihood function may be computationally infeasible.  In particular, the 
+form of the likelihood is determined by the chosen statistics up to a normalizing constant, but this normalizing 
+constant may involve a summation over an astronomical number of terms.  Evaluating the likelihood function---let alone 
+maximizing it---presents a significant challenge.
+  
+Two commonly used parameter estimation methods to circumvent this issue in exponential families are the \emph{pseudo-likelihood}
+approach \citep{Besag:1975,Strauss:1990,Composite}, which finds parameter values that maximize the pseudo-likelihood function,
+and the \emph{Markov chain Monte Carlo maximum likelihood estimate} (MCMC-MLE) approach \citep{Geyer:1992,Geyer:1994},
+which uses MCMC to approximate the log likelihood so that it can subsequently be maximized.  
+The pseudo-likelihood approach is computationally expedient, but has been shown to produce unreliable results when 
+dependence is strong \citep*{Geyer:1992,Duijn:2009}.  
+
+The MCMC-MLE approach is theoretically guaranteed to converge to the MLE if it exists and is the default algorithm in 
+software packages such as \texttt{statnet} \citep{statnet:R} in the R platform for network models.  
+However, this approach has been shown in practice to be sensitive to initial parameter values when used without the 
+trust region methodology recommended in \citep{Geyer:1992}, and the algorithm may require many iterations and enormous 
+(sometimes infeasibly large) Monte Carlo sample sizes when the starting value is far from the MLE \citep*{ergm}.  
+Improvement to the MCMC-MLE approach is an active area of research \citep{Hummel}.     
+
+Variations on the Robbins-Monro \emph{stochastic approximation} (SA) algorithm \citep{Robbins-Monro} have 
+been applied to find in the MLE similar contexts: \citet{Younes:1988,Younes:1989,Moyeed:1991,Gu:2001}
+applied MCMC stochastic approximation to spatial models and \citet{Snijders:2002} to social network 
+models (exponential random graph models).
+%Our approach shares a similar recursive mechanism with SA, so we will describe this method further.  
+SA procedures for finding the MLE of a parameter $\eta$ generate iterated estimates $\eta_k$ to find the 
+root of a gradient function $h(\eta)$:
+\begin{align} \label{E:eta SA update}
+	\eta_{k+1} = \eta_k + \alpha_k Y_k,
+\end{align}
+where $\alpha_k$ is a step size and is typically a member of a decreasing sequence of positive numbers, and $Y_k$ is a 
+random variable from the distribution specified by $\eta_k$ that noisily estimates the gradient function $h(\eta_k)$.  
+
+Restrictive conditions are required of $\alpha_k$ and $Y_k$ to establish convergence of the sequence $\eta_k$.  
+In Robbins-Monro SA \citep{Robbins-Monro}, the step size $\alpha_k$ must be a sequence of positive constants 
+that satisfies 
+\begin{align*}
+\sum \alpha_k^2 < \infty
+%	\sum \alpha_k = \infty, \qquad \sum \alpha_k^2 < \infty.
+\end{align*}
+for which the choice of
+\begin{align} \label{E:SA step size}
+\alpha_k = \frac{A}{B + k}
+\end{align}
+ is commonly used, where $A$ and $B$ are constants that must be specified by the user.  This specification requires experimentation and care.  There can be significant variation in performance depending on choice of these constants. 
+A large body of more recent research presents evidence for a sequence that goes to 0 more slowly than $1/k$ 
+for faster convergence \citep[Chapter 11]{Kushner:1997}.  
+%Regardless of the exact form, there is no guarantee the likelihood function will increase at each update. 
+
+The conditions on $Y_k$ are more restrictive.  Popular approaches include constraining the sequence of estimators $
+\eta_k$ to a compact set specified \emph{a priori}, or assuming that the noise component of $Y_k$ be a martingale 
+difference sequence.  As commonly observed \citep{Chen:2002,Andrieu:2005,Liang:2010} these may be 
+difficult to satisfy in practice.  
+See \citep{Andrieu:2005,Liang:2010} for recent developments that impose less restrictive conditions using truncated 
+updates.
+
+An issue for any recursive search algorithm including stochastic approximation is the choice of starting point.  It is 
+often the case that algorithms are good at finding the MLE when the starting point is close to it, but of course the 
+location of the MLE is unknown.  For any exponential family with bounded support, Fisher information 
+becomes singular as the canonical parameter $\eta$ goes to $\infty$ \citep{Rinaldo:2009}.  Hence methods which rely on 
+the Fisher information matrix may fail when the starting point for $\eta$ is far from the MLE \citep{Younes:1989,Gu:2001}.
+Of course, one may try different starting points until a ``good'' one is found, but this can be cumbersome in 
+practice.
+
+\section{Algorithm overview} 
+In this article, we propose a simple and practical line search algorithm that converges to the MLE of any regular 
+exponential family when the MLE exists and is unique and the first derivative of the log likelihood can be calculated 
+exactly.  
+When it cannot, the first derivative still has a particularly convenient form that is easily estimable with MCMC, 
+making the algorithm still useful in application.  We also show how to construct and apply confidence intervals in such 
+a setting to increase the probability of convergence.  
+
+The appeal of this algorithm is its usability: no trial and error is needed.  
+No experimentation with multiple starting points or tuning parameters is necessary and
+no unrealistic \emph{a priori} information about the problem need be specified.  
+It is currently used in the \texttt{aster2} contributed R package 
+\citep{aster:R} as the safeguard for steepest ascent and Newton-Raphson iterations in finding the MLE for aster models.
+
+Our algorithm generates iterated estimates $\eta_k$ of the MLE $\hat{\eta}$ of the form 
+\begin{align} \label{E:eta update}
+	\eta_{k+1} = \eta_k + \alpha_k p_k
+\end{align}
+where $\alpha_k$ is a step size and $p_k$ is a \emph{search direction} and is restricted to be an ascent direction of 
+the log likelihood.  
+Despite the visual similarity between \eqref{E:eta SA update} and \eqref{E:eta update}, the line search approach treats 
+the search direction $p_k$ in \eqref{E:eta update} as constant whereas in SA the corresponding $Y_k$ in \eqref{E:eta SA 
+update} is random.
+Furthermore, line search algorithms have more restrictions on the step size $\alpha_k$.  
+The step size 
+conditions in the classical gradient ascent algorithm, which is the basis for our algorithm, force  a sufficiently 
+large increase in the objective function at every step, guaranteeing convergence to the global maximum.
+%By contrast, there may be steps in SA that result in a decrease of the objective function.   
+
+Theorem 3.2 in \citep{NW} implies the global convergence of the steepest ascent 
+algorithm for a continuously differentiable function, $\ell(\eta)$.  It requires the step length $\alpha_k$ to satisfy 
+the Wolfe conditions for \emph{sufficient increase} and \emph{curvature}:
+\begin{equation} \label{eq:wolfe}
+\begin{split}
+	\ell(\eta_k + \alpha_k \eta_k) \geq \ell(\eta_k) + c_1 \alpha_k \nabla \ell (\eta_k)^T p_k \\
+	\nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c_2 \nabla \ell( \eta_k)^T p_k
+\end{split}
+\end{equation}
+where $\nabla$ is the gradient operator and $0 < c_1 < c_2 < 1$.   
+Variations of these conditions exist in the numerical optimization literature \citep{Fletcher,NW,Sun:2006}, but all 
+require evaluating the objective function.
+
+Exponential families we consider are an unusual case in optimization in that the objective function 
+is harder to compute than its derivatives and hence not previously considered by optimization theorists.
+In our algorithm, we replace \eqref{eq:wolfe} with a single modified curvature condition:
+\begin{align} \label{E:curvature mod}
+	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
+\end{align}
+for some $0 < c < 1$.  This replacement is possible while still guaranteeing sufficient increase and convergence 
+because we have the additional property that the exponential family log likelihood function we consider is strictly 
+concave.  The restrictions on the step size $\alpha_k$ along a particular direction $p_k$ and the resulting values for 
+$\ell(\eta_{k+1})$ are depicted in Figure~\ref{F:alpha_region}.  
+
+
+
+\begin{figure}
+\centering
+    \scalebox{.4}{\input{Figures/alphamax.pstex_t}}
+	\caption{The acceptable region for step size $\alpha_k$ along a particular search direction $p_k$ according to the 
+modified curvature condition \eqref{E:curvature mod}.  The step sizes $\alpha_{c}$ and $\alpha_{\textrm{max}}$ 
+correspond to values of $\nabla \ell( \eta_k + \alpha p_k)^T p_k$ equaling $c \nabla \ell(\eta_k)^T p_k$ and $0$, 
+respectively.  The condition ensures sufficient increase in the log likelihood along the search direction $p_k$.}
+\label{F:alpha_region}
+\end{figure}
+ 
+The desire to avoid calculation of higher order derivatives is motivated not just by computational considerations, but 
+also by how much useful information can be extracted from them.   As noted previously, if $\eta$ is far from the MLE,  
+the Fisher information matrix may be near-singular and algorithms like (unsafeguarded) Newton-Raphson algorithm may fail.  For this 
+reason, the best use of our algorithm may be from ``long range,'' filling a gap in the MLE estimation toolbox.  It may 
+be expedient to switch to another algorithm like Newton-Raphson after significant progress is made and 
+the Fisher information matrix becomes useful.  Our line search algorithm with $p_k$ the Newton direction provides a
+safeguard for Newton-Raphson that makes it safe (not necessarily efficient) for use from any range.
+%, though it is difficult to quantify what is significant progress since the 
+%limitations of these other algorithms are not well-defined.  
+The \texttt{aster2} contributed R package \citep{aster:R} switches $p_k$ from steepest ascent direction to Newton direction
+after a fixed number of steps ($d / 2$ where $d$ is the dimension $\eta$) but always finds a step length $\alpha_k$ satisfying
+\eqref{E:curvature mod}, iterating until the (unsafeguarded) Newton step satisfies \eqref{E:curvature mod}.\\
+
+
+%%% Can't just put a \newpage just anywhere in the text
+\pagebreak[3]
+
+Our algorithm can be outlined as follows.  Let $\lVert \, \cdot \, \rVert$ denote the Euclidean norm function, and $\epsilon$ 
+a small value greater than 0.  \\
+
+% ALGORITHM 
+\noindent Get an initial value, $\eta_0$.\\ 
+Set $k=0$. \\
+Calculate $\nabla \ell( \eta_k)$, the direction of steepest ascent. \\
+Set $p_k = \nabla \ell( \eta_k)$. \\
+\textbf{while}  $\lVert \nabla \ell( \eta_k) \rVert > \epsilon$ \\ 
+\hspace{4mm} \indent	 \textbf{Find} a step size $\alpha_k$ that satisfies the modified curvature condition
+\begin{align*}
+	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
+\end{align*}
+\indent for some $0 < c < 1$.  
+%This condition requires $\alpha_k$ to fall within \\
+%\indent the acceptable region in Figure \ref{F:alpha_region}. \\
+
+
+$\eta_{k+1} = \eta_k + \alpha_k p_k$.\\
+\indent Calculate $\nabla \ell( \eta_{k+1})$.\\
+\indent \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent direction. \\
+\indent $k = k + 1$.  \\
+\textbf{end while}\\
+
+
+   
+
+%Finally, a future application of this algorithm may be to discrete state space exponential families 
+%where the MLE for $\eta$ does not exist with positive probability.  
+%In these cases, the MLE is ``at infinity'' and the concave log likelihood continues to increase as 
+%$\eta \to \infty$ along certain directions of recession \citep{Rinaldo:2009, Geyer:gdor}.  
+%Finding ``the'' MLE then becomes a very different problem, and conditions to restrict $\eta$ to a 
+%compact set as utilized in MCMC stochastic approximation \citep{Andrieu:2005, Liang:2007, Liang:2010} 
+%would not be relevant.    Our proposed algorithm may be applied to this setting to climb the log likelihood until it 
+%``flattens out''  and the gradient approaches zero.  
+%This in turn may be useful in identifying the directions of recession. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Background Exponential Family Theory}\label{Section:Background}
 %\input{Background}
 
-%\chapter{Implications of Geometric Ergodicity}\label{sec:implications}
-%\input{DriftAndMinor}
-%
-%\chapter{Geometric Ergodicity for the Gibbs Sampler}\label{sec:gibbs}
-%\input{Gibbs}
-%
-%\chapter{Examples and Applications}\label{sec:examples}
-%\input{Examples}
+An exponential family of distributions \citep{Barndorff,Geyer:gdor}
+on a sample space $\YY$ has log likelihood
+\begin{align} \label{E:loglike}
+   \ell(\eta) = \inner{g(y), \eta} - c(\eta)
+\end{align}
+where $g(y)$ is a $d$-dimensional vector of canonical statistics, $\eta$ a $d$-dimensional vector of
+canonical parameters, and $\inner{\fatdot, \fatdot}$ denotes the bilinear form
+$$
+   \inner{g, \eta} = \sum_{i =1}^d g_i \eta_i.
+$$
+So that the probability function integrates to 1,
+the cumulant function $c$ must have the form
+\begin{align} \label{E:cumulant}
+      c(\eta) = \log \left(\int e^{\inner{g(y), \eta}} \, d\mu(y) \right),
+\end{align}
+where $\mu$ is a measure on $\YY$.
+Define
+\begin{align} \label{E:fullparam}
+	\Xi = \{ \eta \in \RR^q: c(\eta) < \infty \}.
+\end{align}
+The exponential family is \emph{full} if the natural parameter space is \eqref{E:fullparam}, and \emph{regular} if, in 
+addition, $\Xi$ is an open set.  We say an exponential family is \emph{minimal} if $g(y)$ is not concentrated on a 
+hyperplane. Minimality guarantees that if an MLE exists, it is unique \citep{Geyer:gdor}.
+
+In finite state space models with complicated dependence like an Ising model or exponential random graph model,  \eqref
+{E:cumulant} is a sum which may have no simple expression and can only be evaluated by explicitly doing the sum.
+When the sample space $\YY$ is even moderately large, this can be prohibitively expensive.  For example, an Ising model 
+defined on a $32\times 32$ square lattice where each entry takes values of 0 or 1, there are $2^{1024} \approx 10^
+{300}$ elements in $\YY$.  A loop with this many iterations takes too long no matter how programmed.
+
+A useful property of all exponential families \cite[p.~27]{TPE2} on which we rely heavily is that 
+\begin{align*}
+	\E_\eta(g(Y)) &= \nabla c(\eta)	\\
+	\Var_\eta(g(Y)) &= \nabla^2 c( \eta ).
+\end{align*}
+
+Thus we can express first and second derivatives of the log likelihood \eqref{E:loglike} and Fisher information, $I
+(\eta)$, as
+\begin{align}
+	\nabla \ell( \eta ) &= g(y) - \E_\eta g(Y) \label{E:nabla ell} \\
+	\nabla^2 \ell( \eta ) &=  - \Var_\eta g(Y) \label{E:nabla2 ell} \\
+	\I(\eta) &= -\E_\eta \nabla^2 \ell (\eta ) = \Var_\eta g(Y) \label{E:FI}
+\end{align}
+and thereby avoid evaluation of the problematic cumulant function $c$.
+
+
+
+\chapter{Algorithm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Long range search algorithm for MLEs} \label{Section:Algorithm}
+We now present our search algorithm, which will converge to the optimum for any continuously differentiable, strictly 
+convex (or concave) function.  The algorithm and requirements are presented in Theorem~\ref{Thm:Line Search}.  Proofs 
+are in Appendix~\ref{Section:Proofs}. 
+
+
+We apply the algorithm in Theorem~\ref{Thm:Line Search works} to the specific setting of finding the MLE in a regular 
+exponential family when the MLE is known to exist and be unique and the gradient can be calculated exactly.
+
+%\section{Line search convergence}
+In order to be consistent with the general optimization literature \citep{Fletcher,NW}, we state our algorithm in this 
+section from the perspective of a minimization problem.  Thus we wish to minimize a real-valued objective function $f$ 
+defined on $\RR^n$.  
+
+
+%%%%%%%%%%% BEGIN THEOREM %%%%%%%%%%%%%%
+\begin{theorem}[Convex function root search] \label{Thm:Line Search}
+Consider any line search of the form 
+\begin{align}
+	x_{k+1} &= x_k + \alpha_k p_k \label{E:x_update}
+\end{align}
+used to minimize the objective function $f$, which satisfies the following assumptions:
+\begin{enumerate}
+	\item The objective function $f$ is bounded below in $\RR^n$. \label{ass:one}
+	\item The objective function $f$ is proper, lower semicontinuous, and strictly convex.
+	\item The objective function $f$ is differentiable in an open set $\NN$ containing the level set $\lev_{\leq f
+(x_0)} f$, which is bounded, where $x_0$ is the starting point of the iteration.
+%\item The \emph{step length} $\alpha_k$ is greater than $0$ unless $\nabla f(x_k) = 0$, 
+% in which case $x_k$ is already the solution and the search is complete.
+\item The \emph{search direction} $p_k$ is a non-zero \emph{descent direction} \label{ass:four}
+such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent direction $-\nabla f(x_k)$ is 
+restricted to be less than 90 degrees by
+\begin{align*}
+\cos \theta_k \geq \delta > 0
+\end{align*}
+ for some fixed $\delta > 0$.  
+\end{enumerate}
+
+Then, unless $\nabla f(x_k) = 0$, in which case $x_k$ is already the solution and the search is complete, it is 
+possible to find a step length $\alpha_k$ that satisfies the \emph{curvature condition}
+\begin{align}
+	c \nabla f(x_k)^T p_k &\leq \nabla f( x_k + \alpha_k p_k)^T p_k \leq 0 \label{E:Wolfe-mod}
+\end{align}
+for some fixed $0 < c < 1$.
+
+Furthermore, repeated iterations of \eqref{E:x_update} satisfying assumptions~\ref{ass:one} through~\ref{ass:four} and \eqref{E:Wolfe-mod} will produce 
+a sequence, $x_1, x_2, \ldots$ such that
+\begin{align*}
+	\lim_{k \to \infty} || \nabla f(x_k) || = 0.
+\end{align*}
+\end{theorem}
+
+%\section{Line search for MLE estimation}
+\begin{theorem}[Exponential family log likelihood maximization] \label{Thm:log like max}
+Consider any line search of the form 
+\begin{align}
+	\eta_{k+1} &= \eta_k + \alpha_k p_k \label{E:eta_update}
+\end{align}
+used to minimize the negative log likelihood function $-\ell(\cdot)$ of a regular exponential family, where the \emph{search direction} $p_k$ is a non-zero \emph{descent direction}
+such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent direction $-\nabla \ell(\eta_k)$ is 
+restricted to be less than 90 degrees by
+\begin{align*}
+\cos \theta_k \geq \delta > 0
+\end{align*}
+ for some fixed $\delta > 0$.  
+
+Then, unless $\nabla \ell(\eta_k) = 0$, in which case $\eta_k$ is already the solution and the search is complete, it is 
+possible to find a step length $\alpha_k$ that satisfies the \emph{curvature condition}
+\begin{align}
+	0 \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k  \leq c \nabla \ell(\eta_k)^T p_k  \label{E:Wolfe-ll}
+\end{align}
+for some fixed $0 < c < 1$.
+
+Furthermore, repeated iterations of \eqref{E:eta_update} along a descent direction satisfying \eqref{E:Wolfe-ll} will produce a sequence, $\eta_1, \eta_2, \ldots$ such that
+\begin{align*}
+	\lim_{k \to \infty} || \nabla \ell(\eta_k) || = 0.
+\end{align*}
+\end{theorem}
+
+
+
+We apply Theorem~\ref{Thm:Line Search} to the setting of exponential families to find the MLE when it exists.  
+
+\begin{theorem}[] \label{Thm:Line Search works}
+For a regular exponential family with minimal representation where the MLE exists, the line search described in 
+Theorem~\ref{Thm:Line Search} can be applied to the negative log likelihood function $-\ell(\eta)$ so that a search 
+starting at any $\eta_0 \in \Xi$ will converge to the MLE of $\eta$.
+\end{theorem}
+
+The issue of MLE existence is a problem in computational geometry, not an optimization problem, so we do not address it 
+here.  See \citep{Geyer:gdor,Rinaldo:2009} and references cited therein.
+
+%%%%%%%% ADD CONJUGATE GRADIENT SECTION IN NEXT VERSION
+\chapter{Refinements of algorithm}
+
+In Theorem~\ref{Thm:Line Search}, we restricted our search direction $p_k$ to be a descent direction, so that $\nabla f
+(x_k)^T p_k < 0$ or, alternatively, the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
+direction $-\nabla f(x_k)$ is less than 90 degrees.  However, this still leaves many possibilities for the choice of 
+$p_k$ other than steepest descent.  In addition, we have specified restrictions on the step size $\alpha_k$ in the 
+curvature condition \eqref{E:Wolfe-mod} with $0 < c < 1$, but it would be useful to know if certain values of $c$ are 
+better than others.
+
+\section{Search directions}
+In our examples in Section~\ref{S:Examples}, we default to steepest descent directions in our implementation for 
+transparency.  Although often effective in early steps, steepest descent directions can result in a zigzagging 
+trajectory of the sequence $x_k$ \citep{Sun:2006}.  Conjugate gradient methods address this phenomena and cover the 
+sample space more efficiently \citep{NW}.  It is easy to implement a variant of the Polak-Ribi\`{e}re method
+\citep[pp.~120--122]{NW} here, requiring little more in terms of calculation or storage.  The search direction $p_k$ would update 
+with an extra intermediate step as follows:
+\begin{align*}
+	\gamma_{k+1}^{PR} &= \max \left( 0, \frac{ [ \nabla f( x_{k+1}) ]^T( \nabla f( x_{k+1} ) - \nabla f( x_k) )  }
+{ \lVert \nabla f( x_k) \rVert^2 } \right )\\
+	p_{k+1} &= -\nabla f( x_{k+1}) + \gamma_{k+1}^{PR} \, p_k.
+\end{align*}
+Note that when $\gamma_{k+1}^{PR} = 0$, $p_{k+1}$ will be just $-\nabla f( x_{k+1})$, the direction of steepest 
+descent, and thus serves as a ``reset''.  The curvature condition \eqref{E:Wolfe-mod} guarantees that this method always 
+yields a descent direction for $p_{k+1}$ and thus Theorem~\ref{Thm:Line Search} still holds.  
+
+\section{Step size}
+We now turn our attention to the optimal step size $\alpha_k$ when our objective function is the log likelihood of an 
+exponential family.  Taking the derivative of $\ell( \eta_k + \alpha_k p_k)$ with respect to $\alpha_k$ shows that the 
+log likelihood is maximized as a function of $\alpha_k$ along the direction $p_k$  when 
+\begin{align*}
+	\nabla \ell( \eta_{k+1} )^T p_k = 0.
+\end{align*}
+
+By choosing $c$ to be small, say 0.2, we ensure that the step taken is close to maximizing the log likelihood along the 
+search direction.  This is also apparent in Figure~\ref{F:alpha_region}. 
+
+Making $c$ too small, however, may make it difficult to find an $\alpha_k$ that meets the curvature condition \eqref
+{E:curvature mod} since this search must be done numerically.  In fact, as the line search nears the MLE and $\nabla 
+\ell( \eta_k)$ gets smaller, the rightmost term in \eqref{E:curvature mod} gets smaller in magnitude (it equals $c 
+\lVert \nabla \ell(\eta_k) \rVert^2$ if using steepest ascent directions), making a numerical search for $\alpha_k$ 
+more challenging.  
+
+%Finally, while the choice of 0.2 for $c$ worked well in the problems we explored regardless of search 
+%directions used, it follows from our discussion in the previous section that it may make sense to use slightly larger 
+%values of $c$ when using steepest ascent directions, thereby reducing the zigzagging phenomenon, but smaller values for 
+%$c$ when using conjugate gradient methods.
+
+
+\section{MCMC approximations} \label{section:MCMC approx}
+Our algorithm requires us to be able to calculate $\nabla \ell(\eta)$ using \eqref{E:nabla ell}.  For many 
+applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC.  That is,
+\begin{align}
+ 	\nabla \ell (\eta) = g(y) - \E_\eta g(Y) \approx g(y) - \frac{1}{m}\sum_{i=1}^m g(Y_i), \label{E:nabla ell approx}
+\end{align}
+where $Y_1, \ldots, Y_m$ are MCMC draws from the distribution with parameter $\eta$.  There are many MCMC algorithms 
+such as Metropolis-Hastings or Swensen-Wang (used for the Ising model example in Section~\ref{S:Examples:Ising}); see 
+\citep{Brooks} and references cited therein.
+We show examples in the next section where $\nabla \ell(\eta)$ can be calculated exactly and where it must be 
+approximated.
+
+The accuracy of the approximation in \eqref{E:nabla ell approx} increases with Monte Carlo sample size $m$. 
+When the current estimate is far away from the MLE, we can use smaller $m$ to save time and work with a 
+fairly noisy approximation of the gradient.  However, when the current estimate approaches the MLE, larger $m$ are necessary.
+
+Our algorithm relies on the computed values of $\nabla \ell(\eta)$ in the curvature condition \eqref{E:curvature mod}, 
+as well as the stop condition for the algorithm, $\lVert \nabla \ell( \eta_k ) \rVert < \epsilon$.  Given that we may 
+only have approximations of $\nabla \ell(\eta)$, we cannot know for certain if either of these conditions are truly 
+met.  We can ameliorate this by constructing confidence intervals for each of the inequalities.  
+
+For the inequalities in \eqref{E:curvature mod}, we can estimate asymptotic standard errors of $\nabla \ell( \eta_k + 
+\alpha_k p_k)^T p_k$  and $c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k$ by appealing to the 
+Markov chain Central limit theorem \citep{Chan:1994,Jones:2004,Roberts:1997,Roberts:2004}.
+The \texttt{initseq} function from the R package \texttt{mcmc} \citep{mcmc:R} can be used to estimate asymptotic 
+standard errors for univariate functionals of reversible Markov chains: given an MCMC sample for a univariate 
+quantity, \texttt{initseq}
+returns a value (divided by sample size) that is an estimate of the asymptotic variance in the Markov chain central 
+limit theorem.  Both of the quantities in \eqref{E:curvature mod} are univariate.  In the second expression, $c \nabla \ell(\eta_k)^T 
+p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k$, the MCMC sample generated for $\nabla \ell( \eta_k + \alpha_k p_k)^T 
+p_k$ is independent of the sample generated for $c \nabla \ell(\eta_k)^T p_k$.  Thus \texttt{initseq} can be applied 
+to each sample separately and the results summed for an estimated variance.  
+We can then be approximately 95\% confident (non-simultaneously) that $\alpha_k$ satisfies \eqref{E:curvature 
+mod} if
+\begin{align*}
+	 \nabla \ell( \eta_k + \alpha_k p_k)^T p_k - 1.645 \cdot \text{se}_1 > 0 \\
+	 c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k - 1.645 \cdot \text{se}_2 > 0 
+\end{align*}
+where $\text{se}_1$ and $\text{se}_2$ are the asymptotic standard errors for $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k
+$  and $c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k$, respectively, calculated as described.
+
+The delta method can be applied to estimate a standard error for $\lVert \nabla \ell( \eta_k ) \rVert$. The asymptotic 
+variance is calculated by
+\begin{align*}
+	V \left( \lVert \nabla \ell( \eta_k ) \rVert \right )= \frac{1}{\lVert \nabla \ell( \eta_k ) \rVert^2} \nabla \ell
+( \eta_k )^T \, \Sigma \,  \nabla \ell( \eta_k ),
+\end{align*}
+where $\Sigma$ is the variance matrix of $\nabla \ell( \eta_k )$ and can be estimated by the sample variance matrix of 
+the batch mean vectors of $g(Y_1), \ldots, g(Y_n)$ divided by the number of batches (the \texttt{initseq} function 
+requires a univariate vector and so cannot be used here).  We can be approximately 95\% confident that $\lVert 
+\nabla \ell( \eta_k ) \rVert > \epsilon$ if 
+\begin{align*}
+	\lVert \nabla \ell( \eta_k ) \rVert - 1.645 \sqrt{ V \left( \lVert \nabla \ell( \eta_k ) \rVert \right )} > 
+\epsilon.
+\end{align*}
+%To be conservative, we suggest using a larger quantile, say 2, 
+%in the confidence intervals instead of the 1.645 used above.
+
+In practice, however, use of confidence intervals does not appear necessary with  Monte Carlo sample sizes that are set 
+large enough so that these standard errors are initially small relative to the point estimates.  The ratio of point 
+estimate to standard error of course decreases as the algorithm progresses and the estimate of the parameter nears the 
+MLE, reflected in $\nabla \ell( \eta_k )$ nearing 0.  Thus these confidence intervals are most useful as a guide for
+when to increase the MCMC sample size, or when to switch methods, or when to terminate the algorithm.
+
+
+
+\section{Combining with other algorithms}
+We believe the best use of this algorithm is in combination with other faster methods like MCMC-MLE \citep{Geyer:1992}
+or Newton-Raphson safeguarded by our line search algorithm.  Our algorithm with steepest ascent or conjugate gradient search direction
+should be used initially from ``long range'', when one has no good intuition for an initial value.
+It is well known that when the objective function is quadratic the conjugate gradient method with exact arithmetic converges to the solution
+in at most $d$ steps, where $d$ is the dimension of the problem \citep{NW}.  As a rule of thumb, we think using our 
+algorithm for $d$ steps before switching seems reasonable.
+ 
+
+
+\chapter{Examples} \label{S:Examples}
+\section{Example: logistic regression}
+We illustrate the application of our algorithm in the case of a logistic regression with a starting point far from the 
+solution.  In such a case, the Hessian matrix is often near-singular and algorithms such as Newton-Raphson which rely 
+on it will fail.  For classical SA with step size $1/k$, the magnitudes of the updates diminishes too quickly for 
+the parameter estimates to approach the MLE in a reasonable amount of time.
+
+The response vector $Y$ has components that are Bernoulli trials with mean vector $p$.  The natural parameter is $
+\theta_i = \log \left( \frac{p_i}{1-p_i} \right )$, which is modeled componentwise as a linear function of the 
+predictors $1, x_1, \ldots, x_{q}$, so that
+\begin{align*}
+	\theta_i &= \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \cdots + \beta_{q} x_{q\,i} = \beta^T x_i \qquad
+i = 1, \ldots, n
+\end{align*}
+where $\beta = (\beta_0, \ldots, \beta_{q} )^T$ and $x_i = ( 1, x_{1i}, \ldots, x_{q i})^T$.  
+
+Defining the model matrix $M$ to be the $n \times (q+1)$ matrix with the $x_i$ as rows, we can express $\theta = M \beta
+$.  This in turn allows us to reparameterize the exponential family  as one with $\beta$ as the natural parameter 
+vector and $M^T y$ the vector of statistics with log likelihood
+\begin{align*}
+		 \ell(\beta) &=  \beta^T (M^T y) - c(\beta),
+\end{align*}
+where $y$ is the vector of observed Bernoulli responses.
+By \eqref{E:nabla ell}, the gradient is
+\begin{align*}
+	\nabla \ell( \beta ) &=  M^T y - \E_{\beta}(M^T Y) = M^T( y - \E_{\beta}(Y) ),
+\end{align*}
+where $\E_{\beta}(Y) = \frac{1}{1 + \exp(-M \beta)}$ can be calculated exactly.  This allows us to directly apply 
+Theorem~\ref{Thm:Line Search works}.
+
+Suppose we specify our true parameter value to be $\beta = (0, 2, 2, 1, 1, 0, 0, 0)^T$ and use 100 independent draws 
+from a correlated multivariate normal distribution centered at 0 as our predictors to generate 100 independent 
+Bernoulli trials.  
+Fitting these data using the R function \texttt{glm}, we find the MLE of $\beta$ to be
+\begin{align*}
+	\betaMLE = (  0.635,  5.949, 1.273, 0.180, 1.006, 1.536, -2.252, -0.472 )^T,
+\end{align*}
+where the disparity to the true value of $\beta$ results from a relatively small sample size of $n=100$.
+We use $\beta_0 = ( 5, 4, 3, 2, 1, 0, -1, -2)^T$ for the starting point for our line search algorithm, a point for 
+which Newton-Raphson fails due to a nearly singular Hessian matrix.  
+
+We measure the performance of our algorithm in terms of the total number of iterations used, where each iteration 
+requires the evaluation of the gradient, $\nabla \ell( \beta_k + \alpha_k p_k )$.  Typically, several iterations take 
+place in an inner loop to find a step size $\alpha_k$ that meets the curvature condition \eqref{E:curvature mod}, a 
+process that grows increasingly difficult as the estimates near the MLE since the rightmost term in \eqref{E:curvature 
+mod} gets smaller in magnitude.  Once an acceptable step size is found, the parameter estimate $\beta_k$ is updated and 
+a new search direction is determined, requiring another evaluation of the gradient.
+
+Our algorithm took 54 iterations over 20 different search directions to get $\lVert \nabla \ell( \beta_k ) \rVert < 
+0.01$ and arrive at an estimate for the MLE that differs from the \texttt{glm} result by 0.0117 in Euclidean distance 
+(See Table~\ref{Table:Logistic}).  
+Using the Polak-Ribi\`{e}re conjugate gradient method described in the previous section  resulted in comparably sharp 
+MLE estimates (see Table~\ref{Table:Logistic}) in fewer iterations---28 over 11 search directions---a noticeable 
+improvement. 
+
+We also applied  SA with step size $1/k$ (setting $A=1$, $B=0$ in \eqref{E:SA step size}) from the same starting point 
+$\beta_0$.  The choice of constants $A$ and $B$ in the step size is of course not likely to be optimal;
+however, we want to apply SA without trial and error experimentation.  
+After 10,000 iterations, the parameter estimates look nothing at all like the MLE (See Table~\ref{Table:Logistic}).  
+The starting point $\beta_0$ is so far from the MLE and the step sizes so small that the algorithm does not converge in a reasonable amount of time.
+Table~\ref{Table:step size} shows the first 20 step sizes used by SA and our line search. Our line search continues to 
+use step sizes of relatively large magnitude even well into the process.  It should be noted that these 20 step sizes 
+correspond to the first 20 iterations of SA but all 54 iterations of our line search algorithm since it spends several 
+iterations finding an acceptable step size for each update.
+
+
+% latex table generated in R 2.10.1 by xtable 1.5-6 package
+% Tue May  4 17:37:01 2010
+\begin{table}
+\caption{Comparison of MLEs of $\beta$ for Example 1: MLE = \texttt{glm}, Steep = line search using steepest ascent, 
+CG = line search using conjugate gradient, and SA =  SA with step size = $1/k$, terminated at 10,000 iterations,
+$n$ = number of iterations.  Our 
+proposed algorithm arrives at nearly identical MLE estimates to \texttt{glm}.}
+\begin{center}
+\begin{tabular}{rrrrrrrrrr}
+  \hline
+ & $n$ & $\beta[1]$ & $\beta[2]$ & $\beta[3]$ & $\beta[4]$ & $\beta[5]$ & $\beta[6]$ & $\beta[7]$ & $\beta[8]$ \\ 
+True $\beta$ & & 0.000 & 2.000 & 2.000 & 1.000 & 1.000 & 0.000 & 0.000 & 0.000 \\ 
+  $\hat{\beta}_{\textrm{MLE}}$ & & 0.635 & 5.949 & 1.273 & 0.180 & 1.006 & 1.536 & $-2.252$ & $-0.472$ \\ 
+  $\hat{\beta}_{\textrm{Steep}}$ & 54 & 0.633 & 5.938 & 1.272 & 0.181 & 1.005 & 1.535 & $-2.249$ & $-0.470$ \\ 
+  $\hat{\beta}_{\textrm{CG}}$ & 28 & 0.631 & 5.936 & 1.272 & 0.181 & 1.003 & 1.532 & $-2.244$ & $-0.470$ \\    
+  $\hat{\beta}_{\textrm{SA}}$ & $10^4$ & 1.280 & 10.619 & 5.588 & 4.005 & 2.478 & $-7.153$ & 1.255 & 0.264 \\ 
+  \hline
+\end{tabular}
+\end{center}
+\label{Table:Logistic}
+\end{table}
+
+\begin{table}
+\caption{The first 20 step sizes used by  SA (with step size $1/k$) and our algorithm for Example 1.  The step sizes 
+used by our algorithm do not diminish like $1/k$.
+}
+\begin{center}
+\begin{tabular}{rrrrrrrrr}
+  \hline
+  $k$ & $\alpha_{\textrm{SA}} = 1/k$  & $\alpha_{\textrm{Steep}}$ & $\alpha_{\textrm{CG}}$ \\ 
+  \hline
+1	&	1.000	&	0.192	&	0.192	\\
+2	&	0.500	&	0.319	&	0.319	\\
+3	&	0.333	&	0.403	&	0.416	\\
+4	&	0.250	&	0.353	&	0.561	\\
+5	&	0.200	&	0.380	&	0.491	\\
+6	&	0.167	&	0.333	&	1.092	\\
+7	&	0.143	&	0.420	&	0.359	\\
+8	&	0.125	&	0.307	&	0.314	\\
+9	&	0.111	&	0.442	&	0.275	\\
+10	&	0.100	&	0.283	&	0.318	\\
+11	&	0.091	&	0.483	&	0.278	\\
+12	&	0.083	&	0.241	&	-	\\
+13	&	0.077	&	0.745	&	-	\\
+14	&	0.071	&	0.203	&	-	\\
+15	&	0.067	&	1.224	&	-	\\
+16	&	0.063	&	0.173	&	-	\\
+17	&	0.059	&	2.510	&	-	\\
+18	&	0.056	&	0.195	&	-	\\
+19	&	0.053	&	0.944	&	-	\\
+20	&	0.050	&	0.173	&	-	\\
+  \hline
+\end{tabular}
+\end{center}
+\label{Table:step size}
+\end{table}
+
+
+
+\section{Example: Ising model} \label{S:Examples:Ising}
+In this example, we apply our gradient-based line search algorithm to an Ising model \citep{Ising} on a toroidal square 
+lattice.  Ising models are exponential families where each entry in the square lattice takes the value of either zero 
+or one.  A realized sample is shown in Figure~\ref{F:pottsimage}.  The sufficient statistic vector is two-dimensional, 
+comprising the number of entries with value one and the number of ``neighbor'' entries with the same value.  Entries are 
+considered ``neighbors'' if they are adjacent to one another horizontally or vertically (but not diagonally).  
+
+Here we describe the toroidal square lattice as an $n \times n$ matrix $Y$ and each entry as $Y_{ij}$, where $i$ and $j
+$ take values in $1, \ldots, n$ considered as a cyclical set (addition is done modulo $n$).  The sufficient statistic, 
+$g(y)$, has components:
+\begin{align*}
+	g_1(y) &= \sum_{i=1}^n \sum_{j=1}^n I(Y_{ij}=1), \\
+	g_2(y) &= \frac{1}{2} \sum_{i=1}^n \sum_{j=1}^n 
+				\bigl[ I(Y_{ij}=Y_{i-1,j}) + I(Y_{ij}=Y_{i,j-1}) \\
+							&\qquad \qquad \qquad + I(Y_{ij}=Y_{i+1,j}) + I(Y_{ij}=Y_{i,j+1}) \bigr ]
+				,
+\end{align*}  
+where $I(\cdot)$ denotes the indicator function taking logical expressions to the numbers zero and one, false 
+expressions to zero and true expressions to one.  
+
+Because of the interdependence of neighboring entries in the lattice, there is no closed form expressing $\nabla \ell
+( \eta)$ as in the logistic example.  Instead, we need to approximate $\nabla \ell( \eta)$ using MCMC as described by 
+\eqref{E:nabla ell approx}.  As discussed in Section~\ref{section:MCMC approx}, Theorem~\ref{Thm:Line Search works} 
+cannot be applied directly, but as we demonstrate here, satisfactory estimates are still attained.  The MCMC draws are 
+performed here using the Swendsen-Wang algorithm \citep{Swendsen-Wang:1987,Swendsen-Wang:1990}, available in the contributed R 
+package \texttt{potts} \citep{Geyer:potts}.
+
+We choose $\eta = \left(0, \log(1 + \sqrt{2} ) \right)^T$ to generate a $32 \times 32$ lattice, which we will use as 
+our observed data (Figure~\ref{F:pottsimage}).  This value for $\eta$ is of particular interest because it corresponds 
+to the phase transition point \citep{Potts} and has been shown to be difficult to estimate \citep{Geyer:1990}.  In 
+order to get a good estimate of the MLE to which we can compare our algorithm's results, we use Newton-Raphson starting 
+at the true value of $\eta$ so that it will converge.
+
+We apply our line search algorithm to this data using an arbitrary initial value of $\eta^{(0)} = ( 2, 0.001)$ and a 
+fixed MCMC sample size of 10,000.  Our algorithm used 62 iterations (gradient evaluations) over 17 search directions to 
+get  $\lVert \nabla \ell( \eta_k ) \rVert < 0.005$ and arrive at an estimate of the MLE that differs from Newton-Raphson
+by 0.0037 (see Table~\ref{Table:Potts}).   Using the Polak-Ribi\`{e}re conjugate gradient method resulted in 
+comparably sharp MLE estimates using 45 iterations over 7 search directions.  The total MCMC sample sizes used were $62\times10,0000 = 620,000$ and $45\times10,0000 = 450,000$, respectively.
+
+%> cat( "Total iterations:",i.total, "\n")
+%Total iterations: 62 
+%> cat( "Outer iterations:",i, "\n")
+%Outer iterations: 18 
+%> cat( "Inner iterations:",i.total - i, "\n")
+%Inner iterations: 44 
+
+
+
+\begin{table}
+\caption{Comparison of MLEs for $\eta$ for Example 2: MLE = Newton-Raphson starting from the true $\eta$, Steep = 
+line search using steepest ascent, CG = line search using conjugate gradient, and SA = SA with step size = $1/k$.  All 
+algorithms converged.}
+\begin{center}
+\begin{tabular}{rrrrrrlrr}
+  \hline
+%    &  &  &  & \multicolumn{1}{c}{inner}\\
+  \multicolumn{1}{c}{} & 
+  \multicolumn{1}{c}{MC Samples} &
+  \multicolumn{1}{c}{$\eta[1]$} &
+  \multicolumn{1}{c}{$\eta[2]$} \\
+%  & \multicolumn{1}{c}{loop }\\
+    &  \multicolumn{1}{c}{(thousands)} &  &  & \\
+  \hline
+True $\eta$  & & 0.000 & 0.881 \\ 
+  $\hat{\eta}_{\textrm{MLE}}$ & & $-0.007$ & 0.896 \\ 
+  $\hat{\eta}_{\textrm{Steep}}$ & 620 & $-0.011$ & 0.895 \\ 
+  $\hat{\eta}_{\textrm{CG}}$ & 450 & $-0.008$ & 0.895 \\ 
+  $\hat{\eta}_{\textrm{SA}}$ & 1368 & $-0.010$ & 0.895 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\label{Table:Potts}
+\end{table}
+
+We also applied SA, again with step size $1/k$ from the same starting point $\eta^{(0)}$, and used
+a MCMC sample size of 1,000 for gradient calculation.  
+Here SA converged in 1368 iterations or 1,368,000 MC samples, comparable to our algorithm (see Table~\ref{Table:Potts}).  Table~\ref{Table:Potts step 
+size} shows the first 17 step sizes used by SA and our line search.  The step sizes used by our line search are 
+initially very small compared to $1/k$, but stay in a range of about $1/300$ to $1/3000$.  So, the $1/k$ step size used 
+by SA in fact occasionally satisfies our curvature condition when $k$ is large. 
+
+\begin{table}
+\caption{The first 17 step sizes used by SA (with step size $1/k$) and our algorithm for Example 2.  The step sizes 
+used by our algorithm are initially much smaller than $1/k$.
+}
+\begin{center}
+\begin{tabular}{rrrrrrrrr}
+  \hline
+  $k$ & $\alpha_{\textrm{SA}} =1/k$  & $\alpha_{\textrm{Steep}}$ & $\alpha_{\textrm{CG}}$ \\ 
+  \hline
+1	&	1.0000	&	0.0029	&	0.0029	\\
+2	&	0.5000	&	0.0005	&	0.0005	\\
+3	&	0.3333	&	0.0017	&	0.0017	\\
+4	&	0.2500	&	0.0013	&	0.0045	\\
+5	&	0.2000	&	0.0017	&	0.0007	\\
+6	&	0.1667	&	0.0011	&	0.0002	\\
+7	&	0.1429	&	0.0021	&	0.0015	\\
+8	&	0.1250	&	0.0009	&		\\
+9	&	0.1111	&	0.0020	&		\\
+10	&	0.1000	&	0.0007	&		\\
+11	&	0.0909	&	0.0018	&		\\
+12	&	0.0833	&	0.0006	&		\\
+13	&	0.0769	&	0.0013	&		\\
+14	&	0.0714	&	0.0006	&		\\
+15	&	0.0667	&	0.0007	&		\\
+16	&	0.0625	&	0.0003	&		\\
+17	&	0.0588	&	0.0013	&		\\
+  \hline
+\end{tabular}
+\end{center}
+\label{Table:Potts step size}
+\end{table}
+
+%\section{Example: Social Network}
+%Use the new \texttt{simulate.formula()} from \texttt{statnet}.
+%In this example, we apply our algorithm to a simple social network model for which MCMC-MLE has been shown 
+%Social networks are typically modeled as a random network represented by a matrix $X$, an $n \times n$ matrix where $n
+%$ is the number of actors.
+%Each entry $X_{ij}$ in the random matrix $X$ is a random variable representing a relation from actor $i$ to actor $j$, 
+%such that:
+%\[
+%	X_{ij} = 
+%	\begin{cases}
+%		1 & \text{if a relationship exists \textit{from} actor $i$ \textit{to} actor $j$ (notation: $i \to j$)}\\
+%		0 & \text{otherwise}
+%	\end{cases}
+%	\
+%\]
+%where $i$ and $j$ take values in $1, \ldots, n$, $i \neq j$, for a network with $n$ actors.  
+%Note that $X_{ij}$ take only values of $0$ or $1$, reflecting our restriction on networks to those 
+%with dichotomous relations, that is, the relation between a pair of actors is either present or absent.  
+%In addition, we do not allow the possibility of $i \to i$ and always denote $X_{ii} = 0$.  
+%In the special case that $X_{ij} = X_{ji}$ and thus the matrix $X$ is symmetric, the network is referred to as a 
+%\textit{undirected} network or graph.  A network is \textit{directed} if it is not undirected.  
+%   1: -0.666     NA 16.520  0.241  0.126   0.012 2288.79100 3770.25800     8.0
+%   2: -0.888     NA  1.270  0.019  0.079   0.013   12.88560   54.58208     2.0
+%   3: -0.904     NA  1.480  0.003  0.160   0.013    0.06350    0.32258    10.0
+%> 
+%> # summary
+%> cat( "Precision:",cutoff.len, "\n")
+%Precision: 0.01 
+%> theta.frame <- data.frame( theta.MLE, theta.current )
+%> theta.frame
+%       theta.MLE theta.current
+%edges -0.9071582    -0.9040951
+%> cat( "Total iterations:",i.total, "\n")
+%Total iterations: 24 
+%> cat( "Outer iterations:",i, "\n")
+%Outer iterations: 4 
+%> cat( "Inner iterations:",i.total - i, "\n")
+%Inner iterations: 20 
+
+\chapter{Discussion}
+We have presented a simple line search algorithm for finding the MLE of a regular exponential family when the MLE 
+exists.  The algorithm avoids the trial and error experimentation of tuning parameters and starting points commonly associated with optimization routines
+not invented by optimization specialists.  Our algorithm is modeled after algorithms discussed in optimization textbooks \citep{Fletcher,NW,Sun:2006},
+all of which are safeguarded to ensure rapid automatic convergence.
+%Because it only relies on first order derivatives, this approach avoids problems with near-singular Fisher information 
+%matrices that plague methods like Newton-Raphson.  The reliant on a curvature condition for step size makes it less 
+%sensitive to poor initial values that are problematic for MCMC-MLE and  SA in practice.
+
+Convergence is guaranteed when the gradient can be calculated exactly.  Even when the gradient cannot be calculated 
+exactly and is only estimable via MCMC, the algorithm is still useful in practice, as demonstrated by the Ising model 
+example.  We have also described a way to construct and use confidence intervals to make convergence highly probable.
+
+The algorithm can be computationally demanding.  When the current iteration approaches the solution, the 
+curvature condition for step size becomes more difficult to satisfy and the method may require several iterations of 
+MCMC sampling and perhaps an increase in MCMC sample size.  Eventual increase in MCMC sample size is unavoidable,
+because the achievable accuracy is inversely proportional to the square root of the MCMC sample size, as in all Monte Carlo.
+Thus we believe the best use of this algorithm is in combination with other faster methods like MCMC-MLE \citep{Geyer:1992}
+or Newton-Raphson safeguarded by our line search algorithm.  Our 
+algorithm should be used from ``long range'', when one has no good intuition for an initial value and is concerned about 
+picking one that is far from the MLE.  The switch between types of search direction (steepest ascent, conjugate gradient,
+or Newton) within our algorithm or the switch to another algorithm (such as MCMC-MLE \citep{Geyer:1992})
+need not require manual intervention.  When used in combination in this
+manner, we do not think the confidence intervals are necessary as the curvature condition is quite easily satisfied 
+when the current iteration is far from the MLE.
+
+One way to improve performance is to use conjugate gradient search directions rather than steepest ascent.  In our 
+examples, this reduced the number of iterations by over 25\%.  However, in other problems we tried with different 
+dimensionality, this performance varied significantly and it appears that no guarantee can be made about quantity of 
+improvement in performance, though in all cases we examined, it never did worse.  This is no surprise, because the
+necessity of ``preconditioning'' for good performance of the conjugate gradient algorithm is well known (but no
+good ``preconditioner'' is available for maximum likelihood in exponential families).
+
+There are several outstanding issues.  Most notably, we have not showed convergence of the algorithm when the gradient 
+is approximated via MCMC.  This is a more difficult theoretical problem and is the motivation for stochastic 
+approximation research.  
+Further work is necessary to determine if one can adapt our restrictive curvature condition \eqref{E:Wolfe-mod} to the 
+approach of \citet{Andrieu:2005} or \citet{Liang:2010} in MCMC stochastic approximation.  
+
+Another remaining issue is the stopping criteria: what value should be chosen for $\epsilon$ in the exit condition
+$\lVert  \nabla \ell( \eta_k ) \rVert < \epsilon$?  Because the value of $\lVert  \nabla \ell( \eta_k ) \rVert$ can only 
+be approximated via MCMC, one cannot be certain if this condition is actually satisfied.  Here again, the switch to 
+another methodology may be appropriate, though at least in our Ising model example, our use of 10,000 for the MCMC 
+sample size and 0.005 for $\epsilon$ were successful in obtaining a reasonable parameter estimate. 
+
+ A final remaining issue is estimation of Monte Carlo error of the estimates.  Here too we recommend switching to another
+algorithm at the end.  The MCMC-MLE procedure gives accurate error estimates \citep{Geyer:1994}.
+For very small steps these are essentially the same as the Monte Carlo error of a single unsafeguarded Newton-Raphson step,
+so the method in \citep{Geyer:1994} can be used for either.
+
+%A natural extension of this algorithm is to the case where the MLE may not exist.  
+%This occurs with positive probability for discrete state space exponential families and 
+%is a practical concern when estimating parameters \citep{Rinaldo:2009, Geyer:gdor}.  
+%In such instances, the concave log likelihood continues to increase as $\eta \to \infty$ along 
+%certain directions of recession.  Our algorithm can still be applied to such a setting to climb the 
+%log likelihood until the gradient approaches zero and help identify the directions of recession. 
+
+
 
 
 % References don't have to be double spaced either
 \setstretch{1.3}
 \bibliographystyle{ims}
+%\bibliographystyle{imsart-nameyear}
 \bibliography{References}
+%\bibliography{/Users/saipuck/Tako/THESIS/References}
 
 
 % text in appendices may be single spaced, if desired
 \setstretch{1.3} % to 1.3 spacing
 \appendix
+\chapter{Proofs} \label{Section:Proofs}
+Our algorithm minimizes the objective function $f$ by performing repeated one-dimensional updates.  We need the 
+following lemma to transfer global properties of the objective function to the objective function restricted to a 
+search direction.
+
+%%%%%%%%%%% BEGIN LEMMA %%%%%%%%%%%%%%
+\begin{lemma} \label{Lemma:f min} 
+Suppose a function $f:\RR^n \to \RR$ is proper, lower semicontinuous, and strictly convex.  Then the minimum for $f$ 
+exists and is unique if and only if every nonempty level set $\lev_{\leq \alpha} f$ is bounded.
+\end{lemma}
+
+%%%%%%%%%%% PROOF - LEMMA %%%%%%%%%%%%%%
+
+\begin{proof}[Proof of Lemma~\ref{Lemma:f min}]
+Assume every non-empty level set is bounded.  Then by Theorem~1.9 in \citet{Rockafellar}, the minimum of $f$ is finite 
+and thus exists.  By strict convexity, this minimum is also unique.
+
+Now assume the minimum for $f$ exists, denoted by $\min f$.  By assumption, the level set $\lev_{\leq \min f} f$ 
+contains exactly one point.  By Corollary~8.7.1 in \citet{Rockafellar:1970}, the level sets $\lev_{\leq \alpha} f$ are 
+bounded for every $\alpha$.  
+\end{proof}
+
+%%%%%%%%%%% PROOF - LINE SEARCH %%%%%%%%%%%%%%
+\begin{proof}[Proof of Theorem~\ref{Thm:Line Search}]
+The objective function $f$ is bounded below, strictly convex, and lower semicontinuous by assumption, and so by Lemma~
+\ref{Lemma:f min}, the global minimum exists.  Then by Lemma~\ref{Lemma:f min}, all level sets of type $\lev_{\leq a} f
+$, $a \in \RR$ are bounded in $\RR^n$.  Restricting the set to be along a search direction $p_k$ maintains the 
+boundedness of these sets.  By Lemma~\ref{Lemma:f min} again, the minimum in this restriction exists and is unique.     
+
+Then, unless $\nabla f( x_k ) = 0$ in which case $x_k$ is already the solution, for each $k$, we can uniquely define $
+\alpha_{c_k}$ and $\alpha_{min_k}$ as follows: 
+\begin{align}
+%	\theta_k &= \cos^{-1} \left( \frac{ -\nabla f_k^T p_k }{ ||\nabla f_k|| \, ||p_k||} \right) \label{E:cosine} \\
+	\nabla f( x_k + \alpha_{c_k} p_k)^T p_k &= c \nabla f(x_k)^T p_k \label{E:alphac} \\
+	\nabla f( x_k + \alpha_{min_k} p_k)^T p_k &= 0. \label{E:alphamin} 
+\end{align}
+The point $\alpha_{c_k}$ is uniquely defined because it is the minimizer of $\alpha \mapsto f( x_k + \alpha p_k) - 
+\alpha c \nabla f( x_k )^T p_k$.
+These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
+%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
+\begin{figure}
+\centering
+\scalebox{.4}{\input{Figures/Wolfe-mod.pstex_t}}
+\caption{The acceptable region for $\alpha$ according to the curvature condition \eqref{E:Wolfe-mod} when restricting 
+$f$ to direction $p_k$.}
+\label{F:Wolfe-mod}
+\end{figure}
+
+%These values are illustrated on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.  
+%Equation \eqref{E:alphamin} defines $\alpha_{min_k}$ to be the step size that would make the 
+%gradient at $x_{k+1}$ equal to zero and hence minimizes $f(x_{k+1})$, equation \eqref{E:alphac} 
+%defines \alpha_{c_k} to be the step size that would make the gradient at $x_{k+1}$ equal to 
+
+By the strict convexity of $f$ and Theorem~2.14 in \citet{Rockafellar}, 
+\begin{align}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) +  \bigl[ \nabla f(x_k + \alpha_{c_k} p_k) \bigr]^T \alpha_{c_k} p_k. \notag 
+\\
+	\intertext{Applying \eqref{E:alphac} to the right hand side of the above gives}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k. \label{E:b-less-a}
+	\end{align}	
+(See points $a$ and $b$ in Figure \ref{F:Wolfe-mod}).
+
+The subproblem $\alpha \mapsto f(x_k + \alpha p_k)$ is strictly convex and hence monotonically decreasing at $\alpha_k$ 
+such that $\alpha_{c_k} \leq \alpha_k \leq \alpha_{min_k}$ (in Figure \ref{F:Wolfe-mod}, see points $b$ and $c$).  That 
+is,
+\begin{align}
+	f( x_k + \alpha_{min}p_k) &\leq f( x_k + \alpha_k p_k) \leq f( x_k + \alpha_{c_k} p_k). \label{E:f-sandwich}
+\end{align}
+	
+Combining the second inequality of \eqref{E:f-sandwich} with \eqref{E:b-less-a}, we have	
+\begin{align}
+	f( x_k + \alpha_k p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k,  \label{E:decrease}
+	\intertext{which can be rearranged as}
+	f(x_k)-f( x_k + \alpha_k p_k ) &>  -\alpha_{c_k} c \nabla f(x_k)^T p_k. \label{E:f-lb}
+\end{align}
+This last inequality \eqref{E:f-lb} expresses a lower bound for the amount of decrease in our objective function at 
+each step (the right-hand side is positive since $\nabla f(x_k)^T p_k < 0$ by assumption that $p_k$ is a descent 
+direction).  It is this lower bound that we will use to cover the distance to the minimum of the objective function.  
+
+We now turn our attention to \eqref{E:alphac}.  Define $x_{c_k} = x_k + \alpha_{c_k} p_k$.  Then
+\begin{align}
+	\nabla f( x_{c_k} )^T p_k &= c \nabla f(x_k)^T p_k. \notag
+\end{align}
+Subtracting $\nabla f(x_k)^T p_k$ from both sides gives
+\begin{align}
+	\left( \nabla f( {x_{c_k}} ) - \nabla f(x_k) \right )^T p_k &= ( c - 1 ) \nabla f(x_k)^T p_k.  \label{E:c-1}
+\end{align}
+
+%\textbf{NEW: SAI 12/05/10}\\
+%Since we are considering a finite state space for $| \nabla^2 \ell(\eta) | \leq K$ for some constant K for all $\eta$ 
+%\textbf{By Theorems 9.2 and 9.7 in \citet{Rockafellar}, since $\nabla^2 f(x)$ is assumed to be finite, 
+%$\nabla f(x)$ is Lipschitz continuous relative to the convex set $\RR^n$.}
+
+By Corollary~25.5.1 in \citet{Rockafellar:1970}, since $f$ is convex and differentiable on the open convex set $\NN$, 
+it is actually continuously differentiable on $\NN$.  It is then Lipschitz continuously differentiable relative to any 
+compact subset of $\NN$. 
+
+Applying this to the compact level set $\lev_{\leq f(x_k)} f$, which is contained in $\NN$ by assumption, there exists 
+a constant $L < \infty$ such that
+	\begin{align}
+		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || \quad \text{for all $x, \tilde{x} \in \lev_
+{\leq f(x_0)} f$}. \label{E:Lipschitz}
+	\end{align} 
+
+Applying \eqref{E:Lipschitz} to $x_{c_k}$ and $x_k$, we have
+\begin{align}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || x_{c_k} - x_k || \notag
+\intertext{or}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || \alpha_{c_k} p_k ||. \notag	
+\end{align}
+
+Multiplying both sides by $\lVert p_k \rVert$ gives
+\begin{align}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || &\leq \alpha_{c_k} L || p_k ||^2 \notag \\
+\intertext{and by Cauchy-Schwarz this implies}
+( \nabla f(x_{c_k}) - \nabla f(x_k) )^T p_k & \leq || \nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || \label
+{E:from-Lipschitz} \\ 
+	&\leq \alpha_{c_k} L || p_k ||^2. \notag
+\end{align}
+Substituting \eqref{E:c-1} into the left-hand side of this last inequality \eqref{E:from-Lipschitz} gives
+\begin{align}
+( c - 1 ) \nabla f(x_k)^T p_k &\leq \alpha_{c_k} L || p_k ||^2 \notag\\
+\intertext{or}
+-\alpha_{c_k} &\leq \frac{( 1 - c )}{L} \frac{ \nabla f(x_k)^T p_k}{ || p_k ||^2}. \label{E:-alpha}
+\end{align}
+
+%%%%%%
+%%%%%%
+Write out the first $k+1$ inequalities of \eqref{E:f-lb}:
+\begin{align}
+\begin{split}
+	f( x_1 ) &< f(x_0) + \alpha_{c_0} c \nabla f(x_0)^T p_0 \\
+	f( x_2 ) &< f(x_1) + \alpha_{c_1} c \nabla f(x_1)^T p_1  \\
+	\ldots  \\
+	f( x_{k} ) &< f(x_{k-1}) + \alpha_{c_{k-1}} c \nabla f(x_{k-1})^T p_{k-1}  \\
+	f( x_{k+1} ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k 
+\end{split}
+	\label{E:to telescope}
+\end{align}
+Telescoping the right-hand side of \eqref{E:to telescope},
+\begin{align*}
+	f( x_{k+1} ) &< f(x_0) + c \sum_{j=0}^{k} \alpha_{c_j} \nabla f(x_j)^T p_j. \notag
+\end{align*}
+Noting that $\nabla f(x_j)^T p_j < 0$, we can substitute our upper bound \eqref{E:-alpha} for $-\alpha_{c_j}$ in the 
+right-hand side above,
+\begin{align}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} \frac{ \nabla f(x_j)^T p_j}{ || p_j ||^2 } \nabla f
+(x_j)^T p_j \notag \\
+	\intertext{which simplies to}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} \frac{ (\nabla f(x_j)^T p_j)^2}{ || p_j ||^2 }. 
+\notag
+\end{align}
+
+Because $f(x)$ is bounded below by assumption, there exists some $M < \infty$ such that $f(x_0) - f(x_{k+1}) < M$ for 
+all $k$. Then rearranging the above yields,
+
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{k}   \frac{ ( \nabla f(x_j)^T p_j )^2}{ || p_j ||^2 } &< M < \infty.
+ \end{align*}
+The angle $\theta_j$ between the search direction $p_k$ and steepest descent direction $-\nabla f_k$ can be expressed 
+by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{||\nabla f_j|| \cdot || p_j||}$.  Substituting this into the equation 
+above and taking $k \to \infty$,
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty.
+\end{align*}
+Since $0 < c < 1$,
+\begin{align}
+	\sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty. \label{E:Z's}
+\end{align}
+
+The convergent series in \eqref{E:Z's} implies that 
+\begin{align*}
+	\cos^2 \theta_k || \nabla f(x_k) ||^2 &\to 0 \text{ as } k \to \infty.
+\end{align*}
+With the additional restriction on the search direction $p_k$ such that $\cos \theta_k \geq \delta > 0$ for some choice 
+of $\delta$, for all choices of $k$, we get the desired convergence result of
+\begin{align*}
+	\lim_{k \to \infty} || \nabla f(x_k) || &= 0.
+\end{align*}
+\end{proof}
+%%%%%%%%%%% END PROOF %%%%%%%%%%%%%%
+The inequality \eqref{E:Z's} has been referred to as \emph{Zoutendijk's condition} \citep{NW}, though we arrive at this 
+result via different assumptions.\\  
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\section{Proof of Exponential family log likelihood maximization}
+\begin{proof}[Proof of Theorem~\ref{Thm:log like max}]
+Let $f(\cdot)$ represent the negative log likelihood $- \ell(\cdot)$, the objective function to be minimized.  We proceed from the perspective of a minimization of a function $f(\cdot)$ since this is the convention in the optimization literature \citep{NW}.  \citet{Okabayashi:longrange} prove a very similar result for when the minimum exists, and this proof mimics that one.
+
+The negative log likelihood function $-\ell(\cdot)$ is strictly convex by \eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by LEHMAN.
+
+It is bounded below by Corollary CHARLIE.
+
+The objective function $f$ is bounded below, strictly convex, and lower semicontinuous by assumption, and so by Lemma~
+\ref{Lemma:f min}, the global minimum exists.  
+Then by Lemma~\ref{Lemma:f min}, all level sets of type $\lev_{\leq a} f
+$, $a \in \RR$ are bounded in $\RR^n$.  Restricting the set to be along a search direction $p_k$ maintains the 
+boundedness of these sets.  By Lemma~\ref{Lemma:f min} again, the minimum in this restriction exists and is unique.     
+
+Then, unless $\nabla f( x_k ) = 0$ in which case $x_k$ is already the solution, for each $k$, we can uniquely define $
+\alpha_{c_k}$ and $\alpha_{min_k}$ as follows: 
+\begin{align}
+%	\theta_k &= \cos^{-1} \left( \frac{ -\nabla f_k^T p_k }{ ||\nabla f_k|| \, ||p_k||} \right) \label{E:cosine} \\
+	\nabla f( x_k + \alpha_{c_k} p_k)^T p_k &= c \nabla f(x_k)^T p_k \label{E:alphac} \\
+	\nabla f( x_k + \alpha_{min_k} p_k)^T p_k &= 0. \label{E:alphamin} 
+\end{align}
+The point $\alpha_{c_k}$ is uniquely defined because it is the minimizer of $\alpha \mapsto f( x_k + \alpha p_k) - 
+\alpha c \nabla f( x_k )^T p_k$.
+These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
+%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
+\begin{figure}
+\centering
+\scalebox{.4}{\input{Figures/Wolfe-mod.pstex_t}}
+\caption{The acceptable region for $\alpha$ according to the curvature condition \eqref{E:Wolfe-mod} when restricting 
+$f$ to direction $p_k$.}
+\label{F:Wolfe-mod}
+\end{figure}
+
+%These values are illustrated on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.  
+%Equation \eqref{E:alphamin} defines $\alpha_{min_k}$ to be the step size that would make the 
+%gradient at $x_{k+1}$ equal to zero and hence minimizes $f(x_{k+1})$, equation \eqref{E:alphac} 
+%defines \alpha_{c_k} to be the step size that would make the gradient at $x_{k+1}$ equal to 
+
+By the strict convexity of $f$ and Theorem~2.14 in \citet{Rockafellar}, 
+\begin{align}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) +  \bigl[ \nabla f(x_k + \alpha_{c_k} p_k) \bigr]^T \alpha_{c_k} p_k. \notag 
+\\
+	\intertext{Applying \eqref{E:alphac} to the right hand side of the above gives}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k. \label{E:b-less-a}
+	\end{align}	
+(See points $a$ and $b$ in Figure \ref{F:Wolfe-mod}).
+
+The subproblem $\alpha \mapsto f(x_k + \alpha p_k)$ is strictly convex and hence monotonically decreasing at $\alpha_k$ 
+such that $\alpha_{c_k} \leq \alpha_k \leq \alpha_{min_k}$ (in Figure \ref{F:Wolfe-mod}, see points $b$ and $c$).  That 
+is,
+\begin{align}
+	f( x_k + \alpha_{min}p_k) &\leq f( x_k + \alpha_k p_k) \leq f( x_k + \alpha_{c_k} p_k). \label{E:f-sandwich}
+\end{align}
+	
+Combining the second inequality of \eqref{E:f-sandwich} with \eqref{E:b-less-a}, we have	
+\begin{align}
+	f( x_k + \alpha_k p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k,  \label{E:decrease}
+	\intertext{which can be rearranged as}
+	f(x_k)-f( x_k + \alpha_k p_k ) &>  -\alpha_{c_k} c \nabla f(x_k)^T p_k. \label{E:f-lb}
+\end{align}
+This last inequality \eqref{E:f-lb} expresses a lower bound for the amount of decrease in our objective function at 
+each step (the right-hand side is positive since $\nabla f(x_k)^T p_k < 0$ by assumption that $p_k$ is a descent 
+direction).  It is this lower bound that we will use to cover the distance to the minimum of the objective function.  
+
+We now turn our attention to \eqref{E:alphac}.  Define $x_{c_k} = x_k + \alpha_{c_k} p_k$.  Then
+\begin{align}
+	\nabla f( x_{c_k} )^T p_k &= c \nabla f(x_k)^T p_k. \notag
+\end{align}
+Subtracting $\nabla f(x_k)^T p_k$ from both sides gives
+\begin{align}
+	\left( \nabla f( {x_{c_k}} ) - \nabla f(x_k) \right )^T p_k &= ( c - 1 ) \nabla f(x_k)^T p_k.  \label{E:c-1}
+\end{align}
+
+%\textbf{NEW: SAI 12/05/10}\\
+By \eqref{E:nabla2 ell}, $\nabla^2 \ell(\eta)$ is bounded for finite state space $g(\YY)$, which is true by assumption (and the only case of interest to us).  Thus $| \nabla^2 f(x) | \leq K$ for some constant K for all $x$. 
+\textbf{Then by Theorems 9.2 and 9.7 in \citet{Rockafellar}, 
+%since $\nabla^2 f(x)$ is assumed to be finite, 
+$\nabla f(x)$ is Lipschitz continuousLY DIFFABLE? relative to the convex set $\RR^n$.}
+
+%By Corollary~25.5.1 in \citet{Rockafellar:1970}, since $f$ is convex and differentiable on the open convex set $\NN$, 
+%it is actually continuously differentiable on $\NN$.  It is then Lipschitz continuously differentiable relative to any 
+%compact subset of $\NN$. 
+
+Applying this to the compact level set $\lev_{\leq f(x_k)} f$, 
+%which is contained in $\NN$ by assumption, 
+there exists a constant $L < \infty$ such that
+	\begin{align}
+		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || \quad \text{for all $x, \tilde{x} \in \lev_
+{\leq f(x_0)} f$}. \label{E:Lipschitz}
+	\end{align} 
+
+Applying \eqref{E:Lipschitz} to $x_{c_k}$ and $x_k$, we have
+\begin{align}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || x_{c_k} - x_k || \notag
+\intertext{or}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || \alpha_{c_k} p_k ||. \notag	
+\end{align}
+
+Multiplying both sides by $\lVert p_k \rVert$ gives
+\begin{align}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || &\leq \alpha_{c_k} L || p_k ||^2 \notag \\
+\intertext{and by Cauchy-Schwarz this implies}
+( \nabla f(x_{c_k}) - \nabla f(x_k) )^T p_k & \leq || \nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || \label
+{E:from-Lipschitz} \\ 
+	&\leq \alpha_{c_k} L || p_k ||^2. \notag
+\end{align}
+Substituting \eqref{E:c-1} into the left-hand side of this last inequality \eqref{E:from-Lipschitz} gives
+\begin{align}
+( c - 1 ) \nabla f(x_k)^T p_k &\leq \alpha_{c_k} L || p_k ||^2 \notag\\
+\intertext{or}
+-\alpha_{c_k} &\leq \frac{( 1 - c )}{L} \frac{ \nabla f(x_k)^T p_k}{ || p_k ||^2}. \label{E:-alpha}
+\end{align}
+
+%%%%%%
+%%%%%%
+Write out the first $k+1$ inequalities of \eqref{E:f-lb}:
+\begin{align}
+\begin{split}
+	f( x_1 ) &< f(x_0) + \alpha_{c_0} c \nabla f(x_0)^T p_0 \\
+	f( x_2 ) &< f(x_1) + \alpha_{c_1} c \nabla f(x_1)^T p_1  \\
+	\ldots  \\
+	f( x_{k} ) &< f(x_{k-1}) + \alpha_{c_{k-1}} c \nabla f(x_{k-1})^T p_{k-1}  \\
+	f( x_{k+1} ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k 
+\end{split}
+	\label{E:to telescope}
+\end{align}
+Telescoping the right-hand side of \eqref{E:to telescope},
+\begin{align*}
+	f( x_{k+1} ) &< f(x_0) + c \sum_{j=0}^{k} \alpha_{c_j} \nabla f(x_j)^T p_j. \notag
+\end{align*}
+Noting that $\nabla f(x_j)^T p_j < 0$, we can substitute our upper bound \eqref{E:-alpha} for $-\alpha_{c_j}$ in the 
+right-hand side above,
+\begin{align}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} \frac{ \nabla f(x_j)^T p_j}{ || p_j ||^2 } \nabla f
+(x_j)^T p_j \notag \\
+	\intertext{which simplies to}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} \frac{ (\nabla f(x_j)^T p_j)^2}{ || p_j ||^2 }. 
+\notag
+\end{align}
+
+Because $f(x)$ is bounded below by assumption, there exists some $M < \infty$ such that $f(x_0) - f(x_{k+1}) < M$ for 
+all $k$. Then rearranging the above yields,
+
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{k}   \frac{ ( \nabla f(x_j)^T p_j )^2}{ || p_j ||^2 } &< M < \infty.
+ \end{align*}
+The angle $\theta_j$ between the search direction $p_k$ and steepest descent direction $-\nabla f_k$ can be expressed 
+by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{||\nabla f_j|| \cdot || p_j||}$.  Substituting this into the equation 
+above and taking $k \to \infty$,
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty.
+\end{align*}
+Since $0 < c < 1$,
+\begin{align}
+	\sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty. \label{E:Z's}
+\end{align}
+
+The convergent series in \eqref{E:Z's} implies that 
+\begin{align*}
+	\cos^2 \theta_k || \nabla f(x_k) ||^2 &\to 0 \text{ as } k \to \infty.
+\end{align*}
+With the additional restriction on the search direction $p_k$ such that $\cos \theta_k \geq \delta > 0$ for some choice 
+of $\delta$, for all choices of $k$, we get the desired convergence result of
+\begin{align*}
+	\lim_{k \to \infty} || \nabla f(x_k) || &= 0.
+\end{align*}
+
+\end{proof}
+
+
+%%%%%%%%%%% BEGIN PROOF - Line Search Works  %%%%%%%%%%%%%%
+Theorem 3.1 shows that the gradient of the objective function converges to 0.  The proof for Theorem 3.2 is concerned 
+with the conditions for mapping this convergence to the convergence of the iterated parameter estimates $\eta_k$ to the 
+unique MLE.  In particular, the mapping from $\eta_k$ to the gradient must be globally invertible.
+
+\begin{proof}[Proof of Theorem~\ref{Thm:Line Search works}]
+
+The Fisher information for a regular exponential family is non-singular by \eqref{E:FI} and thus invertible.  If we 
+consider the map defined by
+\begin{align*}
+	h(\eta) = \nabla c(\eta)
+\end{align*}
+where $c$ is the cumulant function \eqref{E:cumulant}, its first derivative matrix is
+\begin{align}
+	\nabla h(\eta) = \nabla^2 c(\eta) = I(\eta) \label{E:nabla h eta}
+\end{align}
+which is again non-singular.  Since this is true for any $\eta$, by the inverse function theorem, $h$ is everywhere 
+locally invertible.
+
+In fact, $h$ is globally invertible. For any $\mu$ in the range of $h$, consider the function
+\begin{align*}
+	q(\eta) = \mu^T\eta - c(\eta).
+\end{align*}
+Since $\nabla^2 q(\eta) = - I(\eta)$ by \eqref{E:nabla h eta}, $q$ is strictly concave.  Therefore, a maximizer for $q
+$, call it $\hat{\eta}$, is unique if it exists and satisfies the first-order condition
+\begin{align*}
+	\nabla q( \hat{\eta} ) = 0.
+\end{align*}
+This in turn implies that
+\begin{align*}
+	\mu - h(\hat{\eta}) = 0
+\end{align*} 
+or
+\begin{align*}
+	\mu = h( \hat{\eta} ). \label{E:eta hat}
+\end{align*}
+Because of the assumption that $\mu$ is in the range of $h$, this means that $\hat{\eta}$ in fact exists, and by the 
+strict concavity of $q$, is unique.  This implies that $h$ must be one-to-one and hence globally invertible.
+
+
+Since $c$ is infinitely differentiable by Theorem~2.7.1 in \citet{TSH}, so is $h$, and by the inverse function theorem, 
+so is $h^{-1}$ (even if we do not know the form of $h^{-1}$).  The first derivative of $h^{-1}$ can be expressed as
+\begin{align*}
+	\nabla h^{-1}(\mu) = \left [ \nabla h(\eta) \right ]^{-1} = \left [ I(\eta) \right ]^{-1}
+\end{align*}
+when $\mu = h(\eta)$ and is thus non-singular everywhere, including at the MLE of $\eta$, $\etaMLE$.
+
+Thus our algorithm, which concludes that $ || \nabla \ell( \eta_k) ||  = || g(y) - h(\eta_k) || \to 0$, implies that 
+\begin{align*}
+	\mu_k = h(\eta_k) \to g(y), 
+\end{align*}
+or
+\begin{align*}
+	h^{-1}(\mu_k)  \to h^{-1}\left (g(y) \right),
+\end{align*}
+or
+\begin{align*}
+	\eta_k  \to  \etaMLE.
+\end{align*}
+
+\end{proof}
+%%%%%%%%%%% END PROOF %%%%%%%%%%%%%%
 
 %\chapter{Proofs of Chapter \ref{sec:gibbs} Results}\label{sec:app1}
 %\input{GibbsProofs}
