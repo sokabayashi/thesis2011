@@ -89,17 +89,45 @@
 
 \chapter{Introduction}
 %\input{Introduction}
-\section{Motivation: Social network modeling}
+\section{Motivation: stochastic social network models}
 Is it possible to build a mathematical model that captures the behavioral tendencies of individuals in how they form relationships?
 
-%This was the question that led to my eventual research in the area of parameter estimation for exponential families with complex dependence.  
-Studies of social networks typically look to identify gender, age, ethnicity, and other individual-specific attributes to explain which relationships form.  However, it has long been known that potential relationships cannot be studied in isolation; rather, they form in an interdependent manner.  Whether or not a relationship forms between individuals $A$ and $B$ may very well depend on whether or not a relationship forms between $B$ and $C$.  This necessitates a new ``network" perspective that recognizes relationship structures themselves as factors in the analysis.  
+This is the question that led us to do research in parameter estimation methods for exponential families, with a particular focus on social network models.  Sociologists have studied social networks as a subject matter since at least as early as the 1930s, when Moreno introduced the sociogram, a diagram that denotes individuals as points, and the presence of a relationship between individuals by lines \citep{Wasserman:1994}.  A sociogram depicting the marriage network data among important families in Renaissance Florence presented in \citep{Padgett} is depicted in Figure~\ref{F:Florentine}.
+\begin{figure}
+\begin{center}
+\includegraphics[width=4.5in,keepaspectratio]{florentine}
+\end{center}
+\caption{\citet{Padgett}'s marriage network among families in Renaissance in the late 15th century.  Data made available in the \texttt{ergm} package \citep{ergm} in R.}
+\label{F:Florentine}
+\end{figure}
+
+\emph{Stochastic} network models were developed as early as 1959 in the seminal works of \citet{Gilbert} and \citet{Erdos}, resulting in a basic model that is now referred to as the Bernoulli model or the Erd\"{o}s-R\'{e}nyi-Gilbert model.  With the advent of cheaper computing resources, the development of more sophisticated stochastic network models flourished;  notable landmarks are the $p_1$ model of \citet{Holland:1981}, which could capture the reciprocal tendency of relationships in directed networks, and the $p^*$ model of \citet{Frank:1986}, which could describe transitive tendency of relationships in undirected networks.  These models laid the foundation for the more general \emph{exponential random graph models (ERGM)}, a class of exponential family models that are now commonly used to model networks \citep{logit,Pattison:1999,Snijders:2002,Handcock:2006,introp*,advancesp*,recentp*,ergm,Morris:2008,Goldenberg:2009}.
+
+\subsection{THE ISSUE -- DEPENDENCE}
+At the core, a stochastic network model attempts to describe whether or not a relationship forms between each pair of individuals in a collection of individuals.
+%  In the Florentine marriage network depicted in Figure~\ref{Padgett}, a model fit  
+It has long been observed though that relationships do not form in isolation; rather, they form in an interdependent manner.  Whether or not a relationship forms between individuals $A$ and $B$ may very well depend on whether or not a relationship forms between $B$ and $C$.  
+
+This necessitates a new ``network" perspective that recognizes relationship structures themselves as factors in the analysis.  
+
+\subsection{MICRO -- MACRO}
+
+\subsection{PARAMETER ESTIMATION}
+Writing down a mathematical model to describe data is often not difficult to do; the expression $y=mx+b$ should be familiar to anyone who has taken basic algebra as the equation of a line.  However, finding a ``best fit" line through scattered data points---that is, finding appropriate values for the \emph{parameters} $m$ and $b$ is a much more involved mathematical exercise that involves calculus.
+
+Similarly, exponential families---and hence exponential random graph models---have a deceptively simple form that belies the challenges involved in the estimating the model parameters.
+
+\subsection{UNDERLYING MOTIVATION -- SO WHAT?}
+
+
+
 
 In accordance with this perspective, sociologists have developed descriptive statistics of network structures to correspond to social theory.  For example, the frequency of triangles, 
 %One of the simplest relationship structure is a triangle, 
 in which each individual in a group of three individuals has relationships with the other two,
 may reflect the tendency of individuals to form \textit{transitive} relationships, where because $A$ is friends with $B$ and $B$ is friends with $C$, $A$ is friends with $C$.  %These measures can be used to characterize an observed network data set, capturing qualities beyond the individual specific attributes.
 
+\subsection{WHAT MAKES A GOOD MODEL?}
 %%%%%% STATISTICAL MODEL $$$$$$$
 A statistical model provides further clarity of the underlying forces that shape the structure of an observed network.   
 For example, an alternative theory to transitivity is that the frequency of triangles reflects the tendency of individuals to form relationships with others of the same gender.  A good statistical model can see past the noise in the data to identify if one or both of these forces are important.   
@@ -107,6 +135,8 @@ In addition, models can simulate new random networks whose distributions retain 
 
 
 \section{Exponential family modeling}
+VS. ERGM?
+
 Exponential families are commonly used to model phenomena with dependent structure, 
 where the outcomes of the response variable of interest are in fact dependent on one another.  For example, the Ising 
 model \citep{Ising,Potts} is an exponential family model that has been used to model ferromagnetism.  A realized 
@@ -223,6 +253,19 @@ The approach applies repeated linear programming to the polyhedral convex suppor
 The authors explore the geometric properties of the convex support to explain this issue which has come to be  referred to as degeneracy.  According to \citet{Handcock:degeneracy}, degeneracy includes the case of non-existent MLEs but also cases where a model concentrates most its probability on only a few different sample points in the space.  As an example, \citet{Rinaldo:2009} study in detail a 9-node network model and illustrate how the normal fans of the polyhedral convex support explain which portions of the natural parameter space are more likely to correspond to degenerate models.  In both works, the authors work with full knowledge of the geometry of the convex support, attained by enumerating all possible graph realizations.
 %Shannon entropy
 
+%%%%%% 1/25 - From Algorithm.tex
+\textbf{Example of a degenerate social network model is in \citet{statnet-tutorial}.}  As 
+summarized by \citet{Rinaldo:2009}, model degeneracy refers to instances where
+
+\begin{enumerate}
+\item Random graphs generated from the fitted model lack variability, often only 
+giving rise to empty graphs and complete or nearly complete graphs
+\item MLE of $\theta$ does not exist.  OR HARD TO OBTAIN.  includes case where MCMC 
+methods fails to converge.
+\item fitted model makes the observed network very unlikely.
+\end{enumerate}
+%%%%%%%%%%%%%
+
 \citet{Okabayashi:longrange} present a ``long range" search algorithm to climb the log likelihood of an exponential family, intended for settings where the initial guess of the parameter value may be far from the MLE.  The algorithm is guaranteed to converge when the MLE exists in the conventional sense.
 
 
@@ -283,7 +326,7 @@ $\ell(\eta_{k+1})$ are depicted in Figure~\ref{F:alpha_region}.
 
 \begin{figure}
 \centering
-    \scalebox{.4}{\input{Figures/alphamax.pstex_t}}
+    \scalebox{.4}{\input{Figures/alphamax.pdf_t}}
 	\caption{The acceptable region for step size $\alpha_k$ along a particular search direction $p_k$ according to the 
 modified curvature condition \eqref{E:curvature mod}.  The step sizes $\alpha_{c}$ and $\alpha_{\textrm{max}}$ 
 correspond to values of $\nabla \ell( \eta_k + \alpha p_k)^T p_k$ equaling $c \nabla \ell(\eta_k)^T p_k$ and $0$, 
@@ -563,6 +606,104 @@ Tangent and normal cones are polars of each other, that is, each determines the 
 DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{get from \citep{Rockafellar:1970}.}
 
 \section{MLE existence in exponential families}
+Charlie's GDOR theorems rely heavily upon some results from his thesis \citep{Geyer:
+1990}.  Adapted here 
+using the notation from his GDOR paper,
+\begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]
+\begin{align*}
+e^{c(\theta + s \delta) - bs} &\to 
+		\begin{cases} 
+			0 								& b > \sigma_c(\delta) \\
+			e^{c(\theta)} P_\theta(Y \in H ) 	& b = \sigma_c(\delta) \\
+			+\infty							& b < \sigma_c(\delta)
+		\end{cases}
+& \text{as } s \to +\infty.
+\end{align*}
+where $\delta$ is a non-zero direction, $C$ the convex support, and
+\begin{align*}
+	\sigma_C (\delta) = \sup_{y \in C} \inner{ y, \delta} \\
+	H_\delta = \set{w: \inner{w, \delta} = \sigma_C(\delta) }.
+\end{align*}
+\end{theorem}
+$H_\delta$ is the supporting hyperplane to the set $C$ with normal vector $\delta$.
+
+\begin{proof}
+\textbf{Case: $b = \sigma_C(\delta)$.}
+
+Starting with density of the exponential family with parameter $\theta$, we know that
+\begin{align*}
+	e^{c(\theta)} = \int h(y) e^{\inner{y,\theta}} \, dy.
+\end{align*}
+So,
+\begin{align*}
+	e^{ c(\theta + s \delta ) - bs } &= \int h(y) e^{\inner{y,\theta + s \delta - 
+bs} } \, dy. \\
+									&= \int h(y) e^{\inner{y,\theta}  + s [ \inner
+{y,\delta} - b ] } \, dy. 
+\end{align*}
+Multiply by $\frac{p_\theta(y)}{p_\theta(y)}$ to get
+\begin{align*}
+	e^{ c(\theta + s \delta ) - bs } &= \int h(y) e^{\inner{y,\theta}  + s [ \inner
+{y,\delta} - b ] }  \frac{ h(y)e^{\inner{y, \theta} - c(\theta)} }{ h(y)e^{\inner{y, 
+\theta} - c(\theta)} }\, dy \\
+	&= \int e^{  s [ \inner{y,\delta} - b ] + c(\theta) }  h(y)e^{\inner{y, \theta} - 
+c(\theta)} \, dy \\
+	&= \E_\theta e^{  s [ \inner{Y,\delta} - b ] + c(\theta) }
+\end{align*}
+What happens as $s \to +\infty$?  We would like to reverse the order of taking the 
+limit and expectation.  Fortunately, we have the monotone convergence theorem.  For $
+\inner{y, \delta} \leq b$, we have a monotonically decreasing sequence of random 
+variables.  For $\inner{y, \delta} > b$, the sequence is increasing.  Thus,
+\begin{align*}
+	\lim_{s\to \infty} \E_\theta e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= E_
+\theta \lim_{s\to \infty} e^{  s [ \inner{Y,\delta} - b ] + c(\theta) }. 
+\end{align*}
+Ignoring the expectation and examining the just limit component of the above,
+\begin{align*}
+	\lim_{s\to \infty} e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= 
+			\begin{cases} 
+			0 								& \inner{Y,\delta} < b \\
+			e^{c(\theta)} 		 			& \inner{Y,\delta} = b \\
+			+\infty							& \inner{Y,\delta} > b.
+		\end{cases}
+\end{align*}
+In the case that we are considering, however, $b = \sigma_C(\delta) = \sup_{y \in C}
+\inner{y,\delta}$, so $\inner{Y,\delta}$ can never be greater than $b$, so the third 
+case in the limit above is not possible.  Thus we can rewrite the result above 
+succinctly as
+\begin{align*}
+	\lim_{s\to \infty} e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= I(\inner{Y,
+\delta} = b ) e^{c(\theta)} 
+	= I( Y \in H_\delta ) e^{c(\theta)}.
+\end{align*}
+Then returning to the full expression,
+\begin{align*}
+	\lim_{s\to \infty} \E_\theta e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= e^
+{c(\theta)} P( Y \in H_\delta ).
+\end{align*}
+
+\textbf{Case: $b > \sigma_C(\delta)$}.
+\begin{align*}
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - bs } &= 
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s + \sigma_C
+(\delta)s - bs }  \\
+	&= \left( \lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s} 
+\right ) \left(  \lim_{s\to \infty} e^{ s[ \sigma_C(\delta) - b] } \right )\\
+	&= \left (e^{c(\theta) }P(Y\in H_\delta) \right ) \cdot 0 = 0.
+\end{align*}
+
+\textbf{Case: $b < \sigma_C(\delta)$}.
+\begin{align*}
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - bs } &= 
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s + \sigma_C
+(\delta)s - bs }  \\
+	&= \left( \lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s} 
+\right ) \left(  \lim_{s\to \infty} e^{ s[ \sigma_C(\delta) - b] } \right )\\
+	&= \left (e^{c(\theta) }P(Y\in H_\delta) \right ) \cdot \left ( + \infty \right ) 
+= + \infty.
+\end{align*}
+
+
 The \emph{convex support} of an exponential family is the smallest closed convex set that the contains the natural statistic \citep{Geyer:gdor}.
 
 \begin{theorem}[Theorem 1 from \citet{Geyer:gdor}] \label{Thm:DOC}
@@ -604,6 +745,72 @@ the following are equivalent:
 \item $\inner{w,\delta} \leq 0$ for all $w \in T_C(g(\yobs))$ \cite[Theorem 3 (f)]{Geyer:gdor}.
 \end{enumerate}
 \end{theorem}
+
+
+%%%%%%%%%%%%%%%%%%%%%%% 1/26/11 - Added from Algorithm.tex
+\subsection{Theorem 3(a) and (c), \citet[p. 270]{Geyer:gdor}}
+So what do we this theorem for?  It relates when $\delta$ is a direction of recession 
+or not.  Theorem 3 in GDOR has says the following are equivalent:
+\begin{itemize}
+\item (a) There exists a $\theta \in \Theta$ such that the function $s \mapsto \ell
+(\theta+s\delta)$ is nondecreasing on $\RR$.
+\item (c) $\inner{Y-y, \delta} \leq 0$ almost surely for all distributions in the 
+family.
+\end{itemize}
+
+The $\delta$ in (a) in the above is a direction of recession.  
+
+The proof requires the following lemma, which a PROOF WILL BE NEEDED.
+$\ell(\theta+s\delta)$ is non-dereasing if and only if $\lim_{s \to \infty} \ell
+(\theta+s\delta) > -\infty$.
+
+\textbf{From $(c) \to (a)$}:
+
+Take $\E_{\theta + s \delta}()$ of $\inner{Y-y, \delta} \leq 0$.  Then
+\begin{align*}
+\inner{ \E_{\theta + s \delta} Y-y, \delta} \leq 0.
+\end{align*}
+Now, take the derivative of $\ell( \theta + s\delta)$ with respect to $s$.
+\begin{align*}
+\deriv{\ell( \theta + s \delta}{s}) &= \deriv{}{s} \left (   \inner{y, \theta+s
+\delta} - c(\theta+s\delta)  \right )\\
+	&= \inner{y, \delta} - \deriv{}{s} c(\theta+s\delta) \\
+	&= \inner{y, \delta} - \inner{ \E_{\theta+s\delta}Y,\delta }\\
+	&= - \inner{ \E_{\theta+s\delta}Y - y,\delta }.
+\end{align*}
+Applying the above from the assumption, we get that 
+\begin{align*}
+\deriv{\ell( \theta + s \delta)}{s} \geq 0.
+\end{align*}
+Thus $\ell(\theta+s\delta)$ is a non-decreasing function of $s$.
+
+\textbf{From $(a) \to (c)$}:
+\begin{align*}
+	\ell( \theta+s\delta) &= \inner{y, \theta+s\delta} - c(\theta+s\delta) \\
+	&= \inner{y, \theta} + s \inner{y,\delta} -bs +bs - c(\theta+s\delta) \\
+	&= \inner{y, \theta} + s [\inner{y,\delta} -b]  - \log e^{c(\theta+s\delta) -bs}.
+\end{align*}
+We know from the above lemma that $\ell(\theta+s\delta)$ is non-dereasing if and only 
+if $\lim_{s \to \infty} \ell(\theta+s\delta) > -\infty$.  This implies that in the 
+above expression, for the right-most term, $b \geq \sigma_c(\delta)$, and also that
+\begin{align*}
+	\inner{y, \delta} - b \geq 0,
+\end{align*}
+or 
+\begin{align*}
+	b - \inner{y, \delta}  \leq 0.
+\end{align*}
+If the above is true, then 
+\begin{align*}
+	\sigma_C(\delta)  - \inner{y, \delta} \leq b - \inner{y, \delta}  \leq 0,
+%#	\inner{y, \delta} - \inner{Y_{max},\delta } \geq 0.
+\end{align*}
+and recalling that $\sigma_C(\delta) = \sup_{y \in C} \inner{y, \delta}$, then
+\begin{align*}
+	\inner{Y - y,\delta } \leq 0.
+\end{align*}
+(with probability one---do I even need to add this).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 From the two theorems above, it is clear that every direction of constancy is a direction of recession.  These induce the following criteria about the existence of the MLE in the conventional sense:
 
@@ -670,6 +877,149 @@ It may not be full, however; the full family containing this exponential family,
 where $\Gammalim$ is the constancy space of \eqref{E:f conditional},
 is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
 An MLE for this new model must exist, since $g(\yobs)$ cannot lie on the boundary of the convex support which was itself determined by $g(\yobs)$ lying in the interior of it.  
+
+
+\subsection{Theorem 6, \citet[p. 271]{Geyer:gdor}, 7/25/10}
+And now the big one:
+\begin{theorem}
+If $\delta$ is a direction of recession, and
+\begin{align*}
+H = \set{ w \in \RR^p: \inner{w-y,\delta}=0 },
+\end{align*}
+and $P(Y \in H) > 0$ for some distribution in the family, and hence for all, then for 
+all $\theta \in \Theta$,
+\begin{align*}
+\lim_{s \to \infty} f_{\theta+s\delta}(\omega) = 
+			\begin{cases} 
+			0 								& \inner{Y(\omega) - y ,\delta} < 0 \\
+			\frac{f_\theta(\omega)}{P_\theta(Y \in H)} 	& \inner{Y(\omega) - y ,
+\delta} = 0 \\
+			+\infty							& \inner{Y(\omega) - y ,\delta} > 0.
+		\end{cases}
+\end{align*}
+If $\delta$ is not a direction of constancy, then $s \mapsto P_{\theta+s\delta}( Y 
+\in H)$ is continuous and strictly increasing, and $P_{\theta+s\delta}( Y \in H) \to 
+1$ as $s \to \infty$.
+\end{theorem}
+Before going on to the proof, let's think about what this means.  Suppose $\delta$ is 
+a DOR and not a DOC, because the latter is not interesting.  So, the MLE does not 
+exist because the log-likelihood, despite being strictly convex, is strictly 
+increasing when we go in the direction of $\delta$.  That's what DOR means.  So then 
+what?
+
+Well, we need to think first about $H$ again, this plane that is perpendicular to $
+\delta$ on which the observed data $y$ lies.  Looking first at the last sentence of 
+this theorem, it says that for the sequence of exponential families with parameter 
+value $\theta+s\delta$, the probability of $Y$ occurring on the plane $H$ is strictly 
+increasing, and in fact, going to 1.  This is what Charlie is referring to when he 
+says things like ``the probability is accumulating on the boundary".  So, $H$ 
+actually coincides with the boundary of the convex hull, the observed data $y$ sits 
+is on this boundary (hence the MLE does not exist, by the usual MLE existence 
+theorem, and hence a DOR exists).  When we take the parameter value further and 
+further along in the direction of the DOR, the samples generated from that model will 
+be increasingly cluster around that boundary face of the convex hull on which $y$ 
+sits.
+
+So how about the rest of the theorem?  We saw in Theorem 3 that $\inner{Y-y,\delta} 
+\leq 0$ so the set where the above is $+\infty$ has probability zero.  I think the 
+set for which $\inner{Y-y,\delta} = 0$ corresponds to a DOC, doesn't it?  Hmm, 
+something's not right with my reasoning.
+
+Charlie's paper says: the right side (excluding the 0 probability part) is the 
+density of the conditional distribution given the event $Y \in H$ of the distribution 
+having parameter value $\theta$, so we could denote the RHS by $f_\theta(\omega | Y 
+\in H)$.  The exponential family with the \emph{full} natural parameter space (I'm 
+glossing over some stuff) is the limiting condition model (LCM).  ``If an MLE exists 
+for the LCM, then it maximizes the likelihood in the family that is the union of the 
+LCM and the original family, and it maximizes the likelihood in the family that is 
+the set of all limits of sequences of distributions in the original family.  When 
+this happens, we say we have found an MLE in the Barndorff-Nielsen completion of the 
+original family."
+
+\begin{proof}
+Hmm, I'm concerned about the different forms of $H$: are they actually all the same 
+thing?  Well, carry on.
+
+By Theorem 3, if $\delta$ is a DOR, then $\inner{Y-y, \delta} \leq 0$ which implies 
+that $\inner{Y, \delta} \leq \inner{y, \delta}$.  So, the largest value that $\inner
+{Y, \delta}$ can take on is $\inner{y, \delta}$.  Then $\sigma_C(\delta) = \inner{y, 
+\delta}$.
+
+Focus on the form of the density for $f_{\theta+s\delta}(\omega)$.  According the 
+form of the relative density previously defined with respect to $\psi$,
+\begin{align*}
+ f_{\theta+s\delta}(\omega) &= e^{ \inner{y,\theta+s\delta - \psi} - c(\theta+s
+\delta) + c(\psi)  } \\
+ 	&= e^{ \inner{y,\theta - \psi} -c(\theta) + c(\theta) + s \inner{y,\delta} - c
+(\theta+s\delta) + c(\psi)  } \\
+ 	&= e^{ \inner{y,\theta - \psi} -c(\theta) + c(\psi) - c(\theta+s\delta) + s 
+\inner{y,\delta} + c(\theta)   } \\
+ 	&= f_\theta(\omega) \frac{e^{c(\theta)}}{e^{ c(\theta+s\delta) - \inner{y,\delta}
+s } }.
+\end{align*}
+This form is starting to look familiar, in particular, the denominator is from 
+Theorem 2.2 from \citet{Geyer:1990} except with $\inner{y,\delta}$ instead of $b$ 
+(where this 
+$y$ is the dummy variable in the density, not the observed data).  So what happens as 
+$s \to \infty$?  
+
+It depends on how $\inner{Y(\omega),\delta}$ relates to $\sup_{y \in C}\inner{y,
+\delta} = \inner{y,\delta}$, for the observed data $y$.  (our notation is getting a 
+little confusing since $y$ can denote the observed data $y$ or the dummy variable in 
+the density).  
+\begin{align*}
+	f_{\theta+s\delta}(\omega) = f_\theta(\omega) \frac{e^{c(\theta)}}{e^{ c(\theta+s
+\delta) - \inner{y,\delta}s } } 
+	\to	
+			\begin{cases} 
+			0 								& \inner{Y(\omega),\delta} < \inner{y,
+\delta} \\
+			\frac{f_\theta(\omega)}{P_\theta(Y \in H)} 	& \inner{Y(\omega) ,
+\delta} = \inner{y,\delta} \\
+			+\infty							& \inner{Y(\omega),\delta} > \inner{y,
+\delta}.
+	\end{cases}
+\end{align*}
+For $\delta$ a DOR but not DOC, we need to show that the $P_{\theta+s\delta}(Y \in H) 
+\to 1$ 
+as $s \to \infty$, where $H = \set{w \in \RR^p: \inner{w-\yobs,d}=0}$.
+\begin{align*}
+ P_{\theta+s\delta}(Y \in H) &= \int_H e^{\inner{y, \theta+s\delta - \psi} - c(\theta
++s\delta) + c(\psi)} \, d\psi \\
+		&= \E_\psi \left \{ I_H e^{\inner{y, \theta - \psi} +c(\psi) - [c(\theta+s
+\delta) -s\inner{y,\delta}]} \right 
+\}\\
+		&= \E_\psi \left \{ I_H  \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner
+{y,\delta} } } 
+		e^{\inner{y, \theta - \psi} -c(\theta)+c(\psi)}  \right \}.
+\end{align*}
+Since the indicator function, $I_H$, fixes $\inner{ y, \delta}$ to be a constant, it 
+can pulled out of the expectation, so that 
+\begin{align*}
+		 P_{\theta+s\delta}(Y \in H)
+		 &= \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } }
+		 \E_\psi \left \{ I_H   
+		e^{\inner{y, \theta - \psi} -c(\theta)+c(\psi)}  \right \}, \\
+		 &= \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } } 
+		 P_\theta ( Y \in H ).
+		 \end{align*}
+ 
+Then applying Theorem 2.2 from Geyer:1990,
+\begin{align*}
+ P_{\theta+s\delta}(Y \in H)
+		&\to \frac{1}{P_\theta(Y \in H)}  P_{\theta}(Y \in H) = 1
+ \end{align*}
+ as $s \to \infty$.  
+ 
+ That this probability is strictly increasing follows directly from the DOR property 
+which requires $\ell( \theta+s
+\delta)$ to be strictly increasing.   
+\end{proof}
+
+
+\subsection{log likelihood is bounded by LCM}
+\subsection{summary}
+
 
 
 In summary, by Theorem~\ref{Thm:MLE rint}, when the observed statistic, $g(\yobs)$, is on the boundary of the convex support $C$, the MLE does not exist in the conventional sense.
@@ -858,8 +1208,8 @@ Here we suggest another alternative that is especially useful when it appears th
 
 \begin{figure}[!ht]
 \centering
-%\includegraphics[height=2.6in,width=2.6in]{Figures/zigzag-eta}
-%\includegraphics[height=2.6in,width=2.6in]{Figures/zagplusnorm-eta}
+\includegraphics[height=2.6in,width=2.6in]{Figures/zigzag-eta}
+\includegraphics[height=2.6in,width=2.6in]{Figures/zagplusnorm-eta}
 \caption{Contour plots of the log likelihood when the MLE does not exist.  The surface of the log 
 likelihood tends to flatten, though technically it is still concave.  This can cause the steepest ascent 
 algorithm to zigzag, which is inefficient (top).  However, by periodically using search directions 
@@ -1247,6 +1597,33 @@ used by our algorithm are initially much smaller than $1/k$.
 \label{Table:Potts step size}
 \end{table}
 
+\subsection{MLE distribution for Potts models}
+
+\citet{Composite} explored a generalization of the pseudo-likelihood approach called \textit{composite likelihood} and applied to Potts models; a side note result of their analysis is that the MLE distribution is in fact skewed and biased.  This can be ascertained directly through the use of MCMCMLE, the advantage of the MCMCMLE algorithm here is that we can in fact re-use the same 
+MCMC samples.  
+
+If we want to use 100 different observed data sets to estimate our MLE 
+distribution (that is, we will approximate MLEs for each of the 100 data sets), and 
+we will first need to generate 100 different observed samples.  Then, for each sample 
+we will want to MCMC sampling to maximize the log-likelihood ratio, $r( \theta, 
+\theta_0)$.  The beauty here is that in fact we can generate MCMC samples only once 
+(for a reasonable large size, say 100,000) and then use these to approximate the log-
+likelihood ratio.
+
+We applied the Newton algorithm and MCMCMLE (well, Charlie did) to a $32 \times 32$ 
+4-color Potts model.  To our surprise, the MLE distribution appeared to be skewed and 
+biased:
+\begin{align*}
+%\theta_{MLE} = (0.004626115, 0.003245121, -0.001108131, 1.06203 )^T
+\theta_{MLE} = (0.00463, 0.00325, -0.00111, 1.062 )^T
+\end{align*}
+with a standard deviation of 0.028 for $\theta_*$ (the sample standard deviation of 
+the 455 $\theta$ values we calculated).
+
+So, the mean of the MLEs we calculate is significantly lower than the true value of 
+1.098.
+
+
 %\section{Example: Social Network}
 %Use the new \texttt{simulate.formula()} from \texttt{statnet}.
 %In this example, we apply our algorithm to a simple social network model for which MCMC-MLE has been shown 
@@ -1311,6 +1688,35 @@ We now return to the examples from Section~\ref{S:Example}.  We describe the rel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exact calculation of normalizing constant}
+
+%%%%% 1/26/11
+\subsection{Some Basics}
+Why these choices of graphs?  9 nodes is not many at all!
+
+For an undirected graph with $n$-nodes, there are $n \choose 2$ dyads.  For each dyad, 
+an edge may be present or absent, so there are $2^{n \choose 2}$ possible graphs to 
+consider.\\
+
+\begin{table}[ht]
+\caption{Combinatorics for undirected graphs}
+\begin{tabular}{ccl}
+\hline 
+Nodes & Possible Edges & Total Graphs \\ [1ex]
+\hline
+5 & ${5 \choose 2} = 10$ & $2^{10} = 1024$ \\ [1ex]
+6 & ${6 \choose 2} = 15$ & $2^{15} = 32,768$ \\ [1ex]
+7 & ${7 \choose 2} = 21$ & $2^{21} = 2,097,152$ \\ [1ex]
+8 & ${8 \choose 2} = 28$ & $2^{28} = 268,435,456$ \\ [1ex]
+9 & ${9 \choose 2} = 36$ & $2^{36} = 68,719,476,736$ \\ [1ex]
+\hline 
+\end{tabular}
+\end{table}
+%%%%%%
+So, while a 5-node graph seems manageable, a 9-node graph is already getting difficult 
+to handle.  For example, \texttt{as.integer(2\textasciicircum31)} returns \texttt{NA}.  
+\textbf{Going forward, we work with the 9-node edge-triangle model}.
+
+
 For the examples we consider, the sum in \eqref{E:cumulant} can in fact be explicitly evaluated.  The sample space of graphs $\YY$ has $2^{36}$, or about 68 billion, sample points.  However, we only need to consider the points in the sufficient statistics space, $\TT = g(\YY)$, which in the case of the edge-triangle model used for the 9-node network only has 444 points.  That is,
 \begin{align*}
 	e^{c(\eta)} = \sum_{y \in \YY} e^{\inner{g(y),\eta} } = 	\sum_{t \in \TT} e^{\inner{t,\eta} } \nu(t)
@@ -1340,7 +1746,7 @@ Either representation can be expressed with rational arithmetic, making equality
 \subsection{Two-dimensional sufficient statistic}\label{S:example 2dim}
 \begin{figure}[!ht]
 \centering
-%\includegraphics[height=4in,width=4in]{Figures/g9-hull}
+\includegraphics[height=4in,width=4in]{Figures/g9-hull}
 \caption{The sample space of the edge and triangle network statistics for the 9-node network described in 
 Section \ref{S:example 2dim}.  The shading of a point corresponds to the frequency of graphs with that network statistic.  
 The convex hull of all points is the gray, sail-shaped polytope.  Points on the boundary have an 
@@ -1357,8 +1763,8 @@ Our algorithm, arbitrarily starting at the natural parameter value of $\eta = (0
 When the value for $\eta$ is equal to the MLE, the mean of the MC sample points will equal $(29,47)$(see Figure \ref{F:MC cloud} (bottom)).  
 \begin{figure}[!ht]
 \centering
-%\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
-%\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-MLE}
+\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
+\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-MLE}
 \caption{The network statistics for 10,000 Monte Carlo samples generated from models with the natural parameter $\eta$ set to $(0,0)$ (top) and the MLE, $(-0.389, 0.418)$ (bottom).  The observed data has network statistics of $(29,47)$, depicted by the larger point with white outline.  When $\eta$ is the MLE, the observed statistic is 
 exactly the mean of the MC sample points generated from the model with this parameter value. }
 \label{F:MC cloud}
@@ -1388,8 +1794,8 @@ In this example, the algorithm has determined empirically that $(30,44)$, $(31,5
 (We deal later with a case where 100\% of the MC sample points form a face which is \emph{not} on the boundary of $C$.)
 \begin{figure}[!ht]
 \centering
-%\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
-%\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
+\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
+\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
 \caption{The network statistics for 10,000 Monte Carlo samples for the model with 
 observed network statistic $(31,50)$, depicted by the larger point with white 
 outline, lying on the boundary of the convex support (top).
@@ -1492,7 +1898,7 @@ In order for the algorithm to have correctly identified the boundary here and co
 \begin{figure}[!h]
 \centering
 %%\includegraphics[height=2.4in,width=2.4in]{Figures/MCsample-problem}
-%\includegraphics[height=4.5in,width=4.5in]{Figures/MCsample-fakeface}
+\includegraphics[height=4.5in,width=4.5in]{Figures/MCsample-fakeface}
 \caption{An observed statistic at $(21,4)$, in the interior of the convex hull but close to the boundary.  It is quite feasible to generate 10,000 MC 
 samples where all 10,000 points lie on a line that appear to be a one-dimensional face, marked by the 
 triangles in the figure above.  The lighter colored polytope is the convex hull of all previously 
@@ -1591,6 +1997,9 @@ The MC sample, however, does not cover the entire face.  This is a new scenario,
 
 Only issue outstanding with this is how long it takes to find the LCM MLE.  Having a surprisingly hard time with this.  Question: is it doing any worse than when we started with a 2-dim sample space?
 
+\section{Example: \textit{e. coli}}
+\section{Example: Faux Magnolia High School}
+\citet{advancesp*,statnet-tutorial} utilize a adolescent friendship network data set of 1,461 students in grade 7--12 derived from the National Longitudinal Study of Adolescent Health.  The data set, which \citeauthor{statnet-tutorial} refer to as Faux Magnolia High School, is a model-based simulation from the original data set, where the simulation is necessitated to maintain confidentiality.
 
 \chapter{Discussion}
 We have presented a simple line search algorithm for finding the MLE of a regular exponential family when the MLE 
@@ -1705,7 +2114,7 @@ These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
 %%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
 \begin{figure}
 \centering
-\scalebox{.4}{\input{Figures/Wolfe-mod.pstex_t}}
+\scalebox{.4}{\input{Figures/Wolfe-mod.pdf_t}}
 \caption{The acceptable region for $\alpha$ according to the curvature condition \eqref{E:Wolfe-mod} when restricting 
 $f$ to direction $p_k$.}
 \label{F:Wolfe-mod}
@@ -1886,7 +2295,7 @@ These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
 %%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
 \begin{figure}
 \centering
-\scalebox{.4}{\input{Figures/Wolfe-mod.pstex_t}}
+\scalebox{.4}{\input{Figures/Wolfe-mod.pdf_t}}
 \caption{The acceptable region for $\alpha$ according to the curvature condition \eqref{E:Wolfe-mod} when restricting 
 $f$ to direction $p_k$.}
 \label{F:Wolfe-mod}
