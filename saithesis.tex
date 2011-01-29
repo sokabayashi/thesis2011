@@ -89,53 +89,82 @@
 
 \chapter{Introduction}
 %\input{Introduction}
-\section{Motivation: stochastic social network models}
-Is it possible to build a mathematical model that captures the behavioral tendencies of individuals in how they form relationships?
+\section{Motivation: social network models}
+Is it possible to build a mathematical model that captures the behavioral tendencies of individuals in how they form relationships?\\  % in a group?
 
-This is the question that led us to do research in parameter estimation methods for exponential families, with a particular focus on social network models.  Sociologists have studied social networks as a subject matter since at least as early as the 1930s, when Moreno introduced the sociogram, a diagram that denotes individuals as points, and the presence of a relationship between individuals by lines \citep{Wasserman:1994}.  A sociogram depicting the marriage network data among important families in Renaissance Florence presented in \citep{Padgett} is depicted in Figure~\ref{F:Florentine}.
+This is the question that led us to study parameter estimation methods for exponential families, with a particular interest in models used to describe social network data.  
+Formally, a \emph{social network} is the collection of \emph{actors} and the \emph{relations} between each pair of actors.
+Social scientists have studied social networks as a discipline since as early as the 1930s when Moreno introduced the sociogram, a diagram that denotes individuals in a group as points and the presence of a relation between individuals by lines \citep{Wasserman:1994}.  A sociogram depicting the \emph{undirected} marriage network data among sixteen important families in Renaissance Florence \citep{Padgett} is depicted in Figure~\ref{F:Florentine} and a sociogram depicting the \emph{directed} affinity, or ``liking" relation, among 18 monks in a monastery in New England in the late 1960s \citep{Sampson} is depicted in Figure~\ref{F:Sampson}.  In such settings, a social scientist may be interested in understanding whether relations arise out of friendliness or a strategy for alliance building, that is, driven by actor-specific attributes or by the structures of surrounding relations.
 \begin{figure}
 \begin{center}
-\includegraphics[width=4.5in,keepaspectratio]{florentine}
+%\includegraphics[width=4.5in]{florentine} %,keepaspectratio
 \end{center}
-\caption{\citet{Padgett}'s marriage network among families in Renaissance in the late 15th century.  Data made available in the \texttt{ergm} package \citep{ergm} in R.}
+\caption{\citeauthor{Padgett}'s \citeyearpar{Padgett} marriage network among 16 Florentine families around 1430.  At the time, two factions, one revolving around the Medicis and the other around the Strozzis vied for political control of the city.   Data is available through and plotted using the \texttt{ergm} package \citep{ergm} in R.}
 \label{F:Florentine}
 \end{figure}
 
-\emph{Stochastic} network models were developed as early as 1959 in the seminal works of \citet{Gilbert} and \citet{Erdos}, resulting in a basic model that is now referred to as the Bernoulli model or the Erd\"{o}s-R\'{e}nyi-Gilbert model.  With the advent of cheaper computing resources, the development of more sophisticated stochastic network models flourished;  notable landmarks are the $p_1$ model of \citet{Holland:1981}, which could capture the reciprocal tendency of relationships in directed networks, and the $p^*$ model of \citet{Frank:1986}, which could describe transitive tendency of relationships in undirected networks.  These models laid the foundation for the more general \emph{exponential random graph models (ERGM)}, a class of exponential family models that are now commonly used to model networks \citep{logit,Pattison:1999,Snijders:2002,Handcock:2006,introp*,advancesp*,recentp*,ergm,Morris:2008,Goldenberg:2009}.
+\begin{figure}
+\begin{center}
+%\includegraphics[width=4.5in]{samplike}
+\end{center}
+\caption{\citeauthor{Sampson}'s \citeyearpar{Sampson} ``liking" network among 18 monks in a New England monastery in the late 1960s.  Data is available through and plotted using the \texttt{ergm} package \citep{ergm} in R.}
+\label{F:Sampson}
+\end{figure}
 
-\subsection{THE ISSUE -- DEPENDENCE}
-At the core, a stochastic network model attempts to describe whether or not a relationship forms between each pair of individuals in a collection of individuals.
+Stochastic network models were developed as early as 1959 in the seminal works of \citet{Gilbert} and \citet{Erdos}, resulting in a simple probabilistic model that is now referred to as the Bernoulli model or the Erd\"{o}s-R\'{e}nyi-Gilbert model.  Over the last forty years, more sophisticated stochastic network models have flourished;  notable landmarks include the $p_1$ model of \citet{Holland:1981} which captures the reciprocal tendency of relationships in directed networks, and the $p^*$ model of \citet{Frank:1986} which describes the transitive tendency of relationships in undirected networks.  These models laid the foundation for the more general \emph{exponential random graph models (ERGM)}, a class of exponential family models that are now routinely used to model network data \citep{logit,Pattison:1999,Handcock:2006,introp*,advancesp*,recentp*,ergm,Morris:2008,Goodreau:2009,Goldenberg:2009}.
+
+%\subsection{THE ISSUE -- DEPENDENCE}
+At their core, stochastic network models attempt to describe whether or not a relation forms between each pair of actors in a group.
 %  In the Florentine marriage network depicted in Figure~\ref{Padgett}, a model fit  
-It has long been observed though that relationships do not form in isolation; rather, they form in an interdependent manner.  Whether or not a relationship forms between individuals $A$ and $B$ may very well depend on whether or not a relationship forms between $B$ and $C$.  
+It has long been observed that relations, especially those involving humans, do not form in isolation; rather, they form in an interdependent manner.  Whether or not a relation forms between individuals $A$ and $B$ may very well depend on whether or not relations form between $B$ and $C$ and $C$ and $A$.  This has profound implications for the social scientist, necessitating a new ``network" perspective that recognizes the relational structures, such as a triangle between actors $A$, $B$, and $C$, as factors in the analysis \citep{Wasserman:1994}.  For the statistician, this means the model should not break the network down into many independent components with each containing two actors.
+Instead, a good model will consider the relational structures in the observed network and clarify their role in shaping the global structure.  
+In addition, a stochastic model can simulate new random networks whose distributions retain essential characteristics of the observed network.  Researchers can use these to further test hypotheses about the process of relationship formation.  
+%Network researchers have developed many descriptive statistics to capture characteristics of a network.  For example, the number of ties going to a particular actor is one measure of that actor's prestige in that network \citep{Wasserman:1994}.  
+%\subsection{WHAT MAKES A GOOD MODEL?}
+%%%%%% STATISTICAL MODEL $$$$$$$
+%A good statistical model provides clarity of the underlying forces that shape the structure of an observed network.   
+%For example, an alternative theory to transitivity is that the frequency of triangles reflects the tendency of individuals to form relationships with others of the same gender.  A good statistical model can see past the noise in the data to identify if one or both of these forces are important.   
+%\subsection{MICRO -- MACRO}
 
-This necessitates a new ``network" perspective that recognizes relationship structures themselves as factors in the analysis.  
+\subsection{ERGM parameter estimation}
+Writing down a mathematical model to describe a phenomenon is not always difficult to do; the expression $y=mx+b$ should be familiar to anyone who has taken basic algebra as the equation of a line with slope parameter $m$ and $y$-intercept parameter $b$.  However, finding a ``best fit" line through scattered data points---that is, finding the values for the parameters $m$ and $b$ that result in a line that best characterizes the data---is a much more involved mathematical exercise.
 
-\subsection{MICRO -- MACRO}
+Similarly, exponential random graph models have a deceptively simple form that belies the challenges involved in estimating the model parameters.  Typically, parameter estimation in statistical models is done through the method of maximum likelihood estimation in which values for the parameters, called maximum likelihood estimators (MLE), that make the observed data most likely for the model are calculated.
+However, even with increasingly sophisticated simulation methods, finding MLEs for ERGMs can be problematic in two ways:
 
-\subsection{PARAMETER ESTIMATION}
-Writing down a mathematical model to describe data is often not difficult to do; the expression $y=mx+b$ should be familiar to anyone who has taken basic algebra as the equation of a line.  However, finding a ``best fit" line through scattered data points---that is, finding appropriate values for the \emph{parameters} $m$ and $b$ is a much more involved mathematical exercise that involves calculus.
+\begin{enumerate}
+\item The methodology used to find MLEs fails due to a shortcoming in the methodology itself.  That is, an alternative approach might yield parameter estimates resulting in a perfectly good model.
 
-Similarly, exponential families---and hence exponential random graph models---have a deceptively simple form that belies the challenges involved in the estimating the model parameters.
+\item The model itself is specified in such a manner so that it can be classified as ``degenerate'', a term first applied to ERGMs by \citet{Handcock:Degeneracy} and further clarified by \citet{Rinaldo:2009} to refer to instances where
+\begin{enumerate}
+\item Random graphs generated from the fitted model lack variability, often only giving rise to unrealistic graphs, usually empty or complete (or nearly complete).
+\item the MLE does not exist.
+\item The fitted model makes the observed network highly unlikely.
+\end{enumerate}
+\end{enumerate}
+The two issues are related; for example, if the MLE does not actually exist, then an algorithm (excluding the one we present in this paper) sent to find it will surely fail, or worse, return values that the user may then treat as correct.  \citet{advancesp*} argues that this issue is problematic enough to be a barrier to progress in the field.
+
+
+%In accordance with this perspective, sociologists have developed descriptive statistics of network structures to correspond to social theory.  For example, the frequency of triangles, 
+%%One of the simplest relationship structure is a triangle, 
+%in which each individual in a group of three individuals has relationships with the other two,
+%may reflect the tendency of individuals to form \textit{transitive} relationships, where because $A$ is friends with $B$ and $B$ is friends with $C$, $A$ is friends with $C$.  %These measures can be used to characterize an observed network data set, capturing qualities beyond the individual specific attributes.
 
 \subsection{UNDERLYING MOTIVATION -- SO WHAT?}
+Although problems from sociology provide much of the motivation for social network analysis, network models can in fact be applied to problems in a broad range of disciplines including political science, biology, and business.  Actors often represent individuals but they may also represent entities like nation-states, protein molecules, or corporations.  The relation that connects actors is often friendship or actor $A$ ``liking'' actor $B$ as Sampson's monk data depicted in Figure~\ref{F:Sampson}, but the tie can be any kind of relation such as a business transaction or the Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the \textit{Escherichia Coli} transcriptional regulation network among 423 operons produced by \citet{Salgado,Shen-Orr}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=4.5in]{ecoli}
+\end{center}
+\caption{\textit{E. coli} transcriptional regulation network of \citet{Salgado,Shen-Orr}.  Each node is an operon and a directed edge from one node to another indicates that the first encodes the transcription factor that regulates the second.
+Data is available through and plotted using the \texttt{ergm} package \citep{ergm} in R.}
+\label{F:ecoli}
+\end{figure}
 
 
-
-
-In accordance with this perspective, sociologists have developed descriptive statistics of network structures to correspond to social theory.  For example, the frequency of triangles, 
-%One of the simplest relationship structure is a triangle, 
-in which each individual in a group of three individuals has relationships with the other two,
-may reflect the tendency of individuals to form \textit{transitive} relationships, where because $A$ is friends with $B$ and $B$ is friends with $C$, $A$ is friends with $C$.  %These measures can be used to characterize an observed network data set, capturing qualities beyond the individual specific attributes.
-
-\subsection{WHAT MAKES A GOOD MODEL?}
-%%%%%% STATISTICAL MODEL $$$$$$$
-A statistical model provides further clarity of the underlying forces that shape the structure of an observed network.   
-For example, an alternative theory to transitivity is that the frequency of triangles reflects the tendency of individuals to form relationships with others of the same gender.  A good statistical model can see past the noise in the data to identify if one or both of these forces are important.   
-In addition, models can simulate new random networks whose distributions retain essential characteristics of the observed network.  Researchers can use these to further test hypotheses about the process of relationship formation.  
-
-
-\section{Exponential family modeling}
-VS. ERGM?
+\section{Generalization to exponential families}
+The issues discussed in the previous section concerning the challenges of parameter estimation for exponential random graph models extend to the more general discrete state space exponential family.  
 
 Exponential families are commonly used to model phenomena with dependent structure, 
 where the outcomes of the response variable of interest are in fact dependent on one another.  For example, the Ising 
@@ -160,6 +189,7 @@ white or black.}
 \label{F:pottsimage}
 \end{figure}
 
+\subsection{Why Exponential families?}
 The appeal of exponential families in these settings stems from their simplicity and maximum entropy property \citep{Jaynes:1978,Geyer:1992}.
 By choosing statistics of interest on the data, one fully specifies a model that gives the 
 most reasonable inference possible derived solely from those statistics.  Furthermore, exponential families have been 
