@@ -87,7 +87,7 @@ for Social Networks}
 
 
 \mainmatter
-\singlespace
+\onehalfspacing % SAI - REMOVE WHEN DONE EDITING
 \chapter{Introduction}
 %\input{Introduction}
 \section{Motivation: social network models}
@@ -140,8 +140,9 @@ notable landmarks include the $p_1$ model of \citet{Holland:1981} which captures
 reciprocal tendency of relationships in directed networks, and the $p^*$ model of 
 \citet{Frank:1986} which describes the transitive tendency of relationships in 
 undirected networks.  These models laid the foundation for the more general 
-\emph{exponential random graph models (ERGM)}, a class of exponential family models that 
-are now routinely used to model network data.  They are presented in detail in 
+\emph{exponential family random graph models (ERGM)}, a class of exponential family models that 
+are now routinely used to model network data.  They are now commonly referred
+to as ``exponential random graph models" and are presented in detail in 
 Section~\ref{S:ERGM examples}.
 % \citep{logit,Pattison:1999,Handcock:2006,introp*,advancesp*,recentp*,ergm,Morris:
 %2008,Goodreau:2009,Goldenberg:2009}.
@@ -164,33 +165,41 @@ of social network related papers \citep{Knoke:2008}.
   
 For the statistician, the network perspective means that the model should not break the 
 network down into independent components with each containing two actors.
-Instead, a good model will consider interesting relational structures in the observed network 
+Instead, a good model will consider important relational structures in the observed network 
 and clarify their contribution in shaping the global outcome.   
-Accompanying the model must also be a methodology to calibrate the model 
+Accompanying the model must also be a computational algorithm to calibrate the model 
 parameters to the network data.  
 %In fact, this is the focus of our research.
-In fact, writing down the expression for an uncalibrated ERGM is straightforward; however,
-the simple expression belies the difficulties involved in finding appropriate model
-parameter values.
+In fact, writing down the expression for an uncalibrated ERGM turns out to be quite
+straightforward; it is fitting the model
+to data that is an open research problem and the focus of our paper.
+
 Typically, parameter estimation is done through the method of 
-maximum likelihood in which values for the parameters, called \emph{maximum 
-likelihood estimators (MLE)}, that make the observed data most likely for the model 
+\emph{maximum likelihood} in which values for the parameters called \emph{maximum 
+likelihood estimators (MLE)} that index the model to make the observed data most likely 
 are calculated.
-This task proves to be so difficult for exponential family models with complex
-dependence like ERGMs that it has motivated the development of several methodologies
-including Besag's \emph{pseudo likelihood approach} \citep{Besag:1974,Strauss:1990}, the 
+Many methodologies have been developed over the years to address the difficulties
+in this process
+including Besag's \emph{pseudo likelihood} approach \citep{Besag:1974,Strauss:1990}, 
+\citeauthor{Geyer:1992}'s \citeyearpar{Geyer:1992}
 \emph{Markov chain Monte Carlo Maximum Likelihood} (MCMC-ML) approach, and 
 \emph{stochastic approximation}\footnote{Actually, stochastic approximation has more general
 applications in root finding, but has been frequently used for parameter estimation}.  
-In fact, it was the absence of these methodologies that restricted the earlier
-models like $p_1$ and $p^*$ to simpler dependence settings.
+In fact, it was the absence of usable methodologies in parameter estimation that 
+restricted earlier models like $p_1$ and $p^*$ to their simpler settings.
+
+%the simple expression belies the difficulties involved in fitting the model to data.
 %In this paper, we describe further advances to these methodologies that address some of the
 %pathologies researchers have encountered with these approaches.
 
-Once the model parameters are properly estimated, it can then be used to simulate 
+Once model parameters are properly estimated, the completed model can be used to simulate 
 new random networks whose distributions retain essential characteristics of 
-the observed network.  Researchers can use these 
+the observed network.  Researchers can then use these 
 to further test hypotheses about the process of relationship formation.  
+In this paper, we consider the ability to simulate such networks the end goal of parameter
+estimation rather than the parameter values themselves.  That is, the goal in maximum 
+likelihood is to obtain the maximum likelihood distribution rather than the values that index
+the distribution.
 
 %it is analogous to writing the expression $y=mx+b$ as the equation of a line with 
 %slope parameter $m$ and $y$-intercept parameter $b$.  
@@ -241,6 +250,7 @@ R.}
 
 
 \subsection{Why model?}
+RETURN TO THIS SECTION.\\
 Before we step into a lengthy of discussion of \emph{how} we model network data, it is 
 worth reflecting upon the question of \emph{why} network models are desirable.  We 
 have already given one answer to this question in the case of social scientist trying 
@@ -336,9 +346,9 @@ $\inner{\fatdot,\fatdot}$ denotes the bilinear form
 \end{align*}
 and $\YY$ is the sample space of all possible networks.
 So that \eqref{E:ERGM} integrates to 1, $\kappa(\eta)$ is a normalizing constant such that
-\begin{align*}
-   \kappa(\eta) &= \int e^{ \inner{ \eta, g(y)}  } \, d \mu(y) %\label{E:kappa}
-\end{align*}
+\begin{align}
+   \kappa(\eta) &= \int e^{ \inner{ \eta, g(y)}  } \, d \mu(y) \label{E:kappa}
+\end{align}
 where $\mu$ is a measure on $\YY$.  Thus an ERGM is an exponential family distribution 
 in \emph{canonical form} \citep{tpe} and we may rely on many of its known properties.
 %which may contain $N = 2^{n(n-1)}$ networks if graphs are directed and $N = 2^{n
@@ -364,7 +374,7 @@ the log likelihood of \eqref{E:ERGM} as
 \end{align}
 
 The appeal of exponential families in the setting of complex dependence phenomena such 
-as network data stems from their simplicity and maximum entropy property 
+as networks stems from their simplicity and maximum entropy property 
 \citep{Jaynes:1978,Geyer:1992}.
 By choosing statistics of interest on the data, one fully specifies a model that gives 
 the 
@@ -376,30 +386,31 @@ desirable properties such as the MLE uniqueness noted above.
 
 %%%%%%%%% NETWORK STATISTICS
 Ideally then, a network researcher need only specify relational structures of interest 
-to define an ERGM.  For example, in a directed affinity network, a sociologist may be 
-interested in the propensity for individuals to form reciprocal relations, where ties 
-exist $i \to j$ and $j \to i$, or transitive relations, where ties exist $i \to j$, 
-$j \to k$, $i \to k$.  The vector $g(y)$ can then be defined to be 
+to define an ERGM.  
+\citet{Wasserman:1996, Pattison:1999, logit, introp*} describe many of 
+the classical network statistics that one might include in the vector $g(y)$.  
+In these works, the researchers' primary 
+consideration in defining a network statistic is to find a relational structure 
+with scientific interpretability.  
+For example, in a directed affinity network, a sociologist may be 
+interested in the propensity for individuals to form \emph{reciprocal} relations, where 
+relations 
+exist $i \to j$ and $j \to i$, or \emph{transitive} relations, where 
+relations exist $i \to j$, $j \to k$, $i \to k$.  The vector $g(y)$ can then be defined 
 \begin{align*}
 	g(y) = \left ( \sum_{i<j} Y_{ij}Y_{ji}, \sum_{i \neq j \neq k} Y_{ij}Y_{jk}Y_{ik} 
 			\right )  
 \end{align*}
-where the components count the number of reciprocal and transitive tie configurations, 
-respectively.  \citet{Wasserman:1996, Pattison:1999, logit, introp*} describe many of 
-the classical network statistics that one might include in the vector $g(y)$.  
-
+where its components count the number of reciprocal and transitive relational structures, 
+respectively.  
+Such a model, with parameters appropriately calibrated to the affinity network, should then 
+generate networks that exhibit significantly more reciprocal and transitive relations 
+than would be expected in a uniformly random network.
 We will not discuss the merits or purpose of all the different network statistics 
 here; what is important is that these statistics can be transparently calculated for a 
 given network and the inclusion of them in $g(y)$, paired with their parameter 
 component in $\eta$, allows the model \eqref{E:ERGM} to calculate probabilities of 
-different network outcomes.  In the works cited above, the researchers' primary 
-consideration in defining a network statistic is to find a relational structure that 
-is of particular relevance to a problem.  For example, since reciprocity of ``liking" 
-between individuals is commonly observed in friendship networks, it would be sensible 
-to include a statistic for the number of reciprocal ties \citep{Holland:1981}.  Such a 
-model, with parameters appropriately calibrated to a friendship network, might then 
-generate networks that exhibit a significantly different number of reciprocal ties 
-than would be expected in a uniformly random network.
+different global network outcomes.  
 
 %\begin{figure}[!h]
 %\centering
@@ -409,21 +420,30 @@ than would be expected in a uniformly random network.
 %\end{figure}
 %%%%%% TABLE OF COMMONLY USED NETWORK STATISTICS
 
-  \citet{Handcock:2006, Hunter:2006, recentp*} develop new network statistics with 
-emphasis on the sensibility of the distributions generated from the specified models 
-rather than just the scientific significance of a relational structure.  A fairly 
+  \citet{Handcock:2006, Hunter:2006, recentp*} developed new network statistics with 
+particular emphasis on the sensibility of the distributions generated from the specified models.  
+These came about in response to the repeated discovery that poorly behaving models can
+result when a researcher only considers the scientific significance of network
+statistics without worrying about any ``overlap" in role of the network structures.
+A fairly 
 complete description of network statistics including these is in \citet{Morris:2008}.  
+We will explore this issue in much more detail.
 %In addition, the issue of model selection between competing models has not been 
 %addressed though \citet{GOF} have begun making strides in this area.  Both of these 
 %areas are active area of research.
 
+We now return the issue of why parameter estimation for ERGMs and 
+similar exponential family models on discrete state spaces can be challenging.
 Despite the tremendous appeal of the exponential family framework, one 
-immediate and sizable problem is that summation in the normalizing constant $\kappa(\eta)$ 
+immediate and sizable problem is that the summation in the expression for  the 
+normalizing constant $\kappa(\eta)$ in \eqref{E:kappa}
 is over all possible networks in the sample space $\YY$ and can be prohibitively expensive to 
 evaluate for networks of even moderate size.
 For an undirected network with $n$ actors, there are $N=2^{{n\choose 2} }$ 
-different possible networks in $\YY$.  Table~\ref{T:number graphs} shows how rapidly this number grows; \emph{unless dealing with networks of 9 actors or less, the likelihood function 
-should not be evaluated.}
+different possible networks in $\YY$.  Table~\ref{T:number graphs} shows how rapidly this number grows; 
+\emph{unless dealing with networks of 9 actors or less, the likelihood function 
+should not be evaluated.}  Software packages like R cannot even cast $2^{31}$ as an integer,
+necessitating alternative approaches.
 
 \begin{table}[h] \label{T:number graphs}
 \caption{Sample space size for networks with different number of actors.}
@@ -442,12 +462,27 @@ Nodes & Possible Edges & Total Graphs \\ [1ex]
 \end{table}
 %%%%%%
 
+\subsection{Covariate data}
+Information about a particular actor, say gender, can be incorporated as 
+\textit{covariate} data into the model with little difficulty.
+Often, a social scientist looks to include such information because she is interested in
+whether or not there is a \emph{homophily} effect, that is, whether individuals of the 
+same ``type" tend to make more relations with others of that type.  
+Suppose we wish to incorporate $p$ such exogenous attributes for our $n$-actor network.  
+This information can be represented by an $n \times n \times p$ matrix $X$, whose 
+$ijk$th element is the value of the $k$th attribute in the potential relation from actor
+$i$ to $j$ \citep{ergm}.  
 
-Finally, it should be noted that information about a particular actor, say the gender 
-for an individual, can be incorporated as \textit{covariate} data by allowing $g(y)$ 
-to depend on a node-specific covariate matrix $X$.  Thus we may write $g(y, X)$ in 
-place of $g(y)$ in \eqref{E:ERGM}.  We will continue to use $g(y)$ here for 
-simplicity.
+Like the other network statistics discussed, the statistics that comprise $X$ can 
+be transparently calculated from the data and hence included in a new canonical 
+statistics vector, $g(y, X)$,
+and the corresponding canonical parameter vector $\eta$ lengthened accordingly.
+The parameter estimation methodology is unchanged from before (so long as $p$ is not
+excessively large), and while this greatly expands the
+usefulness of ERGMs to the researcher, there are no new issues for us to consider
+from a statistical modeling perspective.
+Thus we will continue to use $g(y)$ instead of $g(y,X)$ for simplicity.
+
 
 
 \section{Examples of ERGMs} \label{S:ERGM examples}
