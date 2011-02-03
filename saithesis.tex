@@ -180,7 +180,7 @@ likelihood estimators (MLE)} that index the model to make the observed data most
 are calculated.
 Many methodologies have been developed over the years to address the difficulties
 in this process
-including Besag's \emph{pseudo likelihood} approach \citep{Besag:1974,Strauss:1990}, 
+including Besag's \emph{pseudolikelihood} approach \citep{Besag:1974,Strauss:1990}, 
 \citeauthor{Geyer:1992}'s \citeyearpar{Geyer:1992}
 \emph{Markov chain Monte Carlo Maximum Likelihood} (MCMC-ML) approach, and 
 \emph{stochastic approximation}\footnote{Actually, stochastic approximation has more general
@@ -349,12 +349,11 @@ So that \eqref{E:ERGM} integrates to 1, $\kappa(\eta)$ is a normalizing constant
 \begin{align}
    \kappa(\eta) &= \int e^{ \inner{ \eta, g(y)}  } \, d \mu(y) \label{E:kappa}
 \end{align}
-where $\mu$ is a measure on $\YY$.  Thus an ERGM is an exponential family distribution 
-in \emph{canonical form} \citep{tpe} and we may rely on many of its known properties.
-%which may contain $N = 2^{n(n-1)}$ networks if graphs are directed and $N = 2^{n
-%(n-1)/2}$ if graphs are undirected, an
+where $\mu$ is a measure on $\YY$.  In fact, \eqref{E:ERGM} is the exactly form of 
+an exponential family distribution in \emph{canonical form} \citep{tpe}.  The only distinction that makes this an ERGM is that $\YY$ is on the discrete state space 
+of possible network configurations.
 
-Define 
+We rely on many properties of exponential families.  Define 
 \begin{align}
    \Xi &= \{ \eta \in \RR^d : \kappa(\eta) < \infty \}.  \label{E:paramspace}
 \end{align}
@@ -517,7 +516,7 @@ for $\eta$ is thus easily calculated from the observed data but the independence
 assumption is too unrealistic for all but the simplest of cases; usually, a researcher is 
 interested in the different probabilities of tie formations between actors.
 
-\subsection{The $p_1$ Model}
+\subsection{The $p_1$ Model} \label{S:p1}
 \citet{Holland:1981} made advances in relaxing this independence assumption  with 
 their $p_1$ model.  They focused on two empirical observations from sociometric 
 studies:
@@ -593,8 +592,8 @@ network structures are the same ignoring the labels on the nodes (also called \t
 
 The model is the first to break dyad independence, made possible by \citeauthor{Frank:1986}' methods of parameter estimation.  In particular, \citeauthor{Frank:1986} run 
 Markov chain Monte Carlo simulations of the model at multiple values for a parameter 
-to determine which fits the data best.  The authors also get \emph{maximum pseudo likelihood 
-estimators (MPLE)} obtained from a standard logistic regression (we will discuss the pseudo likelihood approach in the next section) and observe that the 
+to determine which fits the data best.  The authors also get \emph{maximum pseudolikelihood 
+estimators (MPLE)} obtained from a standard logistic regression (we will discuss the pseudolikelihood approach in the next section) and observe that the 
 MPLEs are close to those they arrived at from their rigorous simulations, leading them to suggest that these MPLEs are good enough.  
 
 %In a chronological review of the network model literature, 
@@ -611,11 +610,12 @@ MPLEs are close to those they arrived at from their rigorous simulations, leadin
 %%%%%%%%%%%%%%%%% SECTION %%%%%%%%%%%
 \section{ERGM parameter estimation}
 Exponential random graph models have a deceptively simple form \eqref
-{E:ERGM} that belies the challenges involved in parameter estimation,
-resulting from the intractable normalizing constant discussed in Section~\ref{S:intractable}.
+{E:ERGM} that belies the challenges involved in parameter estimation which
+result from the intractable normalizing constant discussed in Section~\ref{S:intractable}.
 %resulting from the computationally infeasible normalizing constant \eqref{E:kappa}.  
 In this section, we discuss the most commonly used parameter estimation approaches
-that circumvent evaluating the likelihood function.
+used for exponential families with complex dependence like ERGMs.  All approaches avoid evaluating the likelihood function directly.  
+%These provide the backdrop for the new algorithm we propose in this paper.
 
 %However, even with increasingly sophisticated simulation methods, finding MLEs for 
 %ERGMs can be problematic in two ways:
@@ -641,49 +641,48 @@ that circumvent evaluating the likelihood function.
 
 
 
-\subsection{Maximum Pseudolikelihood method}
-As mentioned in the previous section, \citet{Frank:1986} introduced the application of 
-the maximum pseudolikelihood method, a method used in lattice systems \citep{Besag:
-1974}, to social network models.  \citet{Strauss:1990} further justify the use of 
+\subsection{Maximum pseudolikelihood method}
+As mentioned Section~\ref{S:p1}, \citet{Frank:1986} succsesfully applied 
+the maximum pseudolikelihood method to social network models, a method first used in lattice systems in plant biology \citep{Besag:1974}.  \citet{Strauss:1990} further justified the use of 
 maximum pseudolikelihood estimators (MPLE) as reasonable approximations for MLEs in 
-social network models.  \citet{Wasserman:1996, Pattison:1999, logit} grasp the 
-significance of this simplification and broaden the scope of network models to allow 
-for any combination of network statistics, constrained only by the number of 
-parameters. 
+social network models.  \citet{Wasserman:1996, Pattison:1999, logit} leaned on this 
+result to broaden the scope of network models, allowing 
+for any combination of network structures to be considered.  The result is the more general form of \eqref{E:ERGM} that is currently used.
 
 The method of maximum pseudolikelihood finds the values for the parameters that 
-maximize the \textit{pseudolikelihood} or pseudo-loglikelihood functions for the given 
-data set, which can be constructed from the distributions of a single tie, $Y_{ij}$, 
-conditional on the rest of the network, which we will abbreviate as ``rest".  The 
-conditional distribution of $Y_{ij} | \textrm{rest}$ is a Bernoulli distribution with 
-log odds:
+maximize the \textit{pseudolikelihood function} for the observed 
+data set, which can be constructed from the distributions of a dyad $Y_{ij}$ 
+conditional on the rest of network, denoted by $f_{Y_{ij}}( y_{ij} \mid \textrm{rest})$.
+Then the pseudolikelihood function $PL(\eta)$ is defined to be the product of these,
 \begin{align}
-	\log \left \{ \frac{P( Y_{ij} =1 | \textrm{rest} ) }{ P( Y_{ij} =0 | \textrm{rest} ) } \right \} = \eta^T \Delta(g(y))_{ij}, \label{E:logodds}
+	PL(\eta) = \prod_{i \neq j}f_{Y_{ij}}( y_{ij} \mid \textrm{rest}), \label{E:PL}
 \end{align}
-where we define the vector of \textit{change statistics}, $\Delta(g(y))_{ij}$, to be
-%which is the change in $g(y)$ when $y_{ij}$ changes from 0 to 1 while the rest of the 
-%network remains the same,  
+and in general is different than the likelihood function.
+
+The conditional distribution of $Y_{ij} \mid \textrm{rest}$ for an ERGM is a Bernoulli 
+distribution with log odds:
+\begin{align}
+	\log \left \{ \frac{P( Y_{ij} =1 \mid \textrm{rest} ) }
+				 	 { P( Y_{ij} =0 \mid \textrm{rest} ) } \right \} 
+					 			= \eta^T \Delta(g(y))_{ij}, \label{E:logodds}
+\end{align}
+where we define the vector of \textit{change statistics} $\Delta(g(y))_{ij}$ to be
 \begin{align*}
 	\Delta(g(y))_{ij} = g(y_{ij}^+) - g(y_{ij}^-)
 \end{align*}
 where $y_{ij}^+$ and $y_{ij}^-$ represent networks with $y_{ij} = 1$ or $y_{ij} = 0$, 
 respectively, while leaving the rest of the network as $y$.  Thus $\Delta(g(y))_{ij}$ 
 is the change in $g(y)$ when $y_{ij}$ changes from 0 to 1.
+The form of \eqref{E:logodds} in the context of \eqref{E:PL} naturally lends
+itself to the use of logistic regression through which we can get the estimates of $\eta$, called the maximum pseudolikelihood estimators (MPLE), that maximize \eqref{E:PL}.
 
-The pseudolikelihood is constructed from \eqref{E:logodds} by assuming that the 
-$Y_{ij}$ are in fact mutually independent, that is, 
-\begin{align*}
-	P( Y_{ij} =1 | \textrm{rest} ) = P( Y_{ij} =1 ).
-\end{align*}
-With this independence assumption, \eqref{E:logodds} is exactly the setup for a 
-logistic regression through which we can get the estimates of $\eta$, called the 
-maximum pseudolikelihood estimators, or MPLEs.  In the case where the dyads are in 
-fact independent, the MPLEs will equal the MLEs.  \citet{Strauss:1990} show that in 
+In the case where the dyads are in fact independent, the MPLEs will equal the MLEs.  
+\citet{Strauss:1990} show that in 
 many cases with dyad dependence, MPLE still yield reasonable approximations of the 
 true MLEs for social network models.  However, \citet{Geyer:1992, Snijders:2002, 
 Duijn:2009} demonstrate that MPLEs can produce very misleading results, and social 
-network software packages such as \texttt{statnet} \citep{statnet:R} in the \texttt{R} 
-platform now use MLE methods rather than MPLE.  
+network software packages such as \texttt{statnet} \citep{statnet:R} in the R 
+platform now overwhelmingly use MLE methods rather than MPLE.  
 
 \subsection{Markov chain Monte Carlo methods}
 \citet{Geyer:1992, Corander:1998, Snijders:2002} developed Markov chain Monte Carlo 
@@ -691,25 +690,18 @@ platform now use MLE methods rather than MPLE.
 {Geyer:1992}'s MCMCMLE method appears to be most commonly implemented in the 
 literature and software \citep{Hunter:2006, Handcock:2006, ergm, statnet, GOF}.  
 
-Rather than maximizing the log-likelihood \eqref{E:loglike},
-\[	\ell(\eta ) = \eta ^T g(y) - c(\eta) \]
-with respect to $\eta$, \citeauthor{Geyer:1992} fix $\eta^0$ at a known value and look 
-to maximize the log of the likelihood ratio\footnote{In fact, $r(\eta, \eta^0)$ is 
-also a log-likelihood.  The addition to $\ell (\eta)$ of an arbitrary function of data 
-that does not contain the parameter $\eta$ will still observe the definition of a log-
-likelihood.}, $r( \eta, \eta^0 )$.
+Rather than maximizing the log likelihood \eqref{E:loglike}
+with respect to $\eta$, \citeauthor{Geyer:1992} fix $\eta^0$ at a known value and consider 
+the log of the likelihood ratio $r( \eta, \eta^0 )$:
 \begin{align}
  r( \eta, \eta^0 ) &= \ell( \eta ) - \ell( \eta^0 ) \notag \\ 
-				&= ( \eta - \eta^0)^T g(y) - \log \left [ \exp \{ c(\eta) - c(\eta^0) \} \right ]. \label{E:r}
+				  &= ( \eta - \eta^0)^T g(y) - \log \left [ \exp \bigl( c(\eta) - c(\eta^0) \bigr) \right ].\label{E:r}
 \end{align}
-The approach then focuses on approximating the ratio of normalizing constants, 
-$\frac{ \exp \{c(\eta) \} }{ \exp \{c(\eta^0) \} }$.  The value of $\eta$ that maximizes the 
+The value of $\eta$ that maximizes an 
 approximation of $r( \eta, \eta^0 )$ is then a good estimate of the MLE when it 
-exists.  This can be seen by starting with the normalizing constant,
-\begin{align*}
-	\exp \{c(\eta) \} &= \int \exp\{\eta^Tg(x)\} \, d\mu(x).
-\end{align*}
-The ratio of normalizing constants is then
+exists.  
+The approach does this by approximating the ratio of normalizing constants, 
+$\exp \left (  c(\eta) - c(\eta^0) \right )$, as follows:
 \begin{align*}
 	\exp\{ c(\eta) - c(\eta^0) \} &= \frac{ \int \exp\{\eta^Tg(x)\} \, d\mu(x) }{ \exp\{ c(\eta^0) \} } \\
 	&= \frac{ \int \exp\{( \eta - \eta^0)^T g(x) + (\eta^0)^Tg(x)\}\, d\mu(x)  }{ \exp\{ c(\eta^0) \} } \\
@@ -1309,32 +1301,32 @@ greater variety of empirical faces and normal cones.
 
 \section{Exponential Family Theory}
 An exponential family of distributions \citep{Barndorff,Geyer:gdor}
-on a sample space $\YY$ has log likelihood
-\begin{align} \label{E:loglike}
-   \ell(\eta) = \inner{g(y), \eta} - c(\eta)
-\end{align}
-where $g(y)$ is a $d$-dimensional vector of canonical statistics, $\eta$ a $d$-
-dimensional vector of
-canonical parameters, and $\inner{\fatdot, \fatdot}$ denotes the bilinear form
-$$
-   \inner{g, \eta} = \sum_{i =1}^d g_i \eta_i.
-$$
-So that the probability function integrates to 1,
-the cumulant function $c$ must have the form
-\begin{align} \label{E:cumulant}
-      c(\eta) = \log \left(\int e^{\inner{g(y), \eta}} \, d\mu(y) \right),
-\end{align}
-where $\mu$ is a measure on $\YY$.
-Define
-\begin{align} \label{E:fullparam}
-	\Xi = \{ \eta \in \RR^q: c(\eta) < \infty \}.
-\end{align}
-The exponential family is \emph{full} if the natural parameter space is \eqref
-{E:fullparam}, and \emph{regular} if, in 
-addition, $\Xi$ is an open set.  We say an exponential family is \emph{minimal} if $g
-(y)$ is not concentrated on a 
-hyperplane. Minimality guarantees that if an MLE exists, it is unique \citep
-{Geyer:gdor}.
+on a sample space $\YY$ has log likelihood \eqref{E:loglike}.
+%\begin{align} 
+%   \ell(\eta) = \inner{g(y), \eta} - c(\eta)
+%\end{align}
+%where $g(y)$ is a $d$-dimensional vector of canonical statistics, $\eta$ a $d$-
+%dimensional vector of
+%canonical parameters, and $\inner{\fatdot, \fatdot}$ denotes the bilinear form
+%$$
+%   \inner{g, \eta} = \sum_{i =1}^d g_i \eta_i.
+%$$
+%So that the probability function integrates to 1,
+%the cumulant function $c$ must have the form
+%\begin{align} \label{E:cumulant}
+%      c(\eta) = \log \left(\int e^{\inner{g(y), \eta}} \, d\mu(y) \right),
+%\end{align}
+%where $\mu$ is a measure on $\YY$.
+%Define
+%\begin{align} \label{E:fullparam}
+%	\Xi = \{ \eta \in \RR^q: c(\eta) < \infty \}.
+%\end{align}
+%The exponential family is \emph{full} if the natural parameter space is \eqref
+%{E:fullparam}, and \emph{regular} if, in 
+%addition, $\Xi$ is an open set.  We say an exponential family is \emph{minimal} if $g
+%(y)$ is not concentrated on a 
+%hyperplane. Minimality guarantees that if an MLE exists, it is unique \citep
+%{Geyer:gdor}.
 
 In finite state space models with complicated dependence like an Ising model or 
 exponential random graph model,  \eqref
