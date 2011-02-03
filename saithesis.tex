@@ -487,7 +487,7 @@ Thus we will continue to use $g(y)$ instead of $g(y,X)$ for simplicity.
 \section{Examples of ERGMs} \label{S:ERGM examples}
 We now review the classical Erd\H{o}s-R\'{e}nyi-Gilbert, $p_1$, and $p^*$ models to give both a sense of possible network structures as well as parameter estimation methodologies.
 
-\subsection{Erd\H{o}s-R\'{e}nyi-Gilbert model}
+\subsection{Erd\H{o}s-R\'{e}nyi-Gilbert model} \label{S:Erdos}
 The simplest example of an exponential random graph is the Erd\H{o}s-R\'{e}nyi-Gilbert 
 model \citep{Erdos,Gilbert}, also referred to as a Bernoulli network model, which 
 assumes that each actor forms a relation to every other actor independently with the 
@@ -610,11 +610,12 @@ MPLEs are close to those they arrived at from their rigorous simulations, leadin
 %%%%%%%%%%%%%%%%% SECTION %%%%%%%%%%%
 \section{ERGM parameter estimation}
 Exponential random graph models have a deceptively simple form \eqref
-{E:ERGM} that belies the challenges involved in parameter estimation which
+{E:ERGM} that belies the challenges involved in parameter estimation where
+the difficulties
 result from the intractable normalizing constant discussed in Section~\ref{S:intractable}.
 %resulting from the computationally infeasible normalizing constant \eqref{E:kappa}.  
 In this section, we discuss the most commonly used parameter estimation approaches
-used for exponential families with complex dependence like ERGMs.  All approaches avoid evaluating the likelihood function directly.  
+used for exponential families with complex dependence like ERGMs.  All approaches avoid evaluating the likelihood function directly but have drawbacks that can be improved upon.  
 %These provide the backdrop for the new algorithm we propose in this paper.
 
 %However, even with increasingly sophisticated simulation methods, finding MLEs for 
@@ -643,7 +644,7 @@ used for exponential families with complex dependence like ERGMs.  All approache
 
 \subsection{Maximum pseudolikelihood method}
 As mentioned Section~\ref{S:p1}, \citet{Frank:1986} succsesfully applied 
-the maximum pseudolikelihood method to social network models, a method first used in lattice systems in plant biology \citep{Besag:1974}.  \citet{Strauss:1990} further justified the use of 
+the maximum pseudolikelihood method to social network models, a method first used in lattice systems in plant biology \citep{Besag:1974,Besag:1975}.  \citet{Strauss:1990} further justified the use of 
 maximum pseudolikelihood estimators (MPLE) as reasonable approximations for MLEs in 
 social network models.  \citet{Wasserman:1996, Pattison:1999, logit} leaned on this 
 result to broaden the scope of network models, allowing 
@@ -679,15 +680,22 @@ itself to the use of logistic regression through which we can get the estimates 
 In the case where the dyads are in fact independent, the MPLEs will equal the MLEs.  
 \citet{Strauss:1990} show that in 
 many cases with dyad dependence, MPLE still yield reasonable approximations of the 
-true MLEs for social network models.  However, \citet{Geyer:1992, Snijders:2002, 
-Duijn:2009} demonstrate that MPLEs can produce very misleading results, and social 
-network software packages such as \texttt{statnet} \citep{statnet:R} in the R 
+true MLEs for social network models.  
+
+However, \citet{Geyer:1992, Snijders:2002, Duijn:2009} demonstrated that 
+MPLEs can produce very misleading results when dependence is strong.  \citet{Composite}
+show that pseudolikelihood approach can be improved upon in a generalization called the \emph{composite likelihood} approach; this approach is identical
+to the pseudolikelihood one except that the conditional distributions used to build the \emph{composite likelihood function} involve multiple dyads rather than a single dyad.
+Neverthless, researchers now avoid citing parameter estimates based on these approaches.
+Network software packages such as \texttt{statnet} \citep{statnet:R} in the R 
 platform now overwhelmingly use MLE methods rather than MPLE.  
+
+
 
 \subsection{Markov chain Monte Carlo methods}
 \citet{Geyer:1992, Corander:1998, Snijders:2002} developed Markov chain Monte Carlo 
 (MCMC) methods to approximate the MLE of an exponential family.  Of these, \citeauthor
-{Geyer:1992}'s MCMCMLE method appears to be most commonly implemented in the 
+{Geyer:1992}'s Markov chain Monte Carlo-maximum likelihood estimator (MCMC-MLE) method appears to be most commonly implemented in the 
 literature and software \citep{Hunter:2006, Handcock:2006, ergm, statnet, GOF}.  
 
 Rather than maximizing the log likelihood \eqref{E:loglike}
@@ -697,22 +705,22 @@ the log of the likelihood ratio $r( \eta, \eta^0 )$:
  r( \eta, \eta^0 ) &= \ell( \eta ) - \ell( \eta^0 ) \notag \\ 
 				  &= ( \eta - \eta^0)^T g(y) - \log \left [ \exp \bigl( c(\eta) - c(\eta^0) \bigr) \right ].\label{E:r}
 \end{align}
-The value of $\eta$ that maximizes an 
+The value of $\eta$ that maximizes an
 approximation of $r( \eta, \eta^0 )$ is then a good estimate of the MLE when it 
 exists.  
-The approach does this by approximating the ratio of normalizing constants, 
-$\exp \left (  c(\eta) - c(\eta^0) \right )$, as follows:
+The approach does this by approximating the ratio of normalizing constants 
+$\exp \left (  c(\eta) - c(\eta^0) \right )$ using \eqref{E:kappa} as follows:
 \begin{align*}
-	\exp\{ c(\eta) - c(\eta^0) \} &= \frac{ \int \exp\{\eta^Tg(x)\} \, d\mu(x) }{ \exp\{ c(\eta^0) \} } \\
-	&= \frac{ \int \exp\{( \eta - \eta^0)^T g(x) + (\eta^0)^Tg(x)\}\, d\mu(x)  }{ \exp\{ c(\eta^0) \} } \\
-	&= \int \exp\{( \eta - \eta^0)^T g(x) \} \frac{ \exp \{(\eta^0)^T g(x)\} }{ \exp \{ c(\eta^0) \}  } \, d\mu(x)\\
-	&= \E_{\eta^0} \left [ \exp\{ ( \eta - \eta^0)^T g(Y)  \} \right ].
+	\exp \left (  c(\eta) - c(\eta^0) \right ) &= \frac{ \int \exp \bigl ( \inner{ \eta, g(x) }\bigr ) \, d\mu(x) }{ \kappa(\eta^0)  } \\
+	&= \frac{ \int \exp \left ( \inner{ \eta - \eta^0, g(x)} + \inner{ \eta^0, g(x)} \right ) \, d\mu(x)  }{ \kappa(\eta^0) } \\
+	&= \int \exp \left( \inner{\eta - \eta^0, g(x} \right ) \frac{ e^ { \inner{ \eta^0, g(x)} } }{ \kappa(\eta^0) } \, d\mu(x)\\
+	&= \E_{\eta^0} \exp \left( \inner{ \eta - \eta^0, g(Y)}  \right ) .
 \end{align*}
 
 By the Markov chain strong law of large numbers (or Birkhoff ergodic theorem), this 
 expectation can be approximated by the sample mean for large sample size,
 \begin{align*}
-	&\approx \frac{1}{m} \sum_{i=1}^{m}\exp \{ ( \eta - \eta^0)^Tg(Y_i) \}
+	&\approx \frac{1}{m} \sum_{i=1}^{m}\exp \left ( \inner{ \eta - \eta^0,g(Y_i)} \right )
 \end{align*}
 where $Y_1, \ldots, Y_m$ are draws from the exponential family distribution with 
 parameter $\eta^0$.  This sample can be generated using Markov chain Monte Carlo 
@@ -720,8 +728,9 @@ method such as a Metropolis algorithm.
 
 Thus, $r( \eta, \eta^0 )$ can be approximated by
 \begin{align}
-\hat{r}_m( \eta, \eta^0 ) &= ( \eta - \eta^0)^Tg(y) - \log 
-	\left [ \frac{1}{m} \sum_{i=1}^{m} \exp \{ ( \eta - \eta^0)^Tg(Y_i)\} \right ] 
+\hat{r}_m( \eta, \eta^0 ) &= \inner{ \eta - \eta^0, g(y)} - \log 
+	\left [ \frac{1}{m} \sum_{i=1}^{m} \exp \left ( \inner{ \eta - \eta^0, g(Y_i)} \right ) \right ] 
+%	\left [ \frac{1}{m} \sum_{i=1}^{m} e^{  \inner{ \eta - \eta^0, g(Y_i)} } \right ] 
 	\label{E:r_hat}
 \end{align}
 and 
@@ -738,46 +747,51 @@ $\etaMLE$ exists, \citeauthor{Geyer:1992} show that
 
 In practice, \citeauthor{Geyer:1992} recognize that ``enormous" Monte Carlo sample 
 sizes may be necessary and that best results are obtained when $\eta^0$ is near 
-$\etaMLE$---a condition that of course cannot be checked since $\etaMLE$ is unknown!  
+$\etaMLE$---a condition that of course cannot be checked since $\etaMLE$ is unknown.  
 In addition, \citeauthor{Geyer:1992} recommend iterating the algorithm several times, 
 where each successive value will be closer to $\etaMLE$ than the previous.  At the 
-time of this writing, the MCMCMLE routine in \texttt{statnet} uses by default 10,000 
+time of this writing, the MCMC-MLE routine in \texttt{statnet} uses by default 10,000 
 Monte Carlo samples and a maximum of three iterations \citep{statnet:R}, using the 
-MPLE as the initial value for $\eta^0$.  We follow up with an example presented by 
-\citet{ergm} in \texttt{statnet} in which the MCMCMLE procedure can fail.
+MPLE as the initial value for $\eta^0$.  
 
-\citeauthor{ergm} illustrate the practical difficulty associated with a poor initial 
-value in the MCMCMLE algorithm with Sampson's monastery data set, a standard data set 
-in the social network literature which we depict in Figure \ref{fig-samplike}.  The 
-network is directed with 18 actors and 88 ties present out of $18(17)=306$ possible 
-ties.  For this data set \citeauthor{ergm} use the simple Erd\H{o}s-R\'{e}nyi model 
-described earlier, with the network statistic $g(y)$ equal to the total number of 
-edges present, so $g(y_{obs}) = 88$.  The true MLE is equal to $\logit(88/306) = -0.9072$.  
+%We follow up with an example presented by 
+%\citet{ergm} in \texttt{statnet} in which the MCMCMLE procedure can fail.
+
+\citet{ergm} illustrate the practical difficulty associated with a poor initial 
+value in the MCMC-MLE algorithm with Sampson's monastery data set depicted in 
+Figure \ref{F:Sampson}.  The 
+observed network $\yobs$ is directed with 18 actors and 88 ties present out of $18 \cdot 17=306$ possible 
+ties.  To simply illustrate the issue, \citeauthor{ergm} use the simple Erd\H{o}s-R\'{e}nyi-Gilbert model 
+described in Section~\ref{S:Erdos}, with the network statistic $g(y)$ equal to the total number of 
+edges present.  As noted earlier, the true MLE is equal to 
+\begin{align*}
+	\etaMLE = \logit\left( \frac{g(\yobs)}{n(n-1)}\right) = \logit \left( \frac{88}{306}\right ) = -0.9072.
+\end{align*}
+  
 When $\eta^0$ is chosen to be $1$, however, \citeauthor{ergm} demonstrate 
-that the algorithm will fail in a single iteration.  With $\eta=1$, the model 
-describes that each of the 306 possible edges will occur independently with 
-probability $p = \frac{1}{1+e^{-\eta}} = \frac{1}{1+e^{-1}} = 0.731$.  The problem 
-arises from the fact that this is a high probability relative to the observed data 
+that the algorithm will not attain this value in a single iteration.  
+For this value of $\eta$, the model dictates that each of the 306 possible edges will occur independently with probability $p = \frac{1}{1+e^{-\eta}} = \frac{1}{1+e^{-1}} = 0.731$.  The problem 
+arises from the fact that this is a high probability relative to the sparsity of relations in the observed data 
 set, which suggests a much smaller probability of tie formation of $88/306= 0.288$.  
-In fact, the probability of obtaining $g(Y) < g(y_{obs})=88$ is close to zero at 
-$2.3 \times 10^{-59}$, where $g(Y)$ are generated from a binomial distribution with 
-$n=306$, $p =0.731$.  The MCMCMLE algorithm looks to maximize the approximated log 
-likelihood ratio \eqref{E:r_hat}, but if the MC sample is unable to generate 
-$g(Y)< g(y_{obs})$, \eqref{E:r_hat} will not have a maximizer since the function will not have 
-a point where the derivative is zero (see upper solid line in Figure \ref{F:bad eta}).  
+In fact, the probability of obtaining fewer than 88 ties for this model is nearly zero at $2.3 \times 10^{-59}$, calculated using a binomial distribution with $n=306$, $p =0.731$.  
+
+The MCMC-MLE algorithm looks to maximize the approximated log 
+likelihood ratio \eqref{E:r_hat}, but if the MCMC engine is unable to generate 
+$g(Y)< g(\yobs)$, \eqref{E:r_hat} will not have a maximizer since the function will not have 
+a point where the derivative is zero (see dotted-line in Figure \ref{F:MCMC-MLE}, left).  
 The problem is not present when an initial value close to the true MLE like 
-$\eta^0 = -1$ is used (lower solid line in Figure \ref{F:bad eta}).  With the default three 
+$\eta^0 = -1$ is used (dotted-line in Figure \ref{F:MCMC-MLE}, right).  With the default three 
 iterations in the \texttt{statnet} software, the algorithm gets to $\eta = -0.364$, 
 but with 10 iterations it arrives at the MLE.
 
-\begin{figure} 
+\begin{figure}  \label{F:MCMC-MLE}
 \begin{center} 
-%\scalebox{.8}{\includegraphics{bad_eta.eps}}
+{\includegraphics[width=2.95in]{mcmc-mle1}}
+{\includegraphics[width=2.95in]{mcmc-mle-1}}
 \end{center} 
 \caption{Log likelihood ratios for different values of $\eta$ for the Sampson 
-Monastery data set.  Dotted lines are exact log likelihood ratios, solid lines are the 
-approximation by \eqref{E:r_hat}.  Upper solid and dotted lines correspond to $\eta^0 = 1$, lower lines correspond to $\eta^0 = -1$.  The upper solid line, the approximate 
-log likelihood ratio with $\eta^0 = 1$, has no maximizing value of $\eta$ \citep{ergm}.} 
+Monastery data set.  Left: $\eta^0 = 1$, right: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
+approximation by \eqref{E:r_hat}.  Using code accompanying \citet{Hummel}.} 
 \end{figure} 
 
 %\begin{align*}
@@ -844,12 +858,6 @@ and the \emph{Markov chain Monte Carlo maximum likelihood estimate} (MCMC-MLE)
 approach \citep{Geyer:1992,Geyer:1994},
 which uses MCMC to approximate the log likelihood so that it can subsequently be 
 maximized.  
-
-\subsection{Maximum pseudo-likelihood estimators}
-
-The pseudo-likelihood approach is computationally expedient, but has been shown to 
-produce unreliable results when 
-dependence is strong \citep*{Geyer:1992,Duijn:2009}.  
 
 \subsection{MCMC-MLE}
 
