@@ -1,0 +1,470 @@
+\begin{thebibliography}{76}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Anderson et~al.(1999)Anderson, Wasserman and Crouch}]{logit}
+\textsc{Anderson, C.~J.}, \textsc{Wasserman, S.} and \textsc{Crouch, B.}
+  (1999).
+\newblock A p* primer: Logit models for social networks.
+\newblock \textit{Social Networks}, \textbf{21} 36--66.
+
+\bibitem[{Andrieu et~al.(2005)Andrieu, Moulines and Priouret}]{Andrieu:2005}
+\textsc{Andrieu, C.}, \textsc{Moulines, E.} and \textsc{Priouret, P.} (2005).
+\newblock Stability of stochastic approximation under verifable conditions.
+\newblock \textit{SIAM Journal on Control and Optimization}, \textbf{44}
+  283--312.
+
+\bibitem[{Barndorff-Nielsen(1978)}]{Barndorff}
+\textsc{Barndorff-Nielsen, O.} (1978).
+\newblock \textit{Information and Exponential Families in Statistical Theory}.
+\newblock John Wiley \& Sons.
+
+\bibitem[{Besag(1974)}]{Besag:1974}
+\textsc{Besag, J.} (1974).
+\newblock Spatial interaction and the statistical analysis of lattice systems.
+\newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
+  \textbf{36} 192--236.
+
+\bibitem[{Besag(1975)}]{Besag:1975}
+\textsc{Besag, J.} (1975).
+\newblock Statistical analysis of non-lattice data.
+\newblock \textit{The Statistician}, \textbf{24} 179--195.
+
+\bibitem[{Brooks et~al.(forthcoming)Brooks, Gelman, Jones and Meng}]{Brooks}
+\textsc{Brooks, S.~P.}, \textsc{Gelman, A.~E.}, \textsc{Jones, G.~L.} and
+  \textsc{Meng, X.~L.} (forthcoming).
+\newblock \textit{Handbook of {M}arkov Chain {M}onte {C}arlo}.
+\newblock Chapman \& Hall/CRC, Boca Raton, FL.
+
+\bibitem[{Brown(1986)}]{Brown:1986}
+\textsc{Brown, L.~D.} (1986).
+\newblock \textit{Fundamentals of Statistical Exponential Families: with
+  Applications in Statistical Decision Theory}.
+\newblock Institute of Mathematical Statistics, Hayward, CA.
+
+\bibitem[{Chan and Geyer(1994)}]{Chan:1994}
+\textsc{Chan, K.~S.} and \textsc{Geyer, C.~J.} (1994).
+\newblock Discussion of the paper by tierny.
+\newblock \textit{Annals of Statistics}, \textbf{22} 1747--1758.
+
+\bibitem[{Chen(2002)}]{Chen:2002}
+\textsc{Chen, H.-F.} (2002).
+\newblock \textit{Stochastic Approximation and Its Applications}.
+\newblock Kluwer Academic Publishers, Dordrecht.
+\newblock \urlprefix\url{http://bit.ly/gN6bGq}.
+
+\bibitem[{Corander et~al.(1998)Corander, Dahmstr\"{o}m and
+  Dahmstr\"{o}m}]{Corander:1998}
+\textsc{Corander, J.}, \textsc{Dahmstr\"{o}m, K.} and \textsc{Dahmstr\"{o}m,
+  P.} (1998).
+\newblock Maximum likelihood estimation for markov graphs.
+\newblock Tech. Rep.~8, Stockholm University, S-106 91 Stockholm, Sweden.
+
+\bibitem[{Erd\"{o}s and R\'enyi(1959)}]{Erdos}
+\textsc{Erd\"{o}s, P.} and \textsc{R\'enyi, A.} (1959).
+\newblock On random graphs. i.
+\newblock \textit{Publicationes Mathematicae}, \textbf{6} 290--297.
+
+\bibitem[{Fienberg and Wasserman(1981)}]{Fienberg:1981}
+\textsc{Fienberg, S.~E.} and \textsc{Wasserman, S.~S.} (1981).
+\newblock Categorical data analysis of single sociometric relations.
+\newblock \textit{Sociological Methodology}, \textbf{12} 156--192.
+
+\bibitem[{Fletcher(1987)}]{Fletcher}
+\textsc{Fletcher, R.} (1987).
+\newblock \textit{Practical Methods of Optimization}.
+\newblock 2nd ed. John Wiley \& Sons.
+
+\bibitem[{Frank and Strauss(1986)}]{Frank:1986}
+\textsc{Frank, O.} and \textsc{Strauss, D.} (1986).
+\newblock Markov graphs.
+\newblock \textit{Journal of the American Statistical Association}, \textbf{81}
+  832--842.
+
+\bibitem[{Geyer(1990)}]{Geyer:1990}
+\textsc{Geyer, C.~J.} (1990).
+\newblock \textit{Likelihood and Exponential Families}.
+\newblock Ph.D. thesis, University of Washington, http://purl.umn.edu/56330.
+\newblock \urlprefix\url{http://purl.umn.edu/56330}.
+
+\bibitem[{Geyer(1994)}]{Geyer:1994}
+\textsc{Geyer, C.~J.} (1994).
+\newblock On the convergence of monte carlo maximum likelihood calculations.
+\newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
+  \textbf{56} 261--274.
+
+\bibitem[{Geyer(2009{\natexlab{a}})}]{Geyer:gdor}
+\textsc{Geyer, C.~J.} (2009{\natexlab{a}}).
+\newblock Likelihood inference in exponential families and directions of
+  recession.
+\newblock \textit{Electronic Journal of Statistics}, \textbf{3} 259--289.
+
+\bibitem[{Geyer(2009{\natexlab{b}})}]{mcmc:R}
+\textsc{Geyer, C.~J.} (2009{\natexlab{b}}).
+\newblock \texttt{mcmc}: {M}arkov chain {M}onte {C}arlo.
+\newblock R pakage version 0.7-3.,
+  \urlprefix\url{http://CRAN.R-project.org/package=mcmc}.
+
+\bibitem[{Geyer(2010)}]{aster:R}
+\textsc{Geyer, C.~J.} (2010).
+\newblock \texttt{aster2}: {A}ster models.
+\newblock R pakage version 0.1,
+  \urlprefix\url{http://CRAN.R-project.org/package=aster}.
+
+\bibitem[{Geyer and Johnson(2010)}]{Geyer:potts}
+\textsc{Geyer, C.~J.} and \textsc{Johnson, L.~T.} (2010).
+\newblock \texttt{ potts}: {M}arkov chain {M}onte {C}arlo for {P}otts models.
+\newblock R package version 0.4.
+
+\bibitem[{Geyer and Meeden(2009)}]{rcdd:R}
+\textsc{Geyer, C.~J.} and \textsc{Meeden, G.~D.} (2009).
+\newblock \texttt{rcdd}: R package rcdd ({C} {D}ouble {D}escription for {R}).
+\newblock R pakage version 1.1-3. Incorporates code from cddlib (ver 0.94f)
+  written by Komei Fukuda,
+  \urlprefix\url{http://cran.r-project.org/web/packages/rcdd}.
+
+\bibitem[{Geyer et~al.(2009)Geyer, Meeden and incorporates code from cddlib
+  (ver 0.94f) written~by Komei~Fukuda}]{rcdd}
+\textsc{Geyer, C.~J.}, \textsc{Meeden, G.~D.} and \textsc{incorporates code
+  from cddlib (ver 0.94f) written~by Komei~Fukuda} (2009).
+\newblock \textit{rcdd: rcdd (Computation Geometry)}.
+\newblock R package version 1.1-3,
+  \urlprefix\url{http://CRAN.R-project.org/package=rcdd}.
+
+\bibitem[{Geyer and Thompson(1992)}]{Geyer:1992}
+\textsc{Geyer, C.~J.} and \textsc{Thompson, E.~A.} (1992).
+\newblock Constrained {M}onte {C}arlo maximum likelihood for dependent data.
+\newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
+  \textbf{54} 657--699.
+
+\bibitem[{Gilbert(1959)}]{Gilbert}
+\textsc{Gilbert, E.~N.} (1959).
+\newblock Random graphs.
+\newblock \textit{Annals of Mathematical Statistics}, \textbf{30} 1141--1144.
+
+\bibitem[{Goldenberg et~al.(2009)Goldenberg, Zheng, Fienberg and
+  Airoldi}]{Goldenberg:2009}
+\textsc{Goldenberg, A.}, \textsc{Zheng, A.~X.}, \textsc{Fienberg, S.~E.} and
+  \textsc{Airoldi, E.~M.} (2009).
+\newblock A survey of statistical network models.
+\newblock \textit{Foundations and Trends in Machine Learning}, \textbf{2}
+  129--233.
+
+\bibitem[{Goodreau(2007)}]{advancesp*}
+\textsc{Goodreau, S.~M.} (2007).
+\newblock Advances in exponential random graph (p*) models applied to a large
+  social network.
+\newblock \textit{Social Networks}, \textbf{29} 231--248.
+
+\bibitem[{Goodreau et~al.(2008)Goodreau, Handcock, Hunter, Butts and
+  Morris}]{statnet-tutorial}
+\textsc{Goodreau, S.~M.}, \textsc{Handcock, M.~S.}, \textsc{Hunter, D.~R.},
+  \textsc{Butts, C.~T.} and \textsc{Morris, M.} (2008).
+\newblock A statnet tutorial.
+\newblock \textit{Journal of Statistical Software}, \textbf{24}.
+\newblock \urlprefix\url{http://www.jstatsoft.org/v24/i09}.
+
+\bibitem[{Goodreau et~al.(2009)Goodreau, Kitts and Morris}]{Goodreau:2009}
+\textsc{Goodreau, S.~M.}, \textsc{Kitts, J.~A.} and \textsc{Morris, M.} (2009).
+\newblock Birds of a feather, or friend of a friend? using exponential random
+  graph models to investigate adolescent social networks.
+\newblock \textit{Demography}, \textbf{46} 103---125.
+
+\bibitem[{Gu and Zhu(2001)}]{Gu:2001}
+\textsc{Gu, M.~G.} and \textsc{Zhu, H.-T.} (2001).
+\newblock Maximum likelihood estimation for spatial models by markov chain
+  monte carlo stochastic approximation.
+\newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
+  \textbf{63} 339--355.
+
+\bibitem[{Handcock(2003)}]{Handcock:degeneracy}
+\textsc{Handcock, M.~S.} (2003).
+\newblock Assessing degeneracy in statistical models of social networks.
+\newblock Working Paper~39, University of Washington, Seattle.
+
+\bibitem[{Handcock et~al.(2003)Handcock, Hunter, Butts, Goodreau and
+  Morris}]{statnet:R}
+\textsc{Handcock, M.~S.}, \textsc{Hunter, D.~R.}, \textsc{Butts, C.~T.},
+  \textsc{Goodreau, S.~M.} and \textsc{Morris, M.} (2003).
+\newblock \texttt{statnet}: Software tools for the statistical modeling of
+  network data.
+\newblock Version 2.0. Project home page at {http://statnetproject.org},
+  \urlprefix\url{http://CRAN.R-project.org/package=statnet}.
+
+\bibitem[{Handcock et~al.(2010)Handcock, Hunter, Butts, Goodreau and
+  Morris}]{ergm:R}
+\textsc{Handcock, M.~S.}, \textsc{Hunter, D.~R.}, \textsc{Butts, C.~T.},
+  \textsc{Goodreau, S.~M.} and \textsc{Morris, M.} (2010).
+\newblock \texttt{ergm}: A package to fit, simulate, and diagnose
+  exponentail-family models for networks.
+\newblock Version 2.2-4. Project home page at {http://statnetproject.org},
+  \urlprefix\url{http://CRAN.R-project.org/package=ergm}.
+
+\bibitem[{Holland and Leinhardt(1981)}]{Holland:1981}
+\textsc{Holland, P.~W.} and \textsc{Leinhardt, S.} (1981).
+\newblock An exponential family of probability distributions for directed
+  graphs.
+\newblock \textit{Journal of the American Statistical Association}, \textbf{76}
+  33--50.
+
+\bibitem[{Hummel et~al.(2010)Hummel, Hunter and Handcock}]{Hummel}
+\textsc{Hummel, R.}, \textsc{Hunter, D.~R.} and \textsc{Handcock, M.~S.}
+  (2010).
+\newblock A steplength algorithm for fitting {ERGM}s.
+\newblock Tech. Rep. 10-03, Pennsylvania State University.
+
+\bibitem[{Hunter et~al.(2008{\natexlab{a}})Hunter, Goodreau and Handcock}]{GOF}
+\textsc{Hunter, D.~R.}, \textsc{Goodreau, S.~M.} and \textsc{Handcock, M.~S.}
+  (2008{\natexlab{a}}).
+\newblock Goodness of fit of social network models.
+\newblock \textit{Journal of the American Statistical Association},
+  \textbf{103} 248--258.
+
+\bibitem[{Hunter and Handcock(2006)}]{Hunter:2006}
+\textsc{Hunter, D.~R.} and \textsc{Handcock, M.~S.} (2006).
+\newblock Inference in curved exponential family models for networks.
+\newblock \textit{Journal of Computational and Graphical Statistics},
+  \textbf{15} 565--583.
+
+\bibitem[{Hunter et~al.(2008{\natexlab{b}})Hunter, Handcock, Butts, Goodreau
+  and Morris}]{ergm}
+\textsc{Hunter, D.~R.}, \textsc{Handcock, M.~S.}, \textsc{Butts, C.~T.},
+  \textsc{Goodreau, S.~M.} and \textsc{Morris, M.} (2008{\natexlab{b}}).
+\newblock ergm: A package to fit, simulate and diagnose exponential-family
+  models for networks.
+\newblock \textit{Journal of Statistical Software}, \textbf{24}.
+\newblock \urlprefix\url{http://www.jstatsoft.org/v24/i03}.
+
+\bibitem[{Ising(1925)}]{Ising}
+\textsc{Ising, E.} (1925).
+\newblock Beitrag zur theorie des ferromagnetismus.
+\newblock \textit{Zeitschrift f\"{u}r Physik A Hadrons and Nuclei}, \textbf{31}
+  253--258.
+
+\bibitem[{Jaynes(1978)}]{Jaynes:1978}
+\textsc{Jaynes, E.} (1978).
+\newblock Where do we stand on maximum entroy?
+\newblock In \textit{The Maximum Entropy Formalism} (R.~D. Levine and
+  M.~Tribus, eds.). Cambridge: Massassachusetts Institute of Technology Press.
+
+\bibitem[{Jones(2004)}]{Jones:2004}
+\textsc{Jones, G.~L.} (2004).
+\newblock On the {M}arkov chain central limit theorem.
+\newblock \textit{Probability Surveys}, \textbf{1} 299--320.
+
+\bibitem[{Knoke and Yang(2008)}]{Knoke:2008}
+\textsc{Knoke, D.} and \textsc{Yang, S.} (2008).
+\newblock \textit{Social Network Analysis}.
+\newblock 2nd ed. Sage Publications, Inc., Thousand Oaks, CA.
+
+\bibitem[{Kolaczyk(2010)}]{Kolaczyk:slides}
+\textsc{Kolaczyk, E.~D.} (2010).
+\newblock Tutorial: Statistical analysis of network data.
+
+\bibitem[{Kushner and Yin(1997)}]{Kushner:1997}
+\textsc{Kushner, H.~J.} and \textsc{Yin, G.~G.} (1997).
+\newblock \textit{Stochastic Approximation Algorithms and Applications}.
+\newblock Springer, New York.
+
+\bibitem[{Lehmann(1983)}]{tpe}
+\textsc{Lehmann, E.~L.} (1983).
+\newblock \textit{Theory of Point Estimation}.
+\newblock 1st ed. John Wiley \& Sons.
+
+\bibitem[{Lehmann and Casella(1998)}]{TPE2}
+\textsc{Lehmann, E.~L.} and \textsc{Casella, G.} (1998).
+\newblock \textit{Theory of Point Estimation}.
+\newblock 2nd ed. Springer.
+
+\bibitem[{Lehmann and Romano(2005)}]{TSH}
+\textsc{Lehmann, E.~L.} and \textsc{Romano, J.~P.} (2005).
+\newblock \textit{Testing Statistical Hypotheses}.
+\newblock 3rd ed. Springer.
+
+\bibitem[{Liang(2010)}]{Liang:2010}
+\textsc{Liang, F.} (2010).
+\newblock Trajectory averaging for stochastic approximation mcmc algorithms.
+\newblock \textit{The Annals of Applied Statistics}, \textbf{38} 2823--2856.
+
+\bibitem[{Morris et~al.(2008)Morris, Handcock and Hunter}]{Morris:2008}
+\textsc{Morris, M.}, \textsc{Handcock, M.~S.} and \textsc{Hunter, D.~R.}
+  (2008).
+\newblock Specification of exponential-family random graph models: Terms and
+  computational aspects.
+\newblock \textit{Journal of Statistical Software}, \textbf{24}.
+
+\bibitem[{Moyeed and Baddeley(1991)}]{Moyeed:1991}
+\textsc{Moyeed, R.~A.} and \textsc{Baddeley, A.~J.} (1991).
+\newblock Stochastic approximation of the {MLE} for a spatial point pattern.
+\newblock \textit{Scandinavian Journal of Statistics}, \textbf{18} 39--50.
+
+\bibitem[{Nocedal and Wright(1999)}]{NW}
+\textsc{Nocedal, J.} and \textsc{Wright, S.~J.} (1999).
+\newblock \textit{Numerical Optimization}.
+\newblock 1st ed. Springer.
+
+\bibitem[{Okabayashi and Geyer(2011)}]{Okabayashi:longrange}
+\textsc{Okabayashi, S.} and \textsc{Geyer, C.~J.} (2011).
+\newblock Long range search for maximum likelihood in exponential families.
+\newblock \textit{Electronic Journal of Statistics}, \textbf{Revised and
+  resubmitted.}
+
+\bibitem[{Okabayashi et~al.(2011)Okabayashi, Johnson and Geyer}]{Composite}
+\textsc{Okabayashi, S.}, \textsc{Johnson, L.} and \textsc{Geyer, C.~J.} (2011).
+\newblock Extending pseudo-likelihood for {P}otts models.
+\newblock \textit{Statistica Sinica}, \textbf{21} 331--347.
+
+\bibitem[{Padgett(1994)}]{Padgett}
+\textsc{Padgett, J.~F.} (1994).
+\newblock \textit{Marriage and Elite Structure in Renaissance Florence,
+  1282-1500}.
+\newblock Ph.D. thesis, Paper delivered to the Social Science History
+  Association.
+
+\bibitem[{Pattison and Wasserman(1999)}]{Pattison:1999}
+\textsc{Pattison, P.} and \textsc{Wasserman, S.} (1999).
+\newblock Logit models and logistic regression for social networks: Ii.
+  multivariate relations.
+\newblock \textit{British Journal of Mathematical and Statistical Psychology},
+  \textbf{52} 169--193.
+
+\bibitem[{Potts(1952)}]{Potts}
+\textsc{Potts, R.~B.} (1952).
+\newblock Some generalized order-disorder transformations.
+\newblock \textit{Proceedings of the Cambridge Philosphical Society},
+  \textbf{48} 106--109.
+
+\bibitem[{Rinaldo et~al.(2009)Rinaldo, Fienberg and Zhou}]{Rinaldo:2009}
+\textsc{Rinaldo, A.}, \textsc{Fienberg, S.~E.} and \textsc{Zhou, Y.} (2009).
+\newblock On the geometry of discrete exponential families with application to
+  exponential random graph models.
+\newblock \textit{Electronic Journal of Statistics}, \textbf{3} 446--484.
+
+\bibitem[{Robbins and Monro(1951)}]{Robbins-Monro}
+\textsc{Robbins, H.} and \textsc{Monro, S.} (1951).
+\newblock A stochastic approximation method.
+\newblock \textit{Annals of Mathematical Statistics}, \textbf{22} 400--407.
+
+\bibitem[{Roberts and Rosenthal(1997)}]{Roberts:1997}
+\textsc{Roberts, G.~O.} and \textsc{Rosenthal, J.~S.} (1997).
+\newblock Geometric ergodicity and hybrid {M}arkov chains.
+\newblock \textit{Electronic Communications in Probability}, \textbf{2} 13--25.
+
+\bibitem[{Robins et~al.(2007{\natexlab{a}})Robins, Pattison, Kalish and
+  Lusher}]{introp*}
+\textsc{Robins, G.}, \textsc{Pattison, P.}, \textsc{Kalish, Y.} and
+  \textsc{Lusher, D.} (2007{\natexlab{a}}).
+\newblock An introduction to exponential random graph (p*) models for social
+  networks.
+\newblock \textit{Social Networks}, \textbf{29} 173--191.
+
+\bibitem[{Robins et~al.(2007{\natexlab{b}})Robins, Snijders, Wang, Handcock and
+  Pattison}]{recentp*}
+\textsc{Robins, G.}, \textsc{Snijders, T.}, \textsc{Wang, P.},
+  \textsc{Handcock, M.~S.} and \textsc{Pattison, P.} (2007{\natexlab{b}}).
+\newblock Recent developments in exponential random graph (p*) models fo social
+  networks.
+\newblock \textit{Social Networks}, \textbf{29} 192--215.
+
+\bibitem[{Rockafellar(1970)}]{Rockafellar:1970}
+\textsc{Rockafellar, R.~T.} (1970).
+\newblock \textit{Convex Analysis}.
+\newblock Princeton University Press.
+
+\bibitem[{Rockafellar and Wets(2004)}]{Rockafellar}
+\textsc{Rockafellar, R.~T.} and \textsc{Wets, R. J.-B.} (2004).
+\newblock \textit{Variational Analysis}.
+\newblock corrected second printing, Springer-Verlag, Berlin.
+
+\bibitem[{Salgado et~al.(2001)Salgado, Santos-Zavaleta, Gama-Castro,
+  Mill/'an-Z/'arate, D\'iaz-Peredo, S\'anchez-Solano, P{\'e}rez-Rueda,
+  Bonavides-Mart{\'\i}nez and Collado-Vides}]{Salgado}
+\textsc{Salgado, H.}, \textsc{Santos-Zavaleta, A.}, \textsc{Gama-Castro, S.},
+  \textsc{Mill/'an-Z/'arate, D.}, \textsc{D\'iaz-Peredo, E.},
+  \textsc{S\'anchez-Solano, F.}, \textsc{P{\'e}rez-Rueda, E.},
+  \textsc{Bonavides-Mart{\'\i}nez, C.} and \textsc{Collado-Vides, J.} (2001).
+\newblock Regulondb (version 3.2): Transcriptional regulation and operon
+  organization in escherichia coli k-12.
+\newblock \textit{Nucleic Acids Research}, \textbf{29} 72--74.
+\newblock \urlprefix\url{http://nar.oxfordjournals.org/content/29/1/72.full}.
+
+\bibitem[{Sampson(1968)}]{Sampson}
+\textsc{Sampson, S.~F.} (1968).
+\newblock \textit{A novitiate in a period of change: An experimental and case
+  study of relationships}.
+\newblock Ph.D. thesis, Cornell University.
+
+\bibitem[{Saul and Filkov(2007)}]{Saul:2007}
+\textsc{Saul, Z.~M.} and \textsc{Filkov, V.} (2007).
+\newblock Exploring biological network structure using exponential random graph
+  models.
+\newblock \textit{Bioinformatics}, \textbf{23} 2604--02611.
+
+\bibitem[{Shen-Orr et~al.(2002)Shen-Orr, Milo, Mangan and Alon}]{Shen-Orr}
+\textsc{Shen-Orr, S.~S.}, \textsc{Milo, R.}, \textsc{Mangan, S.} and
+  \textsc{Alon, U.} (2002).
+\newblock etwork motifs in the transcriptional regulation network of escerichia
+  coli.
+\newblock \textit{Nature Genetics}, \textbf{31} 64--68.
+
+\bibitem[{Snijders(2002)}]{Snijders:2002}
+\textsc{Snijders, T. A.~B.} (2002).
+\newblock Markov chain monte carlo estimation of exponential random graph
+  models.
+\newblock \textit{Journal of Social Structure}, \textbf{3}.
+
+\bibitem[{Snijders et~al.(2006)Snijders, Pattison, Robins and
+  Handcock}]{Handcock:2006}
+\textsc{Snijders, T. A.~B.}, \textsc{Pattison, P.~E.}, \textsc{Robins, G.~L.}
+  and \textsc{Handcock, M.~S.} (2006).
+\newblock New specifications for exponential random graph models.
+\newblock \textit{Sociological Methodology}, \textbf{36} 99--153.
+
+\bibitem[{Strauss and Ikeda(1990)}]{Strauss:1990}
+\textsc{Strauss, D.} and \textsc{Ikeda, M.} (1990).
+\newblock Pseudolikelihood estimation for social networks.
+\newblock \textit{Journal of the American Statistical Association}, \textbf{85}
+  204--212.
+
+\bibitem[{Sun and Yuan(2006)}]{Sun:2006}
+\textsc{Sun, W.} and \textsc{Yuan, Y.-X.} (2006).
+\newblock \textit{Optimization Theory and Methods: Nonlinear Programming}.
+\newblock Springer.
+
+\bibitem[{Swendsen and Wang(1987)}]{Swendsen-Wang:1987}
+\textsc{Swendsen, R.~H.} and \textsc{Wang, J.-S.} (1987).
+\newblock Nonuniversal critical dynamics in {M}onte {C}arlo simulations.
+\newblock \textit{Physics Review Letters}, \textbf{58} 86--88.
+
+\bibitem[{van Duijn et~al.(2009)van Duijn, Gile and Handcock}]{Duijn:2009}
+\textsc{van Duijn, M. A.~J.}, \textsc{Gile, K.~J.} and \textsc{Handcock, M.~S.}
+  (2009).
+\newblock A framework for the comparison of maximum pseudo-likelihood and
+  maximum likelihood estimation of exponential family random graph models.
+\newblock \textit{Social Networks}, \textbf{31} 52--62.
+
+\bibitem[{Wasserman and Faust(1994)}]{Wasserman:1994}
+\textsc{Wasserman, S.} and \textsc{Faust, K.} (1994).
+\newblock \textit{Social Network Analysis: Methods and Applications}.
+\newblock Cambridge University Press.
+
+\bibitem[{Wasserman and Pattison(1996)}]{Wasserman:1996}
+\textsc{Wasserman, S.} and \textsc{Pattison, P.} (1996).
+\newblock Logit models and logistic regression for social networks: I. an
+  introduction to markov graphs and p*.
+\newblock \textit{Psychometrika}, \textbf{61} 401--425.
+
+\bibitem[{Younes(1988)}]{Younes:1988}
+\textsc{Younes, L.} (1988).
+\newblock Estimation and annealing for {G}ibbsian fields.
+\newblock \textit{Ann. Inst. Henri Poincare}, \textbf{24} 269--294.
+
+\bibitem[{Younes(1989)}]{Younes:1989}
+\textsc{Younes, L.} (1989).
+\newblock Parametric inference for imperfectly observed gibbsian fields.
+\newblock \textit{Probability Theory and Related Fields}, \textbf{82} 625--645.
+
+\end{thebibliography}
