@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{epsfig,color}
 \usepackage{algpseudocode}
+\usepackage{multirow}
 
 \DeclareMathOperator{\E}{E}
 \DeclareMathOperator{\I}{I}
@@ -51,9 +52,9 @@
 \author{Saisuke Okabayashi}
 \adviser{Charles J. Geyer}
 %\coadviser{Co-Adviser Name Here}
-\title{Maximum Likelihood in Exponential Family Models \\
-for Social Networks}
-\month{April}
+\title{Maximum Likelihood in 
+ Social Network Models}
+\month{May}
 \year{2011}
 % Month and Year of Degree Clearance, NOT necessarily when you defended
 
@@ -116,7 +117,7 @@ surrounding relations.
 \caption{\citeauthor{Padgett}'s \citeyearpar{Padgett} marriage network among 16 
 Florentine families around 1430.  At the time, two factions, one revolving around the 
 Medicis and the other around the Strozzis, vied for political control of the city.   
-Data is available through and plotted using the \texttt{ergm} package \citep{ergm} in 
+Data is available through and plotted using the \texttt{ergm} package \citep*{ergm} in 
 R.}
 \label{F:Florentine}
 \end{figure}
@@ -234,7 +235,7 @@ corporations.  The relation that connects actors is often friendship or actor $A
 but the relation can be any kind of relation such as a business transaction or the 
 Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the 
 \textit{Escherichia Coli} transcriptional regulation network among 423 operons produced by 
-\citet{Salgado,Shen-Orr} and modeled with ERGMs by \citet{Saul:2007,Hummel}.
+\citet*{Salgado,Shen-Orr} and modeled with ERGMs by \citet*{Saul:2007,Hummel}.
 
 \begin{figure}[h]
 \begin{center}
@@ -264,7 +265,8 @@ Framingham Heart Study.
 
 Harvard flu study.
 
-Checkout stuff by \citet{Kolaczyk:slides,Goldenberg:2009,Goodreau:2009}.  Hunter's sna ergm slides 2006.
+Checkout stuff by \citet*{Kolaczyk:slides,Goldenberg:2009,Goodreau:2009}.  Hunter's sna ergm slides 2006.
+Robins 2006 slides.
 
 Limited!
 
@@ -388,7 +390,7 @@ desirable properties such as the MLE uniqueness noted above.
 %%%%%%%%% NETWORK STATISTICS
 Ideally then, a network researcher need only specify relational structures of interest 
 to define an ERGM.  
-\citet{Wasserman:1996, Pattison:1999, logit, introp*} describe many of 
+\citet*{Wasserman:1996, Pattison:1999, logit, introp*} describe many of 
 the classical network statistics that one might include in the vector $g(y)$.  
 In these works, the researchers' primary 
 consideration in defining a network statistic is to find a relational structure 
@@ -420,13 +422,13 @@ different global network outcomes.
 %\end{figure}
 %%%%%% TABLE OF COMMONLY USED NETWORK STATISTICS
 
-  \citet{Handcock:2006, Hunter:2006, recentp*} developed new network statistics with 
+  \citet*{Handcock:2006, Hunter:2006, recentp*} developed new network statistics with 
 particular emphasis on the sensibility of the distributions generated from the specified models.  
 These came about in response to the repeated discovery that poorly behaving models can
 result when a researcher only considers the scientific significance of network
 statistics without worrying about any ``overlap" in role of the network structures.
 A fairly 
-complete description of network statistics including these is in \citet{Morris:2008}.  
+complete description of network statistics including these is in \citet*{Morris:2008}.  
 We will explore this issue in much more detail.
 %In addition, the issue of model selection between competing models has not been 
 %addressed though \citet{GOF} have begun making strides in this area.  Both of these 
@@ -472,7 +474,7 @@ same ``type" tend to make more relations with others of that type \citep{Wasserm
 Suppose we wish to incorporate $p$ such exogenous attributes for our $n$-actor network.  
 This information can be represented by an $n \times n \times p$ matrix $X$, whose 
 $ijk$th element is the value of the $k$th attribute in the potential relation from actor
-$i$ to $j$ \citep{Fienberg:1981,ergm}.  
+$i$ to $j$ \citep*{Fienberg:1981,ergm}.  
 
 Like the other network statistics discussed, the statistics that comprise $X$ can 
 be transparently calculated from the data and hence included in a new canonical 
@@ -595,30 +597,19 @@ network structures are the same ignoring the labels on the nodes (also called \t
 The model is the first to break dyad independence, made possible by \citeauthor{Frank:1986}' methods of parameter estimation.  In particular, \citeauthor{Frank:1986} run 
 Markov chain Monte Carlo simulations of the model at multiple values for a parameter 
 to determine which fits the data best.  The authors also get \emph{maximum pseudolikelihood 
-estimators (MPLE)} obtained from a standard logistic regression (we will discuss the pseudolikelihood approach in the next section) and observe that the 
+estimators (MPLE)} obtained from a standard logistic regression (we will discuss the pseudolikelihood approach in Section~\ref{S:pseudolikelihood}) and observe that the 
 MPLEs are close to those they arrived at from their rigorous simulations, leading them to suggest that these MPLEs are good enough.  
-
-%In a chronological review of the network model literature, 
-%it appears that this simplification of parameter estimation methodology helped
-%propel 
-
-%that has allowed the evolution 
-%of the network model to the more general form of \eqref{E:ERGM} that we now refer as   
-%More recent work has shown that this model with the exhibits problems with \textit
-%{degeneracy} in which a model fit with parameters set to MLEs will generate only 
-%graphs that are empty or complete \citep{Handcock:Degeneracy}.  
 
 
 %%%%%%%%%%%%%%%%% SECTION %%%%%%%%%%%
 \section{ERGM parameter estimation}
 Exponential random graph models have a deceptively simple form \eqref
-{E:ERGM} that belies the challenges involved in parameter estimation where
-the difficulties
-result from the normalizing constant \eqref{E:kappa} which may involve 
-a summation over an astronomical number of terms as discussed 
-in Section~\ref{S:intractable}.
+{E:ERGM} that belies the challenges involved in model parameter estimation.
+As discussed in Section~\ref{S:intractable}, the difficulties
+arise from a normalizing constant \eqref{E:kappa} which may involve 
+a summation over an astronomical number of terms.
 %resulting from the computationally infeasible normalizing constant \eqref{E:kappa}.  
-In this section, we discuss the most commonly used parameter estimation approaches
+In this section, we discuss commonly used parameter estimation methods
 used for exponential families with complex dependence like ERGMs.  All approaches avoid evaluating the likelihood function directly but have drawbacks that can be improved upon.  
 %These provide the backdrop for the new algorithm we propose in this paper.
 
@@ -646,17 +637,17 @@ used for exponential families with complex dependence like ERGMs.  All approache
 
 
 
-\subsection{Maximum pseudolikelihood method}
+\subsection{Maximum pseudolikelihood method} \label{S:pseudolikelihood}
 As mentioned Section~\ref{S:p1}, \citet{Frank:1986} succsesfully applied 
 the maximum pseudolikelihood method to social network models, a method first used in lattice systems in plant biology \citep{Besag:1974,Besag:1975}.  \citet{Strauss:1990} further justified the use of 
 maximum pseudolikelihood estimators (MPLE) as reasonable approximations for MLEs in 
-social network models.  \citet{Wasserman:1996, Pattison:1999, logit} leaned on this 
+social network models.  \citet*{Wasserman:1996, Pattison:1999, logit} leaned on this 
 result to broaden the scope of network models, allowing 
 for any combination of network structures to be considered.  The result is the more general form of \eqref{E:ERGM} that is currently used.
 
 The method of maximum pseudolikelihood finds the values for the parameters that 
 maximize the \textit{pseudolikelihood function} for the observed 
-data set, which can be constructed from the distributions of a dyad $Y_{ij}$ 
+data set, which can be constructed from the densities of a dyad $Y_{ij}$ 
 conditional on the rest of network, denoted by $f_{Y_{ij}}( y_{ij} \mid \textrm{rest})$.
 Then the pseudolikelihood function $PL(\eta)$ is defined to be the product of these,
 \begin{align}
@@ -664,59 +655,65 @@ Then the pseudolikelihood function $PL(\eta)$ is defined to be the product of th
 \end{align}
 and in general is different than the likelihood function.
 
+Define the vector of \textit{change statistics} $\delta_g(y)_{ij}$ to be
+\begin{align*}
+	\delta_g(y)_{ij} = g(y_{ij}^+) - g(y_{ij}^-)
+\end{align*}
+where $y_{ij}^+$ and $y_{ij}^-$ represent networks with $y_{ij} = 1$ or $y_{ij} = 0$, 
+respectively, while leaving the rest of the network as $y$.  Thus $\delta_g(y)_{ij}$ 
+is the change in $g(y)$ when $y_{ij}$ changes from 0 to 1.
 The conditional distribution of $Y_{ij} \mid \textrm{rest}$ for an ERGM is a Bernoulli 
-distribution with log odds:
+distribution with log odds
 \begin{align}
 	\log \left \{ \frac{P( Y_{ij} =1 \mid \textrm{rest} ) }
 				 	 { P( Y_{ij} =0 \mid \textrm{rest} ) } \right \} 
-					 			= \eta^T \Delta(g(y))_{ij}, \label{E:logodds}
+					 			= \eta^T \delta_g(y)_{ij}. \label{E:logodds}
 \end{align}
-where we define the vector of \textit{change statistics} $\Delta(g(y))_{ij}$ to be
-\begin{align*}
-	\Delta(g(y))_{ij} = g(y_{ij}^+) - g(y_{ij}^-)
-\end{align*}
-where $y_{ij}^+$ and $y_{ij}^-$ represent networks with $y_{ij} = 1$ or $y_{ij} = 0$, 
-respectively, while leaving the rest of the network as $y$.  Thus $\Delta(g(y))_{ij}$ 
-is the change in $g(y)$ when $y_{ij}$ changes from 0 to 1.
+%(See \citet*[Appendix]{Composite} for a derivation of \eqref{E:logodds}.)  
 The form of \eqref{E:logodds} in the context of \eqref{E:PL} naturally lends
-itself to the use of logistic regression through which we can get the estimates of $\eta$, called the maximum pseudolikelihood estimators (MPLE), that maximize \eqref{E:PL}.
+itself to the use of logistic regression to find values of $\eta$ that
+maximize $PL(\eta)$.  These values of $\eta$ are called the maximum pseudolikelihood estimators (MPLE).
 
-In the case where the dyads are in fact independent, the MPLEs will equal the MLEs.  
+In the case where the dyads $Y_{ij}$ are in fact mutually independent, the MPLEs will equal the MLEs.  
 \citet{Strauss:1990} show that in 
 many cases with dyad dependence, MPLE still yield reasonable approximations of the 
-true MLEs for social network models.  
+true MLEs.  
 
-However, \citet{Geyer:1992, Snijders:2002, Duijn:2009} demonstrated that 
-MPLEs can produce very misleading results when dependence is strong.  \citet{Composite}
-show that pseudolikelihood approach can be improved upon in a generalization called the \emph{composite likelihood} approach; this approach is identical
-to the pseudolikelihood one except that the conditional distributions used to build the \emph{composite likelihood function} involve multiple dyads rather than a single dyad.
-Neverthless, researchers now avoid citing parameter estimates based on these approaches.
+However, \citet*{Geyer:1992, Snijders:2002, Duijn:2009} demonstrated that 
+MPLEs can produce very misleading results when dependence is strong.  
+\citet*{Composite} showed that the pseudolikelihood approach can be 
+improved upon in a generalization 
+called the \emph{composite likelihood} approach; this method is identical
+to the pseudolikelihood one except that the conditional distributions used to build the \emph{composite likelihood function}---analogous to the pseudolikelihood function---are for multiple dyads rather than a single dyad.
+Nevertheless, researchers now avoid citing parameter estimates based on these approaches.
 Network software packages such as \texttt{statnet} \citep{statnet:R} in the R 
-platform now overwhelmingly use MLE methods rather than MPLE.  
+platform now overwhelmingly use MLE methods.  
 
 
 
-\subsection{Markov chain Monte Carlo Maximum Likelihood}
+\subsection{Markov chain Monte Carlo Maximum Likelihood} \label{S:MCMC-MLE}
 \citet{Geyer:1992, Corander:1998, Snijders:2002} developed Markov chain Monte Carlo 
 (MCMC) methods to approximate the MLE of an exponential family.  Of these, \citeauthor
 {Geyer:1992}'s Markov chain Monte Carlo-maximum likelihood estimator (MCMC-MLE) method 
-and has become the standard approach in the  
-literature \citep{Hunter:2006, Handcock:2006, GOF} and is the default algorithm in 
-the \texttt{statnet} package \citep{statnet:R} in the R platform for network models.  
+appears to have become the standard approach in the network literature 
+\citep{Hunter:2006, Handcock:2006, GOF} and is the default algorithm in 
+the \texttt{statnet} package \citep*{statnet:R} in the R platform for network models.  
 
 The MCMC-MLE approach is theoretically guaranteed to converge to the MLE if it exists.  
 Rather than maximizing the log likelihood \eqref{E:loglike}
-with respect to $\eta$, \citeauthor{Geyer:1992} fix $\eta^0$ at a known value and consider 
-the log of the likelihood ratio $r( \eta, \eta^0 )$:
+with respect to $\eta$, \citeauthor{Geyer:1992} consider 
+the log of the likelihood ratio $r( \eta, \eta^0 )$, where $\eta^0$ 
+is fixed at a known value,
 \begin{align}
  r( \eta, \eta^0 ) &= \ell( \eta ) - \ell( \eta^0 ) \notag \\ 
-				  &= ( \eta - \eta^0)^T g(\yobs) - \log \left [ \exp \bigl( c(\eta) - c(\eta^0) \bigr) \right ].\label{E:r}
+				  &= \inner{ \eta - \eta^0, g(\yobs)} - \log \left [ \exp \bigl( c(\eta) - c(\eta^0) \bigr) \right ].\label{E:r}
 \end{align}
 The value of $\eta$ that maximizes an
-approximation of $r( \eta, \eta^0 )$ is then a good estimate of the MLE when it 
-exists.  
-The approach does this by approximating the ratio of normalizing constants 
-$\exp \left (  c(\eta) - c(\eta^0) \right )$ using \eqref{E:kappa} as follows:
+approximation of $r( \eta, \eta^0 )$ is then a good estimate of the MLE, 
+assuming it exists.  Rather than evaluate the problematic normalizing constant,
+this approach equates the ratio of normalizing constants 
+$\exp \left (  c(\eta) - c(\eta^0) \right )$ to an expectation 
+using \eqref{E:kappa} as follows:
 \begin{align*}
 	\exp \left (  c(\eta) - c(\eta^0) \right ) &= \frac{ \int \exp \bigl ( \inner{ \eta, g(x) }\bigr ) \, d\mu(x) }{ \kappa(\eta^0)  } \\
 	&= \frac{ \int \exp \left ( \inner{ \eta - \eta^0, g(x)} + \inner{ \eta^0, g(x)} \right ) \, d\mu(x)  }{ \kappa(\eta^0) } \\
@@ -731,9 +728,10 @@ expectation can be approximated by the sample mean for large sample size,
 \end{align*}
 where $Y_1, \ldots, Y_m$ are draws from the exponential family distribution with 
 parameter $\eta^0$.  This sample can be generated using Markov chain Monte Carlo 
-method such as a Metropolis algorithm.
+methods such as Metropolis-Hastings (used for ERGMs) or Swensen-Wang (used for the Ising model example in Section~\ref{S:Examples:Ising}); see 
+\citep{Brooks} and references cited therein.
 
-Thus, $r( \eta, \eta^0 )$ can be approximated by
+Thus \eqref{E:r} can be approximated by
 \begin{align}
 \hat{r}_m( \eta, \eta^0 ) &= \inner{ \eta - \eta^0, g(\yobs)} - \log 
 	\left [ \frac{1}{m} \sum_{i=1}^{m} \exp \left ( \inner{ \eta - \eta^0, g(Y_i)} \right ) \right ] 
@@ -745,7 +743,7 @@ and
 	\hat{r}_m( \eta, \eta^0 ) \to r( \eta, \eta^0 ) \text{ a.s. as $m \to \infty$}.
 \end{align*}
 
-If we call the maximizer of \eqref{E:r_hat} $\hat{\eta}_m$ and assume that the MLE 
+If we call $\hat{\eta}_m$  the maximizer of \eqref{E:r_hat} and assume that the MLE 
 $\etaMLE$ exists, \citeauthor{Geyer:1992} show that 
 \begin{align*}
 	\hat{\eta}_m \to \etaMLE \quad a.s.
@@ -754,102 +752,68 @@ $\etaMLE$ exists, \citeauthor{Geyer:1992} show that
  
 This approach has been shown in practice to be sensitive to initial parameter 
 values when used without the trust region methodology recommended in \citep{Geyer:1992}, 
-and the algorithm may require enormous (sometimes infeasibly large) Monte Carlo sample sizes 
-when the starting value $\eta^0$ is far from the MLE \citep*{ergm}.  
+and the algorithm may require enormous---sometimes infeasibly large---Monte Carlo sample sizes 
+when the starting value $\eta^0$ is far from the MLE \citep{ergm}.  
 In addition, \citeauthor{Geyer:1992} recommend iterating the algorithm several times, 
 where each successive value will be closer to $\etaMLE$ than the previous.  At the 
 time of this writing, the MCMC-MLE routine in \texttt{statnet} uses by default 10,000 
 Monte Carlo samples and a maximum of three iterations \citep{statnet:R}, using the 
 MPLE as the initial value for $\eta^0$.  
-
-%We follow up with an example presented by 
-%\citet{ergm} in \texttt{statnet} in which the MCMCMLE procedure can fail.
+Improvements to the MCMC-MLE approach is an active area of research \citep*{Bartz,Hummel}.
 
 \citet{ergm} illustrate the practical difficulty associated with a poor initial 
 value in the MCMC-MLE algorithm with Sampson's monastery data set depicted in 
 Figure \ref{F:Sampson}.  The 
 observed network $\yobs$ is directed with 18 actors and 88 ties present out of $18 \cdot 17=306$ possible 
-ties.  To simply illustrate the issue, \citeauthor{ergm} use the simple Erd\H{o}s-R\'{e}nyi-Gilbert model 
-described in Section~\ref{S:Erdos}, with the network statistic $g(y)$ equal to the total number of 
+ties.  To illustrate the issue, \citeauthor{ergm} use the Erd\H{o}s-R\'{e}nyi-Gilbert model 
+described in Section~\ref{S:Erdos} with network statistic $g(y)$ equal to the total number of 
 edges present.  As noted earlier, the true MLE is equal to 
 \begin{align*}
 	\etaMLE = \logit\left( \frac{g(\yobs)}{n(n-1)}\right) = \logit \left( \frac{88}{306}\right ) = -0.9072.
 \end{align*}
   
 When $\eta^0$ is chosen to be $1$, however, \citeauthor{ergm} show that it is
-extremely difficult for the algorithm to attain the MLE in a single iteration.  
+extremely difficult for the algorithm to attain the MLE in a single iteration of 
+the MCMC-MLE algorithm.  
 For this value of $\eta$, the model dictates that each of the 306 possible edges will occur independently with probability $p = \frac{1}{1+e^{-\eta}} = \frac{1}{1+e^{-1}} = 0.731$.   
 This is a very high probability relative to the sparsity of relations in the observed data 
 set, which suggest a much smaller probability of tie formation of $88/306= 0.288$.  
 In fact, the probability of obtaining fewer than 88 ties for the $\eta=1$ model is nearly zero at $2.3 \times 10^{-59}$, calculated using a binomial distribution with $n=306$, $p =0.731$.  
 
-The MCMC-MLE algorithm maximizes the approximated log 
-likelihood ratio \eqref{E:r_hat}.  However, the first derivative of $\hat{r}(\eta,\eta^0)$ with respect
-to $\eta$ shows that if the MCMC engine is unable to generate any $g(Y)< g(\yobs)$, 
-\eqref{E:r_hat} will be strictly negative, resulting in $\hat{r}(\eta,\eta^0)$ with no
-maximum, as depicted by the dotted-line in Figure \ref{F:MCMC-MLE} (left).  
-The problem is not present when the initial value is close to the true MLE such as 
-$\eta^0 = -1$; the corresponding $r(\eta,\eta^0)$ and $\hat{r}(\eta,\eta^0)$ are
-depicted in Figure \ref{F:MCMC-MLE} (right).  With the default three 
-iterations of MCMC-MLE in the \texttt{statnet} package, the algorithm 
-starting with $\eta^0 = 1$ is only able to obtain an estimate for $\eta$ as 
-small as $\eta = -0.364$.  With 10 iterations, it does in fact 
-arrive at the MLE of $-0.907$.
-It should be noted that improvements to the MCMC-MLE approach is an active area of research \citep{Hummel}. 
-
-\begin{figure}  \label{F:MCMC-MLE}
+\begin{figure}[h]  \label{F:MCMC-MLE}
 \begin{center} 
 {\includegraphics[width=2.95in]{mcmc-mle1}}
 {\includegraphics[width=2.95in]{mcmc-mle-1}}
 \end{center} 
-\caption{Log likelihood ratios for different values of $\eta$ for the Sampson 
+\caption{Log likelihood ratios for different values of $\eta$ for Sampson's 
 Monastery data set.  Left: $\eta^0 = 1$, right: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
 approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  Data for plots are produced using code accompanying \citet{Hummel}.} 
 \end{figure} 
+
+The MCMC-MLE algorithm maximizes the approximated log 
+likelihood ratio \eqref{E:r_hat}.  However, the first derivative of $\hat{r}(\eta,\eta^0)$ with respect
+to $\eta$ shows that if the MCMC sampler is unable to generate any $g(Y)< g(\yobs)$, 
+\eqref{E:r_hat} will be strictly negative, resulting in $\hat{r}(\eta,\eta^0)$ with no
+maximum.  This is depicted by the dotted-line in Figure \ref{F:MCMC-MLE} (left).  
+The problem is not present when the initial value is close to the true MLE, such as 
+when $\eta^0 = -1$; the corresponding $r(\eta,\eta^0)$ and $\hat{r}(\eta,\eta^0)$ 
+functions are depicted in Figure \ref{F:MCMC-MLE} (right).  With the default three 
+iterations of MCMC-MLE in the \texttt{statnet} package, the algorithm 
+starting with $\eta^0 = 1$ is only able to obtain an estimate for $\eta$ as 
+small as $\eta = -0.364$.  With 10 iterations, it does in fact 
+arrive at the MLE of $-0.907$.
+ 
+
 
 
 
 
 %\subsection{Generalization to exponential families}
-%All of the parameter estimation issues discussed thus far for ERGMs are relevant to 
-%the larger class of discrete state space exponential family models.
-%These models are commonly used to model phenomena with dependent structure, 
-%where the outcomes of the response variable of interest are in fact dependent on one 
-%another.  For example, the Ising 
-%model \citep{Ising,Potts} is an exponential family model that has been used to model 
-%ferromagnetism.  A realized 
-%sample from this model is depicted in Figure~\ref{F:pottsimage}, where neighboring 
-%pixels (representing atoms in a crystal lattice) are more likely to have the same 
-%color.  
-%%We explore this model further in Section~\ref{S:Examples:Ising}.
-%Other examples of phenomena with dependent structure modeled with exponential 
-%families include
-%plant ecology \citep{Besag:1974,Besag:1975} and the lifetime fitness of plants \citep
-%{Shaw:2008}.
-%
-%\begin{figure}
-%\begin{center}
-%\includegraphics[width=4.5in,keepaspectratio]{potts}
-%\end{center}
-%\caption{A realized sample from an Ising model on a $32 \times 32$ lattice with $\eta 
-%= \left(0, \log(1 + \sqrt{2}) 
-%\right)^T$.  This value of $\eta$ corresponds to the phase transition point, where 
-%the sample images are mostly one 
-%color with small but significant portions of the other color.  There is no preference 
-%for the dominant color to be 
-%white or black.}
-%\label{F:pottsimage}
-%\end{figure}
 %
 %The algorithm and approaches we present here are generally applicable to all regular 
 %exponential families on finite state spaces, including ERGMs.  Thus we present the 
 %background theory at the higher level of exponential families though we will return to 
 %ERGMs in our most complicated applications.
-
-\section{Parameter estimation in exponential families}
-
-\subsection{MCMC-MLE}
-
 
     
 
@@ -859,8 +823,7 @@ Variations on the Robbins-Monro \emph{stochastic approximation} (SA) algorithm
 \citep{Robbins-Monro} have been applied to find in the MLE similar contexts: 
 \citet{Younes:1988,Younes:1989,Moyeed:1991,Gu:2001}
 applied MCMC stochastic approximation to spatial models and \citet{Snijders:2002} to 
-social network 
-models (exponential random graph models).
+ERGMs.
 %Our approach shares a similar recursive mechanism with SA, so we will describe this 
 %method further.  
 SA procedures for finding the MLE of a parameter $\eta$ generate iterated estimates 
@@ -899,7 +862,7 @@ for faster convergence \citep[Chapter 11]{Kushner:1997}.
 The conditions on $Y_k$ are more restrictive.  Popular approaches include constraining 
 the sequence of estimators $\eta_k$ to a compact set specified \emph{a priori}, 
 or assuming that the noise component of $Y_k$ be a martingale 
-difference sequence.  As commonly observed \citep{Chen:2002,Andrieu:2005,Liang:2010} 
+difference sequence.  As commonly observed \citep*{Chen:2002,Andrieu:2005,Liang:2010} 
 these may be 
 difficult to satisfy in practice.  
 See \citep{Andrieu:2005,Liang:2010} for recent developments that impose less 
@@ -912,82 +875,169 @@ often the case that algorithms are good at finding the MLE when the starting poi
 close to it, but of course the 
 location of the MLE is unknown.  For any exponential family with bounded support, 
 Fisher information 
-becomes singular as the canonical parameter $\eta$ goes to $\infty$ \citep{Rinaldo:
-2009}.  Hence methods which rely on 
+becomes singular as the canonical parameter $\eta$ goes to $\infty$ \citep*{Rinaldo:2009}.
+Hence methods which rely on 
 the Fisher information matrix may fail when the starting point for $\eta$ is far from 
 the MLE \citep{Younes:1989,Gu:2001}.
 Of course, one may try different starting points until a ``good'' one is found, but 
 this can be cumbersome in 
 practice.
 
-\section{Non-existent MLEs}
-Parameter estimation via maximum likelihood for these discrete state space models with 
+\subsection{Summary of Parameter Estimation Methods}
+The following table summarizes the advantages and disadvantages of the parameter estimations discussed.  
+All methods assume that the MLE exists before the search algorithm is applied.
+
+\begin{table}[h] 
+\caption{Appeal and drawbacks of various parameter estimation methods. MPLE=Maximum pseudolikelihood estimator,
+MCMC-MLE=Markov chain Monte Carlo-maximum likelihood estimator, SA=stochastic approximation.}
+\begin{tabular}{|c|l|l|}
+\hline 
+Method & Appeal & Drawbacks \\ [1ex]
+\hline
+\multirow{2}{0.5in}{MPLE}		
+& 	\textbullet \, Simplicity 				  	& \textbullet \, Maximizes $PL(\eta)$, not $\ell(\eta)$  \\
+& 	\textbullet \, Speed, via logistic regression 	& \textbullet \, MPLE behavior not well understood \\ [1ex]
+\hline
+\multirow{3}{0.5in}{MCMC-MLE}
+& 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Highly sensitive to starting point \\ 
+& 	converge to MLE if it exists 					& \textbullet \, May require enormous MC sample sizes\\ 
+&	\textbullet \, Can calculate MCSEs			& \textbullet \, May require several iterations of algorithm\\ [1ex]
+\hline
+\multirow{3}{0.5in}{SA} 		
+& 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, sensitive to starting point \\
+& 	converge to MLE if it exists & \\[1ex]
+\hline 
+\end{tabular}
+\end{table}
+%%%%%%
+
+\section{Non-existent MLEs in exponential families} \label{S:Non-exist MLE}
+Parameter estimation via maximum likelihood for exponential family models with 
 complex dependence---already a 
 challenging problem because the likelihood function may be computationally 
-infeasible---is further obfuscated by the possibility that the maximum likelihood 
-estimator (MLE) may not exist in the conventional sense.  The theoretical background 
-for this situation has been understood for many years (see \citet{Barndorff, Brown:
-1986})---when the MLE does not exist in the conventional sense, it may exist in the 
-Banrdorff-Nielsen completion of the family.
+infeasible---is further obfuscated by the possibility that the MLE
+may not exist.  The theoretical background 
+for this situation has been understood for many years 
+(see \citep{Barndorff,Brown:1986})---whether or not an MLE exists is a
+geometric problem relating to properties of the \emph{convex support} of the model 
+and the location of the observed data relative to this support.
+When the MLE does not exist for
+an exponential family in the conventional sense, 
+it may exist in the \emph{Barndorff-Nielsen completion} of the family.
 However, until recently, there have not been practical solutions to this problem.
 
-\citet{Geyer:1992} separate the search for the MLE for such models into a two-phase 
+\citet{Geyer:1992} separated the search for the MLE an exponential family model
+with complex dependence into a two-phase 
 algorithm, where phase I determines whether or not an MLE exists in the conventional 
 sense via linear programming, and phase II finds the MLE when it exists.
-\citet{Geyer:gdor} describes an algorithm to detect non-existent MLEs and construct 
-one-sided confidence intervals in the case of generalized linear models, including 
-logistic regression and contingency tables.
+The MCMC-MLE method discussed in Section~\ref{S:MCMC-MLE} thus occurs in phase II of
+this approach.
+In the case of generalized linear models including logistic regression and contingency 
+tables, \citet{Geyer:gdor} outline a methodology to detect non-existent MLEs and construct 
+one-sided confidence intervals \textbf{[WHY]}.
 The approach applies repeated linear programming to the polyhedral convex support of 
-the model and observed data to determine the face on which the observed data lies.  
+the model to determine the \emph{face} on which the observed data lies.  
 This face in turn defines the support for a new exponential family for which the MLE 
-exists and can be found using conventional methods.  The linear programming 
+does exist and can be found using conventional methods such as logistic regression.  
+The linear programming 
 functionality has been implemented into the R package \texttt{rcdd} \citep{rcdd}.  
 %However, this approach cannot be directly applied to the complex dependent problems 
 %we consider here because the polyhedral convex support is not known except for simple 
 %problems.  
 
-\citet{Handcock:degeneracy, Rinaldo:2009} focus on problematic instances of parameter 
-estimation for exponential random graph models (ERGM), a particular class of discrete 
-exponential families used for modeling complex networks.  
-The authors explore the geometric properties of the convex support to explain this 
-issue which has come to be  referred to as degeneracy.  According to 
-\citet{Handcock:degeneracy}, degeneracy includes the case of non-existent MLEs but also 
+\citet*{Handcock:degeneracy, Rinaldo:2009} focus on problematic instances of parameter 
+estimation for ERGMs, which have come to broadly be referred 
+to as \emph{degeneracy}.  
+According to \citet{Handcock:degeneracy}, degeneracy includes the 
+case of non-existent MLEs but also 
 cases where a model concentrates most its probability on only a few different sample 
-points in the space.  As an example, \citet{Rinaldo:2009} study in detail a 9-node 
-network model and illustrate how the normal fans of the polyhedral convex support 
-explain which portions of the natural parameter space are more likely to correspond to 
-degenerate models.  In both works, the authors work with full knowledge of the 
-geometry of the convex support, attained by enumerating all possible graph 
-realizations.
-%Shannon entropy
-
-%%%%%% 1/25 - From Algorithm.tex
-\textbf{Example of a degenerate social network model is in \citet{statnet-tutorial}.}  
-As summarized by \citet{Rinaldo:2009}, model degeneracy refers to instances where
+points in the space.  \citet{Rinaldo:2009} clarifies model degeneracy to refer 
+to instances where
 \begin{enumerate}
+\item The MLE does not exist.  
+\item The MLE is difficult to obtain, including cases where MCMC methods fail to converge
+or converge very slowly.
 \item Random graphs generated from the fitted model lack variability, often only 
 giving rise to empty graphs and complete or nearly complete graphs
-\item MLE of $\theta$ does not exist.  OR HARD TO OBTAIN.  includes case where MCMC 
-methods fails to converge.
-\item fitted model makes the observed network very unlikely.
+\item The fitted model makes the observed network very unlikely.
 \end{enumerate}
-%%%%%%%%%%%%%
 
-\citet{Okabayashi:longrange} present a ``long range" search algorithm to climb the log 
-likelihood of an exponential family, intended for settings where the initial guess of 
-the parameter value may be far from the MLE.  The algorithm is guaranteed to converge 
-when the MLE exists in the conventional sense.
+%
+The issue is serious enough to be a barrier to progress in the field \citep{advancesp*}.  
+\citet{statnet-tutorial} utilizes a adolescent friendship network data set 
+of 1,461 students in grade 7--12 derived from the National Longitudinal Study of 
+Adolescent Health\footnote{The data set, which \citeauthor{statnet-tutorial} refer to as Faux 
+Magnolia High School, is a model-based simulation from the original data set, where 
+the simulation is necessitated to maintain confidentiality.
+} and demonstrate that naively fit ERGMs can result in one of the
+situations described above.
+
+\begin{figure}[h]
+\centering
+\includegraphics[height=4in,width=4in]{Figures/g9-hull}
+\caption{The sample space of the edge and triangle network statistics for the 9-node 
+network studied by \citet{Rinaldo:2009}.  
+The shading of a point corresponds to the frequency of 
+graphs with that network statistic.  
+The convex hull of all points is the gray, sail-shaped polytope.  Points on the 
+boundary have an 
+outlined circle and extreme points are square.}
+\label{F:g9-hull}
+\end{figure}
+
+To fully understand the pathologies, \citeauthor{Handcock:degeneracy,Rinaldo:2009}
+study small networks with 7 and 9 nodes.  At these sizes, it is still 
+possible to explicitly evaluate the likelihood function \eqref{E:ERGM} and thus find MLEs
+using standard numerical optimization routines.  As in \citep{Geyer:gdor},
+the emphasis is on the geometric properties of the polyhedral convex support of the model;
+the support for the 9-node ERGM with a two-dimensional network statistic of
+edges and triangles
+studied by \citeauthor{Rinaldo:2009} is depicted in Figure~\ref{F:g9-hull}.
+\citeauthor{Rinaldo:2009} illustrate how the normal fans of this support 
+explain which portions of the natural parameter space are more likely to correspond to 
+degenerate models.  In both works, the authors work with full knowledge of the 
+geometry of this convex support, only attainable by enumerating all possible graph 
+realizations.  In addition, while they dissect these particular examples 
+to explain the problematic behavior, they recommend no general methodology 
+to detect nor cope with non-exist MLEs.
 
 
-\section{Algorithm overview} 
-In this article, we propose a simple and practical line search algorithm that 
-converges to the MLE of any regular 
-exponential family when the MLE exists and is unique and the first derivative of the 
-log likelihood can be calculated 
-exactly.  
-When it cannot, the first derivative still has a particularly convenient form that is 
+%
+%\citet{Okabayashi:longrange} present a ``long range" search algorithm to climb the log 
+%likelihood of an exponential family, intended for settings where the initial guess of 
+%the parameter value may be far from the MLE.  The algorithm is guaranteed to converge 
+%when the MLE exists in the conventional sense.
+
+
+\section{Research overview} 
+In this paper, we propose a simple and practical line search algorithm which
+accomplishes the following:
+\begin{enumerate}
+\item The algorithm converges to the MLE of any regular exponential family 
+when the MLE exists.  It does so while
+\begin{enumerate}
+	\item avoiding the hassle of trial-and-error algorithm calibration
+	\item being insensitive to starting point
+\end{enumerate}
+\item When the MLE does not exist, the algorithm finds the MLE in the Barndorff-Nielsen completion and the 
+accompanying \emph{direction of recession} necessary to build one-sided confidence intervals 
+in the manner of \citep{Geyer:gdor}.
+\end{enumerate}
+
+In short, our proposed algorithm addresses many of the drawbacks of the algorithms
+described in Section~\ref{S:ERGM examples} as well as providing a general approach
+to dealing with non-existent MLEs.
+
+\subsection{some details ...}
+
+ and is unique, and the first derivative of the log likelihood 
+can be calculated exactly.
+When the first derivative of the log likelihood can be calculated exactly, 
+it still has a particularly convenient form that is 
 easily estimable with MCMC, 
-making the algorithm still useful in application.  We also show how to construct and 
+making the algorithm still useful in application.
+  
+We also show how to construct and 
 apply confidence intervals in such 
 a setting to increase the probability of convergence.  
 
@@ -1239,7 +1289,7 @@ direction.
 
 Our motivating application is the modeling of network data using discrete state space 
 exponential families, commonly known as exponential random graph models (ERGM).  See 
-\citet{Goldenberg:2009} for an comprehensive introduction to social network modeling 
+\citep{Goldenberg:2009} for an comprehensive introduction to social network modeling 
 and ERGMs in particular.  (ADD MORE?)
   In network problems, the data of interest can be represented by a graph, with nodes 
 representing the individuals and an edge between a pair of nodes (or lack thereof) 
@@ -1286,6 +1336,35 @@ greater variety of empirical faces and normal cones.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background Theory}\label{Section:Background}
 %\input{Background}
+All of the parameter estimation issues discussed thus far for ERGMs are relevant to 
+the larger class of discrete state space exponential family models.
+These models are commonly used to model phenomena with dependent structure, 
+where the outcomes of the response variable of interest are in fact dependent on one 
+another.  For example, the Ising 
+model \citep{Ising,Potts} is an exponential family model that has been used to model 
+ferromagnetism.  A realized 
+sample from this model is depicted in Figure~\ref{F:pottsimage}, where neighboring 
+pixels (representing atoms in a crystal lattice) are more likely to have the same 
+color.  
+%We explore this model further in Section~\ref{S:Examples:Ising}.
+Other examples of phenomena with dependent structure modeled with exponential 
+families include
+plant ecology \citep{Besag:1974,Besag:1975} and the lifetime fitness of plants \citep
+{Shaw:2008}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=4.5in,keepaspectratio]{potts}
+\end{center}
+\caption{A realized sample from an Ising model on a $32 \times 32$ lattice with $\eta 
+= \left(0, \log(1 + \sqrt{2}) 
+\right)^T$.  This value of $\eta$ corresponds to the phase transition point, where 
+the sample images are mostly one 
+color with small but significant portions of the other color.  There is no preference 
+for the dominant color to be 
+white or black.}
+\label{F:pottsimage}
+\end{figure}
 
 \section{Exponential Family Theory}
 An exponential family of distributions \citep{Barndorff,Geyer:gdor}
@@ -2220,8 +2299,7 @@ applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC.  That is,
 where $Y_1, \ldots, Y_m$ are MCMC draws from the distribution with parameter $\eta$.  
 There are many MCMC algorithms 
 such as Metropolis-Hastings or Swensen-Wang (used for the Ising model example in 
-Section~\ref{S:Examples:Ising}); see 
-\citep{Brooks} and references cited therein.
+Section~\ref{S:Examples:Ising}); see \citep{Brooks} and references cited therein.
 We show examples in the next section where $\nabla \ell(\eta)$ can be calculated 
 exactly and where it must be 
 approximated.
@@ -2879,18 +2957,7 @@ the rational representation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Two-dimensional sufficient statistic}\label{S:example 2dim}
-\begin{figure}[!ht]
-\centering
-\includegraphics[height=4in,width=4in]{Figures/g9-hull}
-\caption{The sample space of the edge and triangle network statistics for the 9-node 
-network described in 
-Section \ref{S:example 2dim}.  The shading of a point corresponds to the frequency of 
-graphs with that network statistic.  
-The convex hull of all points is the gray, sail-shaped polytope.  Points on the 
-boundary have an 
-outlined circle and extreme points are square.}
-\label{F:g9-hull}
-\end{figure}
+
 
 The support for the 9-node ERGM with edge and triangle network statistics is depicted 
 in Figure \ref{F:g9-hull}.
