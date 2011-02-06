@@ -1,0 +1,706 @@
+All of the parameter estimation issues discussed thus far for ERGMs are relevant to 
+the larger class of discrete state space exponential family models.
+These models are commonly used to model phenomena with dependent structure, 
+where the outcomes of the response variable of interest are in fact dependent on one 
+another.  For example, the Ising 
+model \citep{Ising,Potts} is an exponential family model that has been used to model 
+ferromagnetism.  
+%A realized 
+%sample from this model is depicted in Figure~\ref{F:pottsimage}, where neighboring 
+%pixels (representing atoms in a crystal lattice) are more likely to have the same 
+%color.  
+%We explore this model further in Section~\ref{S:Examples:Ising}.
+Other examples of phenomena with dependent structure modeled with exponential 
+families include
+plant ecology \citep{Besag:1974,Besag:1975} and the lifetime fitness of plants \citep
+{Shaw:2008}.
+
+Although motivated by ERGMs, the algorithm we propose is rooted in fundamental
+exponential family theory and applicable to any discrete state space 
+exponential family model.  Thus the theory presented in this section is from
+the perspective of exponential families in general.
+
+\section{Exponential Family Theory}
+An exponential family of distributions \citep{Barndorff,Geyer:gdor}
+on a sample space $\YY$ has log likelihood \eqref{E:loglike}.
+%\begin{align} 
+%   \ell(\eta) = \inner{g(y), \eta} - c(\eta)
+%\end{align}
+%where $g(y)$ is a $d$-dimensional vector of canonical statistics, $\eta$ a $d$-
+%dimensional vector of
+%canonical parameters, and $\inner{\fatdot, \fatdot}$ denotes the bilinear form
+%$$
+%   \inner{g, \eta} = \sum_{i =1}^d g_i \eta_i.
+%$$
+%So that the probability function integrates to 1,
+%the cumulant function $c$ must have the form
+%\begin{align} \label{E:cumulant}
+%      c(\eta) = \log \left(\int e^{\inner{g(y), \eta}} \, d\mu(y) \right),
+%\end{align}
+%where $\mu$ is a measure on $\YY$.
+%Define
+%\begin{align} \label{E:fullparam}
+%	\Xi = \{ \eta \in \RR^q: c(\eta) < \infty \}.
+%\end{align}
+%The exponential family is \emph{full} if the natural parameter space is \eqref
+%{E:fullparam}, and \emph{regular} if, in 
+%addition, $\Xi$ is an open set.  We say an exponential family is \emph{minimal} if $g
+%(y)$ is not concentrated on a 
+%hyperplane. Minimality guarantees that if an MLE exists, it is unique \citep
+%{Geyer:gdor}.
+
+In finite state space models with complicated dependence like an Ising model or 
+exponential random graph model,  \eqref
+{E:cumulant} is a sum which may have no simple expression and can only be evaluated by 
+explicitly doing the sum.
+When the sample space $\YY$ is even moderately large, this can be prohibitively 
+expensive.  For example, an Ising model 
+defined on a $32\times 32$ square lattice where each entry takes values of 0 or 1, 
+there are $2^{1024} \approx 10^
+{300}$ elements in $\YY$.  A loop with this many iterations takes too long no matter 
+how programmed.
+
+A useful property of all exponential families \cite[p.~27]{TPE2} on which we rely 
+heavily is that 
+\begin{align*}
+	\E_\eta(g(Y)) &= \nabla c(\eta)	\\
+	\Var_\eta(g(Y)) &= \nabla^2 c( \eta ).
+\end{align*}
+
+Thus we can express first and second derivatives of the log likelihood \eqref
+{E:loglike} and Fisher information, $I
+(\eta)$, as
+\begin{align}
+	\nabla \ell( \eta ) &= g(y) - \E_\eta g(Y) \label{E:nabla ell} \\
+	\nabla^2 \ell( \eta ) &=  - \Var_\eta g(Y) \label{E:nabla2 ell} \\
+	\I(\eta) &= -\E_\eta \nabla^2 \ell (\eta ) = \Var_\eta g(Y) \label{E:FI}
+\end{align}
+and thereby avoid evaluation of the problematic cumulant function $c$.
+
+
+By the strict convexity of the log likelihood function ensured by \eqref{E:nabla2 
+ell}, the global 
+maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \eta ) = 
+0$, or, by \eqref{E:nabla ell},
+\begin{align}
+	\E_\eta g(Y) = g(\yobs). \label{E:Observed-Expected}
+\end{align}
+
+
+\section{Convex Analysis}
+The issue of MLE existence in the conventional sense in an exponential family is 
+closely tied to the geometric properties of 
+the convex support of the model \citep{Barndorff, Geyer:gdor, Rinaldo:2009}.  We 
+describe the relevant theory from convex analysis as it pertains to the case of 
+exponential families.
+
+A \emph{convex polytope} $C$ is the convex hull of a finite set of points $V$,
+\begin{align*}
+	C = \con( V ).
+\end{align*}
+where [\textbf{DEFINE pos().}]
+
+  By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
+set can equivalently be represented as the intersection of a finite collection of 
+closed half-spaces.  These two representations of a convex polyhedron are referred to 
+as the V-representation and H-representation, respectively.  
+%The V-representation of a convex polyhedron $C$ is the set of all linear combinations
+%\begin{align*}
+%	\sum_{i \in E \cup I} b_i \alpha_i
+%\end{align*}
+%where $\alpha_i$ are vectors, $b_i$ are scalars, $E$ and $I$ are disjoint finite sets 
+%such that
+%\begin{align*}
+%	b_i \geq 0, \quad i \in E \cup I
+%\end{align*}
+%and if $I$ is nonempty
+%\begin{align*}
+%	\sum_{i \in I} b_i = 1.
+%\end{align*}
+
+The H-representation can be expressed as the solution set of a finite set of linear 
+equations and inequalities,
+\begin{align*}
+	C = \{x: Ax \leq b \},
+\end{align*}
+where $A$ is a matrix and $b$ a vector.
+
+A nonempty \emph{face} of a convex polyhedron $C$ is a convex subset of $C$ such that 
+every line segment in $C$ with a relative interior point in $F$ has both end points in 
+$F$ \citep{Rockafellar:1970}.  It is itself a convex polyhedron.
+A \emph{proper} face is a face that is not the empty set or $C$, and 
+\emph{facets} are proper faces of the highest dimension.
+
+The \emph{tangent cone} of a convex set $C$ at a point $x \in C$ is
+\begin{align*}
+	T_C(x) = \cl\{s(w-x):w \in C \text{ and } s \geq 0 \},
+\end{align*}
+where $\cl$ denotes the closure operation \citep[Theorem 6.9]{Rockafellar}.  
+
+The \emph{normal cone} of a convex set $C$ in $\RR^d$ at a point $x \in C$ is 
+\begin{align*}
+	N_C(x) = \{ \delta \in \RR^d: \inner{w-x,\delta} \leq 0 \text{ for all } w \in C 
+\}.
+\end{align*}
+
+Tangent and normal cones are polars of each other, that is, each determines the other.  
+The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
+\begin{align*}
+	N_C(x) 	&= \{ w \in \RR^d: \inner{ w, v } \leq 0 \text{ for all } v \in T_C(x) \}.
+\end{align*}
+
+DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{get from 
+\citep{Rockafellar:1970}.}
+
+\section{MLE existence in exponential families}
+Charlie's GDOR theorems rely heavily upon some results from his thesis \citep{Geyer:
+1990}.  Adapted here 
+using the notation from his GDOR paper,
+\begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]
+\begin{align*}
+e^{c(\theta + s \delta) - bs} &\to 
+		\begin{cases} 
+			0 								& b > \sigma_c(\delta) \\
+			e^{c(\theta)} P_\theta(Y \in H ) 	& b = \sigma_c(\delta) \\
+			+\infty							& b < \sigma_c(\delta)
+		\end{cases}
+& \text{as } s \to +\infty.
+\end{align*}
+where $\delta$ is a non-zero direction, $C$ the convex support, and
+\begin{align*}
+	\sigma_C (\delta) = \sup_{y \in C} \inner{ y, \delta} \\
+	H_\delta = \set{w: \inner{w, \delta} = \sigma_C(\delta) }.
+\end{align*}
+\end{theorem}
+$H_\delta$ is the supporting hyperplane to the set $C$ with normal vector $\delta$.
+
+\begin{proof}
+\textbf{Case: $b = \sigma_C(\delta)$.}
+
+Starting with density of the exponential family with parameter $\theta$, we know that
+\begin{align*}
+	e^{c(\theta)} = \int h(y) e^{\inner{y,\theta}} \, dy.
+\end{align*}
+So,
+\begin{align*}
+	e^{ c(\theta + s \delta ) - bs } &= \int h(y) e^{\inner{y,\theta + s \delta - 
+bs} } \, dy. \\
+									&= \int h(y) e^{\inner{y,\theta}  + s [ \inner
+{y,\delta} - b ] } \, dy. 
+\end{align*}
+Multiply by $\frac{p_\theta(y)}{p_\theta(y)}$ to get
+\begin{align*}
+	e^{ c(\theta + s \delta ) - bs } &= \int h(y) e^{\inner{y,\theta}  + s [ \inner
+{y,\delta} - b ] }  \frac{ h(y)e^{\inner{y, \theta} - c(\theta)} }{ h(y)e^{\inner{y, 
+\theta} - c(\theta)} }\, dy \\
+	&= \int e^{  s [ \inner{y,\delta} - b ] + c(\theta) }  h(y)e^{\inner{y, \theta} - 
+c(\theta)} \, dy \\
+	&= \E_\theta e^{  s [ \inner{Y,\delta} - b ] + c(\theta) }
+\end{align*}
+What happens as $s \to +\infty$?  We would like to reverse the order of taking the 
+limit and expectation.  Fortunately, we have the monotone convergence theorem.  For $
+\inner{y, \delta} \leq b$, we have a monotonically decreasing sequence of random 
+variables.  For $\inner{y, \delta} > b$, the sequence is increasing.  Thus,
+\begin{align*}
+	\lim_{s\to \infty} \E_\theta e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= E_
+\theta \lim_{s\to \infty} e^{  s [ \inner{Y,\delta} - b ] + c(\theta) }. 
+\end{align*}
+Ignoring the expectation and examining the just limit component of the above,
+\begin{align*}
+	\lim_{s\to \infty} e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= 
+			\begin{cases} 
+			0 								& \inner{Y,\delta} < b \\
+			e^{c(\theta)} 		 			& \inner{Y,\delta} = b \\
+			+\infty							& \inner{Y,\delta} > b.
+		\end{cases}
+\end{align*}
+In the case that we are considering, however, $b = \sigma_C(\delta) = \sup_{y \in C}
+\inner{y,\delta}$, so $\inner{Y,\delta}$ can never be greater than $b$, so the third 
+case in the limit above is not possible.  Thus we can rewrite the result above 
+succinctly as
+\begin{align*}
+	\lim_{s\to \infty} e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= I(\inner{Y,
+\delta} = b ) e^{c(\theta)} 
+	= I( Y \in H_\delta ) e^{c(\theta)}.
+\end{align*}
+Then returning to the full expression,
+\begin{align*}
+	\lim_{s\to \infty} \E_\theta e^{  s [ \inner{Y,\delta} - b ] + c(\theta) } &= e^
+{c(\theta)} P( Y \in H_\delta ).
+\end{align*}
+
+\textbf{Case: $b > \sigma_C(\delta)$}.
+\begin{align*}
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - bs } &= 
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s + \sigma_C
+(\delta)s - bs }  \\
+	&= \left( \lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s} 
+\right ) \left(  \lim_{s\to \infty} e^{ s[ \sigma_C(\delta) - b] } \right )\\
+	&= \left (e^{c(\theta) }P(Y\in H_\delta) \right ) \cdot 0 = 0.
+\end{align*}
+
+\textbf{Case: $b < \sigma_C(\delta)$}.
+\begin{align*}
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - bs } &= 
+	\lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s + \sigma_C
+(\delta)s - bs }  \\
+	&= \left( \lim_{s\to \infty} e^{ c(\theta + s \delta ) - \sigma_C(\delta)s} 
+\right ) \left(  \lim_{s\to \infty} e^{ s[ \sigma_C(\delta) - b] } \right )\\
+	&= \left (e^{c(\theta) }P(Y\in H_\delta) \right ) \cdot \left ( + \infty \right ) 
+= + \infty.
+\end{align*}
+\end{proof}
+
+The \emph{convex support} of an exponential family is the smallest closed convex set 
+that the contains the natural statistic \citep{Geyer:gdor}.
+
+\begin{theorem}[Theorem 1 from \citet{Geyer:gdor}] \label{Thm:DOC}
+For a full exponential family with
+\begin{itemize}
+\item log likelihood function, $\ell(\eta)$, as in \eqref{E:loglike},
+\item natural parameter space, $\Xi$, as in \eqref{E:fullparam},
+\item natural statistic, $g(Y)$,
+\item observed data, $\yobs$, such that $g(\yobs) \in C$, the convex 
+support,
+\end{itemize}
+the following are equivalent:
+\begin{enumerate}
+\item $\delta$ is a direction of constancy of the log likelihood.
+\item For all $\eta \in \Xi$, the function $s \mapsto \ell( \eta + s\delta)$ is 
+constant on $\RR$ \cite[Theorem 1 (b)]{Geyer:gdor}.
+\item The parameter values $\eta$ and  $\eta + s\delta$ correspond to the same 
+probability distribution for all $\eta \in \Xi$ and all real $s$ \cite[Theorem 1 (d)]
+{Geyer:gdor}.
+\item $\inner{g(Y) - g(\yobs),\delta} = 0$ almost surely for all distributions in the 
+family \cite[Theorem 1 (f)]{Geyer:gdor}.
+\item $\delta \in N_C(g(\yobs))$ and $-\delta \in N_C(g(\yobs))$ \cite[Theorem 1 (g)]
+{Geyer:gdor}.
+\item $\inner{w,\delta} = 0$ for all $w \in T_C(g(\yobs))$ \cite[Theorem 1 (h)]
+{Geyer:gdor}.
+\end{enumerate}
+\end{theorem}
+The set of all directions of constancy is called the \emph{constancy space} of the log 
+likelihood.
+
+\begin{theorem}[DOR: Theorem 3 from \cite{Geyer:gdor}] \label{Thm:DOR}
+For a full exponential family with the same setting as Theorem~\ref{Thm:DOC},
+%\begin{itemize}
+%\item log likelihood function, $\ell(\eta)$, described by \eqref{E:loglike},
+%\item natural parameter space, $\Xi$,
+%\item natural statistic, $g(Y)$,
+%\item observed value of the natural statistic, $g(\yobs)$, such that $g(\yobs) \in C$, the convex 
+%support,
+%\end{itemize}
+the following are equivalent:
+\begin{enumerate}
+\item $\delta$ is a direction of recession of the log likelihood.
+\item For all $\eta \in \Xi$, the function $s \mapsto \ell( \eta + s\delta)$ is 
+nondecreasing on $\RR$ \cite[Theorem 3 (b)]{Geyer:gdor}.
+\item $\inner{g(Y) - g(\yobs),\delta} \leq 0$ almost surely for all distributions in 
+the family. \cite[Theorem 3 (d)]{Geyer:gdor}.
+\item $\delta \in N_C(g(\yobs))$ \cite[Theorem 3 (e)]{Geyer:gdor}.
+\item $\inner{w,\delta} \leq 0$ for all $w \in T_C(g(\yobs))$ \cite[Theorem 3 (f)]
+{Geyer:gdor}.
+\end{enumerate}
+\end{theorem}
+
+
+%%%%%%%%%%%%%%%%%%%%%%% 1/26/11 - Added from Algorithm.tex
+\subsection{Theorem 3(a) and (c), \citet[p. 270]{Geyer:gdor}}
+So what do we this theorem for?  It relates when $\delta$ is a direction of recession 
+or not.  Theorem 3 in GDOR has says the following are equivalent:
+\begin{itemize}
+\item (a) There exists a $\theta \in \Theta$ such that the function $s \mapsto \ell
+(\theta+s\delta)$ is nondecreasing on $\RR$.
+\item (c) $\inner{Y-y, \delta} \leq 0$ almost surely for all distributions in the 
+family.
+\end{itemize}
+
+The $\delta$ in (a) in the above is a direction of recession.  
+
+The proof requires the following lemma, which a PROOF WILL BE NEEDED.
+$\ell(\theta+s\delta)$ is non-dereasing if and only if $\lim_{s \to \infty} \ell
+(\theta+s\delta) > -\infty$.
+
+\textbf{From $(c) \to (a)$}:
+
+Take $\E_{\theta + s \delta}()$ of $\inner{Y-y, \delta} \leq 0$.  Then
+\begin{align*}
+\inner{ \E_{\theta + s \delta} Y-y, \delta} \leq 0.
+\end{align*}
+Now, take the derivative of $\ell( \theta + s\delta)$ with respect to $s$.
+\begin{align*}
+\deriv{\ell( \theta + s \delta}{s}) &= \deriv{}{s} \left (   \inner{y, \theta+s
+\delta} - c(\theta+s\delta)  \right )\\
+	&= \inner{y, \delta} - \deriv{}{s} c(\theta+s\delta) \\
+	&= \inner{y, \delta} - \inner{ \E_{\theta+s\delta}Y,\delta }\\
+	&= - \inner{ \E_{\theta+s\delta}Y - y,\delta }.
+\end{align*}
+Applying the above from the assumption, we get that 
+\begin{align*}
+\deriv{\ell( \theta + s \delta)}{s} \geq 0.
+\end{align*}
+Thus $\ell(\theta+s\delta)$ is a non-decreasing function of $s$.
+
+\textbf{From $(a) \to (c)$}:
+\begin{align*}
+	\ell( \theta+s\delta) &= \inner{y, \theta+s\delta} - c(\theta+s\delta) \\
+	&= \inner{y, \theta} + s \inner{y,\delta} -bs +bs - c(\theta+s\delta) \\
+	&= \inner{y, \theta} + s [\inner{y,\delta} -b]  - \log e^{c(\theta+s\delta) -bs}.
+\end{align*}
+We know from the above lemma that $\ell(\theta+s\delta)$ is non-dereasing if and only 
+if $\lim_{s \to \infty} \ell(\theta+s\delta) > -\infty$.  This implies that in the 
+above expression, for the right-most term, $b \geq \sigma_c(\delta)$, and also that
+\begin{align*}
+	\inner{y, \delta} - b \geq 0,
+\end{align*}
+or 
+\begin{align*}
+	b - \inner{y, \delta}  \leq 0.
+\end{align*}
+If the above is true, then 
+\begin{align*}
+	\sigma_C(\delta)  - \inner{y, \delta} \leq b - \inner{y, \delta}  \leq 0,
+%#	\inner{y, \delta} - \inner{Y_{max},\delta } \geq 0.
+\end{align*}
+and recalling that $\sigma_C(\delta) = \sup_{y \in C} \inner{y, \delta}$, then
+\begin{align*}
+	\inner{Y - y,\delta } \leq 0.
+\end{align*}
+(with probability one---do I even need to add this).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+From the two theorems above, it is clear that every direction of constancy is a 
+direction of recession.  These induce the following criteria about the existence of 
+the MLE in the conventional sense:
+
+\begin{corollary}[Theorem 4, Corollary 5 \citep{Geyer:gdor}] \label{Cor:MLE DNE}
+For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, if $\delta$ 
+is a 
+direction of recession that is not a direction of constancy, then  
+\begin{enumerate}
+\item the MLE does not exist.
+\item $N_C(g(\yobs))$ is a vector subspace.
+\item $T_C(g(\yobs))$ is a vector subspace.
+\item for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta + s \delta)$ is 
+strictly increasing on 
+the interval where it is finite.
+\end{enumerate}
+\end{corollary}
+
+The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
+relative to its affine hull.  We call $\delta$ a \emph{generic direction of recession} 
+(GDOR) if $\delta \in \rint N_C(g(\yobs))$.  By construction it is not a direction of 
+constancy.  By Corollary~\ref{Cor:MLE DNE}, a GDOR exists if and only if the MLE does 
+not exist.
+
+The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} is 
+formally stated as follows:
+\begin{theorem} \label{Thm:MLE rint}
+Under the conditions [CONDITIONS], the MLE exists in the conventional sense and is 
+unique if and only if 
+$g(\yobs) \in \rint(C)$.
+\end{theorem}
+
+When the MLE does not exist for an exponential family in the conventional sense, there 
+exists a GDOR along which the log likelihood goes to $+\infty$.  The behavior of the 
+density of the distribution is described in the following theorem:
+
+\begin{theorem}[Theorem 6 from \citet{Geyer:gdor}] \label{Thm:LCM}
+For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, and 
+additionally,
+\begin{enumerate}
+\item density function \eqref{E:pdf},
+\item direction of recession, $\delta$,
+\item $H = \{ w \in \RR^d: \inner{ w-g(\yobs), \delta } = 0 \}$,
+\item $P( g(Y) \in H) > 0$ for some distribution in the family,
+\end{enumerate}
+then for all $\eta \in \Xi$
+\begin{align} \label{E:LCM}
+\lim_{s \to \infty} f_{\eta+s\delta}(y) = 
+			\begin{cases} 
+			0 								& \inner{g(Y) - g(\yobs), \delta} < 0 \\
+			\frac{f_\eta(y)}{P_\eta(g(Y) \in H)} 	& \inner{g(Y) - g(\yobs),
+\delta} = 0 \\
+			+\infty							& \inner{g(Y) - g(\yobs), \delta} > 0.
+		\end{cases}
+\end{align}
+If $\delta$ is not a direction of constancy, then $s \mapsto P_{\eta+s\delta}( g(Y) 
+\in H)$ is continuous and strictly increasing, and 
+$P_{\eta+s\delta}( g(Y) \in H) \to 
+1$ as $s \to \infty$.
+\end{theorem}
+
+
+The right-hand side of \eqref{E:LCM} can be viewed as a conditional density of a 
+distribution with parameter $\eta$ given $g(Y) \in H$ and hence expressed as $f_{\eta}
+(\, \cdot\,  | g(Y) \in H)$ (the set that maps to $+\infty$ has probability zero by 
+Theorem~\ref{Thm:DOR}).  Because it still has the same functional form as the 
+exponential family density, $f_\eta(y)$, the family of distributions
+\begin{align} \label{E:f conditional}
+\{ f_{\eta}(\, \cdot\,  | g(Y) \in H) \text{ for } \eta \in \Xi \}
+\end{align}
+is itself an exponential family with the same natural parameters and statistics as the 
+original family.  
+%Then we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
+%\begin{align*}
+%\lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y | g(Y) \in H).
+%\end{align*}
+It may not be full, however; the full family containing this exponential family,
+\begin{align*}
+\{ f_{\eta}(\, \cdot\,  | g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
+{ and } \gamma \in \Gammalim \},
+\end{align*}
+where $\Gammalim$ is the constancy space of \eqref{E:f conditional},
+is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
+An MLE for this new model must exist, since $g(\yobs)$ cannot lie on the boundary of 
+the convex support which was itself determined by $g(\yobs)$ lying in the interior of 
+it.  
+
+
+\subsection{Theorem 6, \citet[p. 271]{Geyer:gdor}, 7/25/10}
+And now the big one:
+\begin{theorem}
+If $\delta$ is a direction of recession, and
+\begin{align*}
+H = \set{ w \in \RR^p: \inner{w-y,\delta}=0 },
+\end{align*}
+and $P(Y \in H) > 0$ for some distribution in the family, and hence for all, then for 
+all $\theta \in \Theta$,
+\begin{align*}
+\lim_{s \to \infty} f_{\theta+s\delta}(\omega) = 
+			\begin{cases} 
+			0 								& \inner{Y(\omega) - y ,\delta} < 0 \\
+			\frac{f_\theta(\omega)}{P_\theta(Y \in H)} 	& \inner{Y(\omega) - y ,
+\delta} = 0 \\
+			+\infty							& \inner{Y(\omega) - y ,\delta} > 0.
+		\end{cases}
+\end{align*}
+If $\delta$ is not a direction of constancy, then $s \mapsto P_{\theta+s\delta}( Y 
+\in H)$ is continuous and strictly increasing, and $P_{\theta+s\delta}( Y \in H) \to 
+1$ as $s \to \infty$.
+\end{theorem}
+Before going on to the proof, let's think about what this means.  Suppose $\delta$ is 
+a DOR and not a DOC, because the latter is not interesting.  So, the MLE does not 
+exist because the log-likelihood, despite being strictly convex, is strictly 
+increasing when we go in the direction of $\delta$.  That's what DOR means.  So then 
+what?
+
+Well, we need to think first about $H$ again, this plane that is perpendicular to $
+\delta$ on which the observed data $y$ lies.  Looking first at the last sentence of 
+this theorem, it says that for the sequence of exponential families with parameter 
+value $\theta+s\delta$, the probability of $Y$ occurring on the plane $H$ is strictly 
+increasing, and in fact, going to 1.  This is what Charlie is referring to when he 
+says things like ``the probability is accumulating on the boundary".  So, $H$ 
+actually coincides with the boundary of the convex hull, the observed data $y$ sits 
+is on this boundary (hence the MLE does not exist, by the usual MLE existence 
+theorem, and hence a DOR exists).  When we take the parameter value further and 
+further along in the direction of the DOR, the samples generated from that model will 
+be increasingly cluster around that boundary face of the convex hull on which $y$ 
+sits.
+
+So how about the rest of the theorem?  We saw in Theorem 3 that $\inner{Y-y,\delta} 
+\leq 0$ so the set where the above is $+\infty$ has probability zero.  I think the 
+set for which $\inner{Y-y,\delta} = 0$ corresponds to a DOC, doesn't it?  Hmm, 
+something's not right with my reasoning.
+
+Charlie's paper says: the right side (excluding the 0 probability part) is the 
+density of the conditional distribution given the event $Y \in H$ of the distribution 
+having parameter value $\theta$, so we could denote the RHS by $f_\theta(\omega | Y 
+\in H)$.  The exponential family with the \emph{full} natural parameter space (I'm 
+glossing over some stuff) is the limiting condition model (LCM).  ``If an MLE exists 
+for the LCM, then it maximizes the likelihood in the family that is the union of the 
+LCM and the original family, and it maximizes the likelihood in the family that is 
+the set of all limits of sequences of distributions in the original family.  When 
+this happens, we say we have found an MLE in the Barndorff-Nielsen completion of the 
+original family."
+
+\begin{proof}
+Hmm, I'm concerned about the different forms of $H$: are they actually all the same 
+thing?  Well, carry on.
+
+By Theorem 3, if $\delta$ is a DOR, then $\inner{Y-y, \delta} \leq 0$ which implies 
+that $\inner{Y, \delta} \leq \inner{y, \delta}$.  So, the largest value that $\inner
+{Y, \delta}$ can take on is $\inner{y, \delta}$.  Then $\sigma_C(\delta) = \inner{y, 
+\delta}$.
+
+Focus on the form of the density for $f_{\theta+s\delta}(\omega)$.  According the 
+form of the relative density previously defined with respect to $\psi$,
+\begin{align*}
+ f_{\theta+s\delta}(\omega) &= e^{ \inner{y,\theta+s\delta - \psi} - c(\theta+s
+\delta) + c(\psi)  } \\
+ 	&= e^{ \inner{y,\theta - \psi} -c(\theta) + c(\theta) + s \inner{y,\delta} - c
+(\theta+s\delta) + c(\psi)  } \\
+ 	&= e^{ \inner{y,\theta - \psi} -c(\theta) + c(\psi) - c(\theta+s\delta) + s 
+\inner{y,\delta} + c(\theta)   } \\
+ 	&= f_\theta(\omega) \frac{e^{c(\theta)}}{e^{ c(\theta+s\delta) - \inner{y,\delta}
+s } }.
+\end{align*}
+This form is starting to look familiar, in particular, the denominator is from 
+Theorem 2.2 from \citet{Geyer:1990} except with $\inner{y,\delta}$ instead of $b$ 
+(where this 
+$y$ is the dummy variable in the density, not the observed data).  So what happens as 
+$s \to \infty$?  
+
+It depends on how $\inner{Y(\omega),\delta}$ relates to $\sup_{y \in C}\inner{y,
+\delta} = \inner{y,\delta}$, for the observed data $y$.  (our notation is getting a 
+little confusing since $y$ can denote the observed data $y$ or the dummy variable in 
+the density).  
+\begin{align*}
+	f_{\theta+s\delta}(\omega) = f_\theta(\omega) \frac{e^{c(\theta)}}{e^{ c(\theta+s
+\delta) - \inner{y,\delta}s } } 
+	\to	
+			\begin{cases} 
+			0 								& \inner{Y(\omega),\delta} < \inner{y,
+\delta} \\
+			\frac{f_\theta(\omega)}{P_\theta(Y \in H)} 	& \inner{Y(\omega) ,
+\delta} = \inner{y,\delta} \\
+			+\infty							& \inner{Y(\omega),\delta} > \inner{y,
+\delta}.
+	\end{cases}
+\end{align*}
+For $\delta$ a DOR but not DOC, we need to show that the $P_{\theta+s\delta}(Y \in H) 
+\to 1$ 
+as $s \to \infty$, where $H = \set{w \in \RR^p: \inner{w-\yobs,d}=0}$.
+\begin{align*}
+ P_{\theta+s\delta}(Y \in H) &= \int_H e^{\inner{y, \theta+s\delta - \psi} - c(\theta
++s\delta) + c(\psi)} \, d\psi \\
+		&= \E_\psi \left \{ I_H e^{\inner{y, \theta - \psi} +c(\psi) - [c(\theta+s
+\delta) -s\inner{y,\delta}]} \right 
+\}\\
+		&= \E_\psi \left \{ I_H  \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner
+{y,\delta} } } 
+		e^{\inner{y, \theta - \psi} -c(\theta)+c(\psi)}  \right \}.
+\end{align*}
+Since the indicator function, $I_H$, fixes $\inner{ y, \delta}$ to be a constant, it 
+can pulled out of the expectation, so that 
+\begin{align*}
+		 P_{\theta+s\delta}(Y \in H)
+		 &= \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } }
+		 \E_\psi \left \{ I_H   
+		e^{\inner{y, \theta - \psi} -c(\theta)+c(\psi)}  \right \}, \\
+		 &= \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } } 
+		 P_\theta ( Y \in H ).
+		 \end{align*}
+ 
+Then applying Theorem 2.2 from Geyer:1990,
+\begin{align*}
+ P_{\theta+s\delta}(Y \in H)
+		&\to \frac{1}{P_\theta(Y \in H)}  P_{\theta}(Y \in H) = 1
+ \end{align*}
+ as $s \to \infty$.  
+ 
+ That this probability is strictly increasing follows directly from the DOR property 
+which requires $\ell( \theta+s
+\delta)$ to be strictly increasing.   
+\end{proof}
+
+
+\subsection{log likelihood is bounded by LCM}
+\subsection{summary}
+
+
+
+In summary, by Theorem~\ref{Thm:MLE rint}, when the observed statistic, $g(\yobs)$, is 
+on the boundary of the convex support $C$, the MLE does not exist in the conventional 
+sense.
+Then by Corollary~\ref{Cor:MLE DNE}, there must exist a direction of recession, $
+\delta$, that is not a direction of constancy.  
+According to Theorem~\ref{Thm:LCM}, as we move in the natural parameter space in the 
+direction of $\delta$, the distribution with this parameter value will put 
+increasingly probability on points for which the natural statistics, $g(Y)$, land in 
+the hyperplane $H$ on which $g(\yobs)$ lies.  This hyperplane is orthogonal to $\delta
+$ by construction and contains the boundary of the convex support.  Samples generated 
+from these models will therefore increasingly fall on the face on which $g(\yobs)$ 
+lies as $\eta$ increases in the direction of $\delta$.  Theorem~\ref{Thm:LCM} says 
+that eventually, all generated sample points will fall on this boundary.
+
+
+\subsection{Mean value parameterization}
+
+An alternative parameterization of an exponential family is the mean value 
+parameterization.  For each natural parameter $\eta$, we can define the mean parameter 
+$\mu$ such that
+\begin{align*}
+	\mu = \E_\eta g(Y).
+\end{align*}
+The space for the mean value parameterization is the same as the convex support of the 
+natural statistics and thus lends itself to easier interpretability  \citep
+{Handcock:degeneracy, Rinaldo:2009}.  In particular, $\mu = g(\yobs)$ is the MLE in 
+the mean value parameterization.  \citeauthor{Handcock:degeneracy} observed that mean 
+value parameters located too close to the boundary of the convex support correspond to 
+degenerate distributions.  
+
+There exists a one-to-one mapping between a natural parameter and its mean value 
+parameter, and one can calculate mean value parameters from natural parameters. In 
+general there is no simply way to get the natural parameter value from the mean value 
+parameter (if there was, then finding MLEs would be very easy and we wouldn't need all 
+these algorithms!).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Linearity}\label{S:linearity}
+\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
+\begin{align*}
+	L = \{ w \in V: -w \in \con( \pos V) \}.
+\end{align*}
+It is the subspace with bases determined by $V$.
+
+We use this to find the face of the polyhedral convex support on which the observed 
+statistic lies in the interior of.  The function \texttt{linearity} in the \texttt
+{rcdd} package can take as input the rays directed from observed statistic to sample 
+points generated via MCMC from the distribution with parameter value of interest.  
+From these, it determines the rays that form the basis of a vector subspace.  Of 
+course we are not interested in the vector subspace; we need only take the points 
+corresponding to these bases as our empirical face $F$.  By construction, the observed 
+statistic lies in the interior of $F$.
+
+%Let $\widetilde{T}_C(x)$ be the empirical tangent cone at the point $x$ constructed 
+%from a set of points $W$ all in $C$.  That is,
+%\begin{align*}
+%	\widetilde{T}_C(x) = \{ w - x: w \in W\}.
+%\end{align*}
+%Then for $V = \widetilde{T}_C(g(\yobs))$, the linearity corresponds to the set of 
+%points from $W$ (shifted by $g(\yobs)$) that form what we refer to as the empirical 
+%face $F$.  
+%In our algorithm, we use the MCMC sample points for $W$.  \citet{Geyer:gdor} provides 
+%the function \texttt{linearity} in the R package \texttt{rcdd} to do this computation.
+
+%Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
+%linearity will correspond to all the points $W \in C$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{One-sided confidence interval}
+
+Consider the probability distributions defined with log likelihood $\ell( \eta + s 
+\delta)$ as defined 
+by \eqref{E:loglike}, where $s$ is a real scalar and $\delta$ is a direction of 
+recession.  Then 
+as $s$ goes from $-\infty$ to $+\infty$, the probability of observing $g(Y) \in H$ 
+goes from zero to one.  This 
+function is strictly increasing by Theorem~\ref{Thm:LCM}.  Thus we can find the unique 
+$s$, call it $\hat{s}$, that makes 
+this probability 0.05.  Then $[\hat{s}, +\infty)$ is a 95\% confidence interval for 
+the scalar parameter 
+$s$, and, in turn, $[\hat{\eta} + \hat{s}\delta, +\infty)$ gives a 95\% confidence 
+interval for $\etaMLE
+$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Subsampling}
+%Once our algorithm has determined that the observed data is on the boundary and thus 
+%the MLE does not exist in the conven
+Our algorithm depends on being able to to subsample from the MC sample points when 
+optimizing in the LCM, restricting to the sample points that comprise the support of 
+this model.  The subsampling operation itself is straightforward since we determined 
+empirically the face that forms this support.  
+
+However, it is not obvious that when we draw $g(Y_1), \ldots, g(Y_m)$ from the 
+original model with parameter value $\eta$ that the subsample restricted to the 
+support is in fact a sample from the LCM with parameter value $\eta$.  This is a 
+convenient consequence of Theorem~\ref{Thm:LCM}: by this stage in the algorithm, the 
+majority of sample points (greater than 60\%) are on the face.  Then $s$ in the 
+expression $P_{\eta + s \delta}(g(Y) \in H)$ is a large value.  But since the LCM 
+density is the limit of the density of the original model as $s$ goes to $+\infty$, 
+the distribution of the LCM is accordingly well approximated.  (\textbf{BUT WELL 
+ENOUGH?})
