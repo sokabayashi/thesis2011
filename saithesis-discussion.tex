@@ -1,0 +1,83 @@
+We have presented a simple line search algorithm for finding the MLE of a regular 
+exponential family when the MLE 
+exists.  The algorithm avoids the trial and error experimentation of tuning parameters 
+and starting points commonly associated with optimization routines
+not invented by optimization specialists.  Our algorithm is modeled after algorithms 
+discussed in optimization textbooks \citep{Fletcher,NW,Sun:2006},
+all of which are safeguarded to ensure rapid automatic convergence.
+%Because it only relies on first order derivatives, this approach avoids problems with 
+%near-singular Fisher information 
+%matrices that plague methods like Newton-Raphson.  The reliant on a curvature 
+%condition for step size makes it less 
+%sensitive to poor initial values that are problematic for MCMC-MLE and  SA in 
+practice.
+
+Convergence is guaranteed when the gradient can be calculated exactly.  Even when the 
+gradient cannot be calculated 
+exactly and is only estimable via MCMC, the algorithm is still useful in practice, as 
+demonstrated by the Ising model 
+example.  We have also described a way to construct and use confidence intervals to 
+make convergence highly probable.
+
+The algorithm can be computationally demanding.  When the current iteration approaches 
+the solution, the 
+curvature condition for step size becomes more difficult to satisfy and the method may 
+require several iterations of 
+MCMC sampling and perhaps an increase in MCMC sample size.  Eventual increase in MCMC 
+sample size is unavoidable,
+because the achievable accuracy is inversely proportional to the square root of the 
+MCMC sample size, as in all Monte Carlo.
+Thus we believe the best use of this algorithm is in combination with other faster 
+methods like MCMC-MLE \citep{Geyer:1992}
+or Newton-Raphson safeguarded by our line search algorithm.  Our 
+algorithm should be used from ``long range'', when one has no good intuition for an 
+initial value and is concerned about 
+picking one that is far from the MLE.  The switch between types of search direction 
+(steepest ascent, conjugate gradient,
+or Newton) within our algorithm or the switch to another algorithm (such as MCMC-MLE 
+\citep{Geyer:1992})
+need not require manual intervention.  When used in combination in this
+manner, we do not think the confidence intervals are necessary as the curvature 
+condition is quite easily satisfied 
+when the current iteration is far from the MLE.
+
+One way to improve performance is to use conjugate gradient search directions rather 
+than steepest ascent.  In our 
+examples, this reduced the number of iterations by over 25\%.  However, in other 
+problems we tried with different 
+dimensionality, this performance varied significantly and it appears that no guarantee 
+can be made about quantity of 
+improvement in performance, though in all cases we examined, it never did worse.  This 
+is no surprise, because the
+necessity of ``preconditioning'' for good performance of the conjugate gradient 
+algorithm is well known (but no
+good ``preconditioner'' is available for maximum likelihood in exponential families).
+
+There are several outstanding issues.  Most notably, we have not showed convergence of 
+the algorithm when the gradient 
+is approximated via MCMC.  This is a more difficult theoretical problem and is the 
+motivation for stochastic 
+approximation research.  
+Further work is necessary to determine if one can adapt our restrictive curvature 
+condition \eqref{E:Wolfe-mod} to the 
+approach of \citet{Andrieu:2005} or \citet{Liang:2010} in MCMC stochastic 
+approximation.  
+
+Another remaining issue is the stopping criteria: what value should be chosen for $
+\epsilon$ in the exit condition
+$\lVert  \nabla \ell( \eta_k ) \rVert < \epsilon$?  Because the value of $\lVert  
+\nabla \ell( \eta_k ) \rVert$ can only 
+be approximated via MCMC, one cannot be certain if this condition is actually 
+satisfied.  Here again, the switch to 
+another methodology may be appropriate, though at least in our Ising model example, 
+our use of 10,000 for the MCMC 
+sample size and 0.005 for $\epsilon$ were successful in obtaining a reasonable 
+parameter estimate. 
+
+ A final remaining issue is estimation of Monte Carlo error of the estimates.  Here 
+too we recommend switching to another
+algorithm at the end.  The MCMC-MLE procedure gives accurate error estimates \citep
+{Geyer:1994}.
+For very small steps these are essentially the same as the Monte Carlo error of a 
+single unsafeguarded Newton-Raphson step,
+so the method in \citep{Geyer:1994} can be used for either.

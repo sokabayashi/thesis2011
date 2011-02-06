@@ -1,0 +1,468 @@
+\section{Long range search algorithm for MLEs} \label{Section:Algorithm}
+We now present our search algorithm, which will converge to the optimum for any 
+continuously differentiable, strictly 
+convex (or concave) function.  The algorithm and requirements are presented in 
+Theorem~\ref{Thm:Line Search}.  Proofs 
+are in Appendix~\ref{Section:Proofs}. 
+
+
+We apply the algorithm in Theorem~\ref{Thm:Line Search works} to the specific setting 
+of finding the MLE in a regular 
+exponential family when the MLE is known to exist and be unique and the gradient can 
+be calculated exactly.
+
+%\section{Line search convergence}
+In order to be consistent with the general optimization literature \citep
+{Fletcher,NW}, we state our algorithm in this 
+section from the perspective of a minimization problem.  Thus we wish to minimize a 
+real-valued objective function $f$ 
+defined on $\RR^n$.  
+
+
+%%%%%%%%%%% BEGIN THEOREM %%%%%%%%%%%%%%
+\begin{theorem}[Convex function root search] \label{Thm:Line Search}
+Consider any line search of the form 
+\begin{align}
+	x_{k+1} &= x_k + \alpha_k p_k \label{E:x_update}
+\end{align}
+used to minimize the objective function $f$, which satisfies the following 
+assumptions:
+\begin{enumerate}
+	\item The objective function $f$ is bounded below in $\RR^n$. \label{ass:one}
+	\item The objective function $f$ is proper, lower semicontinuous, and strictly 
+convex.
+	\item The objective function $f$ is differentiable in an open set $\NN$ containing 
+the level set $\lev_{\leq f
+(x_0)} f$, which is bounded, where $x_0$ is the starting point of the iteration.
+%\item The \emph{step length} $\alpha_k$ is greater than $0$ unless $\nabla f(x_k) = 0$, 
+% in which case $x_k$ is already the solution and the search is complete.
+\item The \emph{search direction} $p_k$ is a non-zero \emph{descent direction} \label
+{ass:four}
+such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
+direction $-\nabla f(x_k)$ is 
+restricted to be less than 90 degrees by
+\begin{align*}
+\cos \theta_k \geq \delta > 0
+\end{align*}
+ for some fixed $\delta > 0$.  
+\end{enumerate}
+
+Then, unless $\nabla f(x_k) = 0$, in which case $x_k$ is already the solution and the 
+search is complete, it is 
+possible to find a step length $\alpha_k$ that satisfies the \emph{curvature 
+condition}
+\begin{align}
+	c \nabla f(x_k)^T p_k &\leq \nabla f( x_k + \alpha_k p_k)^T p_k \leq 0 \label
+{E:Wolfe-mod}
+\end{align}
+for some fixed $0 < c < 1$.
+
+Furthermore, repeated iterations of \eqref{E:x_update} satisfying assumptions~\ref
+{ass:one} through~\ref{ass:four} and \eqref{E:Wolfe-mod} will produce 
+a sequence, $x_1, x_2, \ldots$ such that
+\begin{align*}
+	\lim_{k \to \infty} || \nabla f(x_k) || = 0.
+\end{align*}
+\end{theorem}
+
+%\section{Line search for MLE estimation}
+\begin{theorem}[Exponential family log likelihood maximization] \label{Thm:log like 
+max}
+Consider any line search of the form 
+\begin{align}
+	\eta_{k+1} &= \eta_k + \alpha_k p_k \label{E:eta_update}
+\end{align}
+used to minimize the negative log likelihood function $-\ell(\cdot)$ of a regular 
+exponential family on a finite sample space, where the \emph{search direction} $p_k$ 
+is a non-zero \emph{descent direction}
+such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
+direction $-\nabla \ell(\eta_k)$ is 
+restricted to be less than 90 degrees by
+\begin{align*}
+\cos \theta_k \geq \delta > 0
+\end{align*}
+ for some fixed $\delta > 0$.  
+
+Then, unless $\nabla \ell(\eta_k) = 0$, in which case $\eta_k$ is already the solution 
+and the search is complete, it is 
+possible to find a step length $\alpha_k$ that satisfies the \emph{curvature 
+condition}
+\begin{align}
+	0 \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k  \leq c \nabla \ell(\eta_k)^T p_k  
+\label{E:Wolfe-ll}
+\end{align}
+for some fixed $0 < c < 1$.
+
+Furthermore, repeated iterations of \eqref{E:eta_update} along a descent direction 
+satisfying \eqref{E:Wolfe-ll} will produce a sequence, $\eta_1, \eta_2, \ldots$ such 
+that
+\begin{align*}
+	\lim_{k \to \infty} || \nabla \ell(\eta_k) || = 0.
+\end{align*}
+\end{theorem}
+
+
+
+We apply Theorem~\ref{Thm:Line Search} to the setting of exponential families to find 
+the MLE when it exists.  
+
+\begin{theorem}[] \label{Thm:Line Search works}
+For a regular exponential family with minimal representation where the MLE exists, the 
+line search described in 
+Theorem~\ref{Thm:Line Search} can be applied to the negative log likelihood function 
+$-\ell(\eta)$ so that a search 
+starting at any $\eta_0 \in \Xi$ will converge to the MLE of $\eta$.
+\end{theorem}
+
+The issue of MLE existence is a problem in computational geometry, not an optimization 
+problem, so we do not address it 
+here.  See \citep{Geyer:gdor,Rinaldo:2009} and references cited therein.
+
+
+\chapter{Algorithm pseudocode}
+The algorithm is summarized on the next page.  Below are a few comments about notation 
+and equations:
+\begin{itemize}
+\item $C$ is the convex support.
+\item $Y$ is the random variable in the sample space.
+\item $g(\cdot)$ is the function that maps $y$ to its natural statistics.
+\item $\yobs$ is the observed observed, $g(\yobs)$ the natural statistics of the observed data.
+\item $\con()$ is the convex hull of a set of points.
+\item $\bd()$ is the boundary of a set of points.
+\item $\norm{\cdot}$ is the Euclidean norm.
+\item The curvature condition \eqref{E:curvature} used here comes from the search 
+algorithm of \citet{Okabayashi:longrange} and is necessary for guaranteeing 
+convergence to the MLE when it exists.
+%\item $\bar{Y}_m$ is the sample mean, $\frac{1}{m}\sum_{i=1}^m g(Y_i)$
+\end{itemize}
+\newpage
+{\small
+\noindent \textbf{LCM MLE Algorithm}
+
+\noindent \begin{algorithmic}[1]
+\State Get an initial value, $\eta_1 = (0, \ldots 0)$.
+\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{1}$.  
+\State Set $ty.hull = \con(g(Y_1), \ldots, g(Y_m) )$.
+\State Approximate 
+\begin{align} \label{E:nabla ell approx}
+\nabla \ell( \eta_1) \approx g(\yobs) - \frac{1}{m}\sum_{i=1}^m g(Y_i).
+\end{align}
+\State Set $p_1 = \nabla \ell( \eta_1)$, $k=1$, $LCM.flag$ = FALSE, $c=0.2$.\\
+%, $LCM.k=1$, 
+%\State , $on.boundary$ = FALSE, $on.interior$ = FALSE.
+%\State Set $face.cutoff = 0.30$.
+
+\While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
+\State \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
+\begin{align}\label{E:curvature}
+	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k.
+\end{align}
+%\State for some $0 < c < 1$. % (Calculating $\nabla \ell(\cdot)$ requires more sampling)
+
+\State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
+\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{k+1}$.
+\If{$LCM.flag=$TRUE}
+	\State Restrict sample points to those in empirical face.
+\EndIf
+\State Call the resulting sample points $g(Y_{(1)}), \ldots, g(Y_{(k)})$.
+\State \textbf{Update} $ty.hull$ to reflect new sample points, $g(Y_{(1)}), \ldots, g(Y_{(k)})$.\\
+\State \textbf{Question: $g(\yobs) \in \bd( \con(g(Y_{(1)}), \ldots, g(Y_{(k)}) ))$? }
+%\If{Yes, $g(\yobs)$ is outside the convex hull}
+%	\State  Keep sampling.  
+%%	\State $on.boundary$ = FALSE.
+%	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
+%\ElsIf{No, $\yobs$ is inside the convex hull}
+%	\State \textbf{The MLE exists}.  Finding it should be straightforward, (except 
+%when 
+%	\State it isn't ...) 
+%	\State $on.boundary$ = FALSE, $on.interior$ = TRUE.
+%	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
+%\Else 
+\If{Yes} %\Comment{$g(\yobs)$ is on the boundary of convex hull}
+	\State \textbf{Either:}
+	\State (1) the MLE exists but the sample just touches $g(\yobs)$, 
+	\State (2) the MLE does \emph{not} exist; both $g(\yobs)$ and our sample points  
+	\State are touching the boundary of $C$.
+	\State \textbf{Find} the empirical face $F$ of $ty.hull$ on which $g(\yobs)$ lies.
+%	\State \textbf{Calculate} $face.prop$, the proportion of the sample that falls on
+%	\State this face.\\
+%\newpage
+	\If{$>60\%$ of the sample points are on $F$}
+		\State Conclude that we are in case (2); case (1) is very unlikely.
+		\State \textbf{Set} $LCM.flag$ = TRUE.
+	\EndIf
+\EndIf\\
+%\State \textbf{Calculate} $\nabla \ell( \eta_{k+1})$ as follows: \label{Calc:nabla}
+%\If{ $LCM.flag$ == FALSE }
+%	\State $\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{m}\sum_{i=1}^m g(Y_i)$
+%\Else
+	\State Approximate
+	\begin{align} \label{E:nabla ell approx LCM}
+	\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{k}\sum_{i=1}^k g(Y_{(i)}).
+	\end{align}
+
+%, where the sample mean is restricted 
+%	\State to empirical face points.
+%\EndIf\\
+
+\State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent 
+direction.
+\Statex This may involve using a direction normal to empirical face, or a regression 
+\Statex over previous $\eta_k$ values, or simply using steepest ascent, $\nabla \ell
+( \eta_{k+1})$.
+
+\State $k = k + 1$.
+\EndWhile
+\end{algorithmic}
+}
+\chapter{Refinements of algorithm}
+
+In Theorem~\ref{Thm:Line Search}, we restricted our search direction $p_k$ to be a 
+descent direction, so that $\nabla f
+(x_k)^T p_k < 0$ or, alternatively, the angle $\theta_k$ between the search direction 
+$p_k$ and steepest descent 
+direction $-\nabla f(x_k)$ is less than 90 degrees.  However, this still leaves many 
+possibilities for the choice of 
+$p_k$ other than steepest descent.  In addition, we have specified restrictions on the 
+step size $\alpha_k$ in the 
+curvature condition \eqref{E:Wolfe-mod} with $0 < c < 1$, but it would be useful to 
+know if certain values of $c$ are 
+better than others.
+
+\section{Search directions}
+In our examples in Section~\ref{S:Examples}, we default to steepest descent directions 
+in our implementation for 
+transparency.  Although often effective in early steps, steepest descent directions 
+can result in a zigzagging 
+trajectory of the sequence $x_k$ \citep{Sun:2006}.  Conjugate gradient methods address 
+this phenomena and cover the 
+sample space more efficiently \citep{NW}.  It is easy to implement a variant of the 
+Polak-Ribi\`{e}re method
+\citep[pp.~120--122]{NW} here, requiring little more in terms of calculation or 
+storage.  The search direction $p_k$ would update 
+with an extra intermediate step as follows:
+\begin{align*}
+	\gamma_{k+1}^{PR} &= \max \left( 0, \frac{ [ \nabla f( x_{k+1}) ]^T( \nabla f( x_{k+1} ) - \nabla f( x_k) )  }
+{ \lVert \nabla f( x_k) \rVert^2 } \right )\\
+	p_{k+1} &= -\nabla f( x_{k+1}) + \gamma_{k+1}^{PR} \, p_k.
+\end{align*}
+Note that when $\gamma_{k+1}^{PR} = 0$, $p_{k+1}$ will be just $-\nabla f( x_{k+1})$, 
+the direction of steepest 
+descent, and thus serves as a ``reset''.  The curvature condition \eqref{E:Wolfe-mod} 
+guarantees that this method always 
+yields a descent direction for $p_{k+1}$ and thus Theorem~\ref{Thm:Line Search} still 
+holds.  
+
+
+\subsection{Further Refinement on Search Directions}
+We require that the search direction, $p_k$, be an ascent direction, but make no 
+further restrictions.
+If we use only steepest ascent directions, using $p_k = \nabla \ell( \eta_k)$, our 
+algorithm 
+may not be efficient in scaling the log likelihood due to excessive ``zig-zagging" as 
+illustrated in Figure 
+\ref{F:zigzag}.  This is especially problematic when the MLE does not exist in the 
+conventional sense---the MLE is actually off at infinity and a zig-zagging route may 
+take an especially long time to realize this.  \citet{Okabayashi:longrange} made the 
+case for using search directions chosen according to Polak-Ribiere conjugate gradient 
+updates.  
+
+Here we suggest another alternative that is especially useful when it appears that the 
+observed statistic might fall on the boundary of the convex support.  Because our 
+algorithm computes the normal cone when it finds an empirical face, we suggest using 
+the average normal cone vector as a search direction, checking first that it is an 
+ascent direction to ensure the algorithm proceeds uphill.  As theory in the previous 
+sections show, a GDOR, if it exists, is any vector in the relative interior of the 
+normal cone at the observed statistic.  So, the search direction chosen in this manner 
+may in fact be a GDOR of the original model and hence result in large steps when 
+meeting the curvature condition.  Alternatively, we also consider using search 
+directions resulting from a regression through the previous few parameter values to 
+break the zig-zagging pattern.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[height=2.6in,width=2.6in]{Figures/zigzag-eta}
+\includegraphics[height=2.6in,width=2.6in]{Figures/zagplusnorm-eta}
+\caption{Contour plots of the log likelihood when the MLE does not exist.  The surface 
+of the log 
+likelihood tends to flatten, though technically it is still concave.  This can cause 
+the steepest ascent 
+algorithm to zigzag, which is inefficient (top).  However, by periodically using 
+search directions 
+determined by normal vectors  derived from the empirical face or regression through 
+previous points, the algorithm can make much larger steps (bottom).}
+\label{F:zigzag}
+\end{figure}
+
+
+\section{Step size}
+We now turn our attention to the optimal step size $\alpha_k$ when our objective 
+function is the log likelihood of an 
+exponential family.  Taking the derivative of $\ell( \eta_k + \alpha_k p_k)$ with 
+respect to $\alpha_k$ shows that the 
+log likelihood is maximized as a function of $\alpha_k$ along the direction $p_k$  
+when 
+\begin{align*}
+	\nabla \ell( \eta_{k+1} )^T p_k = 0.
+\end{align*}
+
+By choosing $c$ to be small, say 0.2, we ensure that the step taken is close to 
+maximizing the log likelihood along the 
+search direction.  This is also apparent in Figure~\ref{F:alpha_region}. 
+
+Making $c$ too small, however, may make it difficult to find an $\alpha_k$ that meets 
+the curvature condition \eqref
+{E:curvature mod} since this search must be done numerically.  In fact, as the line 
+search nears the MLE and $\nabla \ell( \eta_k)$ gets smaller, the rightmost term in \eqref{E:curvature mod} gets 
+smaller in magnitude (it equals $c \lVert \nabla \ell(\eta_k) \rVert^2$ if using steepest ascent directions), making a 
+numerical search for $\alpha_k$ 
+more challenging.  
+
+%Finally, while the choice of 0.2 for $c$ worked well in the problems we explored 
+%regardless of search 
+%directions used, it follows from our discussion in the previous section that it may 
+%make sense to use slightly larger 
+%values of $c$ when using steepest ascent directions, thereby reducing the zigzagging 
+%phenomenon, but smaller values for 
+%$c$ when using conjugate gradient methods.
+
+
+\section{MCMC approximations} \label{section:MCMC approx}
+Our algorithm requires us to be able to calculate $\nabla \ell(\eta)$ using \eqref
+{E:nabla ell}.  For many 
+applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC.  That is,
+\begin{align}
+ 	\nabla \ell (\eta) = g(y) - \E_\eta g(Y) \approx g(y) - \frac{1}{m}\sum_{i=1}^m g
+(Y_i), \label{E:nabla ell approx}
+\end{align}
+where $Y_1, \ldots, Y_m$ are MCMC draws from the distribution with parameter $\eta$.  
+There are many MCMC algorithms 
+such as Metropolis-Hastings or Swensen-Wang (used for the Ising model example in 
+Section~\ref{S:Examples:Ising}); see \citep{Brooks} and references cited therein.
+We show examples in the next section where $\nabla \ell(\eta)$ can be calculated 
+exactly and where it must be 
+approximated.
+
+The accuracy of the approximation in \eqref{E:nabla ell approx} increases with Monte 
+Carlo sample size $m$. 
+When the current estimate is far away from the MLE, we can use smaller $m$ to save 
+time and work with a 
+fairly noisy approximation of the gradient.  However, when the current estimate 
+approaches the MLE, larger $m$ are necessary.
+
+Our algorithm relies on the computed values of $\nabla \ell(\eta)$ in the curvature 
+condition \eqref{E:curvature mod}, 
+as well as the stop condition for the algorithm, $\lVert \nabla \ell( \eta_k ) \rVert 
+< \epsilon$.  Given that we may 
+only have approximations of $\nabla \ell(\eta)$, we cannot know for certain if either 
+of these conditions are truly 
+met.  We can ameliorate this by constructing confidence intervals for each of the 
+inequalities.  
+
+For the inequalities in \eqref{E:curvature mod}, we can estimate asymptotic standard 
+errors of $\nabla \ell( \eta_k + 
+\alpha_k p_k)^T p_k$  and $c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + 
+\alpha_k p_k)^T p_k$ by appealing to the 
+Markov chain Central limit theorem \citep{Chan:1994,Jones:2004,Roberts:1997,Roberts:
+2004}.
+The \texttt{initseq} function from the R package \texttt{mcmc} \citep{mcmc:R} can be 
+used to estimate asymptotic 
+standard errors for univariate functionals of reversible Markov chains: given an MCMC 
+sample for a univariate 
+quantity, \texttt{initseq}
+returns a value (divided by sample size) that is an estimate of the asymptotic 
+variance in the Markov chain central 
+limit theorem.  Both of the quantities in \eqref{E:curvature mod} are univariate.  In 
+the second expression, $c \nabla \ell(\eta_k)^T 
+p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k$, the MCMC sample generated for $
+\nabla \ell( \eta_k + \alpha_k p_k)^T 
+p_k$ is independent of the sample generated for $c \nabla \ell(\eta_k)^T p_k$.  Thus 
+\texttt{initseq} can be applied 
+to each sample separately and the results summed for an estimated variance.  
+We can then be approximately 95\% confident (non-simultaneously) that $\alpha_k$ 
+satisfies \eqref{E:curvature 
+mod} if
+\begin{align*}
+	 \nabla \ell( \eta_k + \alpha_k p_k)^T p_k - 1.645 \cdot \text{se}_1 > 0 \\
+	 c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k - 1.645 
+\cdot \text{se}_2 > 0 
+\end{align*}
+where $\text{se}_1$ and $\text{se}_2$ are the asymptotic standard errors for $\nabla 
+\ell( \eta_k + \alpha_k p_k)^T p_k
+$  and $c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + \alpha_k p_k)^T p_k$, 
+respectively, calculated as described.
+
+The delta method can be applied to estimate a standard error for $\lVert \nabla \ell
+( \eta_k ) \rVert$. 
+%%%%%%%%%%%%% 1/25/11 -Newly added from Algorithm.tex
+The multivariate version of the delta method states that for a sequence of r.v. $B_n$ 
+such that
+\begin{align*}
+	\sqrt{n} ( B_n - \beta) \stackrel{\DD}{\longrightarrow} N( 0, \Sigma ),
+\end{align*}
+then for a function $h(B)$, where $h$ such that $\nabla h$ is defined and non-zero,
+\begin{align*}
+	\sqrt{n} \left ( h(B_n) - h(\beta) \right ) \stackrel{\DD}{\longrightarrow} N 
+\left ( 0, \nabla h( \beta)^T \Sigma\nabla h( \beta)  \right ).
+\end{align*}
+
+We set $B_n = \nabla \ell_n( \theta)$ and $\beta =\nabla \ell( \theta)$, where we 
+know that $B_n \stackrel{a.s.}{\longrightarrow} B$ by SLLN.  
+We also do not know $\Sigma$, the variance of $\nabla \ell( \theta)$, but this we will 
+approximate with $
+\hat{\Sigma}$, the scaled sample variance-covariance matrix of our MCMC batches of 
+the canonical statistic (the \texttt{initseq} function 
+requires a univariate vector and so cannot be used here).  That is,
+\begin{align*}
+	\hat{\Sigma} = \frac{1}{nbatch}\frac{1}{m-1}\sum_{i=1}^{m} (g(Y_i) - \overline{g
+(Y)})( g(Y_i) - 
+\overline{g(Y)})^T.
+\end{align*}
+
+%%%%%%%%%%%%%%%
+Thus the asymptotic variance is calculated by
+\begin{align*}
+	V \left( \lVert \nabla \ell( \eta_k ) \rVert \right )= \frac{1}{\lVert \nabla \ell
+( \eta_k ) \rVert^2} \nabla \ell
+( \eta_k )^T \, \hat{\Sigma} \,  \nabla \ell( \eta_k ),
+\end{align*}% added hat to Sigma
+%where $\Sigma$ is the variance matrix of $\nabla \ell( \eta_k )$ and can be estimated 
+%by the sample variance matrix of 
+%the batch mean vectors of $g(Y_1), \ldots, g(Y_n)$ divided by the number of batches 
+%(the \texttt{initseq} function 
+%requires a univariate vector and so cannot be used here).  
+We can be approximately 95\% confident that $\lVert 
+\nabla \ell( \eta_k ) \rVert > \epsilon$ if 
+\begin{align*}
+	\lVert \nabla \ell( \eta_k ) \rVert - 1.645 \sqrt{ V \left( \lVert \nabla \ell
+( \eta_k ) \rVert \right )} > 
+\epsilon.
+\end{align*}
+%To be conservative, we suggest using a larger quantile, say 2, 
+%in the confidence intervals instead of the 1.645 used above.
+
+In practice, however, use of confidence intervals does not appear necessary with  
+Monte Carlo sample sizes that are set 
+large enough so that these standard errors are initially small relative to the point 
+estimates.  The ratio of point 
+estimate to standard error of course decreases as the algorithm progresses and the 
+estimate of the parameter nears the 
+MLE, reflected in $\nabla \ell( \eta_k )$ nearing 0.  Thus these confidence intervals 
+are most useful as a guide for
+when to increase the MCMC sample size, or when to switch methods, or when to terminate 
+the algorithm.
+
+
+
+\section{Combining with other algorithms}
+We believe the best use of this algorithm is in combination with other faster methods 
+like MCMC-MLE \citep{Geyer:1992}
+or Newton-Raphson safeguarded by our line search algorithm.  Our algorithm with 
+steepest ascent or conjugate gradient search direction
+should be used initially from ``long range'', when one has no good intuition for an 
+initial value.
+It is well known that when the objective function is quadratic the conjugate gradient 
+method with exact arithmetic converges to the solution
+in at most $d$ steps, where $d$ is the dimension of the problem \citep{NW}.  As a rule 
+of thumb, we think using our 
+algorithm for $d$ steps before switching seems reasonable.
