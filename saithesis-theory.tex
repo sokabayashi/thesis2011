@@ -12,49 +12,22 @@ ferromagnetism.
 %We explore this model further in Section~\ref{S:Examples:Ising}.
 Other examples of phenomena with dependent structure modeled with exponential 
 families include
-plant ecology \citep{Besag:1974,Besag:1975} and the lifetime fitness of plants \citep
+plant ecology \citep{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1992}
+ and the lifetime fitness of plants \citep
 {Shaw:2008}.
 
 Although motivated by ERGMs, the algorithm we propose is rooted in fundamental
 exponential family theory and applicable to any discrete state space 
 exponential family model.  Thus the theory presented in this section is from
-the perspective of exponential families in general.
+the perspective of general exponential families.
 
 \section{Exponential Family Theory}
-An exponential family of distributions \citep{Barndorff,Geyer:gdor}
-on a sample space $\YY$ has log likelihood \eqref{E:loglike}.
-%\begin{align} 
-%   \ell(\eta) = \inner{g(y), \eta} - c(\eta)
-%\end{align}
-%where $g(y)$ is a $d$-dimensional vector of canonical statistics, $\eta$ a $d$-
-%dimensional vector of
-%canonical parameters, and $\inner{\fatdot, \fatdot}$ denotes the bilinear form
-%$$
-%   \inner{g, \eta} = \sum_{i =1}^d g_i \eta_i.
-%$$
-%So that the probability function integrates to 1,
-%the cumulant function $c$ must have the form
-%\begin{align} \label{E:cumulant}
-%      c(\eta) = \log \left(\int e^{\inner{g(y), \eta}} \, d\mu(y) \right),
-%\end{align}
-%where $\mu$ is a measure on $\YY$.
-%Define
-%\begin{align} \label{E:fullparam}
-%	\Xi = \{ \eta \in \RR^q: c(\eta) < \infty \}.
-%\end{align}
-%The exponential family is \emph{full} if the natural parameter space is \eqref
-%{E:fullparam}, and \emph{regular} if, in 
-%addition, $\Xi$ is an open set.  We say an exponential family is \emph{minimal} if $g
-%(y)$ is not concentrated on a 
-%hyperplane. Minimality guarantees that if an MLE exists, it is unique \citep
-%{Geyer:gdor}.
-
-In finite state space models with complicated dependence like an Ising model or 
-exponential random graph model,  \eqref
-{E:cumulant} is a sum which may have no simple expression and can only be evaluated by 
-explicitly doing the sum.
-When the sample space $\YY$ is even moderately large, this can be prohibitively 
-expensive.  For example, an Ising model 
+Much of the fundamental background for exponential families has already been
+covered in Section~\ref{S:ERGM setup}; we restrict ourselves to regular exponential
+families on a finite sample space $\YY$  with log likelihood \eqref{E:loglike}.
+As noted earlier, when the sample space $\YY$ is even moderately large
+the cumulant function $c(\eta)$ involves a summation that may be prohibitively 
+expensive to evaluate.  For example, an Ising model 
 defined on a $32\times 32$ square lattice where each entry takes values of 0 or 1, 
 there are $2^{1024} \approx 10^
 {300}$ elements in $\YY$.  A loop with this many iterations takes too long no matter 
@@ -103,7 +76,7 @@ where [\textbf{DEFINE pos().}]
   By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
 set can equivalently be represented as the intersection of a finite collection of 
 closed half-spaces.  These two representations of a convex polyhedron are referred to 
-as the V-representation and H-representation, respectively.  
+as the \emph{V-representation} and \emph{H-representation}, respectively.  
 %The V-representation of a convex polyhedron $C$ is the set of all linear combinations
 %\begin{align*}
 %	\sum_{i \in E \cup I} b_i \alpha_i
@@ -124,6 +97,10 @@ equations and inequalities,
 	C = \{x: Ax \leq b \},
 \end{align*}
 where $A$ is a matrix and $b$ a vector.
+
+The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
+relative to its affine hull.  
+\textbf{[WHAT ELSE? bd()?  int()?  pos()?]}
 
 A nonempty \emph{face} of a convex polyhedron $C$ is a convex subset of $C$ such that 
 every line segment in $C$ with a relative interior point in $F$ has both end points in 
@@ -152,10 +129,30 @@ The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{get from 
 \citep{Rockafellar:1970}.}
 
+
+
 \section{MLE existence in exponential families}
-Charlie's GDOR theorems rely heavily upon some results from his thesis \citep{Geyer:
-1990}.  Adapted here 
-using the notation from his GDOR paper,
+We now present two equivalent approaches to determining the existence of an MLE
+in the conventional sense.  The classical theorem simple relates the relative location
+of the observed statistic to the boundaries of the convex support.  
+
+The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} is 
+formally stated as follows:
+\begin{theorem} \label{Thm:MLE rint}
+Under the conditions [CONDITIONS], the MLE exists in the conventional sense and is 
+unique if and only if 
+$g(\yobs) \in \rint(C)$.
+\end{theorem}
+
+From this one can conclude whether or not the MLE exists in the conventional sense.
+
+\citet{Geyer:1990,Geyer:gdor} present theory that relates MLE existence to not only
+the boundary of the convex support, but also to how the log likelihood behaves along
+directions orthogonal to the boundaries.
+CLEAN THIS UP.
+
+In order to do so, we must revisit some of these results with simplified proofs:
+Adapted here using the notation from \citep{Geyer:gdor},
 \begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]
 \begin{align*}
 e^{c(\theta + s \delta) - bs} &\to 
@@ -251,14 +248,12 @@ Then returning to the full expression,
 \end{align*}
 \end{proof}
 
-The \emph{convex support} of an exponential family is the smallest closed convex set 
-that the contains the natural statistic \citep{Geyer:gdor}.
 
 \begin{theorem}[Theorem 1 from \citet{Geyer:gdor}] \label{Thm:DOC}
 For a full exponential family with
 \begin{itemize}
 \item log likelihood function, $\ell(\eta)$, as in \eqref{E:loglike},
-\item natural parameter space, $\Xi$, as in \eqref{E:fullparam},
+\item natural parameter space, $\Xi$, as in \eqref{E:paramspace},
 \item natural statistic, $g(Y)$,
 \item observed data, $\yobs$, such that $g(\yobs) \in C$, the convex 
 support,
@@ -388,19 +383,11 @@ the interval where it is finite.
 \end{enumerate}
 \end{corollary}
 
-The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
-relative to its affine hull.  We call $\delta$ a \emph{generic direction of recession} 
+We call $\delta$ a \emph{generic direction of recession} 
 (GDOR) if $\delta \in \rint N_C(g(\yobs))$.  By construction it is not a direction of 
 constancy.  By Corollary~\ref{Cor:MLE DNE}, a GDOR exists if and only if the MLE does 
 not exist.
 
-The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} is 
-formally stated as follows:
-\begin{theorem} \label{Thm:MLE rint}
-Under the conditions [CONDITIONS], the MLE exists in the conventional sense and is 
-unique if and only if 
-$g(\yobs) \in \rint(C)$.
-\end{theorem}
 
 When the MLE does not exist for an exponential family in the conventional sense, there 
 exists a GDOR along which the log likelihood goes to $+\infty$.  The behavior of the 
@@ -410,7 +397,7 @@ density of the distribution is described in the following theorem:
 For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, and 
 additionally,
 \begin{enumerate}
-\item density function \eqref{E:pdf},
+\item density function $f_{\eta}(y)$ defined by \eqref{E:ERGM},
 \item direction of recession, $\delta$,
 \item $H = \{ w \in \RR^d: \inner{ w-g(\yobs), \delta } = 0 \}$,
 \item $P( g(Y) \in H) > 0$ for some distribution in the family,
@@ -453,6 +440,8 @@ It may not be full, however; the full family containing this exponential family,
 \end{align*}
 where $\Gammalim$ is the constancy space of \eqref{E:f conditional},
 is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
+\textbf{Even though the MLE does not exist, $\ell(\eta)$ is bounded by the LCM log 
+likelihood.}
 An MLE for this new model must exist, since $g(\yobs)$ cannot lie on the boundary of 
 the convex support which was itself determined by $g(\yobs)$ lying in the interior of 
 it.  

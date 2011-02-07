@@ -219,7 +219,7 @@ Limited!
 
 
 
-\section{Exponential random graph model setup}
+\section{Exponential random graph model setup} \label{S:ERGM setup}
 Networks can be modeled as a random matrix $Y$, an $n \times n$ matrix where $n$ is 
 the number of actors.
 Each entry $Y_{ij}$ in the random matrix $Y$ is itself a random variable representing 
@@ -836,7 +836,9 @@ In such a case, the MLE is actually off ``at infinity" in some direction in the 
 The theoretical background 
 for this situation has been understood for many years 
 (see \citep{Barndorff,Brown:1986})---whether or not an MLE exists is a
-geometric problem relating to properties of the \emph{convex support} of the model 
+geometric problem relating to properties of the \emph{convex support} of the model,
+which is  is the smallest closed convex set 
+that the contains the natural statistic \citep{Geyer:gdor},
 and the location of the observed data relative to this support.
 When the MLE does not exist for
 an exponential family in the conventional sense, 
@@ -854,8 +856,8 @@ tables, \citet{Geyer:gdor} outline a methodology to detect non-existent MLEs and
 one-sided confidence intervals \textbf{[WHY]}.
 The approach applies repeated linear programming to the polyhedral convex support of 
 the model to determine the \emph{face} on which the observed data lies.  
-This face in turn defines the support for a new exponential family for which the MLE 
-does \textbf{[MUST?]} exist and can be found using conventional methods such as logistic regression.  
+This face in turn defines the convex support for a new exponential family for which the MLE 
+does \textbf{[MUST?]} exist and can be found using conventional methods such as logistic regression.  \textbf{[EXAMPLE? MORE DETAIL?]}
 The linear programming 
 functionality has been implemented into the R package \texttt{rcdd} \citep{rcdd}.  
 %However, this approach cannot be directly applied to the complex dependent problems 
@@ -908,7 +910,7 @@ possible to explicitly evaluate the likelihood function \eqref{E:ERGM} and thus
 find MLEs using standard numerical optimization routines.  
 As in \citep{Geyer:gdor},the emphasis is on the geometric properties of the 
 polyhedral convex support of the model;
-the support for the 9-node ERGM with a two-dimensional network statistic of
+the convex support for the 9-node ERGM with a two-dimensional network statistic of
 edges and triangles
 studied by \citeauthor{Rinaldo:2009} is depicted in Figure~\ref{F:g9-hull}.
 \citeauthor{Rinaldo:2009} show that the normal fans of this support 
@@ -916,7 +918,7 @@ explain which portions of the natural parameter space are more likely to corresp
 degenerate models.  In light of this, the degenerate behavior described in 
 points 3 and 4 are not ``unusual" in that they can be explained by the underlying
 theory of exponential families.  The perceived pathology then, is a result of 
-model specification rather than any pernicious theoretical flaw.
+model specification rather than any pernicious theoretical oddity.
 
 \citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
 Their tools, available in the \texttt{statnet} package, compare characteristics of 
