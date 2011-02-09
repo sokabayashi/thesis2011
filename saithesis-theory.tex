@@ -22,16 +22,15 @@ exponential family model.  Thus the theory presented in this section is from
 the perspective of general exponential families.
 
 \section{Exponential Family Theory}
-Much of the fundamental background for exponential families has already been
+Much of the basic background for exponential families has already been
 covered in Section~\ref{S:ERGM setup}; we restrict ourselves to regular exponential
 families on a finite sample space $\YY$  with log likelihood \eqref{E:loglike}.
-As noted earlier, when the sample space $\YY$ is even moderately large
+As noted earlier, when the sample space $\YY$ is even moderately large,
 the cumulant function $c(\eta)$ involves a summation that may be prohibitively 
-expensive to evaluate.  For example, an Ising model 
-defined on a $32\times 32$ square lattice where each entry takes values of 0 or 1, 
-there are $2^{1024} \approx 10^
-{300}$ elements in $\YY$.  A loop with this many iterations takes too long no matter 
-how programmed.
+expensive to evaluate.  For example, the sample space $\YY$ for an Ising model 
+defined on a $32\times 32$ square lattice where each entry takes values of 0 or 1 
+has $2^{1024} \approx 10^{300}$ elements.  
+A loop with this many iterations takes too long no matter how programmed.
 
 A useful property of all exponential families \cite[p.~27]{TPE2} on which we rely 
 heavily is that 
