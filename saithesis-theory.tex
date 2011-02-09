@@ -17,13 +17,13 @@ plant ecology \citep{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1
 {Shaw:2008}.
 
 Although motivated by ERGMs, the algorithm we propose is rooted in fundamental
-exponential family theory and applicable to any discrete state space 
+exponential family theory and applicable to any finite state space 
 exponential family model.  Thus the theory presented in this section is from
 the perspective of general exponential families.
 
 \section{Exponential Family Theory}
 Much of the basic background for exponential families has already been
-covered in Section~\ref{S:ERGM setup}; we restrict ourselves to regular exponential
+covered in Section~\ref{S:ERGM setup}; our focus is on regular exponential
 families on a finite sample space $\YY$  with log likelihood \eqref{E:loglike}.
 As noted earlier, when the sample space $\YY$ is even moderately large,
 the cumulant function $c(\eta)$ involves a summation that may be prohibitively 
@@ -131,26 +131,28 @@ DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{ge
 
 
 \section{MLE existence in exponential families}
-We now present two equivalent approaches to determining the existence of an MLE
-in the conventional sense.  The classical theorem simple relates the relative location
-of the observed statistic to the boundaries of the convex support.  
+We now present two equivalent approaches to determine the existence of an MLE
+in the conventional sense.  
 
-The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} is 
-formally stated as follows:
+The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} 
+relates the relative location
+of the observed statistic to the boundaries of the convex support
+and is formally stated as follows:
 \begin{theorem} \label{Thm:MLE rint}
 Under the conditions [CONDITIONS], the MLE exists in the conventional sense and is 
 unique if and only if 
 $g(\yobs) \in \rint(C)$.
 \end{theorem}
 
-From this one can conclude whether or not the MLE exists in the conventional sense.
+From this one can conclude whether or not the MLE exists in the conventional sense
+if $C$ is known.
 
 \citet{Geyer:1990,Geyer:gdor} present theory that relates MLE existence to not only
 the boundary of the convex support, but also to how the log likelihood behaves along
 directions orthogonal to the boundaries.
 CLEAN THIS UP.
 
-In order to do so, we must revisit some of these results with simplified proofs:
+In order to do so, we revisit some of these results with simplified proofs:
 Adapted here using the notation from \citep{Geyer:gdor},
 \begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]
 \begin{align*}
@@ -445,29 +447,6 @@ An MLE for this new model must exist, since $g(\yobs)$ cannot lie on the boundar
 the convex support which was itself determined by $g(\yobs)$ lying in the interior of 
 it.  
 
-
-\subsection{Theorem 6, \citet[p. 271]{Geyer:gdor}, 7/25/10}
-And now the big one:
-\begin{theorem}
-If $\delta$ is a direction of recession, and
-\begin{align*}
-H = \set{ w \in \RR^p: \inner{w-y,\delta}=0 },
-\end{align*}
-and $P(Y \in H) > 0$ for some distribution in the family, and hence for all, then for 
-all $\theta \in \Theta$,
-\begin{align*}
-\lim_{s \to \infty} f_{\theta+s\delta}(\omega) = 
-			\begin{cases} 
-			0 								& \inner{Y(\omega) - y ,\delta} < 0 \\
-			\frac{f_\theta(\omega)}{P_\theta(Y \in H)} 	& \inner{Y(\omega) - y ,
-\delta} = 0 \\
-			+\infty							& \inner{Y(\omega) - y ,\delta} > 0.
-		\end{cases}
-\end{align*}
-If $\delta$ is not a direction of constancy, then $s \mapsto P_{\theta+s\delta}( Y 
-\in H)$ is continuous and strictly increasing, and $P_{\theta+s\delta}( Y \in H) \to 
-1$ as $s \to \infty$.
-\end{theorem}
 Before going on to the proof, let's think about what this means.  Suppose $\delta$ is 
 a DOR and not a DOC, because the latter is not interesting.  So, the MLE does not 
 exist because the log-likelihood, despite being strictly convex, is strictly 
@@ -484,7 +463,7 @@ actually coincides with the boundary of the convex hull, the observed data $y$ s
 is on this boundary (hence the MLE does not exist, by the usual MLE existence 
 theorem, and hence a DOR exists).  When we take the parameter value further and 
 further along in the direction of the DOR, the samples generated from that model will 
-be increasingly cluster around that boundary face of the convex hull on which $y$ 
+increasingly cluster around that boundary face of the convex hull on which $y$ 
 sits.
 
 So how about the rest of the theorem?  We saw in Theorem 3 that $\inner{Y-y,\delta} 
