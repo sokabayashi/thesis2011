@@ -128,36 +128,6 @@ The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{get from 
 \citep{Rockafellar:1970}.}
 
-\subsection{Linearity}\label{S:linearity}
-\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
-\begin{align*}
-	L = \{ w \in V: -w \in \con( \pos V) \}.
-\end{align*}
-It is the subspace with bases determined by $V$.
-
-We use this to find the face of the polyhedral convex support on which the observed 
-statistic lies in the interior of.  The function \texttt{linearity} in the \texttt
-{rcdd} package can take as input the rays directed from observed statistic to sample 
-points generated via MCMC from the distribution with parameter value of interest.  
-From these, it determines the rays that form the basis of a vector subspace.  Of 
-course we are not interested in the vector subspace; we need only take the points 
-corresponding to these bases as our empirical face $F$.  By construction, the observed 
-statistic lies in the interior of $F$.
-
-%Let $\widetilde{T}_C(x)$ be the empirical tangent cone at the point $x$ constructed 
-%from a set of points $W$ all in $C$.  That is,
-%\begin{align*}
-%	\widetilde{T}_C(x) = \{ w - x: w \in W\}.
-%\end{align*}
-%Then for $V = \widetilde{T}_C(g(\yobs))$, the linearity corresponds to the set of 
-%points from $W$ (shifted by $g(\yobs)$) that form what we refer to as the empirical 
-%face $F$.  
-%In our algorithm, we use the MCMC sample points for $W$.  \citet{Geyer:gdor} provides 
-%the function \texttt{linearity} in the R package \texttt{rcdd} to do this computation.
-
-%Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
-%linearity will correspond to all the points $W \in C$.
-
 
 
 \section{MLE existence in exponential families}
@@ -469,86 +439,63 @@ $\inner{g(\yobs), \delta}$.  Using our earlier notation,
 \inner{g(\yobs), \delta}.
 \end{align*}
 
-Focus on the form of the density for $f_{\theta+s\delta}(\omega)$.  According the 
-form of the relative density previously defined with respect to $\psi$,
+From \eqref{E:ERGM}, we can express $f(_{\eta+s\delta}(y)$ as
 \begin{align*}
- f_{\theta+s\delta}(\omega) &= e^{ \inner{y,\theta+s\delta - \psi} - c(\theta+s
-\delta) + c(\psi)  } \\
- 	&= e^{ \inner{y,\theta - \psi} -c(\theta) + c(\theta) + s \inner{y,\delta} - c
-(\theta+s\delta) + c(\psi)  } \\
- 	&= e^{ \inner{y,\theta - \psi} -c(\theta) + c(\psi) - c(\theta+s\delta) + s 
-\inner{y,\delta} + c(\theta)   } \\
- 	&= f_\theta(\omega) \frac{e^{c(\theta)}}{e^{ c(\theta+s\delta) - \inner{y,\delta}
+ f_{\eta+s\delta}(y) &= e^{ \inner{\eta+s\delta,g(y)} - c(\eta+s\delta)  } \\
+ &= e^{ \inner{\eta,g(y)} -c(\eta)+c(\eta) + s\inner{\delta,g(y)} - c(\eta+s\delta) } \\
+ 	&= f_\eta(y) \frac{e^{c(\eta)}}{e^{ c(\eta+s\delta) - \inner{g(y),\delta}
 s } }.
 \end{align*}
-This form is starting to look familiar, in particular, the denominator is from 
-Theorem 2.2 from \citet{Geyer:1990} except with $\inner{y,\delta}$ instead of $b$ 
-(where this 
-$y$ is the dummy variable in the density, not the observed data).  So what happens as 
-$s \to \infty$?  
+The denominator in the fraction above has the form of the starting expression in 
+Theorem~\ref{Thm:e_c} with $\inner{g(y),\delta}$ in place of $b$.
+Thus we can take the limit of $f(_{\eta+s\delta}(y)$ as
+$s \to +\infty$ by applying Theorem~\ref{Thm:e_c},
 
-It depends on how $\inner{Y(\omega),\delta}$ relates to $\sup_{y \in C}\inner{y,
-\delta} = \inner{y,\delta}$, for the observed data $y$.  (our notation is getting a 
-little confusing since $y$ can denote the observed data $y$ or the dummy variable in 
-the density).  
 \begin{align*}
-	f_{\theta+s\delta}(\omega) = f_\theta(\omega) \frac{e^{c(\theta)}}{e^{ c(\theta+s
-\delta) - \inner{y,\delta}s } } 
+	f_{\eta+s\delta}(y) = f_\eta(\eta) \frac{e^{c(\eta)}}{e^{ c(\eta+s
+\delta) - \inner{g(y),\delta}s } } 
 	\to	
 			\begin{cases} 
-			0 								& \inner{Y(\omega),\delta} < \inner{y,
-\delta} \\
-			\frac{f_\theta(\omega)}{P_\theta(Y \in H)} 	& \inner{Y(\omega) ,
-\delta} = \inner{y,\delta} \\
-			+\infty							& \inner{Y(\omega),\delta} > \inner{y,
-\delta}.
-	\end{cases}
+			0 					& \inner{g(Y),\delta} < \inner{g(\yobs),\delta} \\
+			\frac{f_\eta(y)}{P_\eta(g(Y) \in H)} 	& 
+								\inner{g(Y),\delta} = \inner{g(\yobs),\delta} \\
+			+\infty				& \inner{g(Y),\delta} > \inner{g(\yobs),\delta}.
+			\end{cases}
 \end{align*}
-For $\delta$ a DOR but not DOC, we need to show that the $P_{\theta+s\delta}(Y \in H) 
-\to 1$ 
-as $s \to \infty$, where $H = \set{w \in \RR^p: \inner{w-\yobs,d}=0}$.
+This gets us \eqref{E:LCM}.  We next show the behavior of 
+$P_{\eta+s\delta}(g(Y) \in H)$ as $s \to +\infty$ when $\delta$ is a GDOR.
+
 \begin{align*}
- P_{\theta+s\delta}(Y \in H) &= \int_H e^{\inner{y, \theta+s\delta - \psi} - c(\theta
-+s\delta) + c(\psi)} \, d\psi \\
-		&= \E_\psi \left \{ I_H e^{\inner{y, \theta - \psi} +c(\psi) - [c(\theta+s
-\delta) -s\inner{y,\delta}]} \right 
-\}\\
-		&= \E_\psi \left \{ I_H  \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner
-{y,\delta} } } 
-		e^{\inner{y, \theta - \psi} -c(\theta)+c(\psi)}  \right \}.
+ P_{\eta+s\delta}(g(Y) \in H) &= \int_H e^{\inner{g(y), \eta+s\delta} - c(\eta
++s\delta)} \, d\mu(y) \\
+		&= \int_H  \frac{e^{c(\eta)}}{e^{c(\eta+s\delta)-\inner{g(y),\delta}s}} 
+					f_\eta(\eta) \, d\mu(y)\\
+		&= \E_\eta  \left ( I_H \frac{e^{c(\eta)}}{e^{c(\eta+s\delta)-\inner{g(y),\delta}s}} \right )
 \end{align*}
-Since the indicator function, $I_H$, fixes $\inner{ y, \delta}$ to be a constant, it 
-can pulled out of the expectation, so that 
+Since the indicator function $I_H$ evaluates to zero unless 
+$\inner{ g(y), \delta} = \inner{ g(\yobs), \delta} $,  
+this expression can pulled out of the expectation along with other constants, so that 
 \begin{align*}
-		 P_{\theta+s\delta}(Y \in H)
-		 &= \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } }
-		 \E_\psi \left \{ I_H   
-		e^{\inner{y, \theta - \psi} -c(\theta)+c(\psi)}  \right \}, \\
-		 &= \frac{e^{c(\theta)} }{ e^{ c(\theta+s\delta) -s\inner{y,\delta} } } 
-		 P_\theta ( Y \in H ).
+		 P_{\eta+s\delta}(g(Y) \in H)
+		 &= \frac{e^{c(\eta)} }{ e^{ c(\eta+s\delta) -s\inner{g(\yobs),\delta} } }
+		 \E_\eta  I_H   \\
+		 &= \frac{e^{c(\eta)} }{ e^{ c(\eta+s\delta) -s\inner{g(\yobs),\delta} } }
+		 P_\eta  (g(Y) \in H). 
 		 \end{align*}
  
-Then applying Theorem 2.2 from Geyer:1990,
+Then taking the limit of $s \to +\infty$ via Theorem~\ref{Thm:e_c} gives
 \begin{align*}
- P_{\theta+s\delta}(Y \in H)
-		&\to \frac{1}{P_\theta(Y \in H)}  P_{\theta}(Y \in H) = 1
+ P_{\eta+s\delta}(g(Y) \in H)
+		&\to \frac{e^{c(\eta)}}{ e^{c(\eta)} P_\eta (g(Y) \in H) } P_\eta (g(Y)\in H) = 1
  \end{align*}
- as $s \to \infty$.  
- 
- That this probability is strictly increasing follows directly from the DOR property 
-which requires $\ell( \theta+s
-\delta)$ to be strictly increasing.   
+ as desired.   
 \end{proof}
 
 %%%%% END PROOF
 
 
-
-
-
 \subsection{Remarks on Theorem~\ref{Thm:LCM}}
-
-
+The implications of Theorem~\ref{Thm:LCM} are far reaching.
 The right-hand side of \eqref{E:LCM} can be viewed as a conditional density of a 
 distribution with parameter $\eta$ given $g(Y) \in H$ and hence expressed as $f_{\eta}
 (\, \cdot\,  | g(Y) \in H)$ (the set that maps to $+\infty$ has probability zero by 
@@ -558,7 +505,7 @@ the original exponential family density $f_\eta(y)$, the family of distributions
 \{ f_{\eta}(\, \cdot\,  | g(Y) \in H) \text{ for } \eta \in \Xi \}
 \end{align}
 is itself an exponential family with the same natural parameters and statistics as the 
-original family.  
+original family.  WHY A CONDITIONAL DENSITY?
 %Then we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 %\begin{align*}
 %\lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y | g(Y) \in H).
@@ -570,17 +517,25 @@ It may not be full, however; the full family containing this exponential family,
 \end{align*}
 where $\Gammalim$ is the constancy space of \eqref{E:f conditional},
 is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
-\textbf{Even though the MLE does not exist, $\ell(\eta)$ is bounded by the LCM log 
-likelihood.}
+The log likelihood for this can be expressed as
+\begin{align*}
+	\ell_{LCM}(\eta) &= \inner{\eta, g(\yobs)} - c(\eta) - \log P_\eta(g(Y) \in H) \\
+			&= \ell(\eta) - \log P_\eta(g(Y) \in H)
+\end{align*}
+which implies that 
+\begin{align*}
+	\ell(\eta) < \ell_{LCM}(\eta).	
+\end{align*}
+STRICTLY $<$?
+Thus even though the MLE may not exist for the original family, its log likelihood
+$\ell(\eta)$ is bounded by the LCM log likelihood for which a maximizer will exist.
+REALLY?  MLE OF LCM MUST EXIST?
+
 An MLE for this new model must exist, since $g(\yobs)$ cannot lie on the boundary of 
 the convex support which was itself determined by $g(\yobs)$ lying in the interior of 
-it.  
+it.  REALLY?
 
-Before going on to the proof, let's think about what this means.  Suppose $\delta$ is 
-a DOR and not a DOC, because the latter is not interesting.  So, the MLE does not 
-exist because the log-likelihood, despite being strictly convex, is strictly 
-increasing when we go in the direction of $\delta$.  That's what DOR means.  So then 
-what?
+NOTE: face is $C \cap H$, not $H$ standalone.
 
 Well, we need to think first about $H$ again, this plane that is perpendicular to $
 \delta$ on which the observed data $y$ lies.  Looking first at the last sentence of 
@@ -595,9 +550,6 @@ further along in the direction of the DOR, the samples generated from that model
 increasingly cluster around that boundary face of the convex hull on which $y$ 
 sits.
 
-So how about the rest of the theorem?  We saw in Theorem~\ref{Thm:DOC} that $\inner{Y-y,\delta} 
-\leq 0$ so the set where the above is $+\infty$ has probability zero.  I think the 
-set for which $\inner{Y-y,\delta} = 0$ corresponds to a DOR.
 
 The exponential family with the \emph{full} natural parameter space (I'm 
 glossing over some stuff) is the limiting condition model (LCM).  ``If an MLE exists 
@@ -610,22 +562,20 @@ original family."
 
 
 \subsection{summary}
-
-
-
-In summary, by Theorem~\ref{Thm:MLE rint}, when the observed statistic, $g(\yobs)$, is 
+By the well-known theorem of MLE existence for exponential families (Theorem~\ref{Thm:MLE rint}), when the observed statistic, $g(\yobs)$, is 
 on the boundary of the convex support $C$, the MLE does not exist in the conventional 
 sense.
-Then by Corollary~\ref{Cor:MLE DNE}, there must exist a direction of recession, $
-\delta$, that is not a direction of constancy.  
+Here, we have expressed this result with more detail: by Theorem~\ref{Thm:MLE existence}, there must exist a direction of recession, $\delta$, that is not a direction of constancy.  
+
 According to Theorem~\ref{Thm:LCM}, as we move in the natural parameter space in the 
-direction of $\delta$, the distribution with this parameter value will put 
-increasingly probability on points for which the natural statistics, $g(Y)$, land in 
-the hyperplane $H$ on which $g(\yobs)$ lies.  This hyperplane is orthogonal to $\delta
+direction of $\delta$ that is a GDOR, the distribution with this parameter value will 
+put increasing probability on points for which the natural statistics, $g(Y)$, land 
+on the face $H \cap C$ on which $g(\yobs)$ lies.  This face is orthogonal to $\delta
 $ by construction and contains the boundary of the convex support.  Samples generated 
 from these models will therefore increasingly fall on the face on which $g(\yobs)$ 
 lies as $\eta$ increases in the direction of $\delta$.  Theorem~\ref{Thm:LCM} says 
 that eventually, all generated sample points will fall on this boundary.
+WHY DO WE NEED MLE LCM?
 
 
 \section{Mean value parameterization}
@@ -650,8 +600,6 @@ parameter (if there was, then finding MLEs would be very easy and we wouldn't ne
 these algorithms!).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{One-sided confidence interval}
 
 Consider the probability distributions defined with log likelihood $\ell( \eta + s 
@@ -667,6 +615,42 @@ the scalar parameter
 $s$, and, in turn, $[\hat{\eta} + \hat{s}\delta, +\infty)$ gives a 95\% confidence 
 interval for $\etaMLE
 $.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Programming LCM theory}
+\text{rcdd} \citep{rcdd}
+
+\subsection{Linearity}\label{S:linearity}
+\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
+\begin{align*}
+	L = \{ w \in V: -w \in \con( \pos V) \}.
+\end{align*}
+It is the subspace with bases determined by $V$.
+
+We use this to find the face of the polyhedral convex support on which the observed 
+statistic lies in the interior of.  The function \texttt{linearity} in the \texttt
+{rcdd} package can take as input the rays directed from observed statistic to sample 
+points generated via MCMC from the distribution with parameter value of interest.  
+From these, it determines the rays that form the basis of a vector subspace.  Of 
+course we are not interested in the vector subspace; we need only take the points 
+corresponding to these bases as our empirical face $F$.  By construction, the observed 
+statistic lies in the interior of $F$.
+
+%Let $\widetilde{T}_C(x)$ be the empirical tangent cone at the point $x$ constructed 
+%from a set of points $W$ all in $C$.  That is,
+%\begin{align*}
+%	\widetilde{T}_C(x) = \{ w - x: w \in W\}.
+%\end{align*}
+%Then for $V = \widetilde{T}_C(g(\yobs))$, the linearity corresponds to the set of 
+%points from $W$ (shifted by $g(\yobs)$) that form what we refer to as the empirical 
+%face $F$.  
+%In our algorithm, we use the MCMC sample points for $W$.  \citet{Geyer:gdor} provides 
+%the function \texttt{linearity} in the R package \texttt{rcdd} to do this computation.
+
+%Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
+%linearity will correspond to all the points $W \in C$.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling}
