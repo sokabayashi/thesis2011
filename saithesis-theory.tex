@@ -58,6 +58,32 @@ maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \et
 	\E_\eta g(Y) = g(\yobs). \label{E:Observed-Expected}
 \end{align}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Mean value parameterization}
+
+An alternative parameterization of an exponential family is the mean value 
+parameterization.  For each natural parameter $\eta$, we can define the mean parameter 
+$\mu$ such that
+\begin{align*}
+	\mu = \E_\eta g(Y).
+\end{align*}
+The space for the mean value parameterization is the same as the convex support of the 
+natural statistics and thus lends itself to easier interpretability  \citep
+{Handcock:degeneracy, Rinaldo:2009}.  In particular, $\mu = g(\yobs)$ is the MLE in 
+the mean value parameterization.  \citeauthor{Handcock:degeneracy} observed that mean 
+value parameters located too close to the boundary of the convex support correspond to 
+degenerate distributions.  
+
+There exists a one-to-one mapping between a natural parameter and its mean value 
+parameter, and one can calculate mean value parameters from natural parameters. In 
+general there is no simply way to get the natural parameter value from the mean value 
+parameter (if there was, then finding MLEs would be very easy and we wouldn't need all 
+these algorithms!).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \section{Convex Analysis}
 The issue of MLE existence in the conventional sense in an exponential family is 
@@ -130,6 +156,7 @@ DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{ge
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{MLE existence in exponential families}
 We now present two equivalent approaches to determine the existence of an MLE
 in the conventional sense.  
@@ -493,11 +520,13 @@ Then taking the limit of $s \to +\infty$ via Theorem~\ref{Thm:e_c} gives
 
 %%%%% END PROOF
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Remarks on Theorem~\ref{Thm:LCM}}
 The implications of Theorem~\ref{Thm:LCM} are far reaching.
 The right-hand side of \eqref{E:LCM} can be viewed as a conditional density of a 
-distribution with parameter $\eta$ given $g(Y) \in H$ and hence expressed as $f_{\eta}
+distribution 
+\textbf{[WHY?]} 
+with parameter $\eta$ given $g(Y) \in H$ and hence expressed as $f_{\eta}
 (\, \cdot\,  | g(Y) \in H)$ (the set that maps to $+\infty$ has probability zero by 
 Theorem~\ref{Thm:DOR}(2)).  Because it still has the same functional form as 
 the original exponential family density $f_\eta(y)$, the family of distributions
@@ -519,48 +548,52 @@ where $\Gammalim$ is the constancy space of \eqref{E:f conditional},
 is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
 The log likelihood for this can be expressed as
 \begin{align*}
-	\ell_{LCM}(\eta) &= \inner{\eta, g(\yobs)} - c(\eta) - \log P_\eta(g(Y) \in H) \\
+	\ell_{LCM}(\eta) %&= \inner{\eta, g(\yobs)} - c(\eta) - \log P_\eta(g(Y) \in H) \\
 			&= \ell(\eta) - \log P_\eta(g(Y) \in H)
 \end{align*}
 which implies that 
 \begin{align*}
 	\ell(\eta) < \ell_{LCM}(\eta).	
 \end{align*}
-STRICTLY $<$?
+\textbf{[STRICTLY $<$?]}
 Thus even though the MLE may not exist for the original family, its log likelihood
 $\ell(\eta)$ is bounded by the LCM log likelihood for which a maximizer will exist.
-REALLY?  MLE OF LCM MUST EXIST?
+\textbf{[REALLY?  MLE OF LCM MUST EXIST?]}
 
 An MLE for this new model must exist, since $g(\yobs)$ cannot lie on the boundary of 
 the convex support which was itself determined by $g(\yobs)$ lying in the interior of 
-it.  REALLY?
-
+it. 
 NOTE: face is $C \cap H$, not $H$ standalone.
 
-Well, we need to think first about $H$ again, this plane that is perpendicular to $
-\delta$ on which the observed data $y$ lies.  Looking first at the last sentence of 
-this theorem, it says that for the sequence of exponential families with parameter 
+The last part of 
+this theorem says that for the sequence of exponential families with parameter 
 value $\theta+s\delta$, the probability of $Y$ occurring on the plane $H$ is strictly 
-increasing, and in fact, going to 1.  This is what Charlie is referring to when he 
-says things like ``the probability is accumulating on the boundary".  So, $H$ 
-actually coincides with the boundary of the convex hull, the observed data $y$ sits 
-is on this boundary (hence the MLE does not exist, by the usual MLE existence 
-theorem, and hence a DOR exists).  When we take the parameter value further and 
-further along in the direction of the DOR, the samples generated from that model will 
-increasingly cluster around that boundary face of the convex hull on which $y$ 
-sits.
+increasing, and in fact, going to 1.  (This is what Charlie is referring to when he 
+says ``the probability is accumulating on the boundary".)  So, $H$ 
+actually coincides with the boundary of the convex hull
+(to be precise, the face is $C \cap H$) and the observed data $g(\yobs)$ sits 
+is on this boundary.  
 
 
-The exponential family with the \emph{full} natural parameter space (I'm 
-glossing over some stuff) is the limiting condition model (LCM).  ``If an MLE exists 
-for the LCM, then it maximizes the likelihood in the family that is the union of the 
+The exponential family with the \emph{full} natural parameter space.  
+\textbf{
+``If an MLE exists 
+for the LCM, then it maximizes the likelihood in \hl{the family} that is the union of the 
 LCM and the original family, and it maximizes the likelihood in the family that is 
 the set of all limits of sequences of distributions in the original family.  When 
 this happens, we say we have found an MLE in the Barndorff-Nielsen completion of the 
 original family."
+}
 
+By Theorem~\ref{Thm:LCM}, when $\delta$ is a GDOR and $\etaLCM$ is the MLE of the LCM, $\gamma \in \Gammalim$, then
+\begin{align*}
+	\lim_{s \to +\infty} \ell(\etaLCM + \gamma + s\delta) = \sup_{\RR^d} \ell(\eta).
+\end{align*}
 
+When no GDOR exists and the MLE exists in the conventional sense, then the 
+original family is the LCM, corresponding to $\delta=0$ in Theorem~\ref{Thm:LCM}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{summary}
 By the well-known theorem of MLE existence for exponential families (Theorem~\ref{Thm:MLE rint}), when the observed statistic, $g(\yobs)$, is 
 on the boundary of the convex support $C$, the MLE does not exist in the conventional 
@@ -575,46 +608,31 @@ $ by construction and contains the boundary of the convex support.  Samples gene
 from these models will therefore increasingly fall on the face on which $g(\yobs)$ 
 lies as $\eta$ increases in the direction of $\delta$.  Theorem~\ref{Thm:LCM} says 
 that eventually, all generated sample points will fall on this boundary.
-WHY DO WE NEED MLE LCM?
 
-
-\section{Mean value parameterization}
-
-An alternative parameterization of an exponential family is the mean value 
-parameterization.  For each natural parameter $\eta$, we can define the mean parameter 
-$\mu$ such that
-\begin{align*}
-	\mu = \E_\eta g(Y).
-\end{align*}
-The space for the mean value parameterization is the same as the convex support of the 
-natural statistics and thus lends itself to easier interpretability  \citep
-{Handcock:degeneracy, Rinaldo:2009}.  In particular, $\mu = g(\yobs)$ is the MLE in 
-the mean value parameterization.  \citeauthor{Handcock:degeneracy} observed that mean 
-value parameters located too close to the boundary of the convex support correspond to 
-degenerate distributions.  
-
-There exists a one-to-one mapping between a natural parameter and its mean value 
-parameter, and one can calculate mean value parameters from natural parameters. In 
-general there is no simply way to get the natural parameter value from the mean value 
-parameter (if there was, then finding MLEs would be very easy and we wouldn't need all 
-these algorithms!).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{One-sided confidence interval}
 
 Consider the probability distributions defined with log likelihood $\ell( \eta + s 
 \delta)$ as defined 
-by \eqref{E:loglike}, where $s$ is a real scalar and $\delta$ is a direction of 
-recession.  Then 
+by \eqref{E:loglike}, where $s$ is a real scalar, $\delta$ is a GDOR and 
+we have found $\etaLCM$, the MLE in the LCM, and $\gamma \in \Gammalim$
+(and hence $\etaLCM + \gamma$ also indexes the same LCM MLE distribution).  Then 
 as $s$ goes from $-\infty$ to $+\infty$, the probability of observing $g(Y) \in H$ 
-goes from zero to one.  This 
-function is strictly increasing by Theorem~\ref{Thm:LCM}.  Thus we can find the unique 
-$s$, call it $\hat{s}$, that makes 
-this probability 0.05.  Then $[\hat{s}, +\infty)$ is a 95\% confidence interval for 
+goes from zero to one in a strictly increasing manner, per Theorem~\ref{Thm:LCM}.  Thus we can find the unique $s$, call it $\hat{s}$, that makes 
+this probability 0.05.  That is, we find the unique $s$ such that
+\begin{align*}
+	P_{\etaLCM + \gamma + s\delta}\left (g(Y) \in H \right ) = \alpha.
+\end{align*}
+Then $[\hat{s}, +\infty)$ is a 95\% confidence interval for 
 the scalar parameter 
-$s$, and, in turn, $[\hat{\eta} + \hat{s}\delta, +\infty)$ gives a 95\% confidence 
-interval for $\etaMLE
-$.
+$s$, and, in turn, $[\etaLCM + \gamma + \hat{s}\delta, +\infty)$ gives 
+a 95\% confidence interval for $\etaMLE$.
+
+\subsection{Confidence interval for mean value parameterization}
+The confidence intervals calculated for the natural parameters can of 
+course be converted to those for mean value parameters, where the observed
+data, and hence MLE, are known.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Programming LCM theory}
