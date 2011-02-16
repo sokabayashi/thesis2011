@@ -421,6 +421,17 @@ occurs when $g(\yobs)$ is such that $\inner{g(Y) - g(\yobs)} < 0$.  This is
 exactly the criteria that puts $g(\yobs)$ on the boundary of the convex support,
 thus agreeing with Theorem~\ref{Thm:MLE rint}.
 
+\begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
+For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, if $\delta$ is a
+GDOR, then for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta+s\delta)$ is strictly
+increasing on the interval where it is finite.
+\end{corollary}
+
+This corollary is clearly implied by Theorems \ref{Thm:DOC} and \ref{Thm:DOR}; if
+$\delta$ is a GDOR, the $\ell(\eta+s\delta)$ is nondecreasing with respect to $s$ by 
+Theorem \ref{Thm:DOR} but cannot be constant by Theorem \ref{Thm:DOC}.  Therefore,
+it must be strictly increasing.
+
 
 %%%%%%%%%%%%%%%%%%%%%
 
@@ -522,58 +533,79 @@ Then taking the limit of $s \to +\infty$ via Theorem~\ref{Thm:e_c} gives
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Remarks on Theorem~\ref{Thm:LCM}}
-The implications of Theorem~\ref{Thm:LCM} are far reaching.
-The right-hand side of \eqref{E:LCM} can be viewed as a conditional density of a 
-distribution 
-\textbf{[WHY?]} 
-with parameter $\eta$ given $g(Y) \in H$ and hence expressed as $f_{\eta}
-(\, \cdot\,  | g(Y) \in H)$ (the set that maps to $+\infty$ has probability zero by 
-Theorem~\ref{Thm:DOR}(2)).  Because it still has the same functional form as 
-the original exponential family density $f_\eta(y)$, the family of distributions
-\begin{align} \label{E:f conditional}
-\{ f_{\eta}(\, \cdot\,  | g(Y) \in H) \text{ for } \eta \in \Xi \}
-\end{align}
-is itself an exponential family with the same natural parameters and statistics as the 
-original family.  WHY A CONDITIONAL DENSITY?
-%Then we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
-%\begin{align*}
-%\lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y | g(Y) \in H).
-%\end{align*}
-It may not be full, however; the full family containing this exponential family,
+Let $W = I(g(Y) \in H)$. Noting that $\inner{g(Y),\delta} > \inner{g(\yobs),\delta}$
+has zero probability by 
+Theorem~\ref{Thm:DOR}(2) and thus need not be considered, the  
+mixed density $f_\eta(y,w)$ can be expressed
+\begin{align*}
+ f_\eta(y,w) &= f_\eta(y) P(W=w \mid Y )\\
+	&= \begin{cases}
+ 			f_\eta(y)\cdot P(W=w \mid g(Y) \notin H) \quad &\text{for } g(Y) \notin H \\
+			f_\eta(y)\cdot P(W=w \mid g(Y) \in H) \quad &\text{for } g(Y) \in H\\
+ 		\end{cases}\\
+	&= \begin{cases}
+ 			f_\eta(y)\cdot (1-w) \quad &\text{for $g(Y) \notin H$ (or $w = 0$) }\\
+			f_\eta(y)\cdot w \quad &\text{for $g(Y) \in H$ (or $w = 1$)}\\
+ 		\end{cases}\\
+		&=f_\eta(y).
+\end{align*}
+Then the right-hand side of \eqref{E:LCM} can be viewed as a conditional density of a 
+distribution with parameter $\eta$ given $g(Y) \in H$ and hence expressed as $f_{\eta}
+(\, \cdot\,  | g(Y) \in H)$.  
+\hl{
+Now I'm confused.  The event $g(Y) \in H$ corresponds to 
+$\inner{g(Y),\delta} = \inner{g(\yobs),\delta}$ doesn't it?  Then doesn't the conditional
+distribution given $g(Y) \in H$ mean that $g(Y) \in H$???  Isn't there some redundancy/double
+counting going on here?  
+Note that Charlie use $f(\omega$) and $Y(\omega)$ in his paper.  MAYBE I should be used
+lower cased $y$ in the ranges, as in, $g(y) \in H$.  Charlie could not do this because
+for him $y$ means the same thing as my $g(\yobs)$, so little $y$ is ambiguous.
+}
+
+The log likelihood for $f_\eta( \, \cdot\,  | g(Y) \in H)$, $\eta \in \Xi$, can be expressed as
+\begin{align*}
+%	\ell_{LCM}(\eta) &= 
+	\inner{\eta, g(\yobs)} - c(\eta) - \log P_\eta(g(Y) \in H) 
+%			&= \ell(\eta) - \log P_\eta(g(Y) \in H)
+\end{align*}
+which clearly has exponential family form with the same natural parameter $\eta$ and 
+statistic $g(y)$ as the original exponential family.  The cumulant function is different,
+however, and thus the family may not be full; the full family containing this exponential family,
 \begin{align*}
 \{ f_{\eta}(\, \cdot\,  | g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
 { and } \gamma \in \Gammalim \},
 \end{align*}
-where $\Gammalim$ is the constancy space of \eqref{E:f conditional},
+where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  | g(Y) \in H)$,
 is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
-The log likelihood for this can be expressed as
+
+We are primarily interested in the case when $\delta$ is a GDOR, in which case
+we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 \begin{align*}
-	\ell_{LCM}(\eta) %&= \inner{\eta, g(\yobs)} - c(\eta) - \log P_\eta(g(Y) \in H) \\
-			&= \ell(\eta) - \log P_\eta(g(Y) \in H)
+\lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y | g(Y) \in H).
 \end{align*}
-which implies that 
+
+Because $\ell_{LCM}(\eta) = \ell(\eta) - \log P_\eta(g(Y) \in H)$,
 \begin{align*}
 	\ell(\eta) < \ell_{LCM}(\eta).	
 \end{align*}
-\textbf{[STRICTLY $<$?]}
-Thus even though the MLE may not exist for the original family, its log likelihood
+The inequality above is strict due to Corollary~\ref{Cor:strictly increasing} which states that the log likelihood
+is strictly increasing when $\delta$ is a GDOR and so $P_\eta(g(Y) \in H)$ cannot be equal to 1.
+Thus even though the MLE does not exist for the original family, its log likelihood
 $\ell(\eta)$ is bounded by the LCM log likelihood for which a maximizer will exist.
-\textbf{[REALLY?  MLE OF LCM MUST EXIST?]}
 
-An MLE for this new model must exist, since $g(\yobs)$ cannot lie on the boundary of 
+An MLE for this new model must exist for polyhedral convex support $C$, 
+since $g(\yobs)$ cannot lie on the boundary of 
 the convex support which was itself determined by $g(\yobs)$ lying in the interior of 
 it. 
 NOTE: face is $C \cap H$, not $H$ standalone.
 
-The last part of 
-this theorem says that for the sequence of exponential families with parameter 
+The last part of this theorem says that for the sequence of exponential families with parameter 
 value $\theta+s\delta$, the probability of $Y$ occurring on the plane $H$ is strictly 
 increasing, and in fact, going to 1.  (This is what Charlie is referring to when he 
 says ``the probability is accumulating on the boundary".)  So, $H$ 
 actually coincides with the boundary of the convex hull
 (to be precise, the face is $C \cap H$) and the observed data $g(\yobs)$ sits 
 is on this boundary.  
-
 
 The exponential family with the \emph{full} natural parameter space.  
 \textbf{
