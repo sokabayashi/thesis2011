@@ -1,4 +1,4 @@
-\begin{thebibliography}{76}
+\begin{thebibliography}{79}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -21,6 +21,11 @@
 \textsc{Barndorff-Nielsen, O.} (1978).
 \newblock \textit{Information and Exponential Families in Statistical Theory}.
 \newblock John Wiley \& Sons.
+
+\bibitem[{Bartz et~al.(2009)Bartz, Liu and Blitzstein}]{Bartz}
+\textsc{Bartz, K.}, \textsc{Liu, J.} and \textsc{Blitzstein, J.} (2009).
+\newblock Monte {C}arlo maximum likelihood for exponential random graph models:
+  From snowballs to umbrella densities.
 
 \bibitem[{Besag(1974)}]{Besag:1974}
 \textsc{Besag, J.} (1974).
@@ -65,7 +70,7 @@
 
 \bibitem[{Erd\"{o}s and R\'enyi(1959)}]{Erdos}
 \textsc{Erd\"{o}s, P.} and \textsc{R\'enyi, A.} (1959).
-\newblock On random graphs. i.
+\newblock On random graphs. {I}.
 \newblock \textit{Publicationes Mathematicae}, \textbf{6} 290--297.
 
 \bibitem[{Fienberg and Wasserman(1981)}]{Fienberg:1981}
@@ -89,12 +94,6 @@
 \newblock \textit{Likelihood and Exponential Families}.
 \newblock Ph.D. thesis, University of Washington, http://purl.umn.edu/56330.
 \newblock \urlprefix\url{http://purl.umn.edu/56330}.
-
-\bibitem[{Geyer(1994)}]{Geyer:1994}
-\textsc{Geyer, C.~J.} (1994).
-\newblock On the convergence of monte carlo maximum likelihood calculations.
-\newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
-  \textbf{56} 261--274.
 
 \bibitem[{Geyer(2009{\natexlab{a}})}]{Geyer:gdor}
 \textsc{Geyer, C.~J.} (2009{\natexlab{a}}).
@@ -353,6 +352,11 @@
 \newblock Geometric ergodicity and hybrid {M}arkov chains.
 \newblock \textit{Electronic Communications in Probability}, \textbf{2} 13--25.
 
+\bibitem[{Roberts and Rosenthal(2004)}]{Roberts:2004}
+\textsc{Roberts, G.~O.} and \textsc{Rosenthal, J.~S.} (2004).
+\newblock General state space {M}arkov chains and {MCMC} algorithms.
+\newblock \textit{Probability Surveys}, \textbf{1} 20--71.
+
 \bibitem[{Robins et~al.(2007{\natexlab{a}})Robins, Pattison, Kalish and
   Lusher}]{introp*}
 \textsc{Robins, G.}, \textsc{Pattison, P.}, \textsc{Kalish, Y.} and
@@ -380,10 +384,10 @@
 \newblock corrected second printing, Springer-Verlag, Berlin.
 
 \bibitem[{Salgado et~al.(2001)Salgado, Santos-Zavaleta, Gama-Castro,
-  Mill/'an-Z/'arate, D\'iaz-Peredo, S\'anchez-Solano, P{\'e}rez-Rueda,
+  Mill\'an-Z\'arate, D\'iaz-Peredo, S\'anchez-Solano, P{\'e}rez-Rueda,
   Bonavides-Mart{\'\i}nez and Collado-Vides}]{Salgado}
 \textsc{Salgado, H.}, \textsc{Santos-Zavaleta, A.}, \textsc{Gama-Castro, S.},
-  \textsc{Mill/'an-Z/'arate, D.}, \textsc{D\'iaz-Peredo, E.},
+  \textsc{Mill\'an-Z\'arate, D.}, \textsc{D\'iaz-Peredo, E.},
   \textsc{S\'anchez-Solano, F.}, \textsc{P{\'e}rez-Rueda, E.},
   \textsc{Bonavides-Mart{\'\i}nez, C.} and \textsc{Collado-Vides, J.} (2001).
 \newblock Regulondb (version 3.2): Transcriptional regulation and operon
@@ -402,6 +406,14 @@
 \newblock Exploring biological network structure using exponential random graph
   models.
 \newblock \textit{Bioinformatics}, \textbf{23} 2604--02611.
+
+\bibitem[{Shaw et~al.(2008)Shaw, Geyer, Wagenius, Hangelbroek and
+  Etterson}]{Shaw:2008}
+\textsc{Shaw, R.~G.}, \textsc{Geyer, C.~J.}, \textsc{Wagenius, S.},
+  \textsc{Hangelbroek, H.~H.} and \textsc{Etterson, J.~R.} (2008).
+\newblock Unifying life-history analyses for inference of fitness and
+  population growth.
+\newblock \textit{The American Naturalist}, \textbf{172} E35--E47.
 
 \bibitem[{Shen-Orr et~al.(2002)Shen-Orr, Milo, Mangan and Alon}]{Shen-Orr}
 \textsc{Shen-Orr, S.~S.}, \textsc{Milo, R.}, \textsc{Mangan, S.} and
@@ -438,6 +450,13 @@
 \textsc{Swendsen, R.~H.} and \textsc{Wang, J.-S.} (1987).
 \newblock Nonuniversal critical dynamics in {M}onte {C}arlo simulations.
 \newblock \textit{Physics Review Letters}, \textbf{58} 86--88.
+
+\bibitem[{Urbanek(2010)}]{multicore:R}
+\textsc{Urbanek, S.} (2010).
+\newblock \texttt{multicore}: {P}arallel processing of {R} code on machines
+  with multiple cores or {CPU}s.
+\newblock R pakage version 0.1-3,
+  \urlprefix\url{http://www.rforge.net/multicore/}.
 
 \bibitem[{van Duijn et~al.(2009)van Duijn, Gile and Handcock}]{Duijn:2009}
 \textsc{van Duijn, M. A.~J.}, \textsc{Gile, K.~J.} and \textsc{Handcock, M.~S.}

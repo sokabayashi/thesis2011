@@ -2,7 +2,7 @@
 We now present our search algorithm, which will converge to the optimum for any 
 continuously differentiable, strictly 
 convex (or concave) function.  The algorithm and requirements are presented in 
-Theorem~\ref{Thm:Line Search}.  Proofs 
+Theorem~\ref{Thm:log like max}.  Proofs 
 are in Appendix~\ref{Section:Proofs}. 
 
 
@@ -15,55 +15,55 @@ be calculated exactly.
 In order to be consistent with the general optimization literature \citep
 {Fletcher,NW}, we state our algorithm in this 
 section from the perspective of a minimization problem.  Thus we wish to minimize a 
-real-valued objective function $f$ 
-defined on $\RR^n$.  
+real-valued objective function $-\ell(\eta)$ 
+defined on $\RR^d$.  
 
 
-%%%%%%%%%%% BEGIN THEOREM %%%%%%%%%%%%%%
-\begin{theorem}[Convex function root search] \label{Thm:Line Search}
-Consider any line search of the form 
-\begin{align}
-	x_{k+1} &= x_k + \alpha_k p_k \label{E:x_update}
-\end{align}
-used to minimize the objective function $f$, which satisfies the following 
-assumptions:
-\begin{enumerate}
-	\item The objective function $f$ is bounded below in $\RR^n$. \label{ass:one}
-	\item The objective function $f$ is proper, lower semicontinuous, and strictly 
-convex.
-	\item The objective function $f$ is differentiable in an open set $\NN$ containing 
-the level set $\lev_{\leq f
-(x_0)} f$, which is bounded, where $x_0$ is the starting point of the iteration.
-%\item The \emph{step length} $\alpha_k$ is greater than $0$ unless $\nabla f(x_k) = 0$, 
-% in which case $x_k$ is already the solution and the search is complete.
-\item The \emph{search direction} $p_k$ is a non-zero \emph{descent direction} \label
-{ass:four}
-such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
-direction $-\nabla f(x_k)$ is 
-restricted to be less than 90 degrees by
-\begin{align*}
-\cos \theta_k \geq \delta > 0
-\end{align*}
- for some fixed $\delta > 0$.  
-\end{enumerate}
-
-Then, unless $\nabla f(x_k) = 0$, in which case $x_k$ is already the solution and the 
-search is complete, it is 
-possible to find a step length $\alpha_k$ that satisfies the \emph{curvature 
-condition}
-\begin{align}
-	c \nabla f(x_k)^T p_k &\leq \nabla f( x_k + \alpha_k p_k)^T p_k \leq 0 \label
-{E:Wolfe-mod}
-\end{align}
-for some fixed $0 < c < 1$.
-
-Furthermore, repeated iterations of \eqref{E:x_update} satisfying assumptions~\ref
-{ass:one} through~\ref{ass:four} and \eqref{E:Wolfe-mod} will produce 
-a sequence, $x_1, x_2, \ldots$ such that
-\begin{align*}
-	\lim_{k \to \infty} || \nabla f(x_k) || = 0.
-\end{align*}
-\end{theorem}
+%%%%%%%%%%%% BEGIN THEOREM %%%%%%%%%%%%%%
+%\begin{theorem}[Convex function root search] \label{Thm:Line Search}
+%Consider any line search of the form 
+%\begin{align}
+%	x_{k+1} &= x_k + \alpha_k p_k \label{E:x_update}
+%\end{align}
+%used to minimize the objective function $f$, which satisfies the following 
+%assumptions:
+%\begin{enumerate}
+%	\item The objective function $f$ is bounded below in $\RR^n$. \label{ass:one}
+%	\item The objective function $f$ is proper, lower semicontinuous, and strictly 
+%convex.
+%	\item The objective function $f$ is differentiable in an open set $\NN$ containing 
+%the level set $\lev_{\leq f
+%(x_0)} f$, which is bounded, where $x_0$ is the starting point of the iteration.
+%%\item The \emph{step length} $\alpha_k$ is greater than $0$ unless $\nabla f(x_k) = 0$, 
+%% in which case $x_k$ is already the solution and the search is complete.
+%\item The \emph{search direction} $p_k$ is a non-zero \emph{descent direction} \label
+%{ass:four}
+%such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
+%direction $-\nabla f(x_k)$ is 
+%restricted to be less than 90 degrees by
+%\begin{align*}
+%\cos \theta_k \geq \delta > 0
+%\end{align*}
+% for some fixed $\delta > 0$.  
+%\end{enumerate}
+%
+%Then, unless $\nabla f(x_k) = 0$, in which case $x_k$ is already the solution and the 
+%search is complete, it is 
+%possible to find a step length $\alpha_k$ that satisfies the \emph{curvature 
+%condition}
+%\begin{align}
+%	c \nabla f(x_k)^T p_k &\leq \nabla f( x_k + \alpha_k p_k)^T p_k \leq 0 \label
+%{E:Wolfe-mod}
+%\end{align}
+%for some fixed $0 < c < 1$.
+%
+%Furthermore, repeated iterations of \eqref{E:x_update} satisfying assumptions~\ref
+%{ass:one} through~\ref{ass:four} and \eqref{E:Wolfe-mod} will produce 
+%a sequence, $x_1, x_2, \ldots$ such that
+%\begin{align*}
+%	\lim_{k \to \infty} || \nabla f(x_k) || = 0.
+%\end{align*}
+%\end{theorem}
 
 %\section{Line search for MLE estimation}
 \begin{theorem}[Exponential family log likelihood maximization] \label{Thm:log like 
@@ -103,13 +103,13 @@ that
 
 
 
-We apply Theorem~\ref{Thm:Line Search} to the setting of exponential families to find 
+We apply Theorem~\ref{Thm:log like max} to the setting of exponential families to find 
 the MLE when it exists.  
 
 \begin{theorem}[] \label{Thm:Line Search works}
 For a regular exponential family with minimal representation where the MLE exists, the 
 line search described in 
-Theorem~\ref{Thm:Line Search} can be applied to the negative log likelihood function 
+Theorem~\ref{Thm:log like max} can be applied to the negative log likelihood function 
 $-\ell(\eta)$ so that a search 
 starting at any $\eta_0 \in \Xi$ will converge to the MLE of $\eta$.
 \end{theorem}
@@ -130,7 +130,7 @@ and equations:
 \item $\con()$ is the convex hull of a set of points.
 \item $\bd()$ is the boundary of a set of points.
 \item $\norm{\cdot}$ is the Euclidean norm.
-\item The curvature condition \eqref{E:curvature} used here comes from the search 
+\item The curvature condition \eqref{E:Wolfe-ll} used here comes from the search 
 algorithm of \citet{Okabayashi:longrange} and is necessary for guaranteeing 
 convergence to the MLE when it exists.
 %\item $\bar{Y}_m$ is the sample mean, $\frac{1}{m}\sum_{i=1}^m g(Y_i)$
@@ -154,9 +154,9 @@ convergence to the MLE when it exists.
 
 \While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
 \State \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
-\begin{align}\label{E:curvature}
+\begin{align*}%\label{E:curvature}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k.
-\end{align}
+\end{align*}
 %\State for some $0 < c < 1$. % (Calculating $\nabla \ell(\cdot)$ requires more sampling)
 
 \State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
@@ -217,7 +217,7 @@ direction.
 }
 \chapter{Refinements of algorithm}
 
-In Theorem~\ref{Thm:Line Search}, we restricted our search direction $p_k$ to be a 
+In Theorem~\ref{Thm:log like max}, we restricted our search direction $p_k$ to be a 
 descent direction, so that $\nabla f
 (x_k)^T p_k < 0$ or, alternatively, the angle $\theta_k$ between the search direction 
 $p_k$ and steepest descent 
@@ -225,7 +225,7 @@ direction $-\nabla f(x_k)$ is less than 90 degrees.  However, this still leaves 
 possibilities for the choice of 
 $p_k$ other than steepest descent.  In addition, we have specified restrictions on the 
 step size $\alpha_k$ in the 
-curvature condition \eqref{E:Wolfe-mod} with $0 < c < 1$, but it would be useful to 
+curvature condition \eqref{E:Wolfe-ll} with $0 < c < 1$, but it would be useful to 
 know if certain values of $c$ are 
 better than others.
 
@@ -248,9 +248,9 @@ with an extra intermediate step as follows:
 \end{align*}
 Note that when $\gamma_{k+1}^{PR} = 0$, $p_{k+1}$ will be just $-\nabla f( x_{k+1})$, 
 the direction of steepest 
-descent, and thus serves as a ``reset''.  The curvature condition \eqref{E:Wolfe-mod} 
+descent, and thus serves as a ``reset''.  The curvature condition \eqref{E:Wolfe-ll} 
 guarantees that this method always 
-yields a descent direction for $p_{k+1}$ and thus Theorem~\ref{Thm:Line Search} still 
+yields a descent direction for $p_{k+1}$ and thus Theorem~\ref{Thm:log like max} still 
 holds.  
 
 
@@ -363,8 +363,8 @@ For the inequalities in \eqref{E:curvature mod}, we can estimate asymptotic stan
 errors of $\nabla \ell( \eta_k + 
 \alpha_k p_k)^T p_k$  and $c \nabla \ell(\eta_k)^T p_k - \nabla \ell( \eta_k + 
 \alpha_k p_k)^T p_k$ by appealing to the 
-Markov chain Central limit theorem \citep{Chan:1994,Jones:2004,Roberts:1997,Roberts:
-2004}.
+Markov chain Central limit theorem 
+\citep{Chan:1994,Jones:2004,Roberts:1997,Roberts:2004}.
 The \texttt{initseq} function from the R package \texttt{mcmc} \citep{mcmc:R} can be 
 used to estimate asymptotic 
 standard errors for univariate functionals of reversible Markov chains: given an MCMC 
@@ -414,7 +414,7 @@ approximate with $
 the canonical statistic (the \texttt{initseq} function 
 requires a univariate vector and so cannot be used here).  That is,
 \begin{align*}
-	\hat{\Sigma} = \frac{1}{nbatch}\frac{1}{m-1}\sum_{i=1}^{m} (g(Y_i) - \overline{g
+	\hat{\Sigma} = \frac{1}{\text{nbatch}}\frac{1}{m-1}\sum_{i=1}^{m} (g(Y_i) - \overline{g
 (Y)})( g(Y_i) - 
 \overline{g(Y)})^T.
 \end{align*}

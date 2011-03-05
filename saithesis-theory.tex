@@ -4,11 +4,11 @@ These models are commonly used to model phenomena with dependent structure,
 where the outcomes of the response variable of interest are in fact dependent on one 
 another.  For example, the Ising 
 model \citep{Ising,Potts} is an exponential family model that has been used to model 
-ferromagnetism.  
+ferromagnetism, where neighboring 
+pixels (representing atoms in a crystal lattice) are more likely to have the same 
+color.  
 %A realized 
-%sample from this model is depicted in Figure~\ref{F:pottsimage}, where neighboring 
-%pixels (representing atoms in a crystal lattice) are more likely to have the same 
-%color.  
+%sample from this model is depicted in Figure~\ref{F:pottsimage},   
 %We explore this model further in Section~\ref{S:Examples:Ising}.
 Other examples of phenomena with dependent structure modeled with exponential 
 families include
@@ -16,13 +16,13 @@ plant ecology \citep{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1
  and the lifetime fitness of plants \citep
 {Shaw:2008}.
 
-Although motivated by ERGMs, the algorithm we propose is rooted in fundamental
+Although motivated by ERGMs, the methods we propose are rooted in fundamental
 exponential family theory and applicable to any finite state space 
 exponential family model.  Thus the theory presented in this section is from
-the perspective of general exponential families.
+the perspective of this more general setting.
 
 \section{Exponential Family Theory}
-Much of the basic background for exponential families has already been
+Much of the fundamental background for exponential families has already been
 covered in Section~\ref{S:ERGM setup}; our focus is on regular exponential
 families on a finite sample space $\YY$  with log likelihood \eqref{E:loglike}.
 As noted earlier, when the sample space $\YY$ is even moderately large,
@@ -40,8 +40,7 @@ heavily is that
 \end{align*}
 
 Thus we can express first and second derivatives of the log likelihood \eqref
-{E:loglike} and Fisher information, $I
-(\eta)$, as
+{E:loglike} and Fisher information $I(\eta)$ as
 \begin{align}
 	\nabla \ell( \eta ) &= g(y) - \E_\eta g(Y) \label{E:nabla ell} \\
 	\nabla^2 \ell( \eta ) &=  - \Var_\eta g(Y) \label{E:nabla2 ell} \\
@@ -53,7 +52,7 @@ and thereby avoid evaluation of the problematic cumulant function $c$.
 By the strict convexity of the log likelihood function ensured by \eqref{E:nabla2 
 ell}, the global 
 maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \eta ) = 
-0$, or, by \eqref{E:nabla ell},
+0$, or, using \eqref{E:nabla ell}, by setting ``expected equal to observed,"
 \begin{align}
 	\E_\eta g(Y) = g(\yobs). \label{E:Observed-Expected}
 \end{align}
@@ -76,11 +75,11 @@ the mean value parameterization.  \citeauthor{Handcock:degeneracy} observed that
 value parameters located too close to the boundary of the convex support correspond to 
 degenerate distributions.  
 
-There exists a one-to-one mapping between a natural parameter and its mean value 
+\textbf{[NONONO]}. \hl{ There exists a one-to-one mapping between a natural parameter and its mean value 
 parameter, and one can calculate mean value parameters from natural parameters. In 
 general there is no simply way to get the natural parameter value from the mean value 
 parameter (if there was, then finding MLEs would be very easy and we wouldn't need all 
-these algorithms!).
+these algorithms!).}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -92,17 +91,16 @@ the convex support of the model \citep{Barndorff, Geyer:gdor, Rinaldo:2009}.  We
 describe the relevant theory from convex analysis as it pertains to the case of 
 exponential families.
 
-A \emph{convex polytope} $C$ is the convex hull of a finite set of points $V$,
+A \emph{convex polytope} $C$ is the \emph{convex hull} of a finite set of points $V$,
 \begin{align*}
 	C = \con( V ).
 \end{align*}
-where [\textbf{DEFINE pos().}]
 
   By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
 set can equivalently be represented as the intersection of a finite collection of 
-closed half-spaces.  These two representations of a convex polyhedron are referred to 
+closed half-spaces.  These two representations of a convex polytope are referred to 
 as the \emph{V-representation} and \emph{H-representation}, respectively.  
-%The V-representation of a convex polyhedron $C$ is the set of all linear combinations
+%The V-representation of a convex polytope $C$ is the set of all linear combinations
 %\begin{align*}
 %	\sum_{i \in E \cup I} b_i \alpha_i
 %\end{align*}
@@ -125,11 +123,11 @@ where $A$ is a matrix and $b$ a vector.
 
 The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
 relative to its affine hull.  
-\textbf{[WHAT ELSE? bd()?  int()?  pos()?]}
+\textbf{[WHAT ELSE? bd()? ]}
 
-A nonempty \emph{face} of a convex polyhedron $C$ is a convex subset of $C$ such that 
+A nonempty \emph{face} of a convex polytope $C$ is a convex subset of $C$ such that 
 every line segment in $C$ with a relative interior point in $F$ has both end points in 
-$F$ \citep{Rockafellar:1970}.  It is itself a convex polyhedron.
+$F$ \citep{Rockafellar:1970}.  It is itself a convex polytope.
 A \emph{proper} face is a face that is not the empty set or $C$, and 
 \emph{facets} are proper faces of the highest dimension.
 
@@ -145,7 +143,7 @@ The \emph{normal cone} of a convex set $C$ in $\RR^d$ at a point $x \in C$ is
 \}.
 \end{align*}
 
-Tangent and normal cones are polars of each other, that is, each determines the other.  
+Tangent and normal cones are \emph{polars} of each other, that is, each determines the other.  
 The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 \begin{align*}
 	N_C(x) 	&= \{ w \in \RR^d: \inner{ w, v } \leq 0 \text{ for all } v \in T_C(x) \}.
@@ -173,7 +171,7 @@ $g(\yobs) \in \rint(C)$.
 \end{theorem}
 
 From this one can conclude whether or not the MLE exists in the conventional sense
-if $C$ is known using linear programming.
+\emph{if $C$ is known} using linear programming.
 
 \subsection{Approach of \citet{Geyer:gdor}}
 \citet{Geyer:1990,Geyer:gdor} present theory that relates MLE existence to
@@ -186,7 +184,7 @@ We first revisit an older result for which we have developed a simpler proof:
 e^{c(\eta + s \delta) - bs} &\to 
 		\begin{cases} 
 			0 									& b > \sigma_c(\delta) \\
-			e^{c(\eta)} P_\eta(g(Y) \in H_\delta ) 	& b = \sigma_c(\delta) \\
+			e^{c(\eta)} P_\eta(g(Y) \in H ) 		& b = \sigma_c(\delta) \\
 			+\infty								& b < \sigma_c(\delta)
 		\end{cases}
 & \text{as } s \to +\infty.
@@ -194,10 +192,10 @@ e^{c(\eta + s \delta) - bs} &\to
 where $\delta$ is a non-zero direction, $C$ the convex support, and
 \begin{align*}
 	\sigma_C (\delta) &= \sup_{g(y) \in C} \inner{ g(y), \delta} \\
-	H_\delta &= \set{w: \inner{w, \delta} = \sigma_C(\delta) }.
+	H &= \set{w: \inner{w, \delta} = \sigma_C(\delta) }.
 \end{align*}
 \end{theorem}
-Here, $H_\delta$ is the supporting hyperplane to the set $C$ with normal vector $\delta$.
+Here, $H$ is the supporting hyperplane to the set $C$ with normal vector $\delta$.
 
 \begin{proof}
 \textbf{Case: $b = \sigma_C(\delta)$.}
@@ -244,13 +242,13 @@ succinctly as
 \begin{align*}
 	\lim_{s\to \infty} e^{  s [ \inner{g(Y),\delta} - b ] + c(\eta) } 
 		&= I(\inner{g(Y), \delta} = b ) e^{c(\eta)} 
-		= I( g(Y) \in H_\delta ) e^{c(\eta)}.
+		= I( g(Y) \in H ) e^{c(\eta)}.
 \end{align*}
 Then returning to the original expression of interest,
 \begin{align*}
 	\lim_{s\to \infty} e^{c(\eta + s\delta) - bs} 
 	= \lim_{s\to \infty} \E_\eta e^{  s [ \inner{g(Y),\delta} - b ] + c(\eta) } 
-	&= e^{c(\eta)} P( g(Y) \in H_\delta ).
+	&= e^{c(\eta)} P( g(Y) \in H ).
 \end{align*}
 
 \textbf{Case: $b > \sigma_C(\delta)$}.
@@ -260,7 +258,7 @@ Then returning to the original expression of interest,
 (\delta)s - bs }  \\
 	&= \left( \lim_{s\to \infty} e^{ c(\eta + s \delta ) - \sigma_C(\delta)s} 
 \right ) \left(  \lim_{s\to \infty} e^{ s[ \sigma_C(\delta) - b] } \right )\\
-	&= \left (e^{c(\eta) }P(g(Y)\in H_\delta) \right ) \cdot 0 = 0.
+	&= \left (e^{c(\eta) }P(g(Y)\in H) \right ) \cdot 0 = 0.
 \end{align*}
 
 \textbf{Case: $b < \sigma_C(\delta)$}.
@@ -270,7 +268,7 @@ Then returning to the original expression of interest,
 (\delta)s - bs }  \\
 	&= \left( \lim_{s\to \infty} e^{ c(\eta + s \delta ) - \sigma_C(\delta)s} 
 \right ) \left(  \lim_{s\to \infty} e^{ s[ \sigma_C(\delta) - b] } \right )\\
-	&= \left (e^{c(\eta) }P(g(Y)\in H_\delta) \right ) \cdot \left ( + \infty \right ) 
+	&= \left (e^{c(\eta) }P(g(Y)\in H) \right ) \cdot \left ( + \infty \right ) 
 = + \infty.
 \end{align*}
 \end{proof}
@@ -604,9 +602,9 @@ we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 
 We can express the log likelihood of the LCM as a function of the 
 log likelihood of the original family,
-\begin{align*}
+\begin{align} \label{E:LCM ll bound}
  \ell_{LCM}(\eta) = \ell(\eta) - \log P_\eta(g(Y) \in H)
-\end{align*}
+\end{align}
 implying
 \begin{align*}
 	\ell(\eta) < \ell_{LCM}(\eta).	
@@ -692,57 +690,3 @@ The confidence intervals calculated for the natural parameters can of
 course be converted to those for mean value parameters, where the observed
 data, and hence MLE, are known.  
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Programming LCM theory}
-\text{rcdd} \citep{rcdd}
-
-\subsection{Linearity}\label{S:linearity}
-\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
-\begin{align*}
-	L = \{ w \in V: -w \in \con( \pos V) \}.
-\end{align*}
-It is the subspace with bases determined by $V$.
-
-We use this to find the face of the polyhedral convex support on which the observed 
-statistic lies in the interior of.  The function \texttt{linearity} in the \texttt
-{rcdd} package can take as input the rays directed from observed statistic to sample 
-points generated via MCMC from the distribution with parameter value of interest.  
-From these, it determines the rays that form the basis of a vector subspace.  Of 
-course we are not interested in the vector subspace; we need only take the points 
-corresponding to these bases as our empirical face $F$.  By construction, the observed 
-statistic lies in the interior of $F$.
-
-%Let $\widetilde{T}_C(x)$ be the empirical tangent cone at the point $x$ constructed 
-%from a set of points $W$ all in $C$.  That is,
-%\begin{align*}
-%	\widetilde{T}_C(x) = \{ w - x: w \in W\}.
-%\end{align*}
-%Then for $V = \widetilde{T}_C(g(\yobs))$, the linearity corresponds to the set of 
-%points from $W$ (shifted by $g(\yobs)$) that form what we refer to as the empirical 
-%face $F$.  
-%In our algorithm, we use the MCMC sample points for $W$.  \citet{Geyer:gdor} provides 
-%the function \texttt{linearity} in the R package \texttt{rcdd} to do this computation.
-
-%Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
-%linearity will correspond to all the points $W \in C$.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Subsampling}
-%Once our algorithm has determined that the observed data is on the boundary and thus 
-%the MLE does not exist in the conven
-Our algorithm depends on being able to to subsample from the MC sample points when 
-optimizing in the LCM, restricting to the sample points that comprise the support of 
-this model.  The subsampling operation itself is straightforward since we determined 
-empirically the face that forms this support.  
-
-However, it is not obvious that when we draw $g(Y_1), \ldots, g(Y_m)$ from the 
-original model with parameter value $\eta$ that the subsample restricted to the 
-support is in fact a sample from the LCM with parameter value $\eta$.  This is a 
-convenient consequence of Theorem~\ref{Thm:LCM}: by this stage in the algorithm, the 
-majority of sample points (greater than 60\%) are on the face.  Then $s$ in the 
-expression $P_{\eta + s \delta}(g(Y) \in H)$ is a large value.  But since the LCM 
-density is the limit of the density of the original model as $s$ goes to $+\infty$, 
-the distribution of the LCM is accordingly well approximated.  (\textbf{BUT WELL 
-ENOUGH?})
