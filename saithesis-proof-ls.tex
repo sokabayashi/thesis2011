@@ -26,207 +26,9 @@ sets $\lev_{\leq \alpha} f$ are
 bounded for every $\alpha$.  
 \end{proof}
 
-%%%%%%%%%%% PROOF - LINE SEARCH %%%%%%%%%%%%%%
-\begin{proof}[Proof of Theorem~\ref{Thm:Line Search}]
-The objective function $f$ is bounded below, strictly convex, and lower semicontinuous 
-by assumption, and so by Lemma~
-\ref{Lemma:f min}, the global minimum exists.  Then by Lemma~\ref{Lemma:f min}, all 
-level sets of type $\lev_{\leq a} f$, $a \in \RR$ are bounded in $\RR^n$.  Restricting the set to be along a search 
-direction $p_k$ maintains the 
-boundedness of these sets.  By Lemma~\ref{Lemma:f min} again, the minimum in this 
-restriction exists and is unique.     
-
-Then, unless $\nabla f( x_k ) = 0$ in which case $x_k$ is already the solution, for 
-each $k$, we can uniquely define $\alpha_{c_k}$ and $\alpha_{min_k}$ as follows: 
-\begin{align}
-%	\theta_k &= \cos^{-1} \left( \frac{ -\nabla f_k^T p_k }{ ||\nabla f_k|| \, ||
-%p_k||} \right) \label{E:cosine} \\
-	\nabla f( x_k + \alpha_{c_k} p_k)^T p_k &= c \nabla f(x_k)^T p_k \label{E:alphac} \\
-	\nabla f( x_k + \alpha_{min_k} p_k)^T p_k &= 0. \label{E:alphamin} 
-\end{align}
-The point $\alpha_{c_k}$ is uniquely defined because it is the minimizer of 
-$\alpha \mapsto f( x_k + \alpha p_k) - \alpha c \nabla f( x_k )^T p_k$.
-These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
-%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
-\begin{figure}
-\centering
-\scalebox{.4}{\input{Figures/Wolfe-mod.pdf_t}}
-\caption{The acceptable region for $\alpha$ according to the curvature condition 
-\eqref{E:Wolfe-mod} when restricting 
-$f$ to direction $p_k$.}
-\label{F:Wolfe-mod}
-\end{figure}
-
-%These values are illustrated on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.  
-%Equation \eqref{E:alphamin} defines $\alpha_{min_k}$ to be the step size that would make the 
-%gradient at $x_{k+1}$ equal to zero and hence minimizes $f(x_{k+1})$, equation \eqref{E:alphac} 
-%defines \alpha_{c_k} to be the step size that would make the gradient at $x_{k+1}$ equal to 
-
-By the strict convexity of $f$ and Theorem~2.14 in \citet{Rockafellar}, 
-\begin{align}
-	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) +  \bigl[ \nabla f(x_k + \alpha_{c_k} p_k) 
-\bigr]^T \alpha_{c_k} p_k. \notag 
-\\
-	\intertext{Applying \eqref{E:alphac} to the right hand side of the above gives}
-	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k. \label
-{E:b-less-a}
-	\end{align}	
-(See points $a$ and $b$ in Figure \ref{F:Wolfe-mod}).
-
-The subproblem $\alpha \mapsto f(x_k + \alpha p_k)$ is strictly convex and hence 
-monotonically decreasing at $\alpha_k$ 
-such that $\alpha_{c_k} \leq \alpha_k \leq \alpha_{min_k}$ (in Figure \ref{F:Wolfe-
-mod}, see points $b$ and $c$).  That 
-is,
-\begin{align}
-	f( x_k + \alpha_{min}p_k) &\leq f( x_k + \alpha_k p_k) \leq f( x_k + \alpha_{c_k} 
-p_k). \label{E:f-sandwich}
-\end{align}
-	
-Combining the second inequality of \eqref{E:f-sandwich} with \eqref{E:b-less-a}, we 
-have	
-\begin{align}
-	f( x_k + \alpha_k p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k,  \label
-{E:decrease}
-	\intertext{which can be rearranged as}
-	f(x_k)-f( x_k + \alpha_k p_k ) &>  -\alpha_{c_k} c \nabla f(x_k)^T p_k. \label
-{E:f-lb}
-\end{align}
-This last inequality \eqref{E:f-lb} expresses a lower bound for the amount of decrease 
-in our objective function at 
-each step (the right-hand side is positive since $\nabla f(x_k)^T p_k < 0$ by 
-assumption that $p_k$ is a descent 
-direction).  It is this lower bound that we will use to cover the distance to the 
-minimum of the objective function.  
-
-We now turn our attention to \eqref{E:alphac}.  Define $x_{c_k} = x_k + \alpha_{c_k} 
-p_k$.  Then
-\begin{align}
-	\nabla f( x_{c_k} )^T p_k &= c \nabla f(x_k)^T p_k. \notag
-\end{align}
-Subtracting $\nabla f(x_k)^T p_k$ from both sides gives
-\begin{align}
-	\left( \nabla f( {x_{c_k}} ) - \nabla f(x_k) \right )^T p_k &= ( c - 1 ) \nabla f
-(x_k)^T p_k.  \label{E:c-1}
-\end{align}
-
-%\textbf{NEW: SAI 12/05/10}\\
-%Since we are considering a finite state space for $| \nabla^2 \ell(\eta) | \leq K$ for some constant K for all $\eta$ 
-%\textbf{By Theorems 9.2 and 9.7 in \citet{Rockafellar}, since $\nabla^2 f(x)$ is assumed to be finite, 
-%$\nabla f(x)$ is Lipschitz continuous relative to the convex set $\RR^n$.}
-
-By Corollary~25.5.1 in \citet{Rockafellar:1970}, since $f$ is convex and 
-differentiable on the open convex set $\NN$, 
-it is actually continuously differentiable on $\NN$.  It is then Lipschitz 
-continuously differentiable relative to any 
-compact subset of $\NN$. 
-
-Applying this to the compact level set $\lev_{\leq f(x_k)} f$, which is contained in $
-\NN$ by assumption, there exists 
-a constant $L < \infty$ such that
-	\begin{align}
-		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || \quad \text
-{for all $x, \tilde{x} \in \lev_
-{\leq f(x_0)} f$}. \label{E:Lipschitz}
-	\end{align} 
-
-Applying \eqref{E:Lipschitz} to $x_{c_k}$ and $x_k$, we have
-\begin{align}
-|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || x_{c_k} - x_k || \notag
-\intertext{or}
-|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || \alpha_{c_k} p_k ||. \notag	
-\end{align}
-
-Multiplying both sides by $\lVert p_k \rVert$ gives
-\begin{align}
-|| \nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || &\leq \alpha_{c_k} L || p_k ||
-^2 \notag \\
-\intertext{and by Cauchy-Schwarz this implies}
-( \nabla f(x_{c_k}) - \nabla f(x_k) )^T p_k & \leq || \nabla f(x_{c_k}) - \nabla f
-(x_k) || \cdot ||p_k || \label
-{E:from-Lipschitz} \\ 
-	&\leq \alpha_{c_k} L || p_k ||^2. \notag
-\end{align}
-Substituting \eqref{E:c-1} into the left-hand side of this last inequality \eqref
-{E:from-Lipschitz} gives
-\begin{align}
-( c - 1 ) \nabla f(x_k)^T p_k &\leq \alpha_{c_k} L || p_k ||^2 \notag\\
-\intertext{or}
--\alpha_{c_k} &\leq \frac{( 1 - c )}{L} \frac{ \nabla f(x_k)^T p_k}{ || p_k ||^2}. 
-\label{E:-alpha}
-\end{align}
-
-%%%%%%
-%%%%%%
-Write out the first $k+1$ inequalities of \eqref{E:f-lb}:
-\begin{align}
-\begin{split}
-	f( x_1 ) &< f(x_0) + \alpha_{c_0} c \nabla f(x_0)^T p_0 \\
-	f( x_2 ) &< f(x_1) + \alpha_{c_1} c \nabla f(x_1)^T p_1  \\
-	\ldots  \\
-	f( x_{k} ) &< f(x_{k-1}) + \alpha_{c_{k-1}} c \nabla f(x_{k-1})^T p_{k-1}  \\
-	f( x_{k+1} ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k 
-\end{split}
-	\label{E:to telescope}
-\end{align}
-Telescoping the right-hand side of \eqref{E:to telescope},
-\begin{align*}
-	f( x_{k+1} ) &< f(x_0) + c \sum_{j=0}^{k} \alpha_{c_j} \nabla f(x_j)^T p_j. \notag
-\end{align*}
-Noting that $\nabla f(x_j)^T p_j < 0$, we can substitute our upper bound \eqref{E:-
-alpha} for $-\alpha_{c_j}$ in the 
-right-hand side above,
-\begin{align}
-	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
-	\frac{ \nabla f(x_j)^T p_j}{ || p_j ||^2 } \nabla f(x_j)^T p_j \notag \\
-	\intertext{which simplies to}
-	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
-	\frac{ (\nabla f(x_j)^T p_j)^2}{ || p_j ||^2 }. 
-\notag
-\end{align}
-
-Because $f(x)$ is bounded below by assumption, there exists some $M < \infty$ such 
-that $f(x_0) - f(x_{k+1}) < M$ for 
-all $k$. Then rearranging the above yields,
-
-\begin{align*}
-	\frac{c( 1 - c )}{L} \sum_{j=0}^{k}   \frac{ ( \nabla f(x_j)^T p_j )^2}{ || p_j ||^2 } &< M < \infty.
- \end{align*}
-The angle $\theta_j$ between the search direction $p_k$ and steepest descent direction 
-$-\nabla f_k$ can be expressed 
-by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{||\nabla f_j|| \cdot || p_j||}$.  
-Substituting this into the equation 
-above and taking $k \to \infty$,
-\begin{align*}
-	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty.
-\end{align*}
-Since $0 < c < 1$,
-\begin{align}
-	\sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty. \label{E:Z's}
-\end{align}
-
-The convergent series in \eqref{E:Z's} implies that 
-\begin{align*}
-	\cos^2 \theta_k || \nabla f(x_k) ||^2 &\to 0 \text{ as } k \to \infty.
-\end{align*}
-With the additional restriction on the search direction $p_k$ such that $\cos \theta_k \geq \delta > 0$ for some choice 
-of $\delta$, for all choices of $k$, we get the desired convergence result of
-\begin{align*}
-	\lim_{k \to \infty} || \nabla f(x_k) || &= 0.
-\end{align*}
-\end{proof}
-%%%%%%%%%%% END PROOF %%%%%%%%%%%%%%
-The inequality \eqref{E:Z's} has been referred to as \emph{Zoutendijk's condition} 
-\citep{NW}, though we arrive at this 
-result via different assumptions.
 
 
-
-
-
-
-
-
+%%%%%%% WHERE OLD PROOF WAS.  REMOVED 3/5/11.
 
 
 
@@ -241,9 +43,8 @@ function $f(\cdot)$ since this is the convention in the optimization literature 
 exists, and this proof mimics that one.
 
 The negative log likelihood function $-\ell(\cdot)$ is strictly convex by 
-\eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by LEHMAN.
-
-It is bounded below by the negative LCM by Corollary CHARLIE.
+\eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by \hl{LEHMAN} \citep{TPE2}.
+It is bounded below by the negative LCM log likelihood as described by \eqref{E:LCM ll bound}.
 
 The objective function $f$ is bounded below, strictly convex, and lower semicontinuous 
 by assumption, and so by Lemma~
@@ -272,7 +73,7 @@ These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
 \centering
 \scalebox{.4}{\input{Figures/Wolfe-mod.pdf_t}}
 \caption{The acceptable region for $\alpha$ according to the curvature condition 
-\eqref{E:Wolfe-mod} when restricting 
+\eqref{E:Wolfe-ll} when restricting 
 $f$ to direction $p_k$.}
 \label{F:Wolfe-mod}
 \end{figure}
@@ -456,7 +257,7 @@ consider the map defined by
 \begin{align*}
 	h(\eta) = \nabla c(\eta)
 \end{align*}
-where $c$ is the cumulant function \eqref{E:cumulant}, its first derivative matrix is
+where $c(\eta) = \log \kappa(\eta)$ is the cumulant function introduced in Section~\ref{S:ERGM setup}, its first derivative matrix is
 \begin{align}
 	\nabla h(\eta) = \nabla^2 c(\eta) = I(\eta) \label{E:nabla h eta}
 \end{align}
