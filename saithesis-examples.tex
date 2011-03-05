@@ -1,3 +1,14 @@
+We apply our algorithm to several different settings:
+\begin{itemize}
+\item Logistic regression when the MLE exists.  The gradient $\nabla \ell(\beta)$ can be calculated exactly in this setting and thus our algorithm is guaranteed to converge.  We compare the results to those attained by \texttt{glm} function in R, which we treat as the truth.  Also, we compare the performance to stochastic approximation.  We choose a starting value for which Newton-Raphson fails.
+
+\item Ising model, when the MLE exists.  The gradient $\nabla \ell(\beta)$ must be approximated in this setting via MCMC.  Although our algorithm is not guaranteed to converge in theory, it is still effective in practice.  We again compare the performance to stochastic approximation.
+
+\item 9-node undirected ERGM with two-dimensional sufficient statistics.  Here we explore cases where MLE does and does not exist.  Our algorithm finds the MLE when
+exists, and finds the LCM MLE and its support when it does not.  These can then
+be used to constructed one-sided confidence intervals for the natural parameters.
+\end{itemize}
+
 \section{Example: logistic regression}
 We illustrate the application of our algorithm in the case of a logistic regression 
 with a starting point far from the 
@@ -335,9 +346,9 @@ used by our algorithm are initially much smaller than $1/k$.}
 \label{Table:Potts step size}
 \end{table}
 
-\subsection{MLE distribution for Potts models}
+\subsection{Side note: MLE distribution for Ising models}
 
-\citet{Composite} explored a generalization of the pseudo-likelihood approach called 
+\citet{Composite} explored a generalization of the pseudolikelihood approach called 
 \textit{composite likelihood} and applied to Potts models; a side note result of their 
 analysis is that the MLE distribution is in fact skewed and biased.  This can be 
 ascertained directly through the use of MCMCMLE, the advantage of the MCMCMLE 
@@ -416,10 +427,11 @@ So, the mean of the MLEs we calculate is significantly lower than the true value
 Like \citet{Handcock:degeneracy, Rinaldo:2009}, we focus on small networks (9 nodes or 
 fewer) with only two or three network statistics.  This is because the number of 
 different possible graphs can be enormous---even for an undirected 9-node network, 
-there are $2^{{9\choose 2}}$, or about 68 billion different graphs.  Calculating exact 
+there are $2^{{9\choose 2}}$, or about 69 billion different graphs.  Calculating exact 
 probabilities requires summations over all graphs, a computation that is possible 
 still for 9-node network, but becomes prohibitively expensive as the number of nodes 
-increases.  
+increases.  See Appendix~\ref{A:Triangle count} for our involved approach to 
+do exactly this---we enumerating all possible graphs in a 9-node network with up to three network statistics (edges, two-stars, triangles).
 
 The choice of possible network statistics in a network model is broad and evolving; 
 \citet{introp*,recentp*} describe some of the recent work in this area.  Here, for 
@@ -438,11 +450,11 @@ MCMC sampler. \\
 provided in the R package \texttt{ergm} \citep{ergm:R}, we wish to identify here what 
 issues would still be present even with a perfect MC sampler, which can be used in 
 this small network since the likelihood function can be evaluated.  Improving MCMC 
-sampling for ERGMs is an open area of research (SOURCE?); we do not concern ourselves 
+sampling for ERGMs is an open area of research \hl{(SOURCE?)}; we do not concern ourselves 
 with this issue here.
 
 \item In the search for the step length $\alpha_k$ that satisfied the curvature 
-condition \eqref{E:curvature}, we solve for the value that sets $\nabla \ell( \eta_k + 
+condition \eqref{E:Wolfe-ll}, we solve for the value that sets $\nabla \ell( \eta_k + 
 \alpha_k p_k)^T p_k = 0$ using a simple root-finding algorithm.  That is, for a given 
 direction $p_k$, we find the step size that maximizes the log likelihood in that 
 direction.\\
@@ -470,28 +482,28 @@ For an undirected graph with $n$-nodes, there are $n \choose 2$ dyads.  For each
 an edge may be present or absent, so there are $2^{n \choose 2}$ possible graphs to 
 consider.\\
 
-\begin{table}[ht]
-\caption{Combinatorics for undirected graphs}
-\begin{tabular}{ccl}
-\hline 
-Nodes & Possible Edges & Total Graphs \\ [1ex]
-\hline
-5 & ${5 \choose 2} = 10$ & $2^{10} = 1024$ \\ [1ex]
-6 & ${6 \choose 2} = 15$ & $2^{15} = 32,768$ \\ [1ex]
-7 & ${7 \choose 2} = 21$ & $2^{21} = 2,097,152$ \\ [1ex]
-8 & ${8 \choose 2} = 28$ & $2^{28} = 268,435,456$ \\ [1ex]
-9 & ${9 \choose 2} = 36$ & $2^{36} = 68,719,476,736$ \\ [1ex]
-\hline 
-\end{tabular}
-\end{table}
+%\begin{table}[ht]
+%\caption{Combinatorics for undirected graphs}
+%\begin{tabular}{ccl}
+%\hline 
+%Nodes & Possible Edges & Total Graphs \\ [1ex]
+%\hline
+%5 & ${5 \choose 2} = 10$ & $2^{10} = 1024$ \\ [1ex]
+%6 & ${6 \choose 2} = 15$ & $2^{15} = 32,768$ \\ [1ex]
+%7 & ${7 \choose 2} = 21$ & $2^{21} = 2,097,152$ \\ [1ex]
+%8 & ${8 \choose 2} = 28$ & $2^{28} = 268,435,456$ \\ [1ex]
+%9 & ${9 \choose 2} = 36$ & $2^{36} = 68,719,476,736$ \\ [1ex]
+%\hline 
+%\end{tabular}
+%\end{table}
 %%%%%%
 So, while a 5-node graph seems manageable, a 9-node graph is already getting difficult 
 to handle.  For example, \texttt{as.integer(2\textasciicircum31)} returns \texttt{NA}.  
 \textbf{Going forward, we work with the 9-node edge-triangle model}.
 
 
-For the examples we consider, the sum in \eqref{E:cumulant} can in fact be explicitly 
-evaluated.  The sample space of graphs $\YY$ has $2^{36}$, or about 68 billion, sample 
+For the examples we consider, the sum in \eqref{E:kappa} can in fact be explicitly 
+evaluated.  The sample space of graphs $\YY$ has $2^{36}$, or about 69 billion, sample 
 points.  However, we only need to consider the points in the sufficient statistics 
 space, $\TT = g(\YY)$, which in the case of the edge-triangle model used for the 9-
 node network only has 444 points.  That is,
@@ -503,7 +515,7 @@ where $\nu(t)$ is the frequency of the network statistic $t$ across all $y \in \
 computation.  However, this calculation need be done only once per model with the 
 results saved to file.)
 
-Thus we can evaluate the density function \eqref{E:pdf} and calculate exactly 
+Thus we can evaluate the density function \eqref{E:ERGM} and calculate exactly 
 probabilities.  In particular, we can calculate exact values for the gradient \eqref
 {E:nabla ell},
 \begin{align*}
@@ -544,8 +556,7 @@ in Figure \ref{F:g9-hull}.
 The MLE for an exponential family model will exist if and only if the observed 
 statistic lies in the interior of the convex support $C$, which is the sail-shaped 
 polytope in Figure \ref{F:g9-hull}.  For all discrete exponential family models 
-including this one, the convex support is polyhedral.  Here, $C$ has six sides and six 
-vertices.
+including this one, the convex support is polyhedral.  Here, $C$ has six sides (and six vertices).
 
 \subsubsection{Case: MLE exists}
 If the observed data has 29 edges and 47 triangles (or network statistic $(29,47)$), 
@@ -650,7 +661,7 @@ That is, there must exist a constancy space of this new model, $\Gammalim$, such
 \end{align}
 for any $\gamma \in \Gammalim$.
 
-The empirical face $F$ and the observed statistic also define a normal direction, 
+The empirical face $F$ and the observed statistic also define a normal cone, which in this case is a single direction, 
 \begin{align*}
 	\delta = (6,-1),
 \end{align*}
@@ -691,7 +702,7 @@ second component of $\delta$ is negative.
 
 \textbf{Mean value parameters? Are they any more interpretable here?  nice pictures}
 
-%Because our sample space for graphs is still manageable at 68 billion points, we can 
+%Because our sample space for graphs is still manageable at 69 billion points, we can 
 %in fact use numerical optimization methods like trust (CITE?) on the original log 
 %likelihood, passing in first and second derivative functions.  Depending on the 
 %settings for tolerance, we can get a trust routine to return to what it thinks is an 
@@ -740,7 +751,7 @@ point to have extremely small entropy, corresponding to a model that puts most o
 probability on very few points.
 
 The log likelihood for this model is extremely flat, causing some disagreement among 
-optimization routines for MLE estimates, though log likelihood values are nearly 
+numerical optimization routines for MLE estimates, though log likelihood values are nearly 
 identical.  Using a trust optimization routine we calculate that 
 \begin{align*}
 %$(24.44, ?6.65)$ from optim.
@@ -917,8 +928,8 @@ Only issue outstanding with this is how long it takes to find the LCM MLE.  Havi
 surprisingly hard time with this.  Question: is it doing any worse than when we 
 started with a 2-dim sample space?
 
-\section{Example: \textit{e. coli}}
-\section{Example: Faux Magnolia High School}
+\section{Example: \textit{e. coli}?}
+\section{Example: Faux Magnolia High School?}
 \citet{advancesp*,statnet-tutorial} utilize a adolescent friendship network data set 
 of 1,461 students in grade 7--12 derived from the National Longitudinal Study of 
 Adolescent Health.  The data set, which \citeauthor{statnet-tutorial} refer to as Faux 
