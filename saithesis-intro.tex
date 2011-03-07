@@ -353,7 +353,9 @@ different possible networks in $\YY$.  Table~\ref{T:number graphs} shows how rap
 \emph{unless dealing with networks of 9 actors or less, the likelihood function 
 should not be directly evaluated.}  Software packages like R cannot even cast 
 $2^{31}$ as an integer,
-necessitating alternative approaches.
+necessitating alternative approaches.  See Appendix~\ref{A:Triangle count}
+for our computational approach for counting simple statistics in the 9 actor network
+relying on numerous tricks in data representation and counting.
 
 \begin{table}[h] \label{T:number graphs}
 \caption{Sample space size for networks with different number of actors.}
@@ -600,7 +602,7 @@ platform now overwhelmingly use MLE methods.
 
 \subsection{Newton-Raphson}
 \begin{align}
-	\eta_{t+1} = \eta_t - \left[ \nabla^2 \ell(\eta_t) \right ]^{-1} \nabla \ell(\eta_t) 	
+	\eta_{k+1} = \eta_k - \left[ \nabla^2 \ell(\eta_k) \right ]^{-1} \nabla \ell(\eta_k) 	
 \end{align}
 Convergence rate
 
@@ -945,7 +947,7 @@ model and thus avoid the degenerate behavior of type 2 and 3.
 
 \section{Research overview} 
 In this paper, we propose a simple and practical line search algorithm which
-accomplishes the following:
+accomplishes the following objectives:
 \begin{enumerate}
 \item The algorithm converges to the MLE of any regular exponential family 
 when the MLE exists.  It does so while
@@ -960,7 +962,8 @@ confidence intervals in the manner of \citep{Geyer:gdor}.
 
 In short, our proposed algorithm addresses many of the drawbacks of the algorithms
 described in Section~\ref{S:ERGM examples} as well as providing a general framework
-to dealing with non-existent MLEs.  Our algorithm avoids evaluation of the likelihood function and uses first derivative information only.  
+for dealing with non-existent MLEs.  Our algorithm avoids evaluation of the 
+likelihood function and uses first derivative information only.  
 We prove convergence in the case where the first derivative of the log likelihood
 can be calculated exactly.
 When it cannot, it has a particularly convenient form that is 
@@ -989,12 +992,12 @@ after significant progress is made and the Fisher information matrix becomes use
 In the case of non-existent MLEs, our algorithm returns the information necessary
 to construct one-sided confidence intervals for the MLEs, which are actually off 
 ``at infinity".  Our algorithm requires no modification; in fact,
-whether or not the MLE exists cannot be known \emph{a priori} 
-of the MLE search if the convex support is not known, which is typically the case
+whether or not the MLE exists for a model and observed data cannot be known \emph{a priori} 
+of the MLE search if the convex support is not known, which is usually the case
 for ERGMs.
-In \citet{Handcock:degeneracy,Rinaldo:2009}, the authors work with full knowledge of 
-the convex support of their examples (as depicted in Figure~\ref{F:g9-hull}), something only attainable if one is able to
-evaluate the likelihood.  While the authors dissect particular examples 
+In \citet{Handcock:degeneracy,Rinaldo:2009}, the authors 
+go through considerable effort to attain full knowledge of 
+the convex support of their example models (as depicted in Figure~\ref{F:g9-hull}).  While the authors dissect particular examples 
 to explain the problematic behavior, they recommend no general methodology 
 or tools to detect nor cope with non-exist MLEs.  Although we visit the same
 examples, we do so using a general methodology that assumes no knowledge of the 

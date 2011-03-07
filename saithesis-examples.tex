@@ -1,10 +1,17 @@
 We apply our algorithm to several different settings:
 \begin{itemize}
-\item Logistic regression when the MLE exists.  The gradient $\nabla \ell(\beta)$ can be calculated exactly in this setting and thus our algorithm is guaranteed to converge.  We compare the results to those attained by \texttt{glm} function in R, which we treat as the truth.  Also, we compare the performance to stochastic approximation.  We choose a starting value for which Newton-Raphson fails.
+\item Logistic regression where the MLE exists.  The gradient $\nabla \ell(\beta)$ can be calculated exactly in this setting and thus our algorithm is guaranteed to converge.  We compare the results to those attained by the \texttt{glm} function in R and compare the performance to stochastic approximation.  We choose a starting value for which Newton-Raphson fails.
 
-\item Ising model, when the MLE exists.  The gradient $\nabla \ell(\beta)$ must be approximated in this setting via MCMC.  Although our algorithm is not guaranteed to converge in theory, it is still effective in practice.  We again compare the performance to stochastic approximation.
+\item Ising model where the MLE exists.  The gradient $\nabla \ell(\eta)$ must be approximated in this setting via MCMC.  Although our algorithm is not guaranteed to converge in theory, it is still effective in practice.  We again compare the performance to stochastic approximation.
 
-\item 9-node undirected ERGM with two-dimensional sufficient statistics.  Here we explore cases where MLE does and does not exist.  Our algorithm finds the MLE when
+\item Sampson's monastery data.  We revisit the exam from Section~\ref{S:MCMC-MLE} which
+discussed how MCMC-MLE will struggle to converge when the starting value is far
+from the true MLE.  The model used here is the simple Erd\H{o}s-R\'{e}nyi-Gilbert model 
+described in Section~\ref{S:Erdos} with network statistic $g(y)$ equal to the total number of edges present.
+
+\item ERGM with two-dimensional sufficient statistics on a 9-node undirected network.  
+Here we explore cases where the MLE does and does not exist.  
+Our algorithm finds the MLE when
 exists, and finds the LCM MLE and its support when it does not.  These can then
 be used to constructed one-sided confidence intervals for the natural parameters.
 \end{itemize}
@@ -233,22 +240,22 @@ interest because it corresponds
 to the phase transition point \citep{Potts} and has been shown to be difficult to 
 estimate \citep{Geyer:1990}.  In 
 order to get a good estimate of the MLE to which we can compare our algorithm's 
-results, we use Newton-Raphson starting 
-at the true value of $\eta$ so that it will converge.
+results, we use 10 iterations of Newton-Raphson starting 
+from the true value of $\eta$ so that we can be confident it will converge.
 
 %%%% 1/25/11 - added Newton
-The Newton-Raphson update for optimization is
-\begin{align*}
-	\eta_{k+1} = \eta_k + \left [  \nabla^2 \ell (\eta_k) \right ]^{-1} \nabla 
-\ell (\eta_k).
-\end{align*}
-
-When $\eta_k$ is sufficiently close to the MLE, it has been shown to converge 
-quadratically (super-quadratically?)  Citation?.  
-Our benchmark MLE is computed using the Newton-Raphson for 10 iterations, starting at 
-the true value of $
-\eta$.  By iterating 10 times, we 
-know that the error of the attained estimated for the MLE will be \textbf{SMALL}.
+%The Newton-Raphson update for optimization is
+%\begin{align*}
+%	\eta_{k+1} = \eta_k + \left [  \nabla^2 \ell (\eta_k) \right ]^{-1} \nabla 
+%\ell (\eta_k).
+%\end{align*}
+%
+%\hl{When $\eta_k$ is sufficiently close to the MLE, it has been shown to converge 
+%quadratically (super-quadratically?)  Citation?.  
+%Our benchmark MLE is computed using the Newton-Raphson for 10 iterations, starting at 
+%the true value of $
+%\eta$.  By iterating 10 times, we 
+%know that the error of the attained estimated for the MLE will be \textbf{SMALL}.}
 
 %%%%%%%%
 
@@ -346,234 +353,239 @@ used by our algorithm are initially much smaller than $1/k$.}
 \label{Table:Potts step size}
 \end{table}
 
-\subsection{Side note: MLE distribution for Ising models}
+%\subsection{Side note: MLE distribution for Ising models}
+An interesting side note about the MLE distribution for Ising models
+and their generalization to 
+more than two colors called Potts models is that for these moderate size lattices (including
+$32 \times 32$ or even $100 \times 100$), the distribution appears to be skewed and 
+biased \citep{Composite}.  In the sample run above, the MLE happens to be very close 
+to the true parameter value.  However, by calculating MLEs for 1000 different $32 \times 32$
+observed lattices, we find the empirical average for the $\eta[2]$ component to be $0.856$ with a
+standard error of 0.036.  The histogram for $\eta[2]$ component of the MLE 
+based off of 1,000 simulations is shown in Figure~\ref{F:ising-hist}. 
 
-\citet{Composite} explored a generalization of the pseudolikelihood approach called 
-\textit{composite likelihood} and applied to Potts models; a side note result of their 
-analysis is that the MLE distribution is in fact skewed and biased.  This can be 
-ascertained directly through the use of MCMCMLE, the advantage of the MCMCMLE 
-algorithm here is that we can in fact re-use the same 
-MCMC samples.  
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4.5in,keepaspectratio]{ising-hist}
+\end{center}
+\caption{Histogram of the $\eta[2]$ component for 1000 MLEs for 
+an Ising model on a $32 \times 32$ lattice with $\eta = \left(0, \log(1 + \sqrt{2}) 
+\right)^T$.  The vertical line is at $\log(1 + \sqrt{2}) = 0.881$. }
+\label{F:ising-hist}
+\end{figure}
 
-If we want to use 100 different observed data sets to estimate our MLE 
-distribution (that is, we will approximate MLEs for each of the 100 data sets), and 
-we will first need to generate 100 different observed samples.  Then, for each sample 
-we will want to MCMC sampling to maximize the log-likelihood ratio, $r( \theta, 
-\theta_0)$.  The beauty here is that in fact we can generate MCMC samples only once 
-(for a reasonable large size, say 100,000) and then use these to approximate the log-
-likelihood ratio.
+%If we want to use 100 different observed data sets to estimate our MLE 
+%distribution (that is, we will approximate MLEs for each of the 100 data sets), and 
+%we will first need to generate 100 different observed samples.  Then, for each sample 
+%we will want to MCMC sampling to maximize the log-likelihood ratio, $r( \theta, 
+%\theta_0)$.  The beauty here is that in fact we can generate MCMC samples only once 
+%(for a reasonable large size, say 100,000) and then use these to approximate the log-
+%likelihood ratio.
+%
+%
+%\begin{align*}
+%%\theta_{MLE} = (0.004626115, 0.003245121, -0.001108131, 1.06203 )^T
+%%\theta_{MLE} = (0.00463, 0.00325, -0.00111, 1.062 )^T
+%\end{align*}
+%with a standard deviation of 0.028 for $\theta_*$ (the sample standard deviation of 
+%the 455 $\theta$ values we calculated).
+%
+%So, the mean of the MLEs we calculate is significantly lower than the true value of 
+%1.098.
 
-We applied the Newton algorithm and MCMCMLE (well, Charlie did) to a $32 \times 32$ 
-4-color Potts model.  To our surprise, the MLE distribution appeared to be skewed and 
-biased:
+\section{Example: Sampson's monastery data}
+As discussed in Section~\ref{S:MCMC-MLE}, the MCMC-MLE may struggle to converge when the 
+starting value is far from the true MLE.  This was illustrated on Sampson's monastery data set with the Erd\H{o}s-R\'{e}nyi-Gilbert model with network statistic $g(y)$ equal to 
+the total number of edges present.
+The observed network, depicted in Figure \ref{F:Sampson}, is directed with 18 actors and 
+88 ties present out of $18 \cdot 17=306$ possible ties.  The true MLE is equal to 
 \begin{align*}
-%\theta_{MLE} = (0.004626115, 0.003245121, -0.001108131, 1.06203 )^T
-\theta_{MLE} = (0.00463, 0.00325, -0.00111, 1.062 )^T
+	\etaMLE = \logit\left( \frac{g(\yobs)}{n(n-1)}\right) = \logit \left( \frac{88}{306}\right ) = -0.9072.
 \end{align*}
-with a standard deviation of 0.028 for $\theta_*$ (the sample standard deviation of 
-the 455 $\theta$ values we calculated).
+With $\eta^0 = 1$, the MCMC-MLE approximated log likelihood ratio (using 100,000 samples) 
+cannot be maximized, as shown in Figure~\ref{F:MCMC-MLE}.
+We start from this same initial value, using the \texttt{simulate.formula} function
+from the \texttt{ergm} package in R to generate 200 MCMC samples, $g(Y_1), \ldots, g(Y_
+{200})$, with each sample spaced 1000 apart from one another.
 
-So, the mean of the MLEs we calculate is significantly lower than the true value of 
-1.098.
+It took our algorithm 24 iterations over 4 different search directions to get $\lVert 
+\nabla \ell( \eta_k ) \rVert < 0.05$ and arrive at an estimate for the MLE of  $-0.9145$.  The intermediate steps are presented in Table~\ref{T:Sampson redo}.  That the final estimate of $-0.9145$ is not closer to the true MLE of $-0.9072$ than the previous estimate of $-0.9042$ is due to MC error.  The runtime was 4 minutes on a 2GHz computer.
 
-
-%\section{Example: Social Network}
-%Use the new \texttt{simulate.formula()} from \texttt{statnet}.
-%In this example, we apply our algorithm to a simple social network model for which 
-%MCMC-MLE has been shown 
-%Social networks are typically modeled as a random network represented by a matrix $X
-%$, an $n \times n$ matrix where $n
-%$ is the number of actors.
-%Each entry $X_{ij}$ in the random matrix $X$ is a random variable representing a 
-%relation from actor $i$ to actor $j$, 
-%such that:
-%\[
-%	X_{ij} = 
-%	\begin{cases}
-%		1 & \text{if a relationship exists \textit{from} actor $i$ \textit{to} actor 
-%$j$ (notation: $i \to j$)}\\
-%		0 & \text{otherwise}
-%	\end{cases}
-%	\
-%\]
-%where $i$ and $j$ take values in $1, \ldots, n$, $i \neq j$, for a network with $n$ actors.  
-%Note that $X_{ij}$ take only values of $0$ or $1$, reflecting our restriction on networks to those 
-%with dichotomous relations, that is, the relation between a pair of actors is either present or absent.  
-%In addition, we do not allow the possibility of $i \to i$ and always denote $X_{ii} = 0$.  
-%In the special case that $X_{ij} = X_{ji}$ and thus the matrix $X$ is symmetric, the network is referred to as a 
-%\textit{undirected} network or graph.  A network is \textit{directed} if it is not undirected.  
-%   1: -0.666     NA 16.520  0.241  0.126   0.012 2288.79100 3770.25800     8.0
-%   2: -0.888     NA  1.270  0.019  0.079   0.013   12.88560   54.58208     2.0
-%   3: -0.904     NA  1.480  0.003  0.160   0.013    0.06350    0.32258    10.0
-%> 
-%> # summary
-%> cat( "Precision:",cutoff.len, "\n")
-%Precision: 0.01 
-%> theta.frame <- data.frame( theta.MLE, theta.current )
-%> theta.frame
-%       theta.MLE theta.current
-%edges -0.9071582    -0.9040951
-%> cat( "Total iterations:",i.total, "\n")
-%Total iterations: 24 
-%> cat( "Outer iterations:",i, "\n")
-%Outer iterations: 4 
-%> cat( "Inner iterations:",i.total - i, "\n")
-%Inner iterations: 20 
-
-
+\begin{table} \label{T:Sampson redo}
+\caption{
+Long range algorithm applied to Sampson's 
+mastery data.  The starting point of $\eta^0 = 1$ can be thought of as ``far" from the
+true MLE of $-0.9072$.  The inner loop count is the number of iterations spent searching for an $\alpha_k$ that meets the curvature condition.  
+}
+\begin{center}
+\begin{tabular}{rrrrrrlrr}
+  \hline
+    &  &  &  & \multicolumn{1}{c}{inner}\\
+  \multicolumn{1}{c}{$k$} & 
+  \multicolumn{1}{c}{$\eta_k$} &
+  \multicolumn{1}{c}{$\lVert \nabla \ell(\eta_k) \rVert$} &
+  \multicolumn{1}{c}{$\alpha_k$} &
+  \multicolumn{1}{c}{loop }\\
+    &  &  &  & \multicolumn{1}{c}{count}\\
+  \hline
+   0 &  $1.0000$ & 136.940 &  0.012 & 9 \\
+   1 & $-0.6595$ & 16.600  &  0.014 & 3 \\
+   2 & $-0.8846$ & 2.265   &  0.009 & 11 \\
+   3 & $-0.9045$ & 1.140   &  0.009 & 1 \\
+   4 & $-0.9145$ & 0.010   &  & \\
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
 
 
 \section{Example: 9-node network}
+We now dive into the more difficult cases for ERGMs where the MLE may not exist.
 Like \citet{Handcock:degeneracy, Rinaldo:2009}, we focus on small networks (9 nodes or 
-fewer) with only two or three network statistics.  This is because the number of 
-different possible graphs can be enormous---even for an undirected 9-node network, 
-there are $2^{{9\choose 2}}$, or about 69 billion different graphs.  Calculating exact 
-probabilities requires summations over all graphs, a computation that is possible 
-still for 9-node network, but becomes prohibitively expensive as the number of nodes 
-increases.  See Appendix~\ref{A:Triangle count} for our involved approach to 
-do exactly this---we enumerating all possible graphs in a 9-node network with up to three network statistics (edges, two-stars, triangles).
+fewer) with only two or three network statistics.  
+Because we need to compare our algorithm to the truth---whether or not the MLE exists, 
+and what its value
+is if it does---we work with networks for which it is feasible to evaluate the likelihood
+function.  For an undirected 9-node network this requires a summation over  $2^{{9\choose 2}}$, or about 69 billion different graphs.  Determining the existence of the MLE
+requires knowledge of the convex support of the sufficient statistics.  See Appendix~\ref{A:Triangle count} for our approach to enumerate all possible graphs in a 9-node network with counts of three network statistics: edges, two-stars, and triangles.
 
-The choice of possible network statistics in a network model is broad and evolving; 
-\citet{introp*,recentp*} describe some of the recent work in this area.  Here, for 
-comparison purposes to \citet{Rinaldo:2009}, we focus first on a model with the number 
+%We also use a model with 
+%a three-dimensional statistic comprising edges, triangles, and two-stars to get a 
+%greater variety of empirical faces and normal cones.
+
+For comparison purposes with \citet{Rinaldo:2009}, we focus first on a model with the number 
 of edges and triangles as the natural statistics.  A two-dimensional statistic 
-naturally lends itself to more easily interpretable figures.  We also use a model with 
-a three-dimensional statistic comprising edges, triangles, and two-stars to get a 
-greater variety of empirical faces and normal cones.
-
-We do take liberty with two short cuts in our examples to make our analysis cleaner:
-\begin{enumerate}
-\item We use a perfect Monte Carlo sampler to generate our draws \\
-$g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\eta$, rather than a 
-MCMC sampler. \\
- Although we have replicated the results of the algorithm using the MCMC sampler 
-provided in the R package \texttt{ergm} \citep{ergm:R}, we wish to identify here what 
-issues would still be present even with a perfect MC sampler, which can be used in 
-this small network since the likelihood function can be evaluated.  Improving MCMC 
-sampling for ERGMs is an open area of research \hl{(SOURCE?)}; we do not concern ourselves 
-with this issue here.
-
-\item In the search for the step length $\alpha_k$ that satisfied the curvature 
-condition \eqref{E:Wolfe-ll}, we solve for the value that sets $\nabla \ell( \eta_k + 
-\alpha_k p_k)^T p_k = 0$ using a simple root-finding algorithm.  That is, for a given 
-direction $p_k$, we find the step size that maximizes the log likelihood in that 
-direction.\\
-Ordinarily, a more cumbersome numerical approach is necessary.  
-However, here again we use our ability to evaluate the likelihood and thus calculate $
-\nabla \ell(\cdot)$ exactly rather than approximate it.  We do not, however, use this 
-in other steps of the algorithm that require $\nabla \ell(\cdot)$, such as choosing 
-search directions \eqref{E:nabla ell approx}.  
-
-\end{enumerate}
-We believe that neither of these undermine the validity of the overall algorithm, 
-though they undoubtedly simplify and speed up the process for our examples.
-
-We now return to the examples from Section~\ref{S:Example}.  We describe the relevant 
-R functions, which unless otherwise noted are in the \texttt{rcdd} package \citep{rcdd:R}.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exact calculation of normalizing constant}
-
-%%%%% 1/26/11
-\subsection{Some Basics}
-Why these choices of graphs?  9 nodes is not many at all!
-
-For an undirected graph with $n$-nodes, there are $n \choose 2$ dyads.  For each dyad, 
-an edge may be present or absent, so there are $2^{n \choose 2}$ possible graphs to 
-consider.\\
-
-%\begin{table}[ht]
-%\caption{Combinatorics for undirected graphs}
-%\begin{tabular}{ccl}
-%\hline 
-%Nodes & Possible Edges & Total Graphs \\ [1ex]
-%\hline
-%5 & ${5 \choose 2} = 10$ & $2^{10} = 1024$ \\ [1ex]
-%6 & ${6 \choose 2} = 15$ & $2^{15} = 32,768$ \\ [1ex]
-%7 & ${7 \choose 2} = 21$ & $2^{21} = 2,097,152$ \\ [1ex]
-%8 & ${8 \choose 2} = 28$ & $2^{28} = 268,435,456$ \\ [1ex]
-%9 & ${9 \choose 2} = 36$ & $2^{36} = 68,719,476,736$ \\ [1ex]
-%\hline 
-%\end{tabular}
-%\end{table}
-%%%%%%
-So, while a 5-node graph seems manageable, a 9-node graph is already getting difficult 
-to handle.  For example, \texttt{as.integer(2\textasciicircum31)} returns \texttt{NA}.  
-\textbf{Going forward, we work with the 9-node edge-triangle model}.
-
-
-For the examples we consider, the sum in \eqref{E:kappa} can in fact be explicitly 
-evaluated.  The sample space of graphs $\YY$ has $2^{36}$, or about 69 billion, sample 
-points.  However, we only need to consider the points in the sufficient statistics 
-space, $\TT = g(\YY)$, which in the case of the edge-triangle model used for the 9-
-node network only has 444 points.  That is,
+naturally also lends itself to more easily interpretable figures.  The relevant convex support for this model is displayed in Figure~\ref{F:g9-hull}.  Although there are nearly 69 billion
+possible graphs, there are only 444 possible combinations of edges and triangles.
+Let the space of these sufficient statistics be denoted $\TT = g(\YY)$.
+The summation in the normalizing constant \eqref{E:kappa} over all graphs in $\YY$ can in fact be simplified
+ to a weighted sum over the 444 points in $\TT$ as follows:
 \begin{align*}
-	e^{c(\eta)} = \sum_{y \in \YY} e^{\inner{g(y),\eta} } = 	\sum_{t \in \TT} e^{\inner{t,\eta} } \nu(t)
+	\kappa(\eta) = \sum_{y \in \YY} e^{\inner{g(y),\eta} } = 	\sum_{t \in \TT} e^{\inner{t,\eta} } \nu(t)
 \end{align*}
 where $\nu(t)$ is the frequency of the network statistic $t$ across all $y \in \YY$.  
-(This does require $\nu(t)$ to be calculated for all $t \in \TT$, a somewhat expensive 
-computation.  However, this calculation need be done only once per model with the 
-results saved to file.)
+This does require knowing $\nu(t)$ for all $t \in \TT$, something we calculate
+and save to file in our enumeration of all possible graphs.
 
-Thus we can evaluate the density function \eqref{E:ERGM} and calculate exactly 
-probabilities.  In particular, we can calculate exact values for the gradient \eqref
-{E:nabla ell},
+In fact, we will find it easier to work directly with the distribution of the sufficient
+statistic $T=g(Y)$:
 \begin{align*}
-	\nabla \ell (\eta) &= g(\yobs) - \E_\eta g(Y) \\
-					  &= g(\yobs) - \sum_{t \in \TT} t P_\eta(T = t) \nu(t).
+	P_\eta(T=t) 	&= \sum_{y \in \YY: g(y) = t} P_\eta(Y= y ) \\
+		 		&= \sum_{y \in \YY: g(y) = t} \frac{1}{\kappa(\eta)} e^{\inner{g(y),\eta} } \\
+				&= \sum_{y \in \YY: g(y) = t} \frac{1}{\kappa(\eta)} e^{\inner{t,\eta} } \\
+				&= \frac{1}{\kappa(\eta)} e^{\inner{t,\eta} } \nu(t).
+%	P_\eta(T=t) = \frac{1}{\kappa(\eta)} e^{\inner{\eta, t}} \quad t \in \TT
 \end{align*}
-WHAT IS $T$?
+%The log likelihood $\ell(\eta)$ can then be expressed
+%\begin{align*}
+%	\ell( \eta) &= \inner{g(\yobs), \eta} - \log \kappa( \eta ) \\
+%				&=  \inner{g(\yobs), \eta} - \log \sum_{y \in \YY}e^{\inner{t(y),
+%\theta}}.
+%\end{align*}
+
+We can then calculate exact values for the gradient of the log likelihood $\nabla \ell(\eta)$ by \eqref{E:nabla ell},
+\begin{align*}
+	\nabla \ell (\eta) &= g(\yobs) - \E_\eta g(Y)\\ 
+					  &= g(\yobs) - \E_\eta T \\
+					  &= g(\yobs) - \sum_{t \in \TT} t P_\eta(T = t) \\
+					  &= g(\yobs) - \frac{1}{\kappa(\eta)}  \sum_{t \in \TT} t e^{\inner{t,\eta} } \nu(t).
+\end{align*}
+
+To address concerns for overflow possibilities where $e^x$ can become too large, we 
+can subtract $a = \max_t \inner{t, \eta}$ from each term in the summations, so that
+\begin{align*}
+	\nabla \ell (\eta) &= g(\yobs) - \frac{1}{\sum_{t \in \TT} e^{\inner{t,\eta}-a} \nu(t)}  \sum_{t \in \TT} t e^{\inner{t,\eta}-a} \nu(t).
+\end{align*}
+The second derivative of the log likelihood $\nabla ^2 \ell(\eta)$ can also be 
+expressed in term of the sufficient statistic.  By \eqref{E:nabla2 ell},
+\begin{align*}
+	\nabla ^2 \ell(\eta) &= - I(\eta) = -\Var_\eta g(Y) \\
+	&= -\Var_\eta T \\ 
+	&= - \E (T - \E_\eta T)( T - \E_\eta T)^T \\
+				&= - \sum_{t \in \TT} (t - \E_\eta T)(t - \E_\eta T)^T P(T=t)\\
+				&= - \frac{1}{\kappa(\eta)} \sum_{t\in \TT}
+					(t - \E_\eta T)(t - \E_\eta T)^T e^{\inner{t,\theta}} \nu(t).
+\end{align*}
+The same adjustment for overflow as used for $\nabla \ell(\eta)$ can be applied here.
+
+Being able to evaluate $\nabla \ell(\eta)$, and 
+$\nabla^2 \ell(\eta)$ is useful when searching directly from MLEs;
+optimization routines such as \texttt{trust} \citep{trust:R} in R will use these
+as inputs.  
+
+For the 9-node undirected network model with edge and triangle sufficient statistics,
+we are now equipped with the knowledge of the convex support and a log likelihood we 
+can evaluate and numerically maximize.  The linear programming functions in 
+\texttt{rcdd} will determine whether an observed network falls on the boundary 
+or interior of the convex support.  These will allow us to establish the ``truth" 
+against which we can compare our algorithm.
+
+The key difference between our work here and the approaches of 
+\citep{Handcock:degeneracy,Rinaldo:2009} is that our algorithm does not assume
+knowledge of the convex support $C$ and thus must determine ``on the fly" whether
+or not the MLE exists.  
+We do take liberty with two short cuts in the application of our algorithm to make 
+our analysis cleaner:
+\begin{enumerate}
+\item MC sampler.  We use a perfect Monte Carlo sampler to generate our draws \\
+$g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\eta$, rather than a 
+MCMC sampler. \\
+ Although we have replicated the results of the algorithm using the 
+ \texttt{simulate.formula} MCMC sampler provided in the R package \texttt{ergm} 
+ \citep{ergm:R}, we wish to identify here what 
+issues would still be present even with a perfect MC sampler, which we can easily build for 
+this small network since the likelihood function can be evaluated.  Some issues 
+related to the challenges of MCMC sampling for ERGMs are discussed in 
+\citep{ergm,Morris:2008}; we do not concern ourselves with these issue here.
+
+\item Step length search.  The search for the step length $\alpha_k$ that satisfied the 
+curvature condition \eqref{E:Wolfe-ll} can be time consuming, as discussed in
+Section~\ref{S:MCMC approx} and evident in our previous examples.
+Here we use our ability to evaluate the gradient function $\nabla \ell(\cdot)$ exactly;  
+we solve for the value that sets $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k = 0$ 
+using a simple root-finding algorithm.  That is, for a given 
+direction $p_k$, we find the step size that maximizes the log likelihood in that 
+direction.
+
+We do not use this shortcut in any other portions of our approach that 
+require $\nabla \ell(\cdot)$, 
+such as updating search directions $p_k$.
+
+\end{enumerate}
+We believe that neither of these undermine the validity of our overall methodology, 
+though they undoubtedly simplify and speed up its application.
+
+%We now return to the examples from Section~\ref{S:Example}.  We describe the relevant 
+%R functions, which unless otherwise noted are in the \texttt{rcdd} package \citep{rcdd:R}.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Convex hull}
-Finding the convex hull from a set of points is of course a well-studied problem.  We 
-mention it here to describe the sequence of functions we use to find the convex hull.  
-Beginning with a large number of MC sample points, say 10,000, we first use the 
-\texttt{unique} function in the \texttt{base} package in R to reduce to the distinct 
-points in the set.  Then we apply the \texttt{redundant} function in the \texttt{rcdd} 
-package to reduce to a linearly independent set, which corresponds to the V-
-representation of the convex hull.
-
-Our algorithm utilizes the H-representation of the sample points to determine if $g(\yobs)$ lies on the 
-exterior, boundary, or interior of the convex hull of a set of points.  
-This requires switching back and forth between the V-representation and 
-the H-representation.  
-This functionality is provided by the \texttt{scdd} function, which takes as an 
-argument the original representation (H or V) and returns the toggled representation.
-
-Either representation can be expressed with rational arithmetic, making equality 
-comparisons exact.  This is particularly important when trying to determine the 
-location of $g(\yobs)$ relative to the convex hull of a set of points.  The \texttt
-{rcdd} package also provides the necessary matrix arithmetic functions to work with 
-the rational representation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Two-dimensional sufficient statistic}\label{S:example 2dim}
-
-
-The support for the 9-node ERGM with edge and triangle network statistics is depicted 
-in Figure \ref{F:g9-hull}.
 The MLE for an exponential family model will exist if and only if the observed 
-statistic lies in the interior of the convex support $C$, which is the sail-shaped 
-polytope in Figure \ref{F:g9-hull}.  For all discrete exponential family models 
-including this one, the convex support is polyhedral.  Here, $C$ has six sides (and six vertices).
+statistic lies in the interior of the polyhedral convex support $C$, which is the sail-shaped polytope in Figure \ref{F:g9-hull}. Here, $C$ has six sides (and six vertices).
 
 \subsubsection{Case: MLE exists}
-If the observed data has 29 edges and 47 triangles (or network statistic $(29,47)$), 
-and lies in the interior of the convex support as depicted in Figure \ref{F:MC cloud} 
-(top), the MLE exists.  
+Suppose the observed network data has 29 edges and 47 triangles.  Then $g(\yobs) = (29,47)$
+lies in the interior of the convex support as depicted in Figure \ref{F:MC cloud} 
+(top) and the MLE exists.
 Our algorithm, arbitrarily starting at the natural parameter value of $\eta = (0,0)$, 
 generates Monte Carlo samples from the model with this initial parameter value.  As 
-the algorithm scales the log likelihood, the cloud of sample points will move towards 
+the algorithm climbs the log likelihood surface, 
+the cloud of sample points will move towards 
 the observed statistic and eventually engulf it.  
 When the value for $\eta$ is equal to the MLE, the mean of the MC sample points will 
 equal $(29,47)$(see Figure \ref{F:MC cloud} (bottom)).  
 \begin{figure}[!ht]
 \centering
-\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
-\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-MLE}
+%\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
+%\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-MLE}
+\includegraphics[width=3.8in]{Figures/MCsample-far}
+\includegraphics[width=3.8in]{Figures/MCsample-MLE}
 \caption{The network statistics for 10,000 Monte Carlo samples generated from models 
-with the natural parameter $\eta$ set to $(0,0)$ (top) and the MLE, $(-0.389, 0.418)$ 
+with the natural parameter $\eta$ set to $(0,0)$ (top) and the MLE $(-0.389, 0.418)$ 
 (bottom).  The observed data has network statistics of $(29,47)$, depicted by the 
 larger point with white outline.  When $\eta$ is the MLE, the observed statistic is 
 exactly the mean of the MC sample points generated from the model with this parameter 
@@ -583,20 +595,24 @@ value. }
 \end{figure}
 For this problem, the MLE for $\eta$ is found to be
 \begin{align*}
-\etaMLE = (-0.389, 0.418).
+\etaMLE = (-0.389, 0.418),
 \end{align*}
+which matches the results we get from applying \texttt{trust} to numerically
+maximize the log likelihood function.
 
 \subsubsection{Case: MLE does not exist; observed statistic on one-dimensional face}
-If the observed data has network statistic $(31,50)$ and lies on the 
-boundary of the convex support as depicted in Figure \ref{F:MC face}, the MLE does not 
-exist.  To be precise, the observed network statistic $(31,50)$ lies on the interior 
+Suppose the observed network has network has 31 edges and 50 triangles.  Then 
+$g(\yobs) = (31,50)$ lies on the boundary of the convex support as depicted in 
+Figure \ref{F:MC face} and the MLE does not 
+exist.  
+To be precise, the observed network statistic $(31,50)$ lies on the interior 
 of a line segment on the boundary with end points $(30,44)$ and $(32,56)$. 
-Our algorithm begins as before, generating MCÊsample point clouds to explore the 
-sample space, as depicted in Figure \ref{F:MC face}.  Because the sail-shaped convex 
-support is not known, the algorithm cannot determine at the outset  that the MLE does 
+Our algorithm begins as before, generating MC sample point clouds to explore the 
+space, as depicted in Figure \ref{F:MC face}.  Because the convex 
+support is not known, the algorithm cannot determine at the outset that the MLE does 
 not exist; it can only generate more sample point clouds as it climbs the log 
 likelihood surface, with successive clouds moving towards the observed statistic.
-Eventually, the observed statistic will lie exactly on the boundary of a sample cloud.  
+Eventually, the observed statistic will lie exactly on the boundary of a sample cloud.
 When this occurs, the algorithm must 
 \begin{enumerate}
 \item determine empirically the face, $F$, on which the observed statistic lies in the 
@@ -621,8 +637,10 @@ at least, greatly reduce---the possibility of misidentifying a boundary.
 \emph{not} on the boundary of $C$.)
 \begin{figure}[!ht]
 \centering
-\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
-\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
+%\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
+%\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
+\includegraphics[width=3.7in]{Figures/MCsample-boundary}
+\includegraphics[width=3.7in]{Figures/MCsample-77face}
 \caption{The network statistics for 10,000 Monte Carlo samples for the model with 
 observed network statistic $(31,50)$, depicted by the larger point with white 
 outline, lying on the boundary of the convex support (top).

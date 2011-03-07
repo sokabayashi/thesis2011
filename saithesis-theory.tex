@@ -91,12 +91,8 @@ the convex support of the model \citep{Barndorff, Geyer:gdor, Rinaldo:2009}.  We
 describe the relevant theory from convex analysis as it pertains to the case of 
 exponential families.
 
-A \emph{convex polytope} $C$ is the \emph{convex hull} of a finite set of points $V$,
-\begin{align*}
-	C = \con( V ).
-\end{align*}
-
-  By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
+A \emph{convex polytope} $C$ is the \emph{convex hull} of a finite set of points $V$, denoted $\con( V )$.
+By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
 set can equivalently be represented as the intersection of a finite collection of 
 closed half-spaces.  These two representations of a convex polytope are referred to 
 as the \emph{V-representation} and \emph{H-representation}, respectively.  
@@ -149,7 +145,7 @@ The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 	N_C(x) 	&= \{ w \in \RR^d: \inner{ w, v } \leq 0 \text{ for all } v \in T_C(x) \}.
 \end{align*}
 
-DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{get from 
+\hl{DEFINE \emph{direction of recession}, \emph{direction of constancy}.}  \textbf{get from 
 \citep{Rockafellar:1970}.}
 
 
@@ -159,26 +155,24 @@ DEFINE \emph{direction of recession}, \emph{direction of constancy}.  \textbf{ge
 We now present two equivalent approaches to determine the existence of an MLE
 in the conventional sense.  
 
-\subsection{Well-known condition}
+\subsection{Well-known condition?}
 The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} 
 relates the relative location
 of the observed statistic to the boundaries of the convex support
 and is formally stated as follows:
-\begin{theorem} \label{Thm:MLE rint}
+\begin{theorem}[Corollary 9.6, Section 9.8(viii) in \citep{Barndorff}] \label{Thm:MLE rint}
 Under the conditions [CONDITIONS], the MLE exists in the conventional sense and is 
 unique if and only if 
 $g(\yobs) \in \rint(C)$.
 \end{theorem}
 
-From this one can conclude whether or not the MLE exists in the conventional sense
-\emph{if $C$ is known} using linear programming.
+While the above theorem is in fact quite elegant and simple, we note that in order to apply this result, the geometry of $C$ must be fully known.
 
 \subsection{Approach of \citet{Geyer:gdor}}
-\citet{Geyer:1990,Geyer:gdor} present theory that relates MLE existence to
- not only the boundary of the convex support, but also to how the log likelihood behaves along
-directions orthogonal to the boundaries.
+\citet{Geyer:1990,Geyer:gdor} related MLE existence to
+ not only the boundary of the convex support, but also to behavior of the log likelihood function along certain directions.
 
-We first revisit an older result for which we have developed a simpler proof:
+We retrace the blocks leading to this result, and present simpler proofs where possible:
 \begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]\label{Thm:e_c}
 \begin{align*}
 e^{c(\eta + s \delta) - bs} &\to 
@@ -619,7 +613,7 @@ towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
 An MLE for the LCM $\etaLCM$ in turn must exist when the convex support $C$ is polyhedral 
 (and hence finite), which is the only case of interest to us.  
 This can clearly be seen from the following argument: if the MLE does not exist,
-it then $g(\yobs)$ must lie on the boundary of $C$.  The LCM is the distribution
+then $g(\yobs)$ must lie on the boundary of $C$.  The LCM is the distribution
 with same natural parameters and statistics, conditioning that we are on a hyperplane
 $H$, or in this case $C \cap H$.  This face $C \cap H$ defines the support of the LCM,
 and by construction, $g(\yobs)$ must lie in the interior of this face.  It is not
@@ -632,7 +626,7 @@ The last part of Theorem~\ref{Thm:LCM} says that for the sequence of exponential
 value $\theta+s\delta$, the probability of $g(Y)$ occurring on the plane $H$ is strictly 
 increasing, and in fact, going to 1.  We may think of this as 
 ``probability accumulating on the boundary"---where the 
-boundary is actually the face is $C \cap H$ on which $g(\yobs)$ sits.
+boundary is actually the face $C \cap H$ on which $g(\yobs)$ sits.
 
 Thus the MLE for the LCM maximizes the likelihood in \hl{the family} that is the 
 union of the LCM and the original family.  When 
