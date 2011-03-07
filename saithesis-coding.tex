@@ -1,0 +1,81 @@
+The goal of this chapter is illustrate how the theory described thus far can be implemented.
+
+DO I EVEN NEED THIS CHAPTER?  ISN'T EASIER TO SHOW THROUGH OUR EXAMPLE?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Programming LCM theory}
+\text{rcdd} \citep{rcdd}
+
+\subsection{Linearity}\label{S:linearity}
+\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
+\begin{align*}
+	L = \{ w \in V: -w \in \con( V ) \}.
+\end{align*}
+It is the subspace with bases determined by $V$.
+
+We use this to find the face of the polyhedral convex support on which the observed 
+statistic lies in the interior of.  The function \texttt{linearity} in the \texttt
+{rcdd} package can take as input the rays directed from observed statistic to sample 
+points generated via MCMC from the distribution with parameter value of interest.  
+From these, it determines the rays that form the basis of a vector subspace.  Of 
+course we are not interested in the vector subspace; we need only take the points 
+corresponding to these bases as our empirical face $F$.  By construction, the observed 
+statistic lies in the interior of $F$.
+
+%Let $\widetilde{T}_C(x)$ be the empirical tangent cone at the point $x$ constructed 
+%from a set of points $W$ all in $C$.  That is,
+%\begin{align*}
+%	\widetilde{T}_C(x) = \{ w - x: w \in W\}.
+%\end{align*}
+%Then for $V = \widetilde{T}_C(g(\yobs))$, the linearity corresponds to the set of 
+%points from $W$ (shifted by $g(\yobs)$) that form what we refer to as the empirical 
+%face $F$.  
+%In our algorithm, we use the MCMC sample points for $W$.  \citet{Geyer:gdor} provides 
+%the function \texttt{linearity} in the R package \texttt{rcdd} to do this computation.
+
+%Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
+%linearity will correspond to all the points $W \in C$.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Subsampling}
+%Once our algorithm has determined that the observed data is on the boundary and thus 
+%the MLE does not exist in the conven
+Our algorithm depends on being able to to subsample from the MC sample points when 
+optimizing in the LCM, restricting to the sample points that comprise the support of 
+this model.  The subsampling operation itself is straightforward since we determined 
+empirically the face that forms this support.  
+
+However, it is not obvious that when we draw $g(Y_1), \ldots, g(Y_m)$ from the 
+original model with parameter value $\eta$ that the subsample restricted to the 
+support is in fact a sample from the LCM with parameter value $\eta$.  This is a 
+convenient consequence of Theorem~\ref{Thm:LCM}: by this stage in the algorithm, the 
+majority of sample points (greater than 60\%) are on the face.  Then $s$ in the 
+expression $P_{\eta + s \delta}(g(Y) \in H)$ is a large value.  But since the LCM 
+density is the limit of the density of the original model as $s$ goes to $+\infty$, 
+the distribution of the LCM is accordingly well approximated.  (\textbf{BUT WELL 
+ENOUGH?})
+
+
+\subsection{Convex hull}
+Finding the convex hull from a set of points is of course a well-studied problem.  We 
+mention it here to describe the sequence of functions we use to find the convex hull.  
+Beginning with a large number of MC sample points, say 10,000, we first use the 
+\texttt{unique} function in the \texttt{base} package in R to reduce to the distinct 
+points in the set.  Then we apply the \texttt{redundant} function in the \texttt{rcdd} 
+package to reduce to a linearly independent set, which corresponds to the V-
+representation of the convex hull.
+
+Our algorithm utilizes the H-representation of the sample points to determine if $g(\yobs)$ lies on the 
+exterior, boundary, or interior of the convex hull of a set of points.  
+This requires switching back and forth between the V-representation and 
+the H-representation.  
+This functionality is provided by the \texttt{scdd} function, which takes as an 
+argument the original representation (H or V) and returns the toggled representation.
+
+Either representation can be expressed with rational arithmetic, making equality 
+comparisons exact.  This is particularly important when trying to determine the 
+location of $g(\yobs)$ relative to the convex hull of a set of points.  The \texttt
+{rcdd} package also provides the necessary matrix arithmetic functions to work with 
+the rational representation.

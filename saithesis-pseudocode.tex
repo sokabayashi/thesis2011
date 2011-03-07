@@ -1,0 +1,96 @@
+\section{Algorithm pseudocode}
+The algorithm is summarized on the next page.  Below are a few comments about notation 
+and equations:
+\begin{itemize}
+\item $C$ is the convex support.
+\item $Y$ is the random variable in the sample space.
+\item $g(\cdot)$ is the function that maps $y$ to its natural statistics.
+\item $\yobs$ is the observed observed, $g(\yobs)$ the natural statistics of the observed data.
+\item $\con()$ is the convex hull of a set of points.
+\item $\bd()$ is the boundary of a set of points.
+\item $\norm{\cdot}$ is the Euclidean norm.
+\item The curvature condition \eqref{E:Wolfe-ll} used here comes from the search 
+algorithm of \citet{Okabayashi:longrange} and is necessary for guaranteeing 
+convergence to the MLE when it exists.
+%\item $\bar{Y}_m$ is the sample mean, $\frac{1}{m}\sum_{i=1}^m g(Y_i)$
+\end{itemize}
+\newpage
+{\small
+\noindent \textbf{LCM MLE Algorithm}
+
+\noindent \begin{algorithmic}[1]
+\State Get an initial value, $\eta_1 = (0, \ldots 0)$.
+\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{1}$.  
+\State Set $ty.hull = \con(g(Y_1), \ldots, g(Y_m) )$.
+\State Approximate 
+\begin{align} \label{E:nabla ell approx}
+\nabla \ell( \eta_1) \approx g(\yobs) - \frac{1}{m}\sum_{i=1}^m g(Y_i).
+\end{align}
+\State Set $p_1 = \nabla \ell( \eta_1)$, $k=1$, $LCM.flag$ = FALSE, $c=0.2$.\\
+%, $LCM.k=1$, 
+%\State , $on.boundary$ = FALSE, $on.interior$ = FALSE.
+%\State Set $face.cutoff = 0.30$.
+
+\While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
+\State \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
+\begin{align*}%\label{E:curvature}
+	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k.
+\end{align*}
+%\State for some $0 < c < 1$. % (Calculating $\nabla \ell(\cdot)$ requires more sampling)
+
+\State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
+\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{k+1}$.
+\If{$LCM.flag=$TRUE}
+	\State Restrict sample points to those in empirical face.
+\EndIf
+\State Call the resulting sample points $g(Y_{(1)}), \ldots, g(Y_{(k)})$.
+\State \textbf{Update} $ty.hull$ to reflect new sample points, $g(Y_{(1)}), \ldots, g(Y_{(k)})$.\\
+\State \textbf{Question: $g(\yobs) \in \bd( \con(g(Y_{(1)}), \ldots, g(Y_{(k)}) ))$? }
+%\If{Yes, $g(\yobs)$ is outside the convex hull}
+%	\State  Keep sampling.  
+%%	\State $on.boundary$ = FALSE.
+%	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
+%\ElsIf{No, $\yobs$ is inside the convex hull}
+%	\State \textbf{The MLE exists}.  Finding it should be straightforward, (except 
+%when 
+%	\State it isn't ...) 
+%	\State $on.boundary$ = FALSE, $on.interior$ = TRUE.
+%	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
+%\Else 
+\If{Yes} %\Comment{$g(\yobs)$ is on the boundary of convex hull}
+	\State \textbf{Either:}
+	\State (1) the MLE exists but the sample just touches $g(\yobs)$, 
+	\State (2) the MLE does \emph{not} exist; both $g(\yobs)$ and our sample points  
+	\State are touching the boundary of $C$.
+	\State \textbf{Find} the empirical face $F$ of $ty.hull$ on which $g(\yobs)$ lies.
+%	\State \textbf{Calculate} $face.prop$, the proportion of the sample that falls on
+%	\State this face.\\
+%\newpage
+	\If{$>60\%$ of the sample points are on $F$}
+		\State Conclude that we are in case (2); case (1) is very unlikely.
+		\State \textbf{Set} $LCM.flag$ = TRUE.
+	\EndIf
+\EndIf\\
+%\State \textbf{Calculate} $\nabla \ell( \eta_{k+1})$ as follows: \label{Calc:nabla}
+%\If{ $LCM.flag$ == FALSE }
+%	\State $\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{m}\sum_{i=1}^m g(Y_i)$
+%\Else
+	\State Approximate
+	\begin{align} \label{E:nabla ell approx LCM}
+	\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{k}\sum_{i=1}^k g(Y_{(i)}).
+	\end{align}
+
+%, where the sample mean is restricted 
+%	\State to empirical face points.
+%\EndIf\\
+
+\State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent 
+direction.
+\Statex This may involve using a direction normal to empirical face, or a regression 
+\Statex over previous $\eta_k$ values, or simply using steepest ascent, $\nabla \ell
+( \eta_{k+1})$.
+
+\State $k = k + 1$.
+\EndWhile
+\end{algorithmic}
+}
