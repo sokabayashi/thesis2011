@@ -1,4 +1,4 @@
-\begin{thebibliography}{79}
+\begin{thebibliography}{80}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -123,6 +123,13 @@
 \textsc{Geyer, C.~J.} and \textsc{Johnson, L.~T.} (2010).
 \newblock \texttt{ potts}: {M}arkov chain {M}onte {C}arlo for {P}otts models.
 \newblock R package version 0.4.
+
+\bibitem[{Geyer and Meeden(2009)}]{rcdd:R}
+\textsc{Geyer, C.~J.} and \textsc{Meeden, G.~D.} (2009).
+\newblock \texttt{rcdd}: R package rcdd ({C} {D}ouble {D}escription for {R}).
+\newblock R pakage version 1.1-3. Incorporates code from cddlib (ver 0.94f)
+  written by Komei Fukuda,
+  \urlprefix\url{http://cran.r-project.org/web/packages/rcdd}.
 
 \bibitem[{Geyer et~al.(2009)Geyer, Meeden and incorporates code from cddlib
   (ver 0.94f) written~by Komei~Fukuda}]{rcdd}

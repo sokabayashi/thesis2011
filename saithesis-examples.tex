@@ -567,7 +567,7 @@ though they undoubtedly simplify and speed up its application.
 The MLE for an exponential family model will exist if and only if the observed 
 statistic lies in the interior of the polyhedral convex support $C$, which is the sail-shaped polytope in Figure \ref{F:g9-hull}. Here, $C$ has six sides (and six vertices).
 
-\subsubsection{Case: MLE exists}
+\subsection{Case: MLE exists}
 Suppose the observed network data has 29 edges and 47 triangles.  Then $g(\yobs) = (29,47)$
 lies in the interior of the convex support as depicted in Figure \ref{F:MC cloud} 
 (top) and the MLE exists.
@@ -591,7 +591,7 @@ larger point with white outline.  When $\eta$ is the MLE, the observed statistic
 exactly the mean of the MC sample points generated from the model with this parameter 
 value. }
 \label{F:MC cloud}
-% (-0.3890151, 0.4177752)
+% (-0.3890151, 0.4177752) % from trust
 \end{figure}
 For this problem, the MLE for $\eta$ is found to be
 \begin{align*}
@@ -600,35 +600,37 @@ For this problem, the MLE for $\eta$ is found to be
 which matches the results we get from applying \texttt{trust} to numerically
 maximize the log likelihood function.
 
-\subsubsection{Case: MLE does not exist; observed statistic on one-dimensional face}
+\subsection{Case: MLE does not exist; observed statistic on one-dimensional face}
 Suppose the observed network has network has 31 edges and 50 triangles.  Then 
 $g(\yobs) = (31,50)$ lies on the boundary of the convex support as depicted in 
-Figure \ref{F:MC face} and the MLE does not 
-exist.  
-To be precise, the observed network statistic $(31,50)$ lies on the interior 
-of a line segment on the boundary with end points $(30,44)$ and $(32,56)$. 
+Figure \ref{F:MC face}.  To be precise, the observed network statistic $(31,50)$ lies 
+on the interior of a line segment on the boundary of the convex support with 
+end points $(30,44)$ and $(32,56)$. 
+By Theorem~\ref{Thm:MLE rint}, it is clear that the MLE does not exist.
+
 Our algorithm begins as before, generating MC sample point clouds to explore the 
-space, as depicted in Figure \ref{F:MC face}.  Because the convex 
-support is not known, the algorithm cannot determine at the outset that the MLE does 
-not exist; it can only generate more sample point clouds as it climbs the log 
-likelihood surface, with successive clouds moving towards the observed statistic.
-Eventually, the observed statistic will lie exactly on the boundary of a sample cloud.
+space, as depicted in Figure \ref{F:MC face} (top).  Because the convex 
+support is not assumed to be known, 
+the algorithm cannot determine at the outset that the MLE does 
+not exist; rather, it can only generate more sample point clouds as it climbs the log 
+likelihood surface, with successive point clouds moving towards the observed statistic.
+Eventually, the observed statistic will lie exactly on the boundary of a point cloud.
 When this occurs, the algorithm must 
 \begin{enumerate}
-\item determine empirically the face, $F$, on which the observed statistic lies in the 
+\item determine empirically the face $F$ on which the observed statistic lies in the 
 relative interior of,
 \item decide if $F$ is in fact the boundary of the convex support $C$.
 \end{enumerate}  
 
 The first task can be done using the linear programming functions provided to us in 
-the \texttt{rcdd} package.  The second task turns out to be very difficult to do.  
+the \texttt{rcdd} package and described in Chapter~\ref{Chapter:Linear programming}.  The second task turns out to be very difficult to do.  
 For now, we assume that if a substantial portion of the sample points generated, say 
 60\%, land on this empirically determined face $F$, then it is in fact a boundary of 
 the convex support $C$.  
 
 
-In this example, the algorithm has determined empirically that $(30,44)$, $(31,50)$, 
-and $(32,56)$ lie on a one-dimensional face, as depicted in Figure \ref{F:MC face} 
+In this example, the algorithm uses the \texttt{linearity} function to determine empirically that three points from the MC sample---$(30,44)$, $(31,50)$, 
+and $(32,56)$---lie on a one-dimensional face, as depicted in Figure \ref{F:MC face} 
 (bottom).  If less than 60\% of the sample points land on this empirical face, the 
 algorithm continues to sample, trying to get a sample point cloud even closer to the 
 observed statistic.  We choose such a high proportion for a cut off to eliminate---or 
@@ -656,110 +658,142 @@ lighter colored polytope is the convex hull of all previously sampled points.
 By identifying the empirical face $F$ on whose interior the observed statistic lies, 
 the algorithm has not only concluded that the MLE does not exist in the conventional 
 sense, it has also defined $F$ as the convex support for the new limiting conditional 
-model, which is also an exponential family.  
-
-The algorithm proceeds to maximize this new exponential family using the same 
+model for which the MLE must exist.
+The algorithm then maximizes this new exponential family using the same 
 iterative approach as before.  The gradient of the LCM log likelihood is approximated 
 using \eqref{E:nabla ell approx LCM},
 \begin{align*}
 	\nabla \ell( \eta )^{LCM} \approx g(\yobs) - \frac{1}{k} \sum_{i=1}^k g(Y_{(k)})
 \end{align*}
 where $g(Y_{(1)}), \ldots, g(Y_{(k)})$ is the subsample of the MC sample points 
-restricted to the empirical face: $(30,44)$, $(31,50)$, and $(32,56)$ in this case.  
-The maximizer of this log likelihood, $\etaLCM$, is found to be
+restricted to the empirical face, $(30,44)$, $(31,50)$, and $(32,56)$ in this case.  
+The maximizer of this log likelihood $\etaLCM$ is found by the algorithm to
+be
 \begin{align*}
 \etaLCM = (120.9, -20.1).
 %(120.91090 -20.12784)
 \end{align*}
-The LCM, however, is not identifiable, since the support is now only one-dimensional 
-compared to two in the original model (EXPLAIN BETTER).  
+\hl{The LCM, however, is not identifiable, since the support is now only one-dimensional 
+compared to two in the original model. } 
 That is, there must exist a constancy space of this new model, $\Gammalim$, such that 
 \begin{align} \label{E:Gammalim}
 \ell( \eta + \gamma )^{LCM} = \ell( \eta )^{LCM}
 \end{align}
 for any $\gamma \in \Gammalim$.
 
-The empirical face $F$ and the observed statistic also define a normal cone, which in this case is a single direction, 
+The empirical face $F$ and the observed statistic also define a normal cone by Theorem~\ref{Thm:DOR}, which in this case is a single direction, 
 \begin{align*}
-	\delta = (6,-1),
+	\delta = (6,-1)
 \end{align*}
-which is called a generic direction of recession (GDOR).  Exponential family theory 
-states that the log likelihood is a strictly concave function of $\eta$.  For a 
-maximizer to exist then, there must be a direction along which the log likelihood 
-function increases to $+\infty$.  This direction is exactly the $\delta$ found above, 
-and combined with a specific point in the natural parameter space, $\etaLCM$, 
+and is also a GDOR by definition.  The normal cone is derived by the methods described
+in Chapter~\ref{Chapter:Linear programming}.
+By Corollary~\ref{Cor:strictly increasing}, a GDOR $\delta$ is a direction along which the log likelihood function is strictly increasing, and by 
+Theorem~\ref{Thm:LCM}, we know that
 \begin{align} \label{E:GDOR lim}
-	\lim_{s \to +\infty} \ell( \etaLCM + s \delta) = \sup_{\eta} \ell(\eta),
+	\lim_{s \to +\infty} \ell( \etaLCM + s \delta) = \sup_{\eta} \ell(\eta).
 \end{align}
-where  $\ell(\cdot)$ is the log likelihood of our original model.
 
-The GDOR, $\delta$, of the original model is also a direction of constancy the new 
-model.  
-Then by \eqref{E:Gammalim} and \eqref{E:GDOR lim}, note that $\ell(\etaLCM + \gamma + 
-s \delta)$ goes off to $+\infty$ as $s$ increases.  
+
+The GDOR $\delta$ of the original model is also a direction of constancy for the new 
+model [WHY].  
+%Then by \eqref{E:Gammalim} and \eqref{E:GDOR lim}, note that $\ell(\etaLCM + \gamma + 
+%s \delta)$ goes off to $+\infty$ as $s$ increases.  
+
 In order to construct a one-sided confidence intervals, we need to find the value of 
-$s$ for which the probability that the distribution allocates to the event that a 
-sample falls on the face of interest is 5\%, that is,
+$s$ for which the the distribution indexed by $\etaLCM + s \delta$ assigns a probability
+of 0.05 to the event that a sample falls on the face of interest is.  That is,
 \begin{align*}
 P_{\etaLCM + \gamma + s \delta}(g(Y) \in F ) = 0.05.
 \end{align*}
 Although we cannot evaluate the probability function above, we can generate MC samples 
-of $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\etaLCM + \gamma + s 
+of $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\etaLCM + s 
 \delta$ and see for what value of $s$, 5\% of the sample lies in the empirical face we 
 found.  
 
-Some numerical work shows that for $\eta = (9.19, -1.51)$, we get 5\% of the MC sample 
-on this face.  Or, in terms of non-simultaneous 95\% confidence intervals for the 
-components of $\eta$,
+Some numerical calculations shows that the original exponential family index by
+ $\eta = (9.14, -1.50)$ puts 5\% of the MC sample on this face.  
+Expressing this as a non-simultaneous 95\% confidence intervals for the components of $\eta$,
 \begin{align*}
-	[9.19, +\infty)\\
-	(-\infty, -1.51],
+	[9.14, +\infty)\\
+	(-\infty, -1.50],
 \end{align*}
 where the direction of the interval for the second component is flipped because the 
 second component of $\delta$ is negative.
 
-\textbf{Mean value parameters? Are they any more interpretable here?  nice pictures}
+We also applied a trust optimization routine on the original log 
+likelihood in attempt to maximize it.  The maximum of course does not exist, but
+because the surface flattens so much, the routine returns a value it perceives as a maximizer,  
+\begin{align*}
+ 	\hat{\eta}_{\textrm{trust}} = (135.6, -22.6),
+ \end{align*}
+which are well within our confidence intervals.
 
-%Because our sample space for graphs is still manageable at 69 billion points, we can 
-%in fact use numerical optimization methods like trust (CITE?) on the original log 
-%likelihood, passing in first and second derivative functions.  Depending on the 
-%settings for tolerance, we can get a trust routine to return to what it thinks is an 
-%MLE,  
-%\begin{align*}
-% 	\hat{\eta}_{\textrm{trust}} = (135.6, -22.6),
-% \end{align*}
-%which are well within our confidence intervals.
+
+Alternatively, in mean value parameterization, the
+non-simultaneous 95\% confidence intervals for the edge and triangle parameters are
+\begin{align*}
+	[29.7, 31]\\
+	[44.1, 50],
+\end{align*}
+where the upper bounds are the observed data and hence the MLE in this parameterization.
+%Incidentally, the mean parameterization of $\hat{\eta}_{\textrm{trust}}$ is $(31,50)$, 
+
+To summarize, our algorithm has realized the MLE for this model does not exist.
+It has found the one-dimensional face $F$ with end points $(30,44)$  
+and $(32,56)$ on which the observed statistic lies, where $F$ is also the
+convex support of the LCM.  The algorithm has also identified a GDOR $\delta = (6,-1)$
+along which the log likelihood is strictly increasing.  Finally, the algorithm 
+has returned the end points for one-sided confidence intervals in both natural
+and mean value parameterization.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Case: MLE does not exist; observed statistic on zero-dimensional face}
-If the observed data has network statistic $(27, 27)$, the point is an extreme point 
-of the convex support $C$ (it is a square point on the boundary of the sail in Figure~
-\ref{F:g9-hull}) and the MLE does not exist.  In this case, the point itself is the 
-face with zero-dimension.  The algorithm proceeds as before, and concludes that the 
+\subsection{Case: MLE does not exist; observed statistic on zero-dimensional face}
+If the observed network has statistic $g(\yobs) = (27, 27)$,  then 
+$g(\yobs)$ is an extreme point 
+of the convex support $C$ (it is one of the six defining vertices of $C$, depicted by
+a square point in Figure~\ref{F:g9-hull}).  In this case, the point is itself the 
+face with zero-dimension and the MLE does not exist.  
+
+The algorithm proceeds as before, and concludes that the 
 point $(27,27)$ is the empirical face $F$ and on the boundary of the hull.
 In this case, the limiting conditioning model is completely unidentifiable, and thus 
 any value for $\eta$ will be a maximizer.  Our particular implementation found that
 \begin{align*}
 	\etaLCM = (94.0, -20.4 ).
 \end{align*}
-The normal cone to the observed statistic in this case is two-dimensional, bounded by 
+The normal cone to the observed statistic $N_C (g(\yobs) )$ in this case is two-dimensional, bounded by 
 two vectors,
 \begin{align*}
 	 \{ (3.857,   -1),	(5.667,   -1) \}.
 \end{align*}
-If we choose the average of these two vectors, $\delta = (4.76, -1)$, and proceed as 
-before, then we find 95\% one-sided confidence intervals for $\eta$ of 
+If we choose the average of these two vectors, $\delta = (4.76, -1)$, then we have 
+found a vector in the relative interior and thus a GDOR.
+Proceeding as before, then we find 95\% one-sided confidence intervals for $\eta$ of 
 \begin{align*}
 %14.495152 -3.703202 
 	[14.5, +\infty)\\
 	(-\infty, -3.7],
 \end{align*}
 
-\textbf{MEAN VALUE PARAMETERS?}
+The 95\% one-sided confidence intervals for mean parameterization is
+\begin{align*}
+%23.84996, 15.63127
+	[23.8, 27)\\
+	[15.6, 27].
+\end{align*}
 
+Again applying a trust optimization routine on the original log 
+likelihood yielded a value it perceives as a maximizer,  
+\begin{align*}
+%  66.13789     -14.67444
+ 	\hat{\eta}_{\textrm{trust}} = (66.1, -14.7),
+ \end{align*}
+which are well within our confidence intervals.
+  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Case: MLE exists but observed statistic is very near boundary}
+\subsection{Case: MLE exists but observed statistic is very near boundary}
 If the observed data has network statistic $(21, 4)$, it is in fact on the interior of 
 the convex support and so the MLE exists.  
 The approaches of \citet{Handcock:degeneracy} and \citet{Rinaldo:2009} would have 
@@ -914,42 +948,52 @@ for $\eta$, we get
 %\end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Three-dimensional sufficient statistic}
+%In order to increase the complexity of the problem yet still have the ``truth" for 
+%comparison, we also considered 7-node graph with network statistics edges, two-stars, 
+%and triangles, a classic model in the literature first suggested by \citet{Frank:
+%1986}.  Since then it has been criticized for its problematic behavior by \citet
+%[really? check this]{GOF}, precisely related to the issue of non-existence MLEs (or 
+%degeneracy???).
+%
+%The algorithm proceeds in exactly the same way, the difference now being that the 
+%empirical face may have as many as two dimensions instead of one.  This makes for a 
+%more interesting variety of constancy spaces for the LCM.  We only consider cases here 
+%that add a notably different flavor than the two-dimensional case.
+%
+%\subsubsection{Observed value, $y_{obs}$, is on two-dimensional face}
+%\subsubsection{Observed value, $y_{obs}$, is on one-dimensional face}
+%\subsubsection{MLE does not exist; observed statistic on two-dimensional face but not 
+%fully discoverd}
+%
+%Set $y_{obs} = (14, 8, 43).$
+%This point is on the boundary, which is a 2-dim face.
+%
+%The MC sample, however, does not cover the entire face.  This is a new scenario, but 
+%it should not be a problem.  Those points on the actual face that are not included are 
+%simply points of low probability.
+%
+%Only issue outstanding with this is how long it takes to find the LCM MLE.  Having a 
+%surprisingly hard time with this.  Question: is it doing any worse than when we 
+%started with a 2-dim sample space?
 
-
-\subsection{Three-dimensional sufficient statistic}
-
-In order to increase the complexity of the problem yet still have the ``truth" for 
-comparison, we also considered 7-node graph with network statistics edges, two-stars, 
-and triangles, a classic model in the literature first suggested by \citet{Frank:
-1986}.  Since then it has been criticized for its problematic behavior by \citet
-[really? check this]{GOF}, precisely related to the issue of non-existence MLEs (or 
-degeneracy???).
-
-The algorithm proceeds in exactly the same way, the difference now being that the 
-empirical face may have as many as two dimensions instead of one.  This makes for a 
-more interesting variety of constancy spaces for the LCM.  We only consider cases here 
-that add a notably different flavor than the two-dimensional case.
-
-\subsubsection{Observed value, $y_{obs}$, is on two-dimensional face}
-\subsubsection{Observed value, $y_{obs}$, is on one-dimensional face}
-\subsubsection{MLE does not exist; observed statistic on two-dimensional face but not 
-fully discoverd}
-
-Set $y_{obs} = (14, 8, 43).$
-This point is on the boundary, which is a 2-dim face.
-
-The MC sample, however, does not cover the entire face.  This is a new scenario, but 
-it should not be a problem.  Those points on the actual face that are not included are 
-simply points of low probability.
-
-Only issue outstanding with this is how long it takes to find the LCM MLE.  Having a 
-surprisingly hard time with this.  Question: is it doing any worse than when we 
-started with a 2-dim sample space?
-
-\section{Example: \textit{e. coli}?}
+%\section{Example: \textit{e. coli}?}
 \section{Example: Faux Magnolia High School?}
 \citet{advancesp*,statnet-tutorial} utilize a adolescent friendship network data set 
 of 1,461 students in grade 7--12 derived from the National Longitudinal Study of 
 Adolescent Health.  The data set, which \citeauthor{statnet-tutorial} refer to as Faux 
 Magnolia High School, is a model-based simulation from the original data set, where 
 the simulation is necessitated to maintain confidentiality.
+
+SEE PAGE 15
+\begin{verbatim}
+data("faux.magnolia.high")
+fmh <- faux.magnolia.high
+plot(fmh, displayisolates = FALSE, vertex.cex = 0.7)
+> model3.take2 <- ergm(fmh ~ edges + triangle, MCMCsamplesize = 1e+5, 
++	interval = 1000, verbose = TRUE, seed = 88)
+model3.take3 <- ergm(fmh ~ edges + triangle, maxit = 25, seed = 888,	
+control = control.ergm(steplength = 0.25), verbose = TRUE)
+\end{verbatim}
+
+

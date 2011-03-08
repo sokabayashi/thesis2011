@@ -1,7 +1,29 @@
-The goal of this chapter is illustrate how the theory described thus far can be implemented.
+The pseudocode presented in Section~\ref{S:algorithm overview} provides the basic framework for the application of our algorithm.
+For cases where the MLE is known to exist, the expression for the gradient $\nabla \ell(\eta)$ need be adapted to the setting of the problem, using an appropriate MCMC sample as necessary as described by \eqref{E:nabla ell approx}.  An efficient
+root finding algorithm to find a step size $\alpha_k$ that satisfies the curvature
+condition \eqref{E:Wolfe-ll} is also highly desirable.  However, the overall algorithm
+will still essentially be the same.
 
-DO I EVEN NEED THIS CHAPTER?  ISN'T EASIER TO SHOW THROUGH OUR EXAMPLE?
+More complexity is required for the setting where the MLE may not exist.  We will need 
+to make use of the results presented in Chapter~\ref{Chapter:Background} which in turn 
+rely heavily linear programming methodologies.  For example, even when the coordinates 
+of a point $g(\yobs)$ and the vertices that define a convex polytope $C$ are known, it 
+is not a trivial problem to know if that point lies in the interior or exactly on 
+a boundary of $C$.  Further complicating this process is that the representation of 
+numbers in computers is not exact, e.g., \hl{INEXACT MATH}
+Fortunately the tools we need have already been made available to through the \texttt{rcdd} package \citep{rcdd:R} in R.
 
+In these next sections, we detail how to apply these tools to the various problems we encounter.  We then show how we must modify our algorithm for this more general setting.
+We attempt to present this material in such a way that even if the syntax of the 
+code change, the overall functionality is still made clear.
+
+We will need to find ways to perform the following operations:
+\begin{itemize}
+\item Find the convex hull of a set of points.
+\item Determine if a point is on the interior or boundary of a convex polytope.
+\item Once it is determined that a point is on the boundary, determine the face.
+\item Find normal and tangent cones.
+\end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Programming LCM theory}
 \text{rcdd} \citep{rcdd}
