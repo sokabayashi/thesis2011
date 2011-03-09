@@ -508,8 +508,8 @@ expressed in term of the sufficient statistic.  By \eqref{E:nabla2 ell},
 \end{align*}
 The same adjustment for overflow as used for $\nabla \ell(\eta)$ can be applied here.
 
-Being able to evaluate $\nabla \ell(\eta)$, and 
-$\nabla^2 \ell(\eta)$ is useful when searching directly from MLEs;
+Being able to evaluate $\nabla \ell(\eta)$ and 
+$\nabla^2 \ell(\eta)$ exactly is useful when searching directly from MLEs;
 optimization routines such as \texttt{trust} \citep{trust:R} in R will use these
 as inputs.  
 
@@ -655,10 +655,11 @@ lighter colored polytope is the convex hull of all previously sampled points.
 \label{F:MC face}
 \end{figure}
 
-By identifying the empirical face $F$ on whose interior the observed statistic lies, 
+By identifying the empirical face $F$ on whose relative interior the observed 
+statistic lies, 
 the algorithm has not only concluded that the MLE does not exist in the conventional 
 sense, it has also defined $F$ as the convex support for the new limiting conditional 
-model for which the MLE must exist.
+model for which the MLE must exist by Theorem~\ref{Cor:spanL} and \ref{Thm:C-H}.
 The algorithm then maximizes this new exponential family using the same 
 iterative approach as before.  The gradient of the LCM log likelihood is approximated 
 using \eqref{E:nabla ell approx LCM},
@@ -685,8 +686,8 @@ The empirical face $F$ and the observed statistic also define a normal cone by T
 \begin{align*}
 	\delta = (6,-1)
 \end{align*}
-and is also a GDOR by definition.  The normal cone is derived by the methods described
-in Chapter~\ref{Chapter:Linear programming}.
+and is also a GDOR by definition, since it is the only point in the relative interior
+of the normal cone which is not a vector subspace.  The normal cone is derived by the methods described in Chapter~\ref{Chapter:Linear programming}.
 By Corollary~\ref{Cor:strictly increasing}, a GDOR $\delta$ is a direction along which the log likelihood function is strictly increasing, and by 
 Theorem~\ref{Thm:LCM}, we know that
 \begin{align} \label{E:GDOR lim}
@@ -729,59 +730,59 @@ because the surface flattens so much, the routine returns a value it perceives a
 which are well within our confidence intervals.
 
 
-Alternatively, in mean value parameterization, the
-non-simultaneous 95\% confidence intervals for the edge and triangle parameters are
-\begin{align*}
-	[29.7, 31]\\
-	[44.1, 50],
-\end{align*}
-where the upper bounds are the observed data and hence the MLE in this parameterization.
-%Incidentally, the mean parameterization of $\hat{\eta}_{\textrm{trust}}$ is $(31,50)$, 
-
+%Alternatively, in mean value parameterization, the
+%non-simultaneous 95\% confidence intervals for the edge and triangle parameters are
+%\begin{align*}
+%	[29.7, 31]\\
+%	[44.1, 50],
+%\end{align*}
+%where the upper bounds are the observed data and hence the MLE in this parameterization.
+%%Incidentally, the mean parameterization of $\hat{\eta}_{\textrm{trust}}$ is $(31,50)$, 
 To summarize, our algorithm has realized the MLE for this model does not exist.
 It has found the one-dimensional face $F$ with end points $(30,44)$  
 and $(32,56)$ on which the observed statistic lies, where $F$ is also the
 convex support of the LCM.  The algorithm has also identified a GDOR $\delta = (6,-1)$
 along which the log likelihood is strictly increasing.  Finally, the algorithm 
-has returned the end points for one-sided confidence intervals in both natural
-and mean value parameterization.
+has returned the end points for one-sided confidence intervals for the natural
+parameters.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Case: MLE does not exist; observed statistic on zero-dimensional face}
 If the observed network has statistic $g(\yobs) = (27, 27)$,  then 
-$g(\yobs)$ is an extreme point 
+$g(\yobs)$ is an \emph{extreme point} 
 of the convex support $C$ (it is one of the six defining vertices of $C$, depicted by
 a square point in Figure~\ref{F:g9-hull}).  In this case, the point is itself the 
 face with zero-dimension and the MLE does not exist.  
 
 The algorithm proceeds as before, and concludes that the 
-point $(27,27)$ is the empirical face $F$ and on the boundary of the hull.
+point $(27,27)$ is the empirical face $F$ and lies on the boundary of $C$, using the
+same 60\% criteria as before.
 In this case, the limiting conditioning model is completely unidentifiable, and thus 
 any value for $\eta$ will be a maximizer.  Our particular implementation found that
 \begin{align*}
 	\etaLCM = (94.0, -20.4 ).
 \end{align*}
-The normal cone to the observed statistic $N_C (g(\yobs) )$ in this case is two-dimensional, bounded by 
+The normal cone to the observed statistic $N_C (g(\yobs) )$ in this case is a two-dimensional cone (and not a subspace), bounded by 
 two vectors,
 \begin{align*}
 	 \{ (3.857,   -1),	(5.667,   -1) \}.
 \end{align*}
 If we choose the average of these two vectors, $\delta = (4.76, -1)$, then we have 
 found a vector in the relative interior and thus a GDOR.
-Proceeding as before, then we find 95\% one-sided confidence intervals for $\eta$ of 
+Proceeding as before, we find 95\% one-sided confidence intervals for $\eta$ of 
 \begin{align*}
 %14.495152 -3.703202 
 	[14.5, +\infty)\\
 	(-\infty, -3.7],
 \end{align*}
 
-The 95\% one-sided confidence intervals for mean parameterization is
-\begin{align*}
-%23.84996, 15.63127
-	[23.8, 27)\\
-	[15.6, 27].
-\end{align*}
+%The 95\% one-sided confidence intervals for mean parameterization is
+%\begin{align*}
+%%23.84996, 15.63127
+%	[23.8, 27)\\
+%	[15.6, 27].
+%\end{align*}
 
 Again applying a trust optimization routine on the original log 
 likelihood yielded a value it perceives as a maximizer,  
@@ -789,45 +790,51 @@ likelihood yielded a value it perceives as a maximizer,
 %  66.13789     -14.67444
  	\hat{\eta}_{\textrm{trust}} = (66.1, -14.7),
  \end{align*}
-which are well within our confidence intervals.
+which is well within our 95\% confidence intervals.
   
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Case: MLE exists but observed statistic is very near boundary}
-If the observed data has network statistic $(21, 4)$, it is in fact on the interior of 
-the convex support and so the MLE exists.  
-The approaches of \citet{Handcock:degeneracy} and \citet{Rinaldo:2009} would have 
-noted that from a mean value pararmeter perspective, this observed statistic likely 
+If the observed data has network statistic $(21, 4)$, it is on the interior of 
+the convex support $C$ (see Figure~\ref{F:MC problem}) and so the MLE exists.
+It lies very close to the boundary, however, and the approaches of 
+\citet{Handcock:degeneracy} and \citet{Rinaldo:2009} would  
+opine that from a mean value parameter perspective, this observed statistic likely 
 corresponds to a degenerate distribution. The Shannon entropy function would show this 
 point to have extremely small entropy, corresponding to a model that puts most of its 
 probability on very few points.
 
 The log likelihood for this model is extremely flat, causing some disagreement among 
-numerical optimization routines for MLE estimates, though log likelihood values are nearly 
-identical.  Using a trust optimization routine we calculate that 
+numerical optimization routines for MLE estimates, though log likelihood values 
+themselves are nearly identical.  Using a trust optimization routine we calculate that 
 \begin{align*}
 %$(24.44, ?6.65)$ from optim.
 \etaMLE = (28.86, -7.76).
 \end{align*}
 The most problematic aspect of this model for us here, however, is that our algorithm 
-concludes---incorrectly, of course---that the MLE does not exist, and proceeds to 
-calculate the MLE of an LCM.
+may conclude---incorrectly---that the MLE does \emph{not} exist, and proceeds to 
+calculate the MLE of an LCM as in the previous examples.  In this case, we used
+an MC sample size of 10,000 (and recall that we are using a perfect Monte Carlo sampler
+from the exactly distribution rather than an MCMC sampler).
 
-How does this happen?
+How does this happen?  Does this make our algorithm not useful in practice?
 
 Our algorithm begins in the same manner as described previously.  As the algorithm 
-proceeds uphill on the log likelihood function, it will iterate $\eta_k$ to a value 
-(for example, $(35.34, -9.56)$) where all 10,000 MC sample points generated from the 
-model with this parameter value fall on the six points on the line segment between 
-$(20,0)$ and $(25,5)$, as depicted in Figure~\ref{F:MC problem}.  The observed value $
-(21,4)$ is one of these six points.
-In order for the algorithm to have correctly identified the boundary here and conclude 
-that $(21,4)$ was on the interior, the extreme point $(27,27)$ would need to have 
-occurred in the MC sample.  However, for the parameter value that we consider, model 
-assigns a probability of 0.000032 to this point.  Even the MLE model only assigns a 
-probability of about 0.00045 to this point.  So, the extreme point that is critical 
-for fully determining the convex support is in fact assigned very low probability by 
-the MLE model.
+proceeds uphill on the log likelihood function, it eventually iterates $\eta_k$ to a 
+value (for example, $(35.34, -9.56)$) where all 10,000 MC sample points generated 
+from the model with this parameter value fall on the six points on the line segment 
+between $(20,0)$ and $(25,20)$, as depicted in Figure~\ref{F:MC problem}.  
+The observed value $(21,4)$ is one of these six points, and the algorithm concludes
+that it has found an empirical face on the boundary of $C$ and that 
+this observed value lies on the boundary.
+
+In order for the algorithm to have correctly concluded that $(21,4)$ was on the 
+interior, the extreme point $(27,27)$ would need to have occurred in the MC sample.  However, although this point is not far from the end point $(25,20)$ of our line
+segment, the model index by the current parameter value 
+assigns a probability of 0.000032 to this point.  In fact, even the 
+MLE model only assigns a probability of 0.00045 to this point.  
+So, the extreme point that is critical for fully determining the convex support 
+is assigned very low probability.
 
 \begin{figure}[!h]
 \centering
@@ -835,31 +842,33 @@ the MLE model.
 \includegraphics[height=4.5in,width=4.5in]{Figures/MCsample-fakeface}
 \caption{An observed statistic at $(21,4)$, in the interior of the convex hull but 
 close to the boundary.  It is quite feasible to generate 10,000 MC 
-samples where all 10,000 points lie on a line that appear to be a one-dimensional 
-face, marked by the 
-triangles in the figure above.  The lighter colored polytope is the convex hull of all 
-previously 
+samples where all 10,000 points lie on a line segment that appear to be 
+a one-dimensional face, marked by the triangles in the figure above.  
+The lighter colored polytope is the convex hull of all previously 
 sampled points used to derive this empirical face.}
 \label{F:MC problem}
 \end{figure}
 
-According to the algorithm, this line segment is a boundary of the convex support on 
-which the observed statistic lies on the interior of, and the MLE does not exist.  It 
-proceeds as in the first example, and seeks to find the MLE of the LCM,
+Our algorithm treats the line segment as a boundary of the 
+convex support on which the observed statistic lies in the relative interior, and 
+concludes the MLE does not exist.  It does not stop there; it proceeds as in the first
+example and seeks to find the MLE of the LCM,
 \begin{align*}
 	\etaLCM = (35.38, -9.39),
 \end{align*}
-and then calculates one-sided confidence intervals for $\eta$.
+after which it then calculates one-sided confidence intervals for $\eta$.
 
 On first glance this is very troubling: our algorithm arrives at the wrong conclusion 
-about the existence of the MLE, and $(35.38, -9.39)$ does not look particularly close 
-to the true MLE of $(28.86, -7.76)$.  However, we believe a step back needs to be 
-taken and the goal of the analysis reconsidered.  What was the purpose in finding the 
-MLE?  In particular, what does one do with these numbers once they are found?
+about the existence of the MLE, and $(35.38, -9.39)$ does not look close 
+to the true MLE of $(28.86, -7.76)$.  However, we believe the algorithm is
+actually performing better than it might initially appear.
+A step back should be taken and the goal of the analysis revisited.  
+
+What is the purpose in finding the MLE?  In particular, what does one do with these values once they are found?
 
 If the end goal is to try to interpret meaning out of these numbers by their sign and  
-magnitude (\textbf{a questionable approach?  or at least dangerous?}), then we indeed 
-have a problem---our numbers are just wrong.  However, if the MLE is viewed as an 
+magnitude, then we indeed have a problem---our numbers are just wrong.  
+However, if the MLE is viewed as an 
 index into a specific model that assigns the highest probability to the observed data,
 then we claim that the model we have found---the LCM with parameter value $\etaLCM$---
 is in fact remarkably similar to the original model indexed by the true MLE.  A 
@@ -876,8 +885,8 @@ empirically determined face is summarized in Table~\ref{T:LCMvsMLE}.
 \begin{table}[h!] \label{T:LCMvsMLE}
 \begin{center}
 \caption{Probabilities assigned by LCM model with parameter value $\etaLCM$ and 
-original model with parameter value $\etaMLE$ to six points on empirical face.  The 
-observed statistic is $(21,4)$.}
+original model with parameter value $\etaMLE$ to the six points on the empirical face.  The observed statistic is $(21,4)$.  For the MLE model, the probability do 
+not sum to 1 since it assigns positive probability to points other than these six.}
 
 \begin{tabular}{rrrrr}
 \\  \hline
@@ -900,19 +909,19 @@ $0.0031$.  Including the additional 0.001 of probability on points that are outs
 the LCM support, this total still only comes to $0.0041$, a difference that would seem 
 insignificant for most applications.  
 
-Of course, there may be practical issues: a researcher may want software to simply 
-return MLE values to keep around for later analysis.  Here, we are suggesting the 
+Of course, there are practical issues: even if a researcher is interested in the 
+MLE distribution, she may want the software to simply 
+return MLE values to keep around for later analysis.  Here, we are suggesting that the 
 analysis return LCM MLE values and an LCM model (perhaps in the form of the convex 
-support).  The researcher may understandably be confused, especially if he knew in 
-advance that the MLE was guaranteed to exist.  However, any analysis (other than the 
-parameter value magnitude study) would still work as before, though perhaps not ``out 
-of the box".
+support).  The researcher may understandably be confused, especially if she knew in 
+advance that the MLE was guaranteed to exist.  However, any distributional analysis 
+would be almost identical, though perhaps not ``out of the box".
 
 It may be of interest to note that $\etaLCM$ and $\etaMLE$ index nearly identical 
 models in the LCM, with the difference due almost entirely to the lack of 
-identifiability of the LCM.  A normal direction to the empirical face is $\delta = 
-(4,-1)$, which is a direction of constancy for the LCM (that is, $\delta \in \Gammalim
-$).  Then by \eqref{E:Gammalim}, 
+identifiability of the LCM.  A normal direction to the (incorrect) empirical face is 
+$\delta = (4,-1)$, which is also a direction of constancy for the LCM 
+(that is, $\delta \in \Gammalim$).  Then by \eqref{E:Gammalim}, 
 \begin{align*}
 	\ell(\etaLCM)^{LCM} &= \ell( \etaLCM + \gamma )^{LCM}\\
 				 &= 	\ell(\etaLCM + k \, (4,-1))^{LCM}.
@@ -924,8 +933,8 @@ If we had perfect knowledge and chose $k = -1.63$,
 matching the MLE to the significant figures considered.  Thus in this case, $\etaLCM$ 
 and $\etaMLE$ index nearly identical models of the LCM.
 
-If we finished the analysis as before and computed one-sided 95\% confidence intervals 
-for $\eta$, we get 
+If we allowed the algorithm to finish the incorrect analysis and computed 
+one-sided 95\% confidence intervals for $\eta$, we get 
 \begin{align*}
 %14.495152 -3.703202 
 	[20.46, +\infty)\\
