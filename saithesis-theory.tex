@@ -127,11 +127,14 @@ $F$ \citep{Rockafellar:1970}.  It is itself a convex polytope.
 A \emph{proper} face is a face that is not the empty set or $C$, and 
 \emph{facets} are proper faces of the highest dimension.
 
-The \emph{tangent cone} of a convex set $C$ at a point $x \in C$ is
+The \emph{tangent cone}\footnote{Typically, the tangent cone is defined 
+as the \emph{closure} of the above set, but
+this is unnecessary when $C$ is polyhedral.}
+ of a convex polyhedral set $C$ at a point $x \in C$ is
 \begin{align*}
-	T_C(x) = \cl\{s(w-x):w \in C \text{ and } s \geq 0 \},
+	T_C(x) = \{s(w-x):w \in C \text{ and } s \geq 0 \}.
 \end{align*}
-where $\cl$ denotes the closure operation \citep[Theorem 6.9]{Rockafellar}.  
+
 
 The \emph{normal cone} of a convex set $C$ in $\RR^d$ at a point $x \in C$ is 
 \begin{align*}
@@ -146,7 +149,7 @@ The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 \end{align*}
 
 \hl{DEFINE \emph{direction of recession}, \emph{direction of constancy}.}  \textbf{get from 
-\citep{Rockafellar:1970}.}
+\citep{Rockafellar:1970} p 69.}
 
 
 
@@ -389,6 +392,7 @@ almost surely.
 Theorems~\ref{Thm:DOC} and \ref{Thm:DOR} induce the following criteria about the
 existence of the MLE in the conventional sense:
 
+%%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}[Theorem 4, \citep{Geyer:gdor}] \label{Thm:MLE existence}
 For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, the 
 following are equivalent 
@@ -400,11 +404,12 @@ following are equivalent
 \end{enumerate}
 \end{theorem}
 
-Thus the MLE does not exist in the conventional sense if a there exists a vector 
-$\delta$ that is a direction of recession exists but not a direction of constancy.  
-Such a direction is called a \emph{generic direction of recession} (GDOR).
-Thus if $\delta \in \rint N_C(g(\yobs))$, $\delta$ is a GDOR.  A GDOR exists if and 
-only if the MLE does not exist.
+Thus the MLE does not exist in the conventional sense if there exists a vector 
+$\delta$ that is a direction of recession but not a direction of constancy.  
+If in addition $\delta \in \rint N_C(g(\yobs))$, then $\delta$ is called a 
+\emph{generic direction of recession} (GDOR).  \hl{Normal cones are convex sets and
+relative interiors of nonempty convex sets are nonempty.}  Thus 
+a GDOR exists if and only if the MLE does not exist.  
 
 Theorem~\ref{Thm:MLE rint} relates the non-existence of the MLE to the location
 of $g(\yobs)$ relative to the boundary of $C$.  Here, Theorems \ref{Thm:DOC}, \ref{Thm:DOR}, and \ref{Thm:MLE existence} relate the non-existence of the MLE
@@ -413,6 +418,7 @@ occurs when $g(\yobs)$ is such that $\inner{g(Y) - g(\yobs)} < 0$.  This is
 exactly the criteria that puts $g(\yobs)$ on the boundary of the convex support,
 thus agreeing with Theorem~\ref{Thm:MLE rint}.
 
+%%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
 For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, if $\delta$ is a
 GDOR, then for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta+s\delta)$ is strictly
@@ -420,7 +426,8 @@ increasing on the interval where it is finite.
 \end{corollary}
 
 This corollary is clearly implied by Theorems \ref{Thm:DOC} and \ref{Thm:DOR}; if
-$\delta$ is a GDOR, the $\ell(\eta+s\delta)$ is nondecreasing with respect to $s$ by 
+$\delta$ is a direction of recession that is not a direction of constancy, 
+the $\ell(\eta+s\delta)$ is nondecreasing with respect to $s$ by 
 Theorem \ref{Thm:DOR} but cannot be constant by Theorem \ref{Thm:DOC}.  Therefore,
 it must be strictly increasing.
 
@@ -451,7 +458,7 @@ then for all $\eta \in \Xi$
 			+\infty							& \inner{g(y) - g(\yobs), \delta} > 0.
 		\end{cases}
 \end{align}
-If $\delta$ is not a direction of constancy (and thus is a GDOR), 
+If $\delta$ is not a direction of constancy, 
 then $s \mapsto P_{\eta+s\delta}( g(Y) \in H)$ is continuous and 
 strictly increasing, and $P_{\eta+s\delta}( g(Y) \in H) \to 1$ as $s \to \infty$.
 \end{theorem}
@@ -493,7 +500,8 @@ $s \to +\infty$ by applying Theorem~\ref{Thm:e_c},
 			\end{cases}
 \end{align*}
 This gets us \eqref{E:LCM}.  We next show the behavior of 
-$P_{\eta+s\delta}(g(Y) \in H)$ as $s \to +\infty$ when $\delta$ is a GDOR.
+$P_{\eta+s\delta}(g(Y) \in H)$ as $s \to +\infty$ when $\delta$ is a direction of
+recession that is not a direction of constancy.
 
 \begin{align*}
  P_{\eta+s\delta}(g(Y) \in H) &= \int_H e^{\inner{g(y), \eta+s\delta} - c(\eta
@@ -524,7 +532,7 @@ Then taking the limit of $s \to +\infty$ via Theorem~\ref{Thm:e_c} gives
 %%%%% END PROOF
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Remarks on Theorem~\ref{Thm:LCM}}
+%\subsection{Remarks on Theorem~\ref{Thm:LCM}}
 There are many implications of Theorem~\ref{Thm:LCM} described in \citep{Geyer:gdor}
 which we repeat here, though we go into more detail for further clarity.
 
@@ -532,7 +540,7 @@ The event $\inner{g(Y),\delta} > \inner{g(\yobs),\delta}$ has zero probability b
 Theorem~\ref{Thm:DOR}(2) and thus the $+\infty$ case need not be considered.
 The right-hand side of \eqref{E:LCM} can be viewed as a conditional density of a 
 distribution with parameter $\eta$ given $g(Y) \in H$, and expressed as $f_{\eta}
-(\, \cdot\,  | g(y) \in H)$.  This is because the numerator
+(\, \cdot\,  \mid g(y) \in H)$.  This is because the numerator
 is in fact a joint density, which can be reasoned as follows.
 
 Let $W = I(g(Y) \in H)$, which has density 
@@ -557,7 +565,7 @@ The conditional density of $W \mid Y$ is
  		\end{cases}
 \end{align*}
 
-Then the conditional density for $Y|[g(Y)\in H]$ can be expressed
+Then the conditional density for $Y \mid [g(Y)\in H]$ can be expressed
 \begin{align*}
 	f_\eta(y \mid g(y) \in H) &= f_\eta(y \mid w=1) \\
 					&= \frac{f_\eta(w=1, y)}{f_\eta(w=1)}	
@@ -572,7 +580,7 @@ Then the conditional density for $Y|[g(Y)\in H]$ can be expressed
 \end{align*}
 which is exactly the right-hand side of \eqref{E:LCM}.
 
-The log likelihood for $f_\eta( \, \cdot\,  | g(y) \in H)$ for $\eta \in \Xi$ can be expressed as
+The log likelihood for $f_\eta( \, \cdot\,  \mid g(y) \in H)$ for $\eta \in \Xi$ can be expressed as
 \begin{align*}
 %	\ell_{LCM}(\eta) &= 
 	\inner{\eta, g(\yobs)} - c(\eta) - \log P_\eta(g(Y) \in H) 
@@ -582,16 +590,16 @@ which clearly has exponential family form with the same natural parameter $\eta$
 statistic $g(\yobs)$ as the original exponential family.  The cumulant function is different,
 however, and thus the family may not be full.  The full family containing this exponential family is at least as large as
 \begin{align*}
-\{ f_{\eta}(\, \cdot\,  | g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
+\{ f_{\eta}(\, \cdot\,  \mid g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
 { and } \gamma \in \Gammalim \},
 \end{align*}
-where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  | g(Y) \in H)$,
+where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  \mid g(Y) \in H)$,
 and is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
 
 We are primarily interested in the case when $\delta$ is a GDOR, in which case
 we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 \begin{align*}
-\lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y | g(y) \in H).
+\lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y \mid g(y) \in H).
 \end{align*}
 
 We can express the log likelihood of the LCM as a function of the 
@@ -609,6 +617,81 @@ and so $P_\eta(g(Y) \in H)$ cannot be equal to 1.
 Thus even though the MLE does not exist for the original family, its log likelihood
 $\ell(\eta)$ is bounded by the LCM log likelihood and the function increases strictly
 towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
+
+
+
+
+
+
+The following theorem provides the linear programming framework through
+which we can find a GDOR.  
+%%%%%%%%%%%%%%%%%%%%%
+\begin{theorem}[Theorem 7 from \citet{Geyer:gdor}] \label{Thm:L-GDOR}
+For a full exponential family having polyhedral convex support $C$ and observed value 
+of the natural statistic $g(\yobs)$ such that $g(\yobs) \in C$, 
+let $T_C(g(\yobs) = \con(V)$, and define
+\begin{align*}
+	L = \{ v \in V: -v \in T_C(g(\yobs)) \}.
+\end{align*}
+Then a GDOR exists if and only if $L \neq V$, in which case a vector $\delta$ is a GDOR if and 
+only if
+\begin{align*}
+	\inner{w, \delta} = 0, \quad w \in L \\
+	\inner{w, \delta} < 0, \quad w \in V \setminus L \\
+\end{align*}
+\end{theorem}
+It is not immediately obvious why defining $L$ in such a manner is helpful from a theoretical 
+perspective.  
+We will discuss it more detail in Chapter~\ref{Chapter:Linear programming}.
+
+%%%%%%%%%%%%%%%%%%%%%
+\begin{corollary}[Corollary 8 from \citet{Geyer:gdor}]
+Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, a GDOR is not a direction of constancy.
+\end{corollary}
+%%%%%%%%%%%%%%%%%%%%%
+\begin{corollary}[Corollary 9 from \citet{Geyer:gdor}] \label{Cor:spanL}
+Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDOR.  Then
+\begin{align*}
+	T_{C \cap H} (g(\yobs)) &= \spanl L \\
+	C \cap H &= C \cap (g(\yobs) + \spanl L ). \\
+\end{align*}
+\end{corollary}
+
+Suppose $C \cap H$ defines the support of the LCM.  Then Corollary~\ref{Cor:spanL} tells
+us that because the tangent cone $T_{C \cap H} (g(\yobs))$ is in fact a vector subspace, 
+then by Theorem~\ref{Thm:MLE existence}, the MLE for this model must exist.
+Thus by using a GDOR for $\delta$ in Theorem~\ref{Thm:LCM}, we are guaranteed to get an LCM
+which can be maximized.
+
+The following theorem shows that $C \cap H$ defines the support of the LCM in the finite
+state space setting that is of interest to us.
+%%%%%%%%%%%%%%%%%%%%%
+\begin{theorem}
+For a full exponential family having finite polyhedral convex support $C$ and observed value 
+of the natural statistic $g(\yobs)$ such that $g(\yobs) \in C$, suppose $\delta$ is a GDOR.
+Then $C \cap H$ defines the support of the LCM.
+\end{theorem}
+\begin{proof}
+Theorem~\ref{Thm:LCM} says that if $\delta$ is a GDOR, which is a direction of recession
+that is not a direction of constancy, then for the original model,
+\begin{align*}
+	P_{\eta+s\delta}( g(Y) \in H ) \to 1.
+\end{align*}
+Since the LCM is the limiting distribution of the original model as $s \to +\infty$, it follows that $P^{LCM}(g(Y) \in H) = 1$.  
+This puts 0 probability on points outside of $H$.  
+
+Left to show is that there is 0 probability on points $H \setminus C$.
+The original model puts 0 probability on any $x \notin C$, including $H \setminus C$.  Because of the pointwise convergence of the original density to the LCM, since the original density puts zero probability on any $x \in H \setminus C$, the limiting model must as well.  Then
+\begin{align*}
+	P(g(Y) \in H) &= P \left( g(Y) \in ( (H \setminus C)  \cup (H \cap C)   \right ) \\
+	 			&= P \left( g(Y) \in H \setminus C \right) 
+								+ P \left( g(Y) \in H \cap C \right ) \\
+	 			&= 0 + P \left( g(Y) \in H \cap C  \right ) = 1.
+\end{align*}
+Thus the support of the LCM is $C \cap H$.
+
+SO THEN WHY DOESN'T THIS WORK FOR POISSON REGRESSION, WHERE C IS NOT FINITE?
+\end{proof}
 
 An MLE for the LCM $\etaLCM$ in turn must exist when the convex support $C$ is polyhedral 
 (and hence finite), which is the only case of interest to us.  

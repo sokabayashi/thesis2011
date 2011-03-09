@@ -990,10 +990,20 @@ SEE PAGE 15
 data("faux.magnolia.high")
 fmh <- faux.magnolia.high
 plot(fmh, displayisolates = FALSE, vertex.cex = 0.7)
+plot(fmh, displayisolates = FALSE, vertex.col = "Grade", vertex.cex = 0.7)
+R> summary(fmh ~ triangle)triangle 169Instinct tells us that 169 triangles is many more than would be expected by chance in a network of 1,461 actors and 974 edges. 
+
 > model3.take2 <- ergm(fmh ~ edges + triangle, MCMCsamplesize = 1e+5, 
 +	interval = 1000, verbose = TRUE, seed = 88)
 model3.take3 <- ergm(fmh ~ edges + triangle, maxit = 25, seed = 888,	
 control = control.ergm(steplength = 0.25), verbose = TRUE)
+
+R> model4.take3 <- ergm(fmh ~ edges + nodematch("Grade") +nodematch("Race") + nodematch("Sex") + gwesp(0.2, fixed = TRUE), 
+MCMCsamplesize = 1e+5, maxit = 15, verbose = TRUE, 
+control = control.ergm(steplength = 0.25), seed = 123)
+
+edges nodematch.Grade nodematch.Race	nodematch.Sex gwesp.fixed.0.2 
+-9.7915376	2.7557927	0.9184486	0.7664999	1.8150806
 \end{verbatim}
 
 
