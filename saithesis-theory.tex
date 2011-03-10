@@ -409,7 +409,7 @@ $\delta$ that is a direction of recession but not a direction of constancy.
 If in addition $\delta \in \rint N_C(g(\yobs))$, then $\delta$ is called a 
 \emph{generic direction of recession} (GDOR).  \hl{Normal cones are convex sets and
 relative interiors of nonempty convex sets are nonempty.}  Thus 
-a GDOR exists if and only if the MLE does not exist.  
+a GDOR exists if and only if the MLE does not exist.
 
 Theorem~\ref{Thm:MLE rint} relates the non-existence of the MLE to the location
 of $g(\yobs)$ relative to the boundary of $C$.  Here, Theorems \ref{Thm:DOC}, \ref{Thm:DOR}, and \ref{Thm:MLE existence} relate the non-existence of the MLE
@@ -421,7 +421,8 @@ thus agreeing with Theorem~\ref{Thm:MLE rint}.
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
 For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, if $\delta$ is a
-GDOR, then for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta+s\delta)$ is strictly
+direction of recession that is not a direction of constancy, 
+then for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta+s\delta)$ is strictly
 increasing on the interval where it is finite.
 \end{corollary}
 
@@ -436,7 +437,8 @@ it must be strictly increasing.
 
 \subsection{Limiting conditional model}
 When the MLE does not exist for an exponential family in the conventional sense, there 
-exists a GDOR along which the log likelihood goes to $+\infty$.  The behavior of the 
+exists a direction of recession that is not a direction of constancy 
+along which the log likelihood goes to $+\infty$.  The behavior of the 
 density function of the distribution is described in the following theorem:
 
 \begin{theorem}[Theorem 6 from \citet{Geyer:gdor}] \label{Thm:LCM}
@@ -596,7 +598,7 @@ however, and thus the family may not be full.  The full family containing this e
 where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  \mid g(Y) \in H)$,
 and is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
 
-We are primarily interested in the case when $\delta$ is a GDOR, in which case
+Wwhen $\delta$ is a direction of recession that is not a direction of constnacy, 
 we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 \begin{align*}
 \lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y \mid g(y) \in H).
@@ -622,8 +624,9 @@ towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
 
 
 
-
-The following theorem provides the linear programming framework through
+The following theorems and corollaries provide us with some foundation for
+finding both a GDOR and then the MLE in the LCM.
+This first theorem provides the linear programming framework through
 which we can find a GDOR.  
 %%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}[Theorem 7 from \citet{Geyer:gdor}] \label{Thm:L-GDOR}
@@ -641,35 +644,20 @@ only if
 \end{align*}
 \end{theorem}
 It is not immediately obvious why defining $L$ in such a manner is helpful from a theoretical 
-perspective.  
-We will discuss it more detail in Chapter~\ref{Chapter:Linear programming}.
+perspective.  We will discuss it more detail in Chapter~\ref{Chapter:Linear programming}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 8 from \citet{Geyer:gdor}]
 Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, a GDOR is not a direction of constancy.
 \end{corollary}
-%%%%%%%%%%%%%%%%%%%%%
-\begin{corollary}[Corollary 9 from \citet{Geyer:gdor}] \label{Cor:spanL}
-Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDOR.  Then
-\begin{align*}
-	T_{C \cap H} (g(\yobs)) &= \spanl L \\
-	C \cap H &= C \cap (g(\yobs) + \spanl L ). \\
-\end{align*}
-\end{corollary}
 
-Suppose $C \cap H$ defines the support of the LCM.  Then Corollary~\ref{Cor:spanL} tells
-us that because the tangent cone $T_{C \cap H} (g(\yobs))$ is in fact a vector subspace, 
-then by Theorem~\ref{Thm:MLE existence}, the MLE for this model must exist.
-Thus by using a GDOR for $\delta$ in Theorem~\ref{Thm:LCM}, we are guaranteed to get an LCM
-which can be maximized.
-
-The following theorem shows that $C \cap H$ defines the support of the LCM in the finite
-state space setting that is of interest to us.
+The following theorem (which is new) shows that $C \cap H$ defines the support of the LCM 
+in the finite state space setting that is of interest to us.  
 %%%%%%%%%%%%%%%%%%%%%
-\begin{theorem}
+\begin{theorem} \label{Thm:C-H}
 For a full exponential family having finite polyhedral convex support $C$ and observed value 
 of the natural statistic $g(\yobs)$ such that $g(\yobs) \in C$, suppose $\delta$ is a GDOR.
-Then $C \cap H$ defines the support of the LCM.
+Then $C \cap H$ defines the convex support of the LCM.
 \end{theorem}
 \begin{proof}
 Theorem~\ref{Thm:LCM} says that if $\delta$ is a GDOR, which is a direction of recession
@@ -680,38 +668,56 @@ that is not a direction of constancy, then for the original model,
 Since the LCM is the limiting distribution of the original model as $s \to +\infty$, it follows that $P^{LCM}(g(Y) \in H) = 1$.  
 This puts 0 probability on points outside of $H$.  
 
-Left to show is that there is 0 probability on points $H \setminus C$.
 The original model puts 0 probability on any $x \notin C$, including $H \setminus C$.  Because of the pointwise convergence of the original density to the LCM, since the original density puts zero probability on any $x \in H \setminus C$, the limiting model must as well.  Then
 \begin{align*}
-	P(g(Y) \in H) &= P \left( g(Y) \in ( (H \setminus C)  \cup (H \cap C)   \right ) \\
-	 			&= P \left( g(Y) \in H \setminus C \right) 
-								+ P \left( g(Y) \in H \cap C \right ) \\
-	 			&= 0 + P \left( g(Y) \in H \cap C  \right ) = 1.
+	P^{LCM}(g(Y) \in H) &= P^{LCM} \left( g(Y) \in ( (H \setminus C)  \cup (H \cap C)   \right ) \\
+	 			&= P^{LCM} \left( g(Y) \in H \setminus C \right) 
+								+ P^{LCM} \left( g(Y) \in H \cap C \right ) \\
+	 			&= 0 + P^{LCM} \left( g(Y) \in H \cap C  \right ) = 1.
 \end{align*}
-Thus the support of the LCM is $C \cap H$.
 
-SO THEN WHY DOESN'T THIS WORK FOR POISSON REGRESSION, WHERE C IS NOT FINITE?
+Left to show is that there is no smaller set than $C \cap H$ can be convex support for the LCM.
+%Let $S = g(\YY)$, and define $A = \con( S \cap H )$.  Does $A = C \cap H )$?
+%Clearly $ A \subset (C \cap H)$.  But is there an $x \in C\cap H$ where $x \notin A$?
+Let $S = g(\YY)$.  Clearly, $(S \cap H) \subset (C \cap H)$.  Is $(C \cap H) = \con(S \cap H)$?
+If a point $x \in C$, it is a convex combination of finite points in $S$, which we may divide up
+into points in $S \setminus H$ and $S \cap H$.  
+\begin{align*}
+	x = \alpha_1 y_1 + \alpha_2 y_2 + \cdots + \alpha_k y_k + \alpha_{k+1} y_{k+1} + \cdots + \alpha_n y_n
+\end{align*}
+where $\alpha_i \geq 0$, $\sum_i \alpha_i = 1$, and we designate $y_1, \ldots, y_k \in S \setminus H$
+and $y_{k+1}, \ldots, y_n \in S \cap H$.
+
+For any $x \in C \cap H$, the coefficients of the points not in $S \cap H$ must all be zero,
+otherwise there will be a contribution from a component puts the point outside $H$.
+Then $x$ will equal a convex combination of just the points in $S \cap H$.  Since this is 
+true for any $x \in C \cap H$,  $C \cap H = \con( S\cap H)$.
 \end{proof}
 
-An MLE for the LCM $\etaLCM$ in turn must exist when the convex support $C$ is polyhedral 
-(and hence finite), which is the only case of interest to us.  
-This can clearly be seen from the following argument: if the MLE does not exist,
-then $g(\yobs)$ must lie on the boundary of $C$.  The LCM is the distribution
-with same natural parameters and statistics, conditioning that we are on a hyperplane
-$H$, or in this case $C \cap H$.  This face $C \cap H$ defines the support of the LCM,
-and by construction, $g(\yobs)$ must lie in the interior of this face.  It is not
-possible for $g(\yobs)$ to lie on the boundary of this new support by the definition 
-of a GDOR and Theorems \ref{Thm:DOC} and \ref{Thm:DOR}.  \hl{IS THIS CLEAR?}
-Since $g(\yobs)$ cannot lie on the boundary of the new convex support, the MLE for
-this distribution must exist.
+
+%%%%%%%%%%%%%%%%%%%%%
+\begin{corollary}[Corollary 9 from \citet{Geyer:gdor}] \label{Cor:spanL}
+Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDOR.  Then
+\begin{align*}
+	T_{C \cap H} (g(\yobs)) &= \spanl L \\
+	C \cap H &= C \cap (g(\yobs) + \spanl L ). \\
+\end{align*}
+\end{corollary}
+
+Theorem~\ref{Thm:C-H} and Corollary~\ref{Cor:spanL} tells us that by maximizing the 
+original log likelihood along a GDOR, we will converge to an LCM which has $C \cap H$ for
+its convex support.  Because the tangent cone $T_{C \cap H} (g(\yobs))$ 
+is in fact a vector subspace, then by Theorem~\ref{Thm:MLE existence}, the MLE for 
+this model must exist.  Corollary~\ref{Cor:spanL} also tells us that when the MLE
+does not exist, $g(\yobs)$ lies in the relative interior of $C \cap H$.
 
 The last part of Theorem~\ref{Thm:LCM} says that for the sequence of exponential families with parameter 
-value $\theta+s\delta$, the probability of $g(Y)$ occurring on the plane $H$ is strictly 
-increasing, and in fact, going to 1.  We may think of this as 
-``probability accumulating on the boundary"---where the 
-boundary is actually the face $C \cap H$ on which $g(\yobs)$ sits.
+value $\eta+s\delta$, the probability of $g(Y)$ occurring on the plane $H$ is strictly 
+increasing, going to 1.  We may think of this as 
+``probability accumulating on the boundary"---where by boundary 
+we  actually mean the face $C \cap H$ on which $g(\yobs)$ sits in the relative interior.
 
-Thus the MLE for the LCM maximizes the likelihood in \hl{the family} that is the 
+\hl{Thus} the MLE for the LCM maximizes the likelihood in \hl{the family} that is the 
 union of the LCM and the original family.  When 
 this happens, we say we have found an MLE in the Barndorff-Nielsen completion of the 
 original family.
@@ -727,20 +733,20 @@ When no GDOR exists and thus the MLE exists in the conventional sense, then the
 original family is the LCM, corresponding to $\delta=0$ in Theorem~\ref{Thm:LCM}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Summary}
-By the well-known theorem of MLE existence for exponential families (Theorem~\ref{Thm:MLE rint}), when the observed statistic, $g(\yobs)$, is 
-on the boundary of the convex support $C$, the MLE does not exist in the conventional 
-sense.
-Here, we have expressed this result with more detail: by Theorem~\ref{Thm:MLE existence}, there must exist a GDOR.
-
-According to Theorem~\ref{Thm:LCM}, as we move in the natural parameter space in the 
-direction of a GDOR, the distribution with this parameter value will 
-put increasing probability on points for  
-on the face $H \cap C$ on which $g(\yobs)$ lies in the interior of.  
-This face is orthogonal to $\delta
-$ by construction.  Samples generated 
-from these models will therefore increasingly fall on the face on which $g(\yobs)$ 
-lies as $\eta$ increases in the direction of $\delta$.  Eventually, all generated sample points will fall on this boundary.
+%\subsection{Summary}
+%By the well-known theorem of MLE existence for exponential families (Theorem~\ref{Thm:MLE rint}), when the observed statistic, $g(\yobs)$, is 
+%on the boundary of the convex support $C$, the MLE does not exist in the conventional 
+%sense.
+%Here, we have expressed this result with more detail: by Theorem~\ref{Thm:MLE existence}, there must exist a GDOR.
+%
+%According to Theorem~\ref{Thm:LCM}, as we move in the natural parameter space in the 
+%direction of a GDOR, the distribution with this parameter value will 
+%put increasing probability on points for  
+%on the face $H \cap C$ on which $g(\yobs)$ lies in the interior of.  
+%This face is orthogonal to $\delta
+%$ by construction.  Samples generated 
+%from these models will therefore increasingly fall on the face on which $g(\yobs)$ 
+%lies as $\eta$ increases in the direction of $\delta$.  Eventually, all generated sample points will fall on this boundary.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
