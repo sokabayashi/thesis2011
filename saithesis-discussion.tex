@@ -59,7 +59,7 @@ is approximated via MCMC.  This is a more difficult theoretical problem and is t
 motivation for stochastic 
 approximation research.  
 Further work is necessary to determine if one can adapt our restrictive curvature 
-condition \eqref{E:Wolfe-mod} to the 
+condition \eqref{E:Wolfe-ll} to the 
 approach of \citet{Andrieu:2005} or \citet{Liang:2010} in MCMC stochastic 
 approximation.  
 
@@ -76,8 +76,8 @@ parameter estimate.
 
  A final remaining issue is estimation of Monte Carlo error of the estimates.  Here 
 too we recommend switching to another
-algorithm at the end.  The MCMC-MLE procedure gives accurate error estimates \citep
-{Geyer:1994}.
+algorithm at the end.  The MCMC-MLE procedure gives accurate error estimates 
+\citep{Geyer:1994}.
 For very small steps these are essentially the same as the Monte Carlo error of a 
 single unsafeguarded Newton-Raphson step,
 so the method in \citep{Geyer:1994} can be used for either.

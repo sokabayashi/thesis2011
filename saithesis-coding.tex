@@ -33,10 +33,11 @@ We will need to find ways to perform the following operations:
 \begin{align*}
 	L = \{ w \in V: -w \in \con( V ) \}.
 \end{align*}
-It is the subspace with bases determined by $V$.
+It is the subspace with bases determined by $V$ and is the same $L$ that we saw 
+in Theorem~\ref{Thm:L-GDOR}.
 
 We use this to find the face of the polyhedral convex support on which the observed 
-statistic lies in the interior of.  The function \texttt{linearity} in the \texttt
+statistic lies in the relative interior.  The function \texttt{linearity} in the \texttt
 {rcdd} package can take as input the rays directed from observed statistic to sample 
 points generated via MCMC from the distribution with parameter value of interest.  
 From these, it determines the rays that form the basis of a vector subspace.  Of 
