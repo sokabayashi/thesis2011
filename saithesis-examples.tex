@@ -434,7 +434,7 @@ true MLE of $-0.9072$.  The inner loop count is the number of iterations spent s
    3 & $-0.9045$ & 1.140   &  0.009 & 1 \\
    4 & $-0.9145$ & 0.010   &  & \\
    \hline
-\end{tabular}
+\end{tabular} \label{T:Sampson redo}
 \end{center}
 \end{table}
 
@@ -882,7 +882,7 @@ empirically determined face is summarized in Table~\ref{T:LCMvsMLE}.
 
 % latex table generated in R 2.11.1 by xtable 1.5-6 package
 % Fri Sep 10 13:22:25 2010
-\begin{table}[h!] \label{T:LCMvsMLE}
+\begin{table}[h!] 
 \begin{center}
 \caption{Probabilities assigned by LCM model with parameter value $\etaLCM$ and 
 original model with parameter value $\etaMLE$ to the six points on the empirical face.  The observed statistic is $(21,4)$.  For the MLE model, the probability do 
@@ -900,7 +900,7 @@ not sum to 1 since it assigns positive probability to points other than these si
   6 & 25 & 20 & 0.0005 & 0.0005 \\ 
    \hline
    &  &  & 1.0000 & 0.9990 \\ 
-\end{tabular}
+\end{tabular}\label{T:LCMvsMLE}
 \end{center}
 \end{table}
 
@@ -988,37 +988,138 @@ one-sided 95\% confidence intervals for $\eta$, we get
 %started with a 2-dim sample space?
 
 %\section{Example: \textit{e. coli}?}
-\section{Example: Faux Magnolia High School?}
+\section{Example: Faux Magnolia High School} \label{S:FauxMagnolia}
 \citet{advancesp*,statnet-tutorial} utilize a adolescent friendship network data set 
 of 1,461 students in grade 7--12 derived from the National Longitudinal Study of 
 Adolescent Health.  The data set, which \citeauthor{statnet-tutorial} refer to as Faux 
 Magnolia High School, is a model-based simulation from the original data set, where 
 the simulation is necessitated to maintain confidentiality.
 
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=5in]{Figures/fmh-grade}
+\caption{Faux Magnolia High without isolates, colored by grade.  That data is available
+in \texttt{ergm}.
+}
+\label{F:fmh}
+\end{figure}
+
 \subsection{MLE exists}
-\citet{statnet-tutorial} run analyses and settle on a model with the following terms 
-(the model selection issue is one we do not address here.  See \citet{GOF}): Grade, Race, Sex, edges, and 
+\citet{statnet-tutorial} run analyses and settle on a model with the following terms: 
+Grade, Race, Sex, edges, and a geometrically weighted edgewise share partner (GWESP).\footnote{the model selection issue is one we do not address here.  See \citet{GOF}
+ for methods of goodness-of-fit.}  
+Grade, Race, and Sex are covariate factors specific to the 
+actors and reflect whether or not the two actors in a dyad are of the same type.  
+The incorporation of these into an ERGM was 
+discussed in Section~\ref{S:Covariate}.  The GWESP statistic is not one we
+have discussed previously but has been alluded to in Section~\ref{S:ERGM setup} as
+one of the newly developed statistics designed to reduce degeneracy 
+\citep{Handcock:2006, Hunter:2006, recentp*}.  This particular statistics can be 
+thought of as a variant of triangles.
+
+We run our algorithm through 40 search directions, starting from an initial value for 
+$\eta$ of $(0, 0, 0, 0, 0)$.  As in the example with Sampson's monastery data, we rely
+on the \texttt{simulate.formula} command provided in the \texttt{ergm} package to
+generate our MCMC samples from the distributions indexed by $\eta$.  The results of our 
+estimates are reported in Table~\ref{T:FauxMagnolia}.
+%SEE PAGE 15
+%\begin{verbatim}
+%data("faux.magnolia.high")
+%fmh <- faux.magnolia.high
+%plot(fmh, displayisolates = FALSE, vertex.cex = 0.7)
+%plot(fmh, displayisolates = FALSE, vertex.col = "Grade", vertex.cex = 0.7)
+%R> summary(fmh ~ triangle)%triangle 169%Instinct tells us that 169 triangles is many more than would be expected by chance in a network of 1,461 actors and 974 edges. 
+%
+%> model3.take2 <- ergm(fmh ~ edges + triangle, MCMCsamplesize = 1e+5, 
+%+	interval = 1000, verbose = TRUE, seed = 88)
+%model3.take3 <- ergm(fmh ~ edges + triangle, maxit = 25, seed = 888,	
+%control = control.ergm(steplength = 0.25), verbose = TRUE)
+%
+%R> model4.take3 <- ergm(fmh ~ edges + nodematch("Grade") +%nodematch("Race") + nodematch("Sex") + gwesp(0.2, fixed = TRUE), 
+%MCMCsamplesize = 1e+5, maxit = 15, verbose = TRUE, 
+%control = control.ergm(steplength = 0.25), seed = 123)
+%
+%edges nodematch.Grade nodematch.Race	nodematch.Sex gwesp.fixed.0.2 
+%-9.7915376	2.7557927	0.9184486	0.7664999	1.8150806
+%\end{verbatim}
+
+% latex table generated in R 2.12.1 by xtable 1.5-6 package
+% Wed Mar  9 23:32:59 2011
+\begin{table}[h]  
+\begin{center} 
+\caption{Coefficients estimates derived from using the default MCMC-MLE algorithm
+in \texttt{ergm} through 5 iterations ($\etaMLE$ below) 
+and our algorithm $\hat{\eta}_{\textrm{Steep}}$ through 40 iterations.}
+\begin{tabular}{rrrrrr}
+  \hline
+ & edges & Grade & Race & Sex & GWESP \\ 
+  \hline
+$\etaMLE$ & -9.790 & 2.755 & 0.906 & 0.780 & 1.813 \\ 
+$\hat{\eta}_{\textrm{Steep}}$ & -9.879 & 2.810 & 0.942 & 0.786 & 1.809 \\ 
+   \hline
+\end{tabular}\label{T:FauxMagnolia}
+\end{center}
+\end{table}
+
+We compare our estimates to MLEs obtained by running the default MCMC-MLE algorithm 
+in \texttt{ergm}, which starts from a MPLE of
+\begin{align*}
+	\hat{\eta}_{MPLE } = ( -9.8665, 2.8626, 0.9944, 0.8261, 1.6950 ).
+\end{align*}
+It is noteworthy that MCMC-MLE would have had exactly the difficulties 
+described in Section~\ref{S:MCMC-MLE} if it were started at $(0, 0, 0, 0, 0)$ as well:
+after 15 iterations, all the coefficient estimates would still effectively be zeros.
+Thus its successful convergence here is due entirely to its use of 
+a very good MPLE estimate, which cannot always be relied upon.
+
+Our algorithm is very time consuming.  Whereas running MCMC-MLE through 15 iterations with MCMC sample sizes of 100,000 at intervals of 100 steps as done 
+by \citet{statnet-tutorial} takes only a few minutes, 
+we used over 100 iterations over 40 search directions, 
+each iteration using MCMC sample sizes of 
+10,000 spaced 5,000 iterations apart, taking over an hour.  We actually stopped the 
+algorithm at 40 search direction; we did not attain our desired cutoff value for 
+$\lVert \nabla \ell(\eta) \rVert < 0.01$ and were only able to 
+attain values as small as $9.6$.
+ 
+We make a few remarks:
+\begin{itemize}
+\item The goal here is to show that our algorithm can in fact find the MLE if needed, 
+starting from any initial value for a fairly large network data set.  
+Although it is not computationally expedient, 
+we obtain a reasonable estimate after 40 search directions.  
+
+\item Our recommended use of this algorithm is in combination with other algorithms,
+as discussed in Section~\ref{S:Combine}.  Thus, although it is satisfying to see a reasonable estimate of the MLE, what is more useful is the value of $\eta$ 
+at say $2d$ iterations, where $d$ is the dimension of $\eta$.  
+Here we see that at 10 iterations,
+\begin{align*}
+	\eta_{10} =( -8.330,  2.462,  0.565,  0.430,  0.879) 
+\end{align*}
+which makes for a good starting point for MCMC-MLE to converge in 1 iteration.
+Using conjugate gradient directions here does even better, with
+\begin{align*}
+	\eta_{10} =( -9.963,  2.965,  0.927,  0.742,  1.784).
+\end{align*}
+\item MCMC sampler.  We have developed our algorithm assuming that it would have access
+to a reasonably efficient MCMC sampler.  In this example, we found that the MCMC
+sampler performs much better with a larger interval between samples.  This is unsurprising given the very large number of nodes (1461 actors) 
+and the challenging issues of generating less dependent discrete samples.  
+%In fact,
+%our brief experience with this sampler, it would seem that the default 100 interval 
+%used may not have been sufficient.  
+
+\item MCMC sample sizes.  A more pragmatic way to implement our algorithm would have
+been to increase the MCMC sample sizes as the algorithm progressed.  That is, when
+we are very far away, crude estimates of the gradient and step size should be sufficient
+to get $\eta$ ``closer" and satisfy the curvature condition \eqref{E:Wolfe-ll}.
+As noted in Section~\ref{S:MCMC approx}, when $\lVert \nabla \ell(\eta) \rVert$ gets
+smaller, the curvature condition is more difficult to satisfy and sharper estimates---resulting from larger MCMC sizes---are necessary.
+\end{itemize}
 
 
-SEE PAGE 15
-\begin{verbatim}
-data("faux.magnolia.high")
-fmh <- faux.magnolia.high
-plot(fmh, displayisolates = FALSE, vertex.cex = 0.7)
-plot(fmh, displayisolates = FALSE, vertex.col = "Grade", vertex.cex = 0.7)
-R> summary(fmh ~ triangle)triangle 169Instinct tells us that 169 triangles is many more than would be expected by chance in a network of 1,461 actors and 974 edges. 
-
-> model3.take2 <- ergm(fmh ~ edges + triangle, MCMCsamplesize = 1e+5, 
-+	interval = 1000, verbose = TRUE, seed = 88)
-model3.take3 <- ergm(fmh ~ edges + triangle, maxit = 25, seed = 888,	
-control = control.ergm(steplength = 0.25), verbose = TRUE)
-
-R> model4.take3 <- ergm(fmh ~ edges + nodematch("Grade") +nodematch("Race") + nodematch("Sex") + gwesp(0.2, fixed = TRUE), 
-MCMCsamplesize = 1e+5, maxit = 15, verbose = TRUE, 
-control = control.ergm(steplength = 0.25), seed = 123)
-
-edges nodematch.Grade nodematch.Race	nodematch.Sex gwesp.fixed.0.2 
--9.7915376	2.7557927	0.9184486	0.7664999	1.8150806
-\end{verbatim}
-
-
+\subsection{Degenerate}
+\citet{statnet-tutorial} also considered the edges-triangles model, and concluded
+that it is degenerate because the fitted model with coefficients $(-7.31, 4.504)$
+ generates samples that look nothing like the observed data.  
+ We apply our algorithm to this setting to see if we can detect a non-existent MLE.
+ 
