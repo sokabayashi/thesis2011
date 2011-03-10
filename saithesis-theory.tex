@@ -598,7 +598,7 @@ however, and thus the family may not be full.  The full family containing this e
 where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  \mid g(Y) \in H)$,
 and is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
 
-Wwhen $\delta$ is a direction of recession that is not a direction of constnacy, 
+When $\delta$ is a direction of recession that is not a direction of constnacy, 
 we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 \begin{align*}
 \lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y \mid g(y) \in H).
@@ -643,12 +643,22 @@ only if
 	\inner{w, \delta} < 0, \quad w \in V \setminus L \\
 \end{align*}
 \end{theorem}
-It is not immediately obvious why defining $L$ in such a manner is helpful from a theoretical 
-perspective.  We will discuss it more detail in Chapter~\ref{Chapter:Linear programming}.
+It is not immediately obvious why defining $L$ in such a manner is helpful; in fact,
+the motivation is rooted in linear programming.  We rely on this theorem heavily in 
+Chapter~\ref{Chapter:Linear programming}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 8 from \citet{Geyer:gdor}]
 Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, a GDOR is not a direction of constancy.
+\end{corollary}
+
+%%%%%%%%%%%%%%%%%%%%%
+\begin{corollary}[Corollary 9 from \citet{Geyer:gdor}] \label{Cor:spanL}
+Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDOR.  Then
+\begin{align*}
+	T_{C \cap H} (g(\yobs)) &= \spanl L \\
+	C \cap H &= C \cap (g(\yobs) + \spanl L ). \\
+\end{align*}
 \end{corollary}
 
 The following theorem (which is new) shows that $C \cap H$ defines the support of the LCM 
@@ -676,33 +686,36 @@ The original model puts 0 probability on any $x \notin C$, including $H \setminu
 	 			&= 0 + P^{LCM} \left( g(Y) \in H \cap C  \right ) = 1.
 \end{align*}
 
-Left to show is that there is no smaller set than $C \cap H$ can be convex support for the LCM.
+Left to show is that there is no smaller set than $C \cap H$ that 
+can be the convex support of the LCM.
 %Let $S = g(\YY)$, and define $A = \con( S \cap H )$.  Does $A = C \cap H )$?
 %Clearly $ A \subset (C \cap H)$.  But is there an $x \in C\cap H$ where $x \notin A$?
-Let $S = g(\YY)$.  Clearly, $(S \cap H) \subset (C \cap H)$.  Is $(C \cap H) = \con(S \cap H)$?
-If a point $x \in C$, it is a convex combination of finite points in $S$, which we may divide up
-into points in $S \setminus H$ and $S \cap H$.  
+Let $S = g(\YY)$.  The convex support of the LCM by construction is $\con(S \cap H)$, 
+which is closed since $S$ is finite.  
+%Clearly, $(S \cap H) \subset (C \cap H)$.  
+Is $(C \cap H) = \con(S \cap H)$?
+If a point $x \in C$, it is a convex combination of a finite set points in $S$,
 \begin{align*}
-	x = \alpha_1 y_1 + \alpha_2 y_2 + \cdots + \alpha_k y_k + \alpha_{k+1} y_{k+1} + \cdots + \alpha_n y_n
+	x = \alpha_1 w_1 + \alpha_2 w_2 + \cdots + \alpha_n w_n
 \end{align*}
-where $\alpha_i \geq 0$, $\sum_i \alpha_i = 1$, and we designate $y_1, \ldots, y_k \in S \setminus H$
-and $y_{k+1}, \ldots, y_n \in S \cap H$.
+where $\alpha_i \geq 0$, $\sum_i \alpha_i = 1$, and $w_i \in S$.
 
-For any $x \in C \cap H$, the coefficients of the points not in $S \cap H$ must all be zero,
-otherwise there will be a contribution from a component puts the point outside $H$.
-Then $x$ will equal a convex combination of just the points in $S \cap H$.  Since this is 
-true for any $x \in C \cap H$,  $C \cap H = \con( S\cap H)$.
+We claim for any $x \in C \cap H$, the coefficients of the $w_i$ not in $S \cap H$ must all be zero.  Suppose to get a contradiction that for an $x \in S \cap H$, there exist $\alpha_j > 0$ for $w_j \notin S \cap H$ for $j \in J$.  Then
+\begin{align*}
+	\inner{x - g(\yobs), \delta } &= \left \inner{ \sum_i \alpha_i w_i - g(\yobs), \delta \right } \\
+	&= \left \inner{ \sum_i \alpha_i \left( w_i - g(\yobs) \right), \delta \right }\\
+	&=  \left \inner{ \sum_{i \notin J} \alpha_i \left( w_i - g(\yobs) \right), \delta \right }
+		+ \left \inner{ \sum_{j\in J} \alpha_j \left( w_j - g(\yobs) \right), \delta \right }
+\end{align*}
+where the first term is less than or equal to zero by the definition of a direction of
+recession, and the second term is strictly less than zero since $w_j \notin H$.  Thus 
+$\inner{x - g(\yobs), \delta } < 0$, which means $x \notin H$, which is a contradiction.
+
+Thus $x$ will equal a convex combination of just the points in $S \cap H$.  Since this is 
+true for any $x \in C \cap H$, we have that $C \cap H = \con( S\cap H)$.
 \end{proof}
 
 
-%%%%%%%%%%%%%%%%%%%%%
-\begin{corollary}[Corollary 9 from \citet{Geyer:gdor}] \label{Cor:spanL}
-Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDOR.  Then
-\begin{align*}
-	T_{C \cap H} (g(\yobs)) &= \spanl L \\
-	C \cap H &= C \cap (g(\yobs) + \spanl L ). \\
-\end{align*}
-\end{corollary}
 
 Theorem~\ref{Thm:C-H} and Corollary~\ref{Cor:spanL} tells us that by maximizing the 
 original log likelihood along a GDOR, we will converge to an LCM which has $C \cap H$ for
