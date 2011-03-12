@@ -1,37 +1,52 @@
-The pseudocode presented in Section~\ref{S:algorithm overview} provides the basic framework for the application of our algorithm.
-For cases where the MLE is known to exist, the expression for the gradient $\nabla \ell(\eta)$ need be adapted to the setting of the problem, using an appropriate MCMC sampler as described by \eqref{E:nabla ell approx} if it cannot be calculated exactly.  
-An efficient root finding algorithm to find a step size $\alpha_k$ that satisfies the curvature condition \eqref{E:Wolfe-ll} is also highly desirable (and is in fact
+The pseudocode presented in Section~\ref{S:algorithm overview} provides the 
+basic framework for the application of our algorithm.
+For cases where the MLE is known to exist and  the gradient $\nabla \ell(\eta)$  
+cannot be calculated exactly, an appropriate MCMC sampler can be used to 
+approximate this quantity as described in Section~\ref{S:MCMC approx}.  
+An efficient root finding algorithm to find a step size $\alpha_k$ that satisfies the 
+curvature condition \eqref{E:Wolfe-ll} is also highly desirable (and is in fact
 an area for further research).  However, the overall algorithm
-will still essentially be the same.
+is essentially the same.
 
-More complexity is required for the setting where the MLE may not exist.  We will need 
-to make use of the results presented in Chapter~\ref{Chapter:Background} which in turn 
-rely heavily linear programming methodologies.  For example, even when coordinates 
+Some modification is required for the setting where the MLE may not exist.  
+We need to apply the theory developed in Section~\ref{S:LCM}, which
+relies heavily on linear programming methodologies.  For example, even when coordinates 
 of a point $g(\yobs)$ and the vertices that define a convex polytope $C$ are known, it 
-is not a trivial matter to know if that point lies in the interior or exactly on 
-a boundary of $C$.  Further complicating this process is that the representation of 
+is not a trivial matter to know if that point lies in the exterior, interior, 
+or exactly on a boundary of $C$.  
+%Furthermore, in the general case that we are considering, we do not assume this 
+%convex support $C$ to be known in advance, and thus must combine a way to explore the
+%sample space while simultaneously 
+Further complicating this process is that the representation of 
 numbers in computers is not exact, e.g., \texttt{0.3 / 3 == 1} evaluates
-to \texttt{FALSE}.  Fortunately the tools we need have already been made available to us through the \texttt{rcdd} package \citep{rcdd:R} in R.  
+to \texttt{FALSE}.  Fortunately most of the tools we need have already 
+been made available to us through the \texttt{rcdd} package \citep{rcdd:R} in R.  
 
-In this chapter, we first present an expanded pseudocode to deal with the possible
-non-existence of MLEs.  We then point out the specific functionality that is necessary,
+In this chapter, we first present an expanded pseudocode to handle the possible
+non-existence of MLEs: when the algorithm determines that the MLE does not exist
+in the original model, it then finds a GDOR and proceeds to maximize the LCM to
+find the MLE in the LCM.  
+We then point out the specific functionality that is necessary,
 and describe the commands by which each of these operations can be performed in R.
+We do not provide theoretical derivations for the linear programming operations here
+and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 
+\newpage
 \section{Algorithm pseudocode}
-Below are a few comments about notation and equations:
-\begin{itemize}
-\item $C$ is the convex support.
-\item $Y$ is the random variable in the sample space.
-\item $g(\cdot)$ is the function that maps $y$ to its natural statistics.
-\item $\yobs$ is the observed observed, $g(\yobs)$ the natural statistics of the observed data.
-\item $\con()$ is the convex hull of a set of points.
-\item $\bd()$ is the boundary of a set of points.
-\item $\norm{\cdot}$ is the Euclidean norm.
-\item The curvature condition \eqref{E:Wolfe-ll} used here comes from the search 
-algorithm of \citet{Okabayashi:longrange} and is necessary for guaranteeing 
-convergence to the MLE when it exists.
-%\item $\bar{Y}_m$ is the sample mean, $\frac{1}{m}\sum_{i=1}^m g(Y_i)$
-\end{itemize}
+%Below are a few comments about notation and equations:
+%\begin{itemize}
+%\item $C$ is the convex support.
+%\item $Y$ is the random variable in the sample space.
+%\item $g(\cdot)$ is the function that maps $y$ to its natural statistics.
+%\item $\yobs$ is the observed observed, $g(\yobs)$ the natural statistics of the observed data.
+%%\item $\con()$ is the convex hull of a set of points.
+%%\item $\rbd()$ is the relative boundary of a set of points.
+%\item $\norm{\cdot}$ is the Euclidean norm.
+%%\item The curvature condition \eqref{E:Wolfe-ll} used here comes from the search 
+%%algorithm of \citet{Okabayashi:longrange} and is necessary for guaranteeing 
+%%convergence to the MLE when it exists.
+%%\item $\bar{Y}_m$ is the sample mean, $\frac{1}{m}\sum_{i=1}^m g(Y_i)$
+%\end{itemize}
 %\newpage
 {\small
 \noindent \textbf{LCM MLE Algorithm}
@@ -39,7 +54,7 @@ convergence to the MLE when it exists.
 \noindent \begin{algorithmic}[1]
 \State Get an initial value, $\eta_1 = (0, \ldots 0)$.
 \State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{1}$.  
-\State Set $ty.hull = \con(g(Y_1), \ldots, g(Y_m) )$.
+\State Set $ty.hull = \con(g(Y_1), \ldots, g(Y_m) )$.  \hl{V-REP??}
 \State Approximate 
 \begin{align*}
 \nabla \ell( \eta_1) \approx g(\yobs) - \frac{1}{m}\sum_{i=1}^m g(Y_i).
@@ -50,7 +65,7 @@ convergence to the MLE when it exists.
 %\State Set $face.cutoff = 0.30$.
 
 \While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
-\State \textbf{Find} a step size $\alpha_k$ that satisfies the \textit{curvature condition}
+\State \textbf{Find} a step size $\alpha_k$ that satisfies the curvature condition \eqref{E:Wolfe-ll}
 \begin{align*}%\label{E:curvature}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k.
 \end{align*}
@@ -63,7 +78,7 @@ convergence to the MLE when it exists.
 \EndIf
 \State Call the resulting sample points $g(Y_{(1)}), \ldots, g(Y_{(k)})$.
 \State \textbf{Update} $ty.hull$ to reflect new sample points, $g(Y_{(1)}), \ldots, g(Y_{(k)})$.\\
-\State \textbf{Question: $g(\yobs) \in \bd( \con(g(Y_{(1)}), \ldots, g(Y_{(k)}) ))$? }
+\State \textbf{Question: $g(\yobs) \in \rbd( \con(g(Y_{(1)}), \ldots, g(Y_{(k)}) ))$? }
 %\If{Yes, $g(\yobs)$ is outside the convex hull}
 %	\State  Keep sampling.  
 %%	\State $on.boundary$ = FALSE.
@@ -113,18 +128,112 @@ direction.
 \end{algorithmic}
 }
 
-
-In these next sections, we detail how to apply these tools to the various problems we encounter.  We then show how we must modify our algorithm for this more general setting.
-We attempt to present this material in such a way that even if the syntax of the 
-code change, the overall functionality is still made clear.
-
-We will need to find ways to perform the following operations:
+There are several computational geometric operations implied in the above pseudocode:
 \begin{itemize}
-\item Find the convex hull of a set of points.
-\item Determine if a point is on the interior or boundary of a convex polytope.
-\item Once it is determined that a point is on the boundary, determine the face.
+\item Find the convex hull of a set of points.  \hl{V-rep?  H-rep?}
+\item Determine if a point is on the interior or boundary of a convex hull.
+\item Determine the face of a convex hull on which a points lies in the relative interior.
 \item Find normal and tangent cones.
 \end{itemize}
+
+Before we can discuss how to performs these, some background notation
+and tools are necessary.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Convex polytope representation}
+As discussed in Section~\ref{S:Convex analysis}, a convex polyhedron $C$, which we 
+may think of as the convex hull of a finite set of points $V$, can equivalently
+be expressed as the intersection of a finite collect of closed half-spaces.  These
+representations are referred to as the V-representation and the H-representation, 
+respectively.
+
+\subsubsection{V-representation} \label{S:V-rep}
+The \texttt{rcdd} package requires a V-representation be inputed in the following form:
+\begin{align} \label{E:V-rep}
+	\left[\begin{array}{ccc}l & b & V\end{array}\right]
+\end{align}
+where $l$ and $b$ are column vectors and $V$ is a matrix such that the polytope
+is the set of points $y$ of the form
+\begin{align*}
+	y = \lambda^T V
+\end{align*}
+where
+\begin{align*}
+	\lambda_j \geq 0, \quad \text{where $l_j = 0$}
+\end{align*}
+and 
+\begin{align*}
+	\sum_j b_j \lambda_j = 1, \quad \text{unless all $b_j = 0$.}
+\end{align*}
+The entries for $l$ and $b$ in each row define how the linear combination of 
+points in the same row in $V$ should be taken,
+\begin{align*}
+	l &= \text{0 or 1.  A 0 indicates nonnegative coefficients only,}\\
+	b &= \text{0 or 1.  A 1 indicates this row should be included in sum to one.}
+\end{align*}
+For finite polytopes of a finite set of points, we take $l = 0$ and $b = 1$.  
+We may also be interested in the V-representation for rays (such as in the
+case of a cone), in which case we can set $b=0$.  
+This representation can also handle more abstract structures that 
+are not of interest to us here.
+
+\subsubsection{H-representation} \label{S:H-rep}
+The \texttt{rcdd} package requires a H-representation be inputed in the following form:
+\begin{align} \label{E:H-rep}
+	\left[\begin{array}{ccc}	0 & b_1 & -A_1 \\ 1 & b_2 & -A_2
+	\end{array}\right]
+\end{align}
+where $b_1$ and $b_2$ are column vectors and $A_1$ and $A_2$ are matrices 
+of coefficients characterizing the finite set of 
+linear equalities and inequalities
+\begin{align*} 
+	A_1 x &\leq b_1 \\
+	A_2 x &= b_2.
+\end{align*}
+Thus the zero in the first column corresponds to an equality constraint, a one to
+an inequality constraint.
+The set of points $x$ that satisfy the above constraints is equivalent to the
+convex polyhedron.
+
+\subsubsection{V-rep to H-rep and back}
+The \texttt{rcdd} package provides us with a simple function \texttt{scdd}
+to go back and forth between the H-representation and V-representation, taking as input
+the matrix form described by either \eqref{E:V-rep} or \eqref{E:H-rep} accompanied
+by its representation type (``H'' or ``V"), and returning its alternate representation, e.g.,
+\begin{verbatim}
+Hrep <- scdd( Vrep, representation = "V" )
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Finding the convex hull}
+According to \citet{Fukuda:2004}, determining the extreme points of $\con C$
+is a much simpler problem which he refers to as ``redundancy removal", and 
+that the ``convex hull problem" is actually finding the H-representation for the points.
+
+
+
+Finding the convex hull from a set of points is of a well-studied problem.  We 
+mention it here to describe the sequence of functions we use to find the convex hull.  
+Beginning with a large number of MC sample points, say 10,000, we first use the 
+\texttt{unique} function to reduce to the distinct 
+points in the set.  
+Then we apply the \texttt{redundant} function in the \texttt{rcdd} 
+package to reduce to the extreme points of the convex hull.
+
+Our algorithm utilizes the H-representation of the sample points to determine if $g(\yobs)$ lies on the 
+exterior, boundary, or interior of the convex hull of a set of points.  
+This requires switching back and forth between the V-representation and 
+the H-representation.  
+This functionality is provided by the \texttt{scdd} function, which takes as an 
+argument the original representation (H or V) and returns the toggled representation.
+
+Either representation can be expressed with rational arithmetic, making equality 
+comparisons exact.  This is particularly important when trying to determine the 
+location of $g(\yobs)$ relative to the convex hull of a set of points.  The \texttt
+{rcdd} package also provides the necessary matrix arithmetic functions to work with 
+the rational representation.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Programming LCM theory}
 \text{rcdd} \citep{rcdd}
@@ -160,7 +269,31 @@ $S \cap H = S \cap(\yobs + \spanl (L))$.  We are interested in $\spanl L$.
 %Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
 %linearity will correspond to all the points $W \in C$.
 
+\subsection{Normal and tangent cones}
+how to find?
+From H-representation,
+\begin{align*}
+	C = \{ x: \inner{a_i, x} \leq b_i, i \in I \text{ and } 
+				\inner{a_i, x} = b_i, i \in E \}.
+\end{align*}
+To find the tangent cone at a particular point $x \in C$,
+\begin{align*}
+	T_C(x) = \{ x: \inner{a_i, x} \leq 0, i \in A \text{ and } 
+				\inner{a_i, x} = 0, i \in E \}
+\end{align*}
+where 
+\begin{align*}
+	A = \{ i \in I: \inner{a_i, x} = b_i \}
+\end{align*}
+is the active set of inequality constraints (the inactive constraints have been
+ dropped, and now $x$ is the new origin).
 
+Polarity?
+\begin{align*}
+	N_C(x) = \pos( \{ a_i: i \in A \cup E \} \cup \{ -a_i: i \in E \} )
+\end{align*}
+
+\section{Rational arithmetic}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling}
@@ -183,24 +316,3 @@ the distribution of the LCM is accordingly well approximated.
 $P_{LCM, \eta} = P_\eta( \cdot \mid g(Y) \in H )$
 
 
-\subsection{Convex hull}
-Finding the convex hull from a set of points is of course a well-studied problem.  We 
-mention it here to describe the sequence of functions we use to find the convex hull.  
-Beginning with a large number of MC sample points, say 10,000, we first use the 
-\texttt{unique} function in the \texttt{base} package in R to reduce to the distinct 
-points in the set.  Then we apply the \texttt{redundant} function in the \texttt{rcdd} 
-package to reduce to a linearly independent set, which corresponds to the V-
-representation of the convex hull.
-
-Our algorithm utilizes the H-representation of the sample points to determine if $g(\yobs)$ lies on the 
-exterior, boundary, or interior of the convex hull of a set of points.  
-This requires switching back and forth between the V-representation and 
-the H-representation.  
-This functionality is provided by the \texttt{scdd} function, which takes as an 
-argument the original representation (H or V) and returns the toggled representation.
-
-Either representation can be expressed with rational arithmetic, making equality 
-comparisons exact.  This is particularly important when trying to determine the 
-location of $g(\yobs)$ relative to the convex hull of a set of points.  The \texttt
-{rcdd} package also provides the necessary matrix arithmetic functions to work with 
-the rational representation.
