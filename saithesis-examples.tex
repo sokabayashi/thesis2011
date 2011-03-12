@@ -27,7 +27,7 @@ the parameter estimates to approach the MLE in a reasonable amount of time.
 
 The response vector $Y$ has components that are Bernoulli trials with mean vector $p$.  
 The natural parameter is $
-\theta_i = \log \left( \frac{p_i}{1-p_i} \right )$, which is modeled componentwise as 
+\theta_i = \log \left( \frac{p_i}{1-p_i} \right )$, which is modeled component-wise as 
 a linear function of the 
 predictors $1, x_1, \ldots, x_{q}$, so that
 \begin{align*}
@@ -686,8 +686,9 @@ The empirical face $F$ and the observed statistic also define a normal cone by T
 \begin{align*}
 	\delta = (6,-1)
 \end{align*}
-and is also a GDOR by definition, since it is the only point in the relative interior
-of the normal cone which is not a vector subspace.  The normal cone is derived by the methods described in Chapter~\ref{Chapter:Linear programming}.
+and is also a GDOR by definition, since it is the only direction in the 
+relative interior of the normal cone which is not a vector subspace.  The normal 
+cone is derived by the methods described in Chapter~\ref{Chapter:Linear programming}.
 By Corollary~\ref{Cor:strictly increasing}, a GDOR $\delta$ is a direction along which the log likelihood function is strictly increasing, and by 
 Theorem~\ref{Thm:LCM}, we know that
 \begin{align} \label{E:GDOR lim}
@@ -708,8 +709,9 @@ P_{\etaLCM + \gamma + s \delta}(g(Y) \in F ) = 0.05.
 \end{align*}
 Although we cannot evaluate the probability function above, we can generate MC samples 
 of $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\etaLCM + s 
-\delta$ and see for what value of $s$, 5\% of the sample lies in the empirical face we 
-found.  
+\delta$ and see for what value of $s$, 5\% of the sample lies in the 
+empirical face we found.  
+\hl{CHARLIE SAYS: USE IMPORTANCE SAMPLING FORMULA---MORE EFFICIENT}
 
 Some numerical calculations shows that the original exponential family index by
  $\eta = (9.14, -1.50)$ puts 5\% of the MC sample on this face.  
@@ -974,7 +976,7 @@ one-sided 95\% confidence intervals for $\eta$, we get
 %\subsubsection{Observed value, $y_{obs}$, is on two-dimensional face}
 %\subsubsection{Observed value, $y_{obs}$, is on one-dimensional face}
 %\subsubsection{MLE does not exist; observed statistic on two-dimensional face but not 
-%fully discoverd}
+%fully discovered}
 %
 %Set $y_{obs} = (14, 8, 43).$
 %This point is on the boundary, which is a 2-dim face.
@@ -1028,14 +1030,17 @@ estimates are reported in Table~\ref{T:FauxMagnolia}.
 %fmh <- faux.magnolia.high
 %plot(fmh, displayisolates = FALSE, vertex.cex = 0.7)
 %plot(fmh, displayisolates = FALSE, vertex.col = "Grade", vertex.cex = 0.7)
-%R> summary(fmh ~ triangle)%triangle 169%Instinct tells us that 169 triangles is many more than would be expected by chance in a network of 1,461 actors and 974 edges. 
+%R> summary(fmh ~ triangle)
+%triangle 169
+%Instinct tells us that 169 triangles is many more than would be expected by chance in a network of 1,461 actors and 974 edges. 
 %
 %> model3.take2 <- ergm(fmh ~ edges + triangle, MCMCsamplesize = 1e+5, 
 %+	interval = 1000, verbose = TRUE, seed = 88)
 %model3.take3 <- ergm(fmh ~ edges + triangle, maxit = 25, seed = 888,	
 %control = control.ergm(steplength = 0.25), verbose = TRUE)
 %
-%R> model4.take3 <- ergm(fmh ~ edges + nodematch("Grade") +%nodematch("Race") + nodematch("Sex") + gwesp(0.2, fixed = TRUE), 
+%R> model4.take3 <- ergm(fmh ~ edges + nodematch("Grade") +
+%nodematch("Race") + nodematch("Sex") + gwesp(0.2, fixed = TRUE), 
 %MCMCsamplesize = 1e+5, maxit = 15, verbose = TRUE, 
 %control = control.ergm(steplength = 0.25), seed = 123)
 %
@@ -1081,12 +1086,14 @@ algorithm at 40 search direction; we did not attain our desired cutoff value for
 $\lVert \nabla \ell(\eta) \rVert < 0.01$ and were only able to 
 attain values as small as $9.6$.
  
-We make a few remarks:
+A few remarks:
 \begin{itemize}
 \item The goal here is to show that our algorithm can in fact find the MLE if needed, 
-starting from any initial value for a fairly large network data set.  
+starting from any initial value for a more realistic model and a large data set.  
 Although it is not computationally expedient, 
-we obtain a reasonable estimate after 40 search directions.  
+we obtain a reasonable estimate after 40 search directions.  That the network
+is large is a concern for the MCMC sampler and not our algorithm, which is only
+dealing with a five dimensional parameter.
 
 \item Our recommended use of this algorithm is in combination with other algorithms,
 as discussed in Section~\ref{S:Combine}.  Thus, although it is satisfying to see a reasonable estimate of the MLE, what is more useful is the value of $\eta$ 
@@ -1117,9 +1124,9 @@ smaller, the curvature condition is more difficult to satisfy and sharper estima
 \end{itemize}
 
 
-\subsection{Degenerate}
-\citet{statnet-tutorial} also considered the edges-triangles model, and concluded
-that it is degenerate because the fitted model with coefficients $(-7.31, 4.504)$
- generates samples that look nothing like the observed data.  
- We apply our algorithm to this setting to see if we can detect a non-existent MLE.
+%\subsection{Degenerate}
+%\citet{statnet-tutorial} also considered the edges-triangles model, and concluded
+%that it is degenerate because the fitted model with coefficients $(-7.31, 4.504)$
+% generates samples that look nothing like the observed data.  
+% We apply our algorithm to this setting to see if we can detect a non-existent MLE.
  

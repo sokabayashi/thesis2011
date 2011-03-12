@@ -1,6 +1,6 @@
 All of the parameter estimation issues discussed thus far for ERGMs are relevant to 
 the larger class of discrete state space exponential family models.
-These models are commonly used to model phenomena with dependent structure, 
+The latter are commonly used to model phenomena with dependent structure, 
 where the outcomes of the response variable of interest are in fact dependent on one 
 another.  For example, the Ising 
 model \citep{Ising,Potts} is an exponential family model that has been used to model 
@@ -23,7 +23,8 @@ the perspective of this more general setting.
 
 \section{Exponential Family Theory}
 Much of the fundamental background for exponential families has already been
-covered in Section~\ref{S:ERGM setup}; our focus is on regular exponential
+covered in Section~\ref{S:ERGM setup}: our interest is the properties of
+ regular exponential
 families on a finite sample space $\YY$  with log likelihood \eqref{E:loglike}.
 As noted earlier, when the sample space $\YY$ is even moderately large,
 the cumulant function $c(\eta)$ involves a summation that may be prohibitively 
@@ -49,10 +50,11 @@ Thus we can express first and second derivatives of the log likelihood \eqref
 and thereby avoid evaluation of the problematic cumulant function $c$.
 
 
-By the strict convexity of the log likelihood function ensured by \eqref{E:nabla2 
-ell}, the global 
+By the strict concavity of the log likelihood function is assured by \eqref{E:nabla2 
+ell} being strictly positive definite, which in turn is assured by the natural statistic
+not being concentrated on a hyper plane.  The global 
 maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \eta ) = 
-0$, or, using \eqref{E:nabla ell}, by setting ``expected equal to observed,"
+0$, or, using \eqref{E:nabla ell}, by setting ``expected equal to observed"
 \begin{align}
 	\E_\eta g(Y) = g(\yobs). \label{E:Observed-Expected}
 \end{align}
@@ -72,14 +74,16 @@ The space for the mean value parameterization is the same as the convex support 
 natural statistics and thus lends itself to easier interpretability  \citep
 {Handcock:degeneracy, Rinaldo:2009}.  In particular, $\mu = g(\yobs)$ is the MLE in 
 the mean value parameterization.  \citeauthor{Handcock:degeneracy} observed that mean 
-value parameters located too close to the boundary of the convex support correspond to 
-degenerate distributions.  
+value parameters located too close to the boundary of the convex support tend to 
+correspond to degenerate distributions; this was corroborated by 
+\citeauthor{Rinaldo:2009} from the perspective of Shannon's entropy function.
 
-\textbf{[NONONO]}. \hl{ There exists a one-to-one mapping between a natural parameter and its mean value 
-parameter, and one can calculate mean value parameters from natural parameters. In 
-general there is no simply way to get the natural parameter value from the mean value 
-parameter (if there was, then finding MLEs would be very easy and we wouldn't need all 
-these algorithms!).}
+\hl{ADD ANYTHING ELSE?}
+%\textbf{[NONONO]}. \hl{ There exists a one-to-one mapping between a natural parameter and its mean value 
+%parameter, and one can calculate mean value parameters from natural parameters. In 
+%general there is no simply way to get the natural parameter value from the mean value 
+%parameter (if there was, then finding MLEs would be very easy and we wouldn't need all 
+%these algorithms!).}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -89,9 +93,9 @@ The issue of MLE existence in the conventional sense in an exponential family is
 closely tied to the geometric properties of 
 the convex support of the model \citep{Barndorff, Geyer:gdor, Rinaldo:2009}.  We 
 describe the relevant theory from convex analysis as it pertains to the case of 
-exponential families.
+discrete state space exponential families.
 
-A \emph{convex polytope} $C$ is the \emph{convex hull} of a finite set of points $V$, denoted $\con( V )$.
+A \emph{convex polytope} $C$ is the \emph{convex hull} of a finite set of points $V$, denoted $\con V$.
 By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
 set can equivalently be represented as the intersection of a finite collection of 
 closed half-spaces.  These two representations of a convex polytope are referred to 
@@ -118,8 +122,13 @@ equations and inequalities,
 where $A$ is a matrix and $b$ a vector.
 
 The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
-relative to its affine hull.  
-\textbf{[WHAT ELSE? bd()? ]}
+relative to its affine hull.  The concept is motivated by the idea that a triangle
+$\RR^3$ does have a natural interior which does not meet the definition of an interior
+since no three-dimensional ball will lie in that set.  The closure of a set $C$, denoted $\cl C$, is equal to
+\begin{align*}
+	\cl C = \bigcap \{C + \epsilon B \mid \epsilon > 0 \}
+\end{align*}
+where $B$ is a Euclidean ball \citep{Rockafellar:1970}.  The \emph{relative boundary} of a set $C$, denoted $\rbd C$, is the set difference $\cl C \setminus \rint C$.
 
 A nonempty \emph{face} of a convex polytope $C$ is a convex subset of $C$ such that 
 every line segment in $C$ with a relative interior point in $F$ has both end points in 
@@ -148,8 +157,8 @@ The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 	N_C(x) 	&= \{ w \in \RR^d: \inner{ w, v } \leq 0 \text{ for all } v \in T_C(x) \}.
 \end{align*}
 
-\hl{DEFINE \emph{direction of recession}, \emph{direction of constancy}.}  \textbf{get from 
-\citep{Rockafellar:1970} p 69.}
+%\hl{DEFINE \emph{direction of recession}, \emph{direction of constancy}.}  \textbf{get from 
+%\citep{Rockafellar:1970} p 69.}
 
 
 
@@ -158,15 +167,14 @@ The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 We now present two equivalent approaches to determine the existence of an MLE
 in the conventional sense.  
 
-\subsection{Well-known condition?}
+\subsection{Approach of \citet{Barndorff}}
 The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} 
-relates the relative location
-of the observed statistic to the boundaries of the convex support
-and is formally stated as follows:
-\begin{theorem}[Corollary 9.6, Section 9.8(viii) in \citep{Barndorff}] \label{Thm:MLE rint}
-Under the conditions [CONDITIONS], the MLE exists in the conventional sense and is 
-unique if and only if 
-$g(\yobs) \in \rint(C)$.
+relates the relative location of the observed statistic to the boundaries of 
+the convex support and is formally stated as follows:
+\begin{theorem}[Corollary 9.6 in \citep{Barndorff}] \label{Thm:MLE rint}
+For a regular exponential family with convex support $C$ and observed statistic $g(\yobs)$, the MLE exists in the conventional sense if and only if 
+$g(\yobs) \in \rint(C)$ and is unique if and only if $\intr(C)$ is nonempty, which
+happens if and only if $\rint(C) = \intr(C)$. 
 \end{theorem}
 
 While the above theorem is in fact quite elegant and simple, we note that in order to apply this result, the geometry of $C$ must be fully known.
@@ -332,7 +340,7 @@ a more accessible proof without the use of this corollary.  It is the equivalenc
 of these two conditions the relates the behavior of the log likelihood function
 to the convex support of the distribution.
 %The proof requires the following lemma, which a PROOF WILL BE NEEDED.
-%$\ell(\theta+s\delta)$ is non-dereasing if and only if $\lim_{s \to \infty} \ell
+%$\ell(\theta+s\delta)$ is non-decreasing if and only if $\lim_{s \to \infty} \ell
 %(\theta+s\delta) > -\infty$.  See Theorem 8.6 in \citep{Rockafellar}
 \begin{proof}
 \textbf{From $2 \to 1$}:
@@ -404,20 +412,6 @@ following are equivalent
 \end{enumerate}
 \end{theorem}
 
-Thus the MLE does not exist in the conventional sense if there exists a vector 
-$\delta$ that is a direction of recession but not a direction of constancy.  
-If in addition $\delta \in \rint N_C(g(\yobs))$, then $\delta$ is called a 
-\emph{generic direction of recession} (GDOR).  \hl{Normal cones are convex sets and
-relative interiors of nonempty convex sets are nonempty.}  Thus 
-a GDOR exists if and only if the MLE does not exist.
-
-Theorem~\ref{Thm:MLE rint} relates the non-existence of the MLE to the location
-of $g(\yobs)$ relative to the boundary of $C$.  Here, Theorems \ref{Thm:DOC}, \ref{Thm:DOR}, and \ref{Thm:MLE existence} relate the non-existence of the MLE
-to a strictly increasing log likelihood function.  This in turn
-occurs when $g(\yobs)$ is such that $\inner{g(Y) - g(\yobs)} < 0$.  This is
-exactly the criteria that puts $g(\yobs)$ on the boundary of the convex support,
-thus agreeing with Theorem~\ref{Thm:MLE rint}.
-
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
 For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, if $\delta$ is a
@@ -426,11 +420,30 @@ then for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta+s\delta)$ is stri
 increasing on the interval where it is finite.
 \end{corollary}
 
-This corollary is clearly implied by Theorems \ref{Thm:DOC} and \ref{Thm:DOR}; if
+This corollary is implied by Theorems \ref{Thm:DOC} and \ref{Thm:DOR}; if
 $\delta$ is a direction of recession that is not a direction of constancy, 
-the $\ell(\eta+s\delta)$ is nondecreasing with respect to $s$ by 
+then $\ell(\eta+s\delta)$ is nondecreasing with respect to $s$ by 
 Theorem \ref{Thm:DOR} but cannot be constant by Theorem \ref{Thm:DOC}.  Therefore,
 it must be strictly increasing.
+
+The MLE does not exist in the conventional sense if there exists a vector 
+$\delta$ that is a direction of recession but not a direction of constancy.  
+If in addition $\delta \in \rint N_C(g(\yobs))$, then $\delta$ is called a 
+\emph{generic direction of recession} (GDOR).  \hl{Normal cones are convex sets and
+relative interiors of nonempty convex sets are nonempty.}  Thus 
+a GDOR exists if and only if the MLE does not exist.
+
+Theorem~\ref{Thm:MLE rint} relates the non-existence of the MLE to the location
+of $g(\yobs)$ relative to the boundary of $C$.  
+Here in the approach of \citet{Geyer:gdor}, Theorems \ref{Thm:DOC}, 
+\ref{Thm:DOR}, \ref{Thm:MLE existence}, and Corollary~\ref{Cor:strictly increasing} relate the non-existence of the MLE
+to a strictly increasing log likelihood function.  This in turn
+occurs when $g(\yobs)$ is such that $\inner{w - g(\yobs), \delta} \leq 0$ for all
+$w \in T_C(g(\yobs))$.  This is
+exactly the criteria that puts $g(\yobs)$ on the boundary of the convex support,
+thus agreeing with Theorem~\ref{Thm:MLE rint}.
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -438,7 +451,7 @@ it must be strictly increasing.
 \subsection{Limiting conditional model}
 When the MLE does not exist for an exponential family in the conventional sense, there 
 exists a direction of recession that is not a direction of constancy 
-along which the log likelihood goes to $+\infty$.  The behavior of the 
+along which the log likelihood is strictly increasing.  The behavior of the 
 density function of the distribution is described in the following theorem:
 
 \begin{theorem}[Theorem 6 from \citet{Geyer:gdor}] \label{Thm:LCM}
@@ -598,7 +611,7 @@ however, and thus the family may not be full.  The full family containing this e
 where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  \mid g(Y) \in H)$,
 and is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
 
-When $\delta$ is a direction of recession that is not a direction of constnacy, 
+When $\delta$ is a direction of recession that is not a direction of constancy, 
 we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 \begin{align*}
 \lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y \mid g(y) \in H).
@@ -661,7 +674,7 @@ Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDO
 \end{align*}
 \end{corollary}
 
-The following theorem (which is new) shows that $C \cap H$ defines the support of the LCM 
+The following theorem shows that $C \cap H$ defines the support of the LCM 
 in the finite state space setting that is of interest to us.  
 %%%%%%%%%%%%%%%%%%%%%
 \begin{theorem} \label{Thm:C-H}
@@ -709,7 +722,7 @@ We claim for any $x \in C \cap H$, the coefficients of the $w_i$ not in $S \cap 
 \end{align*}
 where the first term is less than or equal to zero by the definition of a direction of
 recession, and the second term is strictly less than zero since $w_j \notin H$.  Thus 
-$\inner{x - g(\yobs), \delta } < 0$, which means $x \notin H$, which is a contradiction.
+$\inner{x - g(\yobs), \delta } < 0$, which means $x \notin H$, leading to a contradiction.
 
 Thus $x$ will equal a convex combination of just the points in $S \cap H$.  Since this is 
 true for any $x \in C \cap H$, we have that $C \cap H = \con( S\cap H)$.
@@ -724,7 +737,7 @@ is in fact a vector subspace, then by Theorem~\ref{Thm:MLE existence}, the MLE f
 this model must exist.  Corollary~\ref{Cor:spanL} also tells us that when the MLE
 does not exist, $g(\yobs)$ lies in the relative interior of $C \cap H$.
 
-The last part of Theorem~\ref{Thm:LCM} says that for the sequence of exponential families with parameter 
+The last part of Theorem~\ref{Thm:LCM} says that for the sequence of distributions with parameter 
 value $\eta+s\delta$, the probability of $g(Y)$ occurring on the plane $H$ is strictly 
 increasing, going to 1.  We may think of this as 
 ``probability accumulating on the boundary"---where by boundary 

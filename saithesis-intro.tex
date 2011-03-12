@@ -82,7 +82,7 @@ parameters to the network data.
 %In fact, this is the focus of our research.
 In fact, writing down the expression for an uncalibrated ERGM turns out to be quite
 straightforward; it is fitting the model
-to data that is an open research problem and the focus of our paper.
+to data that is an open research problem and the focus of this dissertation.
 
 Typically, parameter estimation is done through the method of 
 \emph{maximum likelihood} in which values for the parameters called \emph{maximum 
@@ -159,8 +159,8 @@ R.}
 
 
 
-\subsection{Why model?}
-RETURN TO THIS SECTION.\\
+\subsection{Why model networks?}
+\hl{RETURN TO THIS SECTION.}\\
 Before we step into a lengthy of discussion of \emph{how} we model network data, it is 
 worth reflecting upon the question of \emph{why} network models are desirable.  We 
 have already given one answer to this question in the case of the social scientist 
@@ -386,8 +386,8 @@ $ijk$th element is the value of the $k$th attribute in the potential relation fr
 $i$ to $j$ \citep*{Fienberg:1981,ergm}.  
 
 Like the other network statistics discussed, the statistics that comprise $X$ can 
-be transparently calculated from the data and hence included in a new canonical 
-statistics vector, $g(y, X)$,
+be transparently calculated from data and hence included in the canonical 
+statistics vector as $g(y, X)$,
 with the corresponding canonical parameter vector $\eta$ lengthened accordingly.
 The parameter estimation methodology is unchanged from before (so long as $p$ is not
 excessively large), and while this greatly expands the
@@ -548,7 +548,7 @@ find undesirable.
 
 
 \subsection{Maximum pseudolikelihood method} \label{S:pseudolikelihood}
-As mentioned Section~\ref{S:p1}, \citet{Frank:1986} succsesfully applied 
+As mentioned Section~\ref{S:p1}, \citet{Frank:1986} successfully applied 
 the maximum pseudolikelihood method to social network models, a method first used in lattice systems in plant biology \citep{Besag:1974,Besag:1975}.  \citet{Strauss:1990} further justified the use of 
 maximum pseudolikelihood estimators (MPLE) as reasonable approximations for MLEs in 
 social network models.  \citet*{Wasserman:1996, Pattison:1999, logit} leaned on this 
@@ -601,13 +601,13 @@ platform now overwhelmingly use MLE methods.
 
 
 \subsection{Newton-Raphson}
+\hl{RETURN TO THIS}
 \begin{align}
 	\eta_{k+1} = \eta_k - \left[ \nabla^2 \ell(\eta_k) \right ]^{-1} \nabla \ell(\eta_k) 	
 \end{align}
 Convergence rate
 
-Convergence radius
-
+Fisher information
 
 \subsection{Markov chain Monte Carlo Maximum Likelihood} \label{S:MCMC-MLE}
 \citet{Geyer:1992, Corander:1998, Snijders:2002} developed Markov chain Monte Carlo 
@@ -860,17 +860,18 @@ However, until recently, there have not been practical solutions to this problem
 with complex dependence into a two-phase algorithm, 
 where phase I determines whether or not an MLE exists in the conventional 
 sense via linear programming, and phase II finds the MLE when it exists.
-The MCMC-MLE method discussed in Section~\ref{S:MCMC-MLE} thus occurs in phase II of
+The MCMC-MLE method discussed in Section~\ref{S:MCMC-MLE} corresponds to phase II of
 this approach.
 In the special case of generalized linear models including logistic regression and contingency 
 tables, \citet{Geyer:gdor} outline a methodology to detect non-existent MLEs and construct 
 one-sided confidence intervals \textbf{[WHY]}.
-The approach applies repeated linear programming to the polyhedral convex support of 
+The approach applies linear programming to the polyhedral convex support of 
 the model to determine the \emph{face} on which the observed data lies.  
 This face in turn defines the convex support for a new exponential family for which the MLE 
-does \textbf{[MUST?]} exist and can be found using conventional methods.  \textbf{[EXAMPLE? MORE DETAIL?]}
+does exist and can be found using conventional methods.  \textbf{[MORE DETAIL?]}
 The linear programming 
-functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd:R}.  
+functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd:R},
+which we will rely on heavily.
 %However, this approach cannot be directly applied to the complex dependent problems 
 %we consider here because the polyhedral convex support is not known except for simple 
 %problems.  
@@ -1079,7 +1080,7 @@ the search direction $p_k$.}
  
  
  %%%%%%%%%%%%
-HMMMMM---WHERE TO PUT THIS PARAGRAPH.  Our line search algorithm with $p_k$ 
+\hl{HMMMMM---WHERE TO PUT THIS PARAGRAPH.}  Our line search algorithm with $p_k$ 
 the Newton direction provides a
 safeguard for Newton-Raphson that makes it safe (not necessarily efficient) for use 
 from any range.
@@ -1137,8 +1138,8 @@ guaranteed to exist.
 Our algorithm looks to find this new maximizer.  In order to do so, however, it must 
 recognize that the objective function it seeks to maximize has changed.
 
-We discuss in Section~\ref{} the adjustments that need to be made to the algorithm
-to handle this situation.
+We discuss in Chapter~\ref{Chapter:Linear programming} the adjustments that need to 
+be made to the algorithm to handle this situation.
 
 DOES THE REST OF THIS CHAPTER NEED TO BE HERE AT ALL?  It is a well-known theorem of exponential families that the non-existence of the MLE 
 is synonymous with the the observed data occurring on a boundary of the 
@@ -1151,14 +1152,6 @@ convex support.
 Should this occur, the algorithm defines the limiting conditional model and 
 proceeds to maximize its log likelihood in search of the maximizer.
 
-\subsection{Examples in this paper}
+\subsection{Examples in this paper??}
 
 % \section{Example: social network models} \label{S:Example}
-
-Our motivating application is the modeling of network data using ERGMs.
-Before we get to an ERGM, we first show that our algorithm applies to simpler
-exponential family models, including logistic regression and an Ising model \citep{Ising,Potts}, an exponential family model that has been used to model 
-ferromagnetism.
-We then visit the same 9-node network example studied by \citep{Rinaldo:2009}.  
-However, our methodology is much more general in that we assume no knowledge of the 
-convex support.
