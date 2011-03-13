@@ -54,7 +54,7 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 \noindent \begin{algorithmic}[1]
 \State Get an initial value, $\eta_1 = (0, \ldots 0)$.
 \State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{1}$.  
-\State Set $ty.hull = \con(g(Y_1), \ldots, g(Y_m) )$.  \hl{V-REP??}
+\State Set $ty.hull = \con(g(Y_1), \ldots, g(Y_m) )$.
 \State Approximate 
 \begin{align*}
 \nabla \ell( \eta_1) \approx g(\yobs) - \frac{1}{m}\sum_{i=1}^m g(Y_i).
@@ -200,7 +200,7 @@ convex polyhedron.
 The H-representation provides a direct
 way to assess whether some new point $q$ is in or out of the convex hull
 simply by plugging it in for $x$ in \eqref{E:H-repx} and seeing if the equalities
-and inequalities are satisfied.
+and inequalities are satisfied, as described in Section~\ref{S:H-rep inquiry}
 
 \subsection{V-rep to H-rep and back}
 The \texttt{rcdd} package provides us with a simple function \texttt{scdd}
@@ -210,6 +210,10 @@ by its representation type (``H'' or ``V"), and returning its alternate represen
 \begin{verbatim}
 Hrep <- scdd( Vrep, representation = "V" )
 \end{verbatim}
+
+However, the operation of V-representation $\rightarrow$ H-representation 
+can be a very computationally intensive operation; \citet{Geyer:2009} describes
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Finding the convex hull}
@@ -227,6 +231,7 @@ the H-representation.  Determining the extreme points of $\con C$
 is a much simpler problem which \citet{Fukuda:2004} refers to as ``redundancy 
 removal" as opposed to the latter which is the usual ``convex hull problem".
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Extreme points}
 Given a set of non-unique points $V$, we can find the extreme points in two steps:
 first, find the unique points in this sample, and then eliminate redundant generators.  The first operation can be done using the \texttt{unique} function, 
@@ -245,7 +250,6 @@ We demonstrate this using 10 samples of a two-dimensional vector:
 + 21, 16,
 + 15, 4,
 + 17, 8), ncol = 10) )
-> 
 > sample.gy.unique <- unique( sample.gy ) 
 > ( sample.gy.Vrep 	 <- cbind( 0, 1, sample.gy.unique ) )
      [,1] [,2] [,3] [,4]
@@ -276,14 +280,17 @@ $new.position
 In the first step, $(19,11)$ and $(21,13)$ each appear twice and are eliminated
 using \texttt{unique}.  Then, a V-rep of these points is constructed.  Before
 passing to \texttt{redundant}, we first convert it to rational number format
-with the function \texttt{d2q}.  The \texttt{redundant} function then eliminates
+with the function \texttt{d2q}.  The \texttt{redundant} function, which could
+be applied to both rational and decimal format, then eliminates
 all but four of these points.  These can be converted back to decimal format
-using \texttt{q2d}.
+using \texttt{q2d}.  We prefer doing any operation that involves a comparison
+with rational numbers for the reasons discussed earlier.
 
 It would have been possible to go directly from the sample to the reduced 
 representation using \texttt{redundant}, but this step reduces the calculations
-performed by \texttt{redundant}, which is generally preferable.
+performed by \texttt{redundant}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{H-representation of the convex hull}
 We can convert this to H-representation of the convex hull 
 using the \texttt{scdd} function described previously:
@@ -301,11 +308,12 @@ attr(,"representation")
 
 \hl{This route of \texttt{unique} $\rightarrow$ \texttt{redundant} $\rightarrow$ 
 \texttt{scdd} is our preferred approach to obtain the H-representation of the convex hull from a set of points since \texttt{scdd} is the most computationally demanding
-operation.}
+operation.}  In fact, it is so computationally expensive that we will avoid
+this where possible.
 
-\subsubsection{Adding constraints}
-Suppose we generated additional points and wanted to combine these with the previous
-points.  We obtain the non-redundant points as before:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Adding points to convex hull}
+Suppose we generated additional points and wanted to combine these with the previously generated convex hull.  We obtain the non-redundant points as before:
 \begin{verbatim}
 > sample.gy2 <- t(matrix( c(
 + 20, 14,
@@ -370,7 +378,7 @@ WE WANT TO FIRST CONVERT BACK TO V-REP AND THEN SCDD?}
 
 We then combine these new, reduced points with the extreme points of the previously
 obtained convex hull.  On this combined set, we apply \texttt{unique}, 
-\texttt{redundant}, and \texttt{scdd} as before.
+\texttt{redundant} as before, and, if we desire the H-representation, \texttt{scdd}.
 
 \begin{verbatim}
 > sample.gy.combined <- unique( rbind( sample.gy.reduced$output, 
@@ -416,19 +424,27 @@ convex hull for the combined is the solid line.}
 \end{figure}
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Point on exterior, interior, and boundary of a convex hull}
 Determining whether $g(\yobs)$ lies on the exterior, interior, or boundary
 of a convex hull is of central importance to our method.  We present two 
-different approaches to answer this question.
+different approaches here.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Determining boundary points via H-representation of convex hull}
+\label{S:H-rep inquiry}
+We first describe a more intuitive but less desirable approach.  It is less preferable because it requires obtaining the H-representation, 
+which can be expense to obtain from the V-representation, 
+especially as the dimension increases.  In fact, the number of inequalities 
+is often exponential in the number of dimensions \citep{Fukuda:2008}.
+
 We pick an exterior, interior, and boundary point by examining 
 Figure~\ref{F:combined-hull}: (20,10), (20,12), (21,13).  To this vector, we multiply
- by the matrix $A$ from the H-representation (assuming we have all inequalities)
- and subtract $b$.  The sign of the resulting quantities tells us if that 
+ by the matrix $A$ from the H-representation (we assume here that we have 
+ all inequalities)
+ and subtract $b$.  The sign of the resulting quantities tells us if a 
  particular inequality has been satisfied: positive indicates that it has not, 
- negative indicates that it has strictly, and a zero indicates that it is
+ negative indicates that it is strictly satisfied, and a zero indicates that it is
  met with an equality.  Thus for each inquiry point, we need only largest
  of the sign of these to make our conclusion.
 \begin{verbatim}
@@ -452,19 +468,17 @@ Figure~\ref{F:combined-hull}: (20,10), (20,12), (21,13).  To this vector, we mul
 Here we have five inequalities.
  The first point (20,10) satisfies 4 of the 5, but violates the first, with
  a positive result of $\frac{1}{3}$ and thus we get a positive sign, indicating
- an exterior point.  The second point (20,12) is strictly negative on all five inequalities, indicating that they have all been satisfied, resulting in a negative sign.  Finally, the point (21,13) satisfies three inequalities strictly, and meets
+ an exterior point.  The second point (20,12) is strictly negative on all five inequalities, indicating that they have all been strictly satisfied, 
+ resulting in a negative sign.  Finally, the point (21,13) satisfies three inequalities strictly, and meets
 two with strict equality.  This makes sense since (21,13) is an exterior point
 of the hull and thus connects two sides.
 
-Unfortunately this approach is computationally inefficient; solving 
-the convex hull problem, that is, finding the H-representation can be very 
-expensive.  
-
-\subsection{Strongly separating hyperplane}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Strongly separating hyperplane} \label{S:Strong H}
 \citet{Fukuda:2008} presents a more efficient way to determine whether a single 
 inquiry point $q$ is in or out of the convex hull of many other points $p_i$.  
-The approach looks to find a strong hyperplane $H$ between a point $q$
-and the convex hull of a set of points $\{p_i : i \in I\}$
+The approach looks to find a strongly separating hyperplane $H$ between a 
+point $q$ and the convex hull of a set of points $\{p_i : i \in I\}$
 \begin{align*}
 	H = \{x : z^T x = z_0\}
 \end{align*}
@@ -485,11 +499,15 @@ $f$ is strictly positive, then a strongly separating hyperplane exists and
 $q$ is in the exterior of the convex hull.  Otherwise, $q$ is on the boundary or 
 the interior.  Note that it does not distinguish between these latter two cases.
 
-\citet{rcdd:R} provide a linear programming function \texttt{lpcdd} function in the \texttt{rcdd} package which can be applied to solve this problem.
-The function maximizes the linear function $x \mapsto a^x$ subject to the 
-constraint that $x$ lie in the polyhedral convex set having the H-representation
-specified.  We demonstrate its use on an exterior, boundary, and interior
-point, using the convex hull we constructed in the previous section.  Note that \texttt{lpcdd} requires the H-representation of the convex hull.
+\citet{rcdd:R} provide a general linear programming routine in the
+\texttt{lpcdd} function in the \texttt{rcdd} package which can be applied to solve this problem.  The function maximizes the linear function $x \mapsto a^x$ 
+subject to the constraint that $x$ lie in the polyhedral convex set having 
+the H-representation specified.  It has also been built to work with 
+rational arithmetic.
+We demonstrate its use on an exterior, boundary, and interior
+point, using the convex hull we constructed in the previous section.  Note that \texttt{lpcdd} can be applied to the V-representation of points, eliminating
+the need for a call to \texttt{scdd}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Exterior point}
 Let $q = (20,10)$, on the exterior.
 \begin{verbatim}
@@ -514,6 +532,7 @@ Let $q = (20,10)$, on the exterior.
 [1] "1"
 \end{verbatim}
 The maximum value of 1 is strictly positive so $(20,10)$ is on the exterior, as expected.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Interior point}
 Let $q = (20,12)$.
 \begin{verbatim}
@@ -532,7 +551,7 @@ Let $q = (20,12)$.
 [1] "0"
 \end{verbatim}
 The maximum value of $f$ here is 0, so $(20,12)$ is on the boundary or the interior.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Boundary point}
 Let $q = (21,13)$, one of the extreme points of the convex hull.
 \begin{verbatim}
@@ -550,11 +569,22 @@ Let $q = (21,13)$, one of the extreme points of the convex hull.
 > lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
 [1] "0"
 \end{verbatim}
-The maximum value of $f$ here is again 0, so $(21,13)$ is on the boundary or the interior, we do not know which.  If we want to confirm that the point is indeed
-on the boundary of the convex hull, we must use H-representation of the hull
-directly as described in Section~\ref{}.
+The maximum value of $f$ here is again 0, so $(21,13)$ is on the boundary or the interior, we do not know which.  
+%If we want to confirm that the point is indeed
+%on the boundary of the convex hull, we must use H-representation of the hull
+%directly as described in Section~\ref{}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Linearity}\label{S:linearity}
+Thus far we have advocated using V-representations of convex hulls and using
+the \texttt{lpcdd} function to determine whether or not an inquiry point is
+in the exterior of the hull.  To then determine if the point is on the boundary
+or the interior (the crucial question), one could apply the 
+H-representation approach described in 
+Section~\ref{S:H-rep inquiry}, but as noted, this is computationally inefficient.
+Here we describe another approach that is not only more computationally efficient
+but also provides us with much more useful information.
+
 \citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
 \begin{align*}
 	L = \{ w \in V: -w \in \con( V ) \}.
@@ -588,6 +618,7 @@ $S \cap H = S \cap(\yobs + \spanl (L))$.  We are interested in $\spanl L$.
 %Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
 %linearity will correspond to all the points $W \in C$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Normal and tangent cones}
 how to find?
 From H-representation,
@@ -612,6 +643,7 @@ Polarity?
 	N_C(x) = \pos( \{ a_i: i \in A \cup E \} \cup \{ -a_i: i \in E \} )
 \end{align*}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Rational arithmetic}
 The \texttt{rcdd} package also provides the necessary matrix arithmetic functions to 
 work with the rational representation.
