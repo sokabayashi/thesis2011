@@ -140,14 +140,14 @@ Before we can discuss how to performs these, some background notation
 and tools are necessary.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Convex polytope representation}
+\section{Convex polytope representation}
 As discussed in Section~\ref{S:Convex analysis}, a convex polyhedron $C$, which we 
 may think of as the convex hull of a finite set of points $V$, can equivalently
 be expressed as the intersection of a finite collect of closed half-spaces.  These
 representations are referred to as the V-representation and the H-representation, 
 respectively.
 
-\subsubsection{V-representation} \label{S:V-rep}
+\subsection{V-representation} \label{S:V-rep}
 The \texttt{rcdd} package requires a V-representation be inputed in the following form:
 \begin{align} \label{E:V-rep}
 	\left[\begin{array}{ccc}l & b & V\end{array}\right]
@@ -174,10 +174,10 @@ points in the same row in $V$ should be taken,
 For finite polytopes of a finite set of points, we take $l = 0$ and $b = 1$.  
 We may also be interested in the V-representation for rays (such as in the
 case of a cone), in which case we can set $b=0$.  
-This representation can also handle more abstract structures that 
+This representation can also handle more abstract generators that 
 are not of interest to us here.
 
-\subsubsection{H-representation} \label{S:H-rep}
+\subsection{H-representation} \label{S:H-rep}
 The \texttt{rcdd} package requires a H-representation be inputed in the following form:
 \begin{align} \label{E:H-rep}
 	\left[\begin{array}{ccc}	0 & b_1 & -A_1 \\ 1 & b_2 & -A_2
@@ -186,16 +186,23 @@ The \texttt{rcdd} package requires a H-representation be inputed in the followin
 where $b_1$ and $b_2$ are column vectors and $A_1$ and $A_2$ are matrices 
 of coefficients characterizing the finite set of 
 linear equalities and inequalities
-\begin{align*} 
+\begin{align} \label{E:H-repx}
+\begin{split}
 	A_1 x &\leq b_1 \\
 	A_2 x &= b_2.
-\end{align*}
+\end{split}
+\end{align}
 Thus the zero in the first column corresponds to an equality constraint, a one to
 an inequality constraint.
 The set of points $x$ that satisfy the above constraints is equivalent to the
 convex polyhedron.
 
-\subsubsection{V-rep to H-rep and back}
+The H-representation provides a direct
+way to assess whether some new point $q$ is in or out of the convex hull
+simply by plugging it in for $x$ in \eqref{E:H-repx} and seeing if the equalities
+and inequalities are satisfied.
+
+\subsection{V-rep to H-rep and back}
 The \texttt{rcdd} package provides us with a simple function \texttt{scdd}
 to go back and forth between the H-representation and V-representation, taking as input
 the matrix form described by either \eqref{E:V-rep} or \eqref{E:H-rep} accompanied
@@ -206,52 +213,364 @@ Hrep <- scdd( Vrep, representation = "V" )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Finding the convex hull}
-According to \citet{Fukuda:2004}, determining the extreme points of $\con C$
-is a much simpler problem which he refers to as ``redundancy removal", and 
-that the ``convex hull problem" is actually finding the H-representation for the points.
+Finding the convex hull from a set of points is a well-studied problem.  It 
+is of interest to us here because we want to ``discover" the convex support $C$
+by repeatedly taking MCMC samples in different areas close to $g(\yobs)$ (the
+process by which we get these samples to approach $g(\yobs)$ is discussed
+in more detail in Section~\ref{S:Example 9node}).  The 
+set of points we have to work with then are generated from repeated MCMC
+samples of canonical statistics.
+
+We can do two things with these set of points: we can try to determine the
+extreme points of $C$, that is, the minimal V-representation, or we can try to find
+the H-representation.  Determining the extreme points of $\con C$ 
+is a much simpler problem which \citet{Fukuda:2004} refers to as ``redundancy 
+removal" as opposed to the latter which is the usual ``convex hull problem".
+
+\subsubsection{Extreme points}
+Given a set of non-unique points $V$, we can find the extreme points in two steps:
+first, find the unique points in this sample, and then eliminate redundant generators.  The first operation can be done using the \texttt{unique} function, 
+which is in the \texttt{base} package of R, the second requires defining a V-representation and then applying the \texttt{redundant} function in the \texttt{rcdd}
+package which eliminates the redundant generators.
+We demonstrate this using 10 samples of a two-dimensional vector:
+\begin{verbatim}
+> sample.gy <- t(matrix( c(
++ 19, 11,
++ 21, 14,
++ 19, 11,
++ 21, 13,
++ 21, 13,
++ 23, 21,
++ 14, 3,
++ 21, 16,
++ 15, 4,
++ 17, 8), ncol = 10) )
+> 
+> sample.gy.unique <- unique( sample.gy ) 
+> ( sample.gy.Vrep 	 <- cbind( 0, 1, sample.gy.unique ) )
+     [,1] [,2] [,3] [,4]
+[1,]    0    1   19   11
+[2,]    0    1   21   14
+[3,]    0    1   21   13
+[4,]    0    1   23   21
+[5,]    0    1   14    3
+[6,]    0    1   21   16
+[7,]    0    1   15    4
+[8,]    0    1   17    8
+> ( sample.gy.reduced <- redundant( d2q(sample.gy.Vrep), rep = "V" ) )
+$output
+     [,1] [,2] [,3] [,4]
+[1,] "0"  "1"  "21" "13"
+[2,] "0"  "1"  "23" "21"
+[3,] "0"  "1"  "14" "3" 
+[4,] "0"  "1"  "15" "4" 
+attr(,"representation")
+[1] "V"
+
+$redundant
+[1] 1 2 6 8
+
+$new.position
+[1] 0 0 1 2 3 0 4 0
+\end{verbatim}
+In the first step, $(19,11)$ and $(21,13)$ each appear twice and are eliminated
+using \texttt{unique}.  Then, a V-rep of these points is constructed.  Before
+passing to \texttt{redundant}, we first convert it to rational number format
+with the function \texttt{d2q}.  The \texttt{redundant} function then eliminates
+all but four of these points.  These can be converted back to decimal format
+using \texttt{q2d}.
+
+It would have been possible to go directly from the sample to the reduced 
+representation using \texttt{redundant}, but this step reduces the calculations
+performed by \texttt{redundant}, which is generally preferable.
+
+\subsubsection{H-representation of the convex hull}
+We can convert this to H-representation of the convex hull 
+using the \texttt{scdd} function described previously:
+\begin{verbatim}
+> ( sample.gy.Hrep <- scdd( sample.gy.reduced$output, rep = "V" ) )
+$output
+     [,1] [,2]   [,3]   [,4]
+[1,] "0"  "11"   "-1"   "1" 
+[2,] "0"  "37/2" "-3/2" "1" 
+[3,] "0"  "71"   "-4"   "1" 
+[4,] "0"  "-25"  "2"    "-1"
+attr(,"representation")
+[1] "H"
+\end{verbatim}
+
+\hl{This route of \texttt{unique} $\rightarrow$ \texttt{redundant} $\rightarrow$ 
+\texttt{scdd} is our preferred approach to obtain the H-representation of the convex hull from a set of points since \texttt{scdd} is the most computationally demanding
+operation.}
+
+\subsubsection{Adding constraints}
+Suppose we generated additional points and wanted to combine these with the previous
+points.  We obtain the non-redundant points as before:
+\begin{verbatim}
+> sample.gy2 <- t(matrix( c(
++ 20, 14,
++ 11, 1,
++ 19, 10,
++ 12, 3,
++ 15, 5,
++ 18, 7,
++ 15, 6,
++ 20, 13,
++ 17, 9,
++ 18, 5), ncol=10) ) 
+> sample.gy2.unique 	<- unique( sample.gy2 ) 
+> ( sample.gy2.Vrep 	 <- cbind( 0, 1, sample.gy2.unique ) )
+      [,1] [,2] [,3] [,4]
+ [1,]    0    1   20   14
+ [2,]    0    1   11    1
+ [3,]    0    1   19   10
+ [4,]    0    1   12    3
+ [5,]    0    1   15    5
+ [6,]    0    1   18    7
+ [7,]    0    1   15    6
+ [8,]    0    1   20   13
+ [9,]    0    1   17    9
+[10,]    0    1   18    5
+> ( sample.gy2.reduced <- redundant( d2q(sample.gy2.Vrep), rep = "V" ) )
+$output
+     [,1] [,2] [,3] [,4]
+[1,] "0"  "1"  "20" "14"
+[2,] "0"  "1"  "11" "1" 
+[3,] "0"  "1"  "12" "3" 
+[4,] "0"  "1"  "20" "13"
+[5,] "0"  "1"  "18" "5" 
+attr(,"representation")
+[1] "V"
+
+$redundant
+[1] 3 5 6 7 9
+
+$new.position
+ [1] 1 2 0 3 0 0 0 4 0 5
+\end{verbatim}
+%
+%> ( sample.gy2.Hrep <- scdd( sample.gy2.reduced$output, rep = "V" ) )
+%$output
+%     [,1] [,2]    [,3]   [,4] 
+%[1,] "0"  "67"    "-4"   "1"  
+%[2,] "0"  "37/4"  "-1"   "7/4"
+%[3,] "0"  "-21"   "2"    "-1" 
+%[4,] "0"  "-27/2" "11/8" "-1" 
+%[5,] "0"  "20"    "-1"   "0"  
+%attr(,"representation")
+%[1] "H"
+\hl{WHAT IS BEING STORED?  IF WE KEPT AROUND THE V-REP, THEN COULD
+DO UNIQUE() ON THE POINTS, AND GO AS BEFORE.  OR, IF WE KEEP H-REP, THEN
+WE WANT TO FIRST CONVERT BACK TO V-REP AND THEN SCDD?}
+% First sample H-rep
+%[1,] "0"  "11"   "-1"   "1" 
+%[2,] "0"  "37/2" "-3/2" "1" 
+%[3,] "0"  "71"   "-4"   "1" 
+%[4,] "0"  "-25"  "2"    "-1"
+
+We then combine these new, reduced points with the extreme points of the previously
+obtained convex hull.  On this combined set, we apply \texttt{unique}, 
+\texttt{redundant}, and \texttt{scdd} as before.
+
+\begin{verbatim}
+> sample.gy.combined <- unique( rbind( sample.gy.reduced$output, 
+sample.gy2.reduced$output ) )
+> ( sample.gy.combined <- redundant( sample.gy.combined, rep = "V" ) )
+$output
+     [,1] [,2] [,3] [,4]
+[1,] "0"  "1"  "21" "13"
+[2,] "0"  "1"  "23" "21"
+[3,] "0"  "1"  "11" "1" 
+[4,] "0"  "1"  "12" "3" 
+[5,] "0"  "1"  "18" "5" 
+attr(,"representation")
+[1] "V"
+
+$redundant
+[1] 3 4 5 8
+
+$new.position
+[1] 1 2 0 0 0 3 4 0 5
+
+> ( sample.gy.Hrep <- scdd( sample.gy.combined$output, rep = "V" ) )
+$output
+     [,1] [,2]      [,3]    [,4] 
+[1,] "0"  "43"      "-8/3"  "1"  
+[2,] "0"  "37/4"    "-1"    "7/4"
+[3,] "0"  "-21"     "2"     "-1" 
+[4,] "0"  "-183/11" "18/11" "-1" 
+[5,] "0"  "71"      "-4"    "1"  
+attr(,"representation")
+[1] "H"
+\end{verbatim}
+
+The separate and combined convex hulls are displayed in Figure~\ref{F:combined-hull}.
+There are five inequalities here, one for each side.
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4.5in]{combined-hull}
+\end{center}
+\caption{The convex hulls for two separate ten-point samples (dotted lines).  The 
+convex hull for the combined is the solid line.}
+\label{F:combined-hull}
+\end{figure}
 
 
 
-Finding the convex hull from a set of points is of a well-studied problem.  We 
-mention it here to describe the sequence of functions we use to find the convex hull.  
-Beginning with a large number of MC sample points, say 10,000, we first use the 
-\texttt{unique} function to reduce to the distinct 
-points in the set.  
-Then we apply the \texttt{redundant} function in the \texttt{rcdd} 
-package to reduce to the extreme points of the convex hull.
+\section{Point on exterior, interior, and boundary of a convex hull}
+Determining whether $g(\yobs)$ lies on the exterior, interior, or boundary
+of a convex hull is of central importance to our method.  We present two 
+different approaches to answer this question.
 
-Our algorithm utilizes the H-representation of the sample points to determine if $g(\yobs)$ lies on the 
-exterior, boundary, or interior of the convex hull of a set of points.  
-This requires switching back and forth between the V-representation and 
-the H-representation.  
-This functionality is provided by the \texttt{scdd} function, which takes as an 
-argument the original representation (H or V) and returns the toggled representation.
+\subsection{Determining boundary points via H-representation of convex hull}
+We pick an exterior, interior, and boundary point by examining 
+Figure~\ref{F:combined-hull}: (20,10), (20,12), (21,13).  To this vector, we multiply
+ by the matrix $A$ from the H-representation (assuming we have all inequalities)
+ and subtract $b$.  The sign of the resulting quantities tells us if that 
+ particular inequality has been satisfied: positive indicates that it has not, 
+ negative indicates that it has strictly, and a zero indicates that it is
+ met with an equality.  Thus for each inquiry point, we need only largest
+ of the sign of these to make our conclusion.
+\begin{verbatim}
+> x <- rbind( c(20,10), c(20,12), c(21,13) )
+> l <- sample.gy.Hrep$output[ ,1]
+> b <- sample.gy.Hrep$output[ ,2]
+> a <- sample.gy.Hrep$output[ ,-c(1,2)]
+> a <- qneg( a )
+> ( axb <- qmatmult( a, t(x) ) )
+     [,1]     [,2]     [,3]    
+[1,] "1/3"    "-5/3"   "0"     
+[2,] "-27/4"  "-41/4"  "-11"   
+[3,] "-9"     "-7"     "-8"    
+[4,] "-67/11" "-45/11" "-52/11"
+[5,] "-1"     "-3"     "0"     
+> axb <- sweep( axb, 1, b, FUN=qmq ) # subtract b
+> apply( axb, 2, function(pair) max(qsign(pair)) )
+[1]  1 -1  0
+\end{verbatim}
 
-Either representation can be expressed with rational arithmetic, making equality 
-comparisons exact.  This is particularly important when trying to determine the 
-location of $g(\yobs)$ relative to the convex hull of a set of points.  The \texttt
-{rcdd} package also provides the necessary matrix arithmetic functions to work with 
-the rational representation.
+Here we have five inequalities.
+ The first point (20,10) satisfies 4 of the 5, but violates the first, with
+ a positive result of $\frac{1}{3}$ and thus we get a positive sign, indicating
+ an exterior point.  The second point (20,12) is strictly negative on all five inequalities, indicating that they have all been satisfied, resulting in a negative sign.  Finally, the point (21,13) satisfies three inequalities strictly, and meets
+two with strict equality.  This makes sense since (21,13) is an exterior point
+of the hull and thus connects two sides.
 
+Unfortunately this approach is computationally inefficient; solving 
+the convex hull problem, that is, finding the H-representation can be very 
+expensive.  
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Programming LCM theory}
-\text{rcdd} \citep{rcdd}
+\subsection{Strongly separating hyperplane}
+\citet{Fukuda:2008} presents a more efficient way to determine whether a single 
+inquiry point $q$ is in or out of the convex hull of many other points $p_i$.  
+The approach looks to find a strong hyperplane $H$ between a point $q$
+and the convex hull of a set of points $\{p_i : i \in I\}$
+\begin{align*}
+	H = \{x : z^T x = z_0\}
+\end{align*}
+where $z$ is a vector and $z_0$ a scalar satisfying
+\begin{align*}
+		z^T p_i &< z_0 \quad i \in I \\
+		z^Tq &> z_0.
+\end{align*}
+This can be accomplished by solving the linear programming problem
+\begin{align*}
+	\text{maximize } 	&f(z_0, z) = z^q - z_0 \\
+	\text{subject to } 	&z^T p_i - z_0 \leq 0, \quad i \in I \\
+						&z^Tq - z \leq 1, 
+\end{align*}
+where the last inequality is artificially added so that the linear program 
+has a bounded solution \citep{Fukuda:2008,rcdd:R}.  If the maximized value of 
+$f$ is strictly positive, then a strongly separating hyperplane exists and 
+$q$ is in the exterior of the convex hull.  Otherwise, $q$ is on the boundary or 
+the interior.  Note that it does not distinguish between these latter two cases.
 
-\subsection{Linearity}\label{S:linearity}
+\citet{rcdd:R} provide a linear programming function \texttt{lpcdd} function in the \texttt{rcdd} package which can be applied to solve this problem.
+The function maximizes the linear function $x \mapsto a^x$ subject to the 
+constraint that $x$ lie in the polyhedral convex set having the H-representation
+specified.  We demonstrate its use on an exterior, boundary, and interior
+point, using the convex hull we constructed in the previous section.  Note that \texttt{lpcdd} requires the H-representation of the convex hull.
+\subsubsection{Exterior point}
+Let $q = (20,10)$, on the exterior.
+\begin{verbatim}
+> q <- c(20,10) 
+> ( hull.pts <- sample.gy.combined$output[ , -c(1:2) ] ) # get points in hull
+     [,1] [,2]
+[1,] "21" "13"
+[2,] "23" "21"
+[3,] "11" "1" 
+[4,] "12" "3" 
+[5,] "18" "5" 
+> hrep <- cbind( 0, 0, 1, qneg(hull.pts) )	# s.t. 1st ineq
+> ( hrep <- rbind( hrep, c(0, 1, 1, -q) ) )	# 2nd (artifical) ineq
+     [,1] [,2] [,3] [,4]  [,5] 
+[1,] "0"  "0"  "1"  "-21" "-13"
+[2,] "0"  "0"  "1"  "-23" "-21"
+[3,] "0"  "0"  "1"  "-11" "-1" 
+[4,] "0"  "0"  "1"  "-12" "-3" 
+[5,] "0"  "0"  "1"  "-18" "-5" 
+[6,] "0"  "1"  "1"  "-20" "-10"
+> lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
+[1] "1"
+\end{verbatim}
+The maximum value of 1 is strictly positive so $(20,10)$ is on the exterior, as expected.
+\subsubsection{Interior point}
+Let $q = (20,12)$.
+\begin{verbatim}
+> q <- c(20,12) 
+>  hull.pts <- sample.gy.combined$output[ , -c(1:2) ]  # get points in hull
+> hrep <- cbind( 0, 0, 1, qneg(hull.pts) )	# s.t. 1st ineq
+> ( hrep <- rbind( hrep, c(0, 1, 1, -q) ) )	# 2nd (artifical) ineq
+     [,1] [,2] [,3] [,4]  [,5] 
+[1,] "0"  "0"  "1"  "-21" "-13"
+[2,] "0"  "0"  "1"  "-23" "-21"
+[3,] "0"  "0"  "1"  "-11" "-1" 
+[4,] "0"  "0"  "1"  "-12" "-3" 
+[5,] "0"  "0"  "1"  "-18" "-5" 
+[6,] "0"  "1"  "1"  "-20" "-12"
+> lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
+[1] "0"
+\end{verbatim}
+The maximum value of $f$ here is 0, so $(20,12)$ is on the boundary or the interior.
+
+\subsubsection{Boundary point}
+Let $q = (21,13)$, one of the extreme points of the convex hull.
+\begin{verbatim}
+> q <- c(21,13) 
+>  hull.pts <- sample.gy.combined$output[ , -c(1:2) ]  # get points in hull
+> hrep <- cbind( 0, 0, 1, qneg(hull.pts) )	# s.t. 1st ineq
+> ( hrep <- rbind( hrep, c(0, 1, 1, -q) ) )	# 2nd (artifical) ineq
+     [,1] [,2] [,3] [,4]  [,5] 
+[1,] "0"  "0"  "1"  "-21" "-13"
+[2,] "0"  "0"  "1"  "-23" "-21"
+[3,] "0"  "0"  "1"  "-11" "-1" 
+[4,] "0"  "0"  "1"  "-12" "-3" 
+[5,] "0"  "0"  "1"  "-18" "-5" 
+[6,] "0"  "1"  "1"  "-21" "-13"
+> lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
+[1] "0"
+\end{verbatim}
+The maximum value of $f$ here is again 0, so $(21,13)$ is on the boundary or the interior, we do not know which.  If we want to confirm that the point is indeed
+on the boundary of the convex hull, we must use H-representation of the hull
+directly as described in Section~\ref{}.
+
+\section{Linearity}\label{S:linearity}
 \citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
 \begin{align*}
 	L = \{ w \in V: -w \in \con( V ) \}.
 \end{align*}
 The set $L$ is a finite set and the same $L$ we saw in Theorem~\ref{Thm:L-GDOR}.
 
-\hl{We use this to find the face of the polyhedral convex support on which the observed 
-statistic lies in the relative interior.  The function \texttt{linearity} in the \texttt
-{rcdd} package can take as input the rays directed from observed statistic to sample 
-points generated via MCMC from the distribution with parameter value of interest.  
+\hl{We use this to find the face of the polyhedral convex support on 
+which the observed 
+statistic lies in the relative interior.  The function \texttt{linearity} 
+in the \texttt{rcdd} package can take as input the rays directed from observed 
+statistic to sample points generated via MCMC from the distribution with 
+parameter value of interest.  
 From these, it determines the rays that form the basis of a vector subspace.  
 Of course we are not interested in the vector subspace; we need only take the points 
-corresponding to these bases as our empirical face $F$.  By construction, the observed 
+corresponding to these bases as our empirical face $F$.  
+By construction, the observed 
 statistic lies in the interior of $F$.}  By Corollary~\ref{Cor:spanL}, 
 $S \cap H = S \cap(\yobs + \spanl (L))$.  We are interested in $\spanl L$.
 
@@ -294,6 +613,8 @@ Polarity?
 \end{align*}
 
 \section{Rational arithmetic}
+The \texttt{rcdd} package also provides the necessary matrix arithmetic functions to 
+work with the rational representation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling}
