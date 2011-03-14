@@ -161,6 +161,8 @@ reflects the tendency of individuals to form relationships with others of the sa
 gender.  A good statistical model can see past the noise in the data to identify if 
 one or both of these forces are important.   
 
+\citet*{Welch:2011} applied to epidemiology.
+
 %\subsection{MICRO -- MACRO}
 
 protein-binding;
@@ -313,7 +315,9 @@ We will not discuss the merits or purpose of all the different network statistic
 here; what is important is that these statistics can be transparently calculated for a 
 given network and the inclusion of them in $g(y)$, paired with their parameter 
 component in $\eta$, allows the model \eqref{E:ERGM} to calculate probabilities of 
-different global network outcomes.  
+different global network outcomes.  \citet{ergm:userterms} describe how one can
+customize and create her own network statistic of interest and model in the 
+\texttt{statnet} package in R.
 
 %\begin{figure}[!h]
 %\centering
@@ -671,7 +675,7 @@ where each successive maximizing value will be closer to $\etaMLE$ than the prev
 time of this writing, the MCMC-MLE routine in \texttt{statnet} uses by default 10,000 
 Monte Carlo samples and a maximum of three iterations, using the 
 MPLE as the initial value for $\eta^0$ \citep{statnet:R}.  
-Improvements to the MCMC-MLE approach is an active area of research \citep*{Bartz,Hummel}.
+Improvements to the MCMC-MLE approach is an active area of research \citep*{Bartz,Hummel}.  \hl{HUMMEL MORE DETAIL}.
 
 \citet{ergm} illustrate the practical difficulty associated with a poor initial 
 value in the MCMC-MLE algorithm with Sampson's monastery data set depicted in 

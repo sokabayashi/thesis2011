@@ -1,4 +1,4 @@
-\begin{thebibliography}{83}
+\begin{thebibliography}{85}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -242,6 +242,12 @@
 \newblock Goodness of fit of social network models.
 \newblock \textit{Journal of the American Statistical Association},
   \textbf{103} 248--258.
+
+\bibitem[{Hunter et~al.(2011)Hunter, Goodreau and Handcock}]{ergm:userterms}
+\textsc{Hunter, D.~R.}, \textsc{Goodreau, S.~M.} and \textsc{Handcock, M.~S.}
+  (2011).
+\newblock \texttt{ergm.userterms}: A template package for extendent
+  \texttt{statnet}.
 
 \bibitem[{Hunter and Handcock(2006)}]{Hunter:2006}
 \textsc{Hunter, D.~R.} and \textsc{Handcock, M.~S.} (2006).
@@ -496,6 +502,11 @@
 \newblock Logit models and logistic regression for social networks: I. an
   introduction to markov graphs and p*.
 \newblock \textit{Psychometrika}, \textbf{61} 401--425.
+
+\bibitem[{Welch et~al.(to appear)Welch, Bansal and Hunter}]{Welch:2011}
+\textsc{Welch, D.}, \textsc{Bansal, S.} and \textsc{Hunter, D.~R.} (to appear).
+\newblock Statistical inference to advance network models in epidemiology.
+\newblock \textit{Epidemics}.
 
 \bibitem[{Younes(1988)}]{Younes:1988}
 \textsc{Younes, L.} (1988).
