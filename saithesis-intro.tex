@@ -106,33 +106,17 @@ Once model parameters are properly estimated, the completed model can be used to
 new random networks whose distribution retains essential characteristics of 
 the observed network.  Researchers can then use these 
 to further test hypotheses about the process of relationship formation.  
-In this paper, we consider the ability to simulate such networks as the end goal of parameter
-estimation rather than the parameter values themselves.  That is, the goal in 
-maximum likelihood is to obtain the maximum likelihood \emph{distribution} 
-rather than the values that index the distribution.
+In this dissertation, we consider the ability to do statistical inference 
+as the end goal of parameter estimation rather than the parameter values 
+themselves.  This requires obtaining the maximum likelihood distribution by which
+to construct confidence intervals and evaluate hypotheses.
 
-%it is analogous to writing the expression $y=mx+b$ as the equation of a line with 
-%slope parameter $m$ and $y$-intercept parameter $b$.  
-%However, just as finding the values for the parameters $m$ and $b$ that result 
-%in a line that best characterizes the data is a much more involved mathematical 
-%exercise, 
-
-%
 %Similarly, exponential random graph models have a deceptively simple form \eqref
 %{E:ERGM} that belies the challenges involved in estimating the model parameters.  
 
 %Network researchers have developed many descriptive statistics to capture 
 %characteristics of a network.  For example, the number of ties going to a particular 
 %actor is one measure of that actor's prestige in that network \citep{Wasserman:1994}.  
-%\subsection{WHAT MAKES A GOOD MODEL?}
-%%%%%% STATISTICAL MODEL $$$$$$$
-%A good statistical model provides clarity of the underlying forces that shape the 
-%structure of an observed network.   
-%For example, an alternative theory to transitivity is that the frequency of triangles 
-%reflects the tendency of individuals to form relationships with others of the same 
-%gender.  A good statistical model can see past the noise in the data to identify if 
-%one or both of these forces are important.   
-%\subsection{MICRO -- MACRO}
 
 Finally, it should be noted that although problems from the social sciences provide much of the 
 motivation for social network analysis and our research here, network models can in 
@@ -169,6 +153,16 @@ to differentiate between completing underlying forces that can shape the global
 structure; a network model will allow the researcher to identify if one or more actor 
 specific variables and network structures contribute to the characteristic of the 
 overall network.
+
+A good statistical model provides clarity of the underlying forces that shape the 
+structure of an observed network.   
+For example, an alternative theory to transitivity is that the frequency of triangles 
+reflects the tendency of individuals to form relationships with others of the same 
+gender.  A good statistical model can see past the noise in the data to identify if 
+one or both of these forces are important.   
+
+%\subsection{MICRO -- MACRO}
+
 protein-binding;
 
 Framingham Heart Study.
@@ -235,7 +229,7 @@ where $i$ and $j$ take values in $1, \ldots, n$, $i \neq j$, for a network with 
 actors.  Note that $Y_{ij}$ take only values of $0$ or $1$, reflecting our restriction 
 on networks to those with \emph{dichotomous} relations, that is, the relation between a pair 
 of actors is either present or absent.  In addition, we do not allow the possibility 
-of $i \to i$ and always denote $Y_{ii} = 0$.  In the special case that 
+of $i \to i$ and always have $Y_{ii} = 0$.  In the special case that 
 $Y_{ij} = Y_{ji}$ and thus the matrix $Y$ is symmetric, the network is referred to as a \textit
 {undirected} network or graph, such as in the case of the Florentine marriage network 
 depicted in Figure~\ref{F:Florentine}.  A network is \textit{directed} if it is not 
@@ -270,8 +264,9 @@ The exponential family is \emph{full} if the natural parameter  space is
 %The exponential family is \emph{full} if the natural parameter space is \eqref
 %{E:fullparam}, and \emph{regular} if, in 
 %addition, $\Xi$ is an open set.  
-We say an exponential family is \emph{minimal} if $g(y)$ is not concentrated on a 
-hyperplane. Minimality guarantees that if an MLE exists, it is unique \citep{Geyer:gdor}.
+We say an exponential family is \emph{minimal} if the natural statistic and 
+natural parameter are not each not concentrated on a hyperplane. 
+Minimality guarantees that if an MLE exists, it is unique \citep{Geyer:gdor}.
 
 
 Defining the \emph{cumulant} function as $c(\eta) = \log \kappa(\eta)$ and
@@ -329,7 +324,7 @@ different global network outcomes.
 %%%%%% TABLE OF COMMONLY USED NETWORK STATISTICS
 
   \citet*{Handcock:2006, Hunter:2006, recentp*} developed new network statistics with 
-particular emphasis on the sensibility of the distributions generated from the specified models.  
+particular emphasis on the sensibileness of the distributions generated from the specified models.  
 These came about in response to the repeated discovery that poorly behaving models can
 result when a researcher only considers the scientific significance of network
 statistics without worrying about any overlap or conflict in role of the 
@@ -351,9 +346,7 @@ evaluate for networks of even moderate size.
 For an undirected network with $n$ actors, there are $N=2^{{n\choose 2} }$ 
 different possible networks in $\YY$.  Table~\ref{T:number graphs} shows how rapidly this number grows; 
 \emph{unless dealing with networks of 9 actors or less, the likelihood function 
-should not be directly evaluated.}  Software packages like R cannot even cast 
-$2^{31}$ as an integer,
-necessitating alternative approaches.  See Appendix~\ref{A:Triangle count}
+should not be directly evaluated.}  See Appendix~\ref{A:Triangle count}
 for our computational approach for counting simple statistics in the 9 actor network
 relying on numerous tricks in data representation and counting.
 
@@ -404,7 +397,7 @@ We now review the classical Erd\H{o}s-R\'{e}nyi-Gilbert, $p_1$, and $p^*$ models
 The simplest example of an exponential random graph is the Erd\H{o}s-R\'{e}nyi-Gilbert 
 model \citep{Erdos,Gilbert}, also referred to as a Bernoulli network model, which 
 assumes that each actor forms a relation to every other actor independently with the 
-same probability $p$ \citep{Wasserman:1994, ergm}.  The ERGM can be expressed as
+same probability $p$ \citep{ergm}.  The ERGM can be expressed as
 \begin{align*}
 	P_{\eta}(Y=y) &= \frac{1}{\kappa( \eta) }e^{\eta g(y)}  \qquad y \in \YY, 
 \end{align*}
@@ -428,7 +421,8 @@ The MLE
 for $\eta$ is thus easily calculated from the observed data but the independence 
 assumption is too unrealistic for all but the simplest of cases; usually, 
 a researcher is interested in the different probabilities of tie formations 
-between actors.  Thus the $p_1$ model may be most useful as a ``null'' model.
+between actors.  Thus the Erd\H{o}s-R\'{e}nyi-Gilbert model may be most 
+useful as a ``null'' model, though it is arguably too simple even for this.
 
 \subsection{The $p_1$ Model} \label{S:p1}
 \citet{Holland:1981} made advances in relaxing this independence assumption  with 
@@ -664,7 +658,7 @@ and
 If we call $\hat{\eta}_m$  the maximizer of \eqref{E:r_hat} and assume that the MLE 
 $\etaMLE$ exists, \citeauthor{Geyer:1992} show that 
 \begin{align*}
-	\hat{\eta}_m \to \etaMLE \quad a.s.
+	\hat{\eta}_m \to \etaMLE \text{ a.s.}
 \end{align*}
  whenever the Markov chain is ergodic. 
  
@@ -711,6 +705,7 @@ approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  Data for plots are
 The MCMC-MLE algorithm maximizes the approximated log 
 likelihood ratio \eqref{E:r_hat}.  However, the first derivative of $\hat{r}(\eta,\eta^0)$ with respect
 to $\eta$ shows that if the MCMC sampler is unable to generate any $g(Y)< g(\yobs)$, 
+the derivative of 
 \eqref{E:r_hat} will be strictly negative, resulting in $\hat{r}(\eta,\eta^0)$ with no
 maximum.  This is depicted by the dotted-line in Figure \ref{F:MCMC-MLE} (left).  
 The problem is not present when the initial value is close to the true MLE, such as 
@@ -748,14 +743,14 @@ SA procedures for finding the MLE of a parameter $\eta$ generate iterated estima
 $\eta_k$ to find the 
 root of a gradient function $h(\eta)$:
 \begin{align} \label{E:eta SA update}
-	\eta_{k+1} = \eta_k + \alpha_k Y_k,
+	\eta_{k+1} = \eta_k + \alpha_k U_k,
 \end{align}
 where $\alpha_k$ is a step size and is typically a member of a decreasing sequence of 
-positive numbers, and $Y_k$ is a 
+positive numbers, and $U_k$ is a 
 random variable from the distribution specified by $\eta_k$ that noisily estimates the 
 gradient function $h(\eta_k)$.  
 
-Restrictive conditions are required of $\alpha_k$ and $Y_k$ to establish convergence 
+Restrictive conditions are required of $\alpha_k$ and $U_k$ to establish convergence 
 of the sequence $\eta_k$.  
 In Robbins-Monro SA \citep{Robbins-Monro}, the step size $\alpha_k$ must be a sequence 
 of positive constants 
@@ -777,9 +772,9 @@ for faster convergence \citep[Chapter 11]{Kushner:1997}.
 %Regardless of the exact form, there is no guarantee the likelihood function will 
 %increase at each update. 
 
-The conditions on $Y_k$ are more restrictive.  Popular approaches include constraining 
+The conditions on $U_k$ are more restrictive.  Popular approaches include constraining 
 the sequence of estimators $\eta_k$ to a compact set specified \emph{a priori}, 
-or assuming that the noise component of $Y_k$ be a martingale 
+or assuming that the noise component of $U_k$ be a martingale 
 difference sequence.  As commonly observed \citep*{Chen:2002,Andrieu:2005,Liang:2010} 
 these may be 
 difficult to satisfy in practice.  
@@ -798,8 +793,7 @@ Hence methods which rely on
 the Fisher information matrix may fail when the starting point for $\eta$ is far from 
 the MLE \citep{Younes:1989,Gu:2001}.
 Of course, one may try different starting points until a ``good'' one is found, but 
-this can be cumbersome in 
-practice.
+this comes with no theoretical guarantees and can be cumbersome in practice
 
 \subsection{Summary of parameter estimation methods}
 The following table summarizes the advantages and disadvantages of the parameter estimations discussed.  
@@ -835,6 +829,15 @@ Method & Appeal & Drawbacks \\ [1ex]
 \end{table}
 %%%%%%
 
+%\begin{figure}[h]
+%\begin{center}
+%\includegraphics[width=4.5in]{mck.pdf}
+%\end{center}
+%\caption{What I got out of case studies.}
+%\label{F:mck}
+%\end{figure}
+
+
 \section{Non-existent MLEs in exponential families} \label{S:Non-existent MLE}
 Parameter estimation via maximum likelihood for exponential family models with 
 complex dependence---already a 
@@ -854,7 +857,8 @@ and the location of the observed data relative to this support.
 When the MLE does not exist for
 an exponential family in the conventional sense, 
 it may exist in the \emph{Barndorff-Nielsen completion} of the family.
-However, until recently, there have not been practical solutions to this problem.
+However, until recently, there have not been computationally convenient
+solutions to this problem.
 
 \citet{Geyer:1992} separated the search for the MLE of an exponential family model
 with complex dependence into a two-phase algorithm, 
@@ -1020,8 +1024,7 @@ the log likelihood.
 Despite the visual similarity between \eqref{E:eta SA update} and \eqref{E:eta 
 update}, the line search approach treats 
 the search direction $p_k$ in \eqref{E:eta update} as constant whereas in SA the 
-corresponding $Y_k$ in \eqref{E:eta SA 
-update} is random.
+corresponding $U_k$ in \eqref{E:eta SA update} is random.
 Furthermore, line search algorithms have more restrictions on the step size $\alpha_k$.  
 The step size 
 conditions in the classical gradient ascent algorithm, which is the basis for our 
@@ -1141,17 +1144,17 @@ recognize that the objective function it seeks to maximize has changed.
 We discuss in Chapter~\ref{Chapter:Linear programming} the adjustments that need to 
 be made to the algorithm to handle this situation.
 
-DOES THE REST OF THIS CHAPTER NEED TO BE HERE AT ALL?  It is a well-known theorem of exponential families that the non-existence of the MLE 
-is synonymous with the the observed data occurring on a boundary of the 
-convex support $C$.
-Because we do not assume to know the full geometry of $C$, we do not know at the 
-outset if the MLE exists.  
-Thus we need to explore the sample space through sampling and determine on the fly 
-whether or not the observed data occurs on a boundary of the perceived 
-convex support.  
-Should this occur, the algorithm defines the limiting conditional model and 
-proceeds to maximize its log likelihood in search of the maximizer.
-
-\subsection{Examples in this paper??}
-
-% \section{Example: social network models} \label{S:Example}
+%DOES THE REST OF THIS CHAPTER NEED TO BE HERE AT ALL?  It is a well-known theorem of exponential families that the non-existence of the MLE 
+%is synonymous with the the observed data occurring on a boundary of the 
+%convex support $C$.
+%Because we do not assume to know the full geometry of $C$, we do not know at the 
+%outset if the MLE exists.  
+%Thus we need to explore the sample space through sampling and determine on the fly 
+%whether or not the observed data occurs on a boundary of the perceived 
+%convex support.  
+%Should this occur, the algorithm defines the limiting conditional model and 
+%proceeds to maximize its log likelihood in search of the maximizer.
+%
+%\subsection{Examples in this paper??}
+%
+%% \section{Example: social network models} \label{S:Example}

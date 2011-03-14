@@ -491,7 +491,7 @@ $\inner{g(\yobs), \delta}$.  Using our earlier notation,
 \inner{g(\yobs), \delta}.
 \end{align*}
 
-From \eqref{E:ERGM}, we can express $f(_{\eta+s\delta}(y)$ as
+From \eqref{E:ERGM}, we can express $f_{\eta+s\delta}(y)$ as
 \begin{align*}
  f_{\eta+s\delta}(y) &= e^{ \inner{\eta+s\delta,g(y)} - c(\eta+s\delta)  } \\
  &= e^{ \inner{\eta,g(y)} -c(\eta)+c(\eta) + s\inner{\delta,g(y)} - c(\eta+s\delta) } \\
@@ -725,7 +725,7 @@ recession, and the second term is strictly less than zero since $w_j \notin H$. 
 $\inner{x - g(\yobs), \delta } < 0$, which means $x \notin H$, leading to a contradiction.
 
 Thus $x$ will equal a convex combination of just the points in $S \cap H$.  Since this is 
-true for any $x \in C \cap H$, we have that $C \cap H = \con( S\cap H)$.
+true if and only if $x \in C \cap H$, we have that $C \cap H = \con( S\cap H)$.
 \end{proof}
 
 
@@ -738,7 +738,7 @@ this model must exist.  Corollary~\ref{Cor:spanL} also tells us that when the ML
 does not exist, $g(\yobs)$ lies in the relative interior of $C \cap H$.
 
 The last part of Theorem~\ref{Thm:LCM} says that for the sequence of distributions with parameter 
-value $\eta+s\delta$, the probability of $g(Y)$ occurring on the plane $H$ is strictly 
+value $\eta+s\delta$, the probability of $g(Y)$ occurring on the hyperplane $H$ is strictly 
 increasing, going to 1.  We may think of this as 
 ``probability accumulating on the boundary"---where by boundary 
 we  actually mean the face $C \cap H$ on which $g(\yobs)$ sits in the relative interior.
@@ -792,7 +792,7 @@ this probability 0.05.  That is, we find the unique $s$ such that
 Then $[\hat{s}, +\infty)$ is a 95\% confidence interval for 
 the scalar parameter 
 $s$, and, in turn, $[\etaLCM + \gamma + \hat{s}\delta, +\infty)$ gives 
-a 95\% confidence interval for $\etaMLE$.
+a 95\% confidence interval for the parameter $\etaLCM + s \delta$.
 
 \subsection{Confidence interval for mean value parameterization}
 The confidence intervals calculated for the natural parameters can of 
