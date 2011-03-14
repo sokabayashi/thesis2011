@@ -401,7 +401,7 @@ Theorems~\ref{Thm:DOC} and \ref{Thm:DOR} induce the following criteria about the
 existence of the MLE in the conventional sense:
 
 %%%%%%%%%%%%%%%%%%%%%
-\begin{theorem}[Theorem 4, \citep{Geyer:gdor}] \label{Thm:MLE existence}
+\begin{theorem}[Extension of Theorem 4, \citep{Geyer:gdor}] \label{Thm:MLE existence}
 For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, the 
 following are equivalent 
 \begin{enumerate}
@@ -409,8 +409,17 @@ following are equivalent
 \item Every direction of recession is a direction of constancy.
 \item $N_C(g(\yobs))$ is a vector subspace.
 \item $T_C(g(\yobs))$ is a vector subspace.
+\item $g(\yobs) \in \rint C$.
 \end{enumerate}
 \end{theorem}
+\begin{proof}
+The equivalence of 1 -- 4 are shown in \citep{Geyer:gdor}.  We have added condition 5 above
+and show the equivalency of this condition to condition 4.  By Theorem~6.4 in \citep{Rockafellar:1970}, the point $g(\yobs) \in C$ if and only if $v \in T_C(g(\yobs))$ implies
+$-v \in T_C(g(\yobs))$.  But by Proposition 3.8 in \citep{Rockafellar}, the latter condition
+on  $T_C(g(\yobs))$ is necessary and sufficient for  $T_C(g(\yobs))$ to be a vector subspace.
+\end{proof}
+With the addition of Condition 5 to Theorem~4 of \citep{Geyer:gdor}, we now have the 
+tied this approach to the one previously described of \citep{Barndorff} in Theorem~\ref{MLE rint}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
