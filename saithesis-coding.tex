@@ -64,7 +64,7 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 %\State , $on.boundary$ = FALSE, $on.interior$ = FALSE.
 %\State Set $face.cutoff = 0.30$.
 
-\While{$\lVert \nabla \ell*( \eta_k) \rVert > \epsilon$}
+\While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
 \State \textbf{Find} a step size $\alpha_k$ that satisfies the curvature condition \eqref{E:Wolfe-ll}
 \begin{align*}%\label{E:curvature}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k.
@@ -76,9 +76,9 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 \If{$LCM.flag=$TRUE}
 	\State Restrict sample points to those in empirical face.
 \EndIf
-\State Call the resulting sample points $g(Y_{(1)}), \ldots, g(Y_{(k)})$.
-\State \textbf{Update} $ty.hull$ to reflect new sample points, $g(Y_{(1)}), \ldots, g(Y_{(k)})$.\\
-\State \textbf{Question: $g(\yobs) \in \rbd( \con(g(Y_{(1)}), \ldots, g(Y_{(k)}) ))$? }
+\State Call the resulting sample points $g(Y_{(1)}), \ldots, g(Y_{(p)})$.
+\State \textbf{Update} $ty.hull$ to reflect new sample points, $g(Y_{(1)}), \ldots, g(Y_{(p)})$.\\
+\State \textbf{Question: $g(\yobs) \in \rbd( \con(g(Y_{(1)}), \ldots, g(Y_{(p)}) ))$? }
 %\If{Yes, $g(\yobs)$ is outside the convex hull}
 %	\State  Keep sampling.  
 %%	\State $on.boundary$ = FALSE.
@@ -110,7 +110,7 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 %\Else
 	\State Approximate
 	\begin{align} \label{E:nabla ell approx LCM}
-	\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{k}\sum_{i=1}^k g(Y_{(i)}).
+	\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{p}\sum_{i=1}^p g(Y_{(i)}).
 	\end{align}
 
 %, where the sample mean is restricted 
@@ -119,10 +119,7 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 
 \State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent 
 direction.
-\Statex This may involve using a direction normal to empirical face, or a regression 
-\Statex over previous $\eta_k$ values, or simply using steepest ascent, $\nabla \ell
-( \eta_{k+1})$.
-
+\State This may be a normal or regression direction or $\nabla \ell( \eta_{k+1})$.
 \State $k = k + 1$.
 \EndWhile
 \end{algorithmic}
@@ -649,8 +646,11 @@ back $q$ to the rays will return the original extreme points of the convex hull.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Boundary point, two-dimensional face}
 Let $q = (20,31/3)$, which we found by plugging 20 into the H-representation
-of the hull.  This point falls on the line $y = \frac{8}{3}x + 43$ between
-the points $(18,5)$ and $(21,13)$. 
+of the hull.  This point falls on the line $y = \frac{8}{3}x - 43$ between
+the points $(18,5)$ and $(21,13)$. Of course in the ERGM setting we consider,
+it is impossible to generate an non-integer count of network structures,
+but we ignore this issue here since we simply wish to illustrate the 
+behavior of \texttt{linearity}.
 \begin{verbatim}
 > q <- c("20","31/3")
 > ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
@@ -959,22 +959,59 @@ The GDOR of $(1, -\frac{3}{8} )$ agrees with the one found earlier.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling}
-%Once our algorithm has determined that the observed data is on the boundary and thus 
-%the MLE does not exist in the conven
-Our algorithm depends on being able to to subsample from the MC sample points when 
-optimizing in the LCM, restricting to the sample points that comprise the support of 
-this model.  The subsampling operation itself is straightforward since we determined 
-empirically the face that forms this support.  
+Given a particular face characterized by an empirical GDOR, we need to
+find points in a new sample that fall on this face.  This is straightforward to
+do since by definition the GDOR $\delta$ is orthogonal to any point in that face,
+so we may simply take the dot product 
+We demonstrate this at the point $(20, 31/3)$, using the GDOR that we just 
+obtained in the previous section, $\delta = (1, -3/8)$.
+\begin{verbatim}
+> gdor <- as.matrix(c( "1", "-3/8" ) )
+> q <- c( "20", "31/3" )
+> sample.gy.3 <- t(matrix( c(
++ "17", "7/3",
++ "18", "5",
++ "19", "23/3",
++ "20", "31/3",
++ "21", "13",
++ "22", "47/3",
++ "20", "10",
++ "20", "32/3",
++ "19", "8",
++ "19", "25/3"
++ ), ncol = 10) )
+> W <- sweep( sample.gy.3, 2, q, FUN = qmq )
+> qmatmult( W, gdor )
+      [,1]  
+ [1,] "0"   
+ [2,] "0"   
+ [3,] "0"   
+ [4,] "0"   
+ [5,] "0"   
+ [6,] "0"   
+ [7,] "1/8" 
+ [8,] "-1/8"
+ [9,] "-1/8"
+[10,] "-1/4"
+\end{verbatim}
+This method identifies the first six points as being orthogonal to $\delta$.
+If we are using the same face as before of the line segment between (18,5) and (21,13), then actually the first and sixth points, $(17, 7/3)$ and $(22,47/3)$, 
+are \emph{not} on the face.  This may cause for concern, but let us 
+think about the context in which we will use this.  From an MCMC sample of points,
+we identify via \texttt{linearity} a face on which $g(\yobs)$ lies in the relative
+interior and then find a GDOR for this face.  It is impossible to generate any
+points outside of $C$, so the additional points we find are in fact legitimate 
+points of the face.  We may still want to be aware that what we had previously
+perceived as the face was incomplete; thus we may need to keep track of a 
+V-representation of the face after all.
 
-However, it is not obvious that when we draw $g(Y_1), \ldots, g(Y_m)$ from the 
+\section{Sampling from the LCM distribution}
+It is not obvious that when we draw $g(Y_1), \ldots, g(Y_m)$ from the 
 original model with parameter value $\eta$ that the subsample restricted to the 
-support is in fact a sample from the LCM with parameter value $\eta$.  This is a 
-convenient consequence of Theorem~\ref{Thm:LCM}: by this stage in the algorithm, the 
-majority of sample points (greater than 60\%) are on the face.  Then $s$ in the 
-expression $P_{\eta + s \delta}(g(Y) \in H)$ is a large value.  But since the LCM 
-density is the limit of the density of the original model as $s$ goes to $+\infty$, 
-the distribution of the LCM is accordingly well approximated.  
-
-$P_{LCM, \eta} = P_\eta( \cdot \mid g(Y) \in H )$
+support is in fact a sample from the LCM with parameter value $\eta$.  
+But that is in fact example what Theorem~\ref{Thm:LCM} tells us: 
+\begin{align*}
+P_{LCM, \eta} = P_\eta( \cdot \mid g(Y) \in H ).
+\end{align*}
 
 
