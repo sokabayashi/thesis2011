@@ -131,7 +131,7 @@ direction.
 There are several computational geometric operations implied in the above pseudocode:
 \begin{itemize}
 \item Find the convex hull of a set of points.  \hl{V-rep?  H-rep?}
-\item Determine if a point is on the interior or boundary of a convex hull.
+\item Determine if a point is in the interior, exterior, or  boundary of a convex hull.
 \item Determine the face of a convex hull on which a points lies in the relative interior.
 \item Find normal and tangent cones.
 \end{itemize}
@@ -583,26 +583,152 @@ or the interior (the crucial question), one could apply the
 H-representation approach described in 
 Section~\ref{S:H-rep inquiry}, but as noted, this is computationally inefficient.
 Here we describe another approach that is not only more computationally efficient
-but also provides us with much more useful information.
+but also provides us with much more useful information in the context of our
+MLE search objective.
 
-\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $V$ to be
+\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $W$ to be
 \begin{align*}
-	L = \{ w \in V: -w \in \con( V ) \}.
+	L = \{ w \in W: -w \in \con( W ) \}.
 \end{align*}
-The set $L$ is a finite set and the same $L$ we saw in Theorem~\ref{Thm:L-GDOR}.
+Let $V$ the set of extreme points of a convex hull and let $q$ be a point of inquiry.
+Define 
+\begin{align*}
+W = \{ v - q: v \in V \},
+\end{align*}
+which is in fact $T_V(q)$.  If $\con( V ) = C$ the
+polyhedral convex support of an exponential family and $q = g(\yobs)$, then the set 
+$L$ here is the same $L$ as in Theorem~\ref{Thm:L-GDOR}.    
+By Theorem~\ref{Thm:C-H} and Corollary~\ref{Cor:spanL}, if a GDOR 
+exists then $\spanl L$  
+determines the hyperplane $H$ and also the convex support of the LCM by
+\begin{align*}
+	C \cap H = C \cap (g(\yobs) + \spanl L).
+\end{align*}
 
-\hl{We use this to find the face of the polyhedral convex support on 
-which the observed 
-statistic lies in the relative interior.  The function \texttt{linearity} 
-in the \texttt{rcdd} package can take as input the rays directed from observed 
-statistic to sample points generated via MCMC from the distribution with 
-parameter value of interest.  
-From these, it determines the rays that form the basis of a vector subspace.  
-Of course we are not interested in the vector subspace; we need only take the points 
-corresponding to these bases as our empirical face $F$.  
-By construction, the observed 
-statistic lies in the interior of $F$.}  By Corollary~\ref{Cor:spanL}, 
-$S \cap H = S \cap(\yobs + \spanl (L))$.  We are interested in $\spanl L$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The \texttt{linearity} function}
+The \texttt{linearity} function in the \texttt{rcdd} takes as input rays in 
+the form of $W$ above and identities the generators that characterize
+a vector subspace.  It can take as input the V- or H-representation and solves the 
+following linear programming problem for each $w \in W$:
+\begin{align*}
+	\text{maximize } 	&\inner{w,\delta}\\
+	\text{subject to } 	&\inner{v,\delta} \geq 0, \quad v \in W \setminus \{w\}
+\end{align*}
+We demonstrate its functionality on an interior
+point and two points on the boundary, using the same convex hull V-representation
+as before.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Interior point}
+Let $q = (20,12)$, a point on the interior.
+\begin{verbatim}
+> q <- c(20,12)
+> ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
+     [,1] [,2] 
+[1,] "1"  "1"  
+[2,] "3"  "9"  
+[3,] "-9" "-11"
+[4,] "-8" "-9" 
+[5,] "-2" "-7" 
+> W <- cbind( 0, 0, W )
+> ( lin.active <- linearity( W, rep = "V" ) )
+[1] 1 2 3 4 5
+> ( L <- W[ lin.active, , drop=FALSE] )
+     [,1] [,2] [,3] [,4] 
+[1,] "0"  "0"  "1"  "1"  
+[2,] "0"  "0"  "3"  "9"  
+[3,] "0"  "0"  "-9" "-11"
+[4,] "0"  "0"  "-8" "-9" 
+[5,] "0"  "0"  "-2" "-7" 
+\end{verbatim}
+Here, \texttt{linearity} returned the indices for all vectors put in.  Adding
+back $q$ to the rays will return the original extreme points.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Boundary point, two-dimensional face}
+Let $q = (20,31/3)$, which we found by plugging 20 into the H-representation
+of the hull.  This point falls on the line $y = \frac{8}{3}x + 43$ between
+the points $(18,5)$ and $(21,13)$. 
+\begin{verbatim}
+> q <- c("20","31/3")
+> ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
+     [,1] [,2]   
+[1,] "1"  "8/3"  
+[2,] "3"  "32/3" 
+[3,] "-9" "-28/3"
+[4,] "-8" "-22/3"
+[5,] "-2" "-16/3"
+> W <- cbind( 0, 0, W )
+> ( lin.active <- linearity( W, rep = "V" ) )
+[1] 1 5
+> ( L <- W[ lin.active, , drop=FALSE] )
+     [,1] [,2] [,3] [,4]   
+[1,] "0"  "0"  "1"  "8/3"  
+[2,] "0"  "0"  "-2" "-16/3"
+> hull.pts[ lin.active, , drop=FALSE ]
+     [,1] [,2]
+[1,] "21" "13"
+[2,] "18" "5" 
+\end{verbatim}
+The \texttt{linearity} function identifies the rays in opposite directions
+running along $y = \frac{8}{3}x + 43$, starting at $q$.  That is, it has
+identified a two-dimensional face, the line segment between $(18,5)$ and $(21,13)$
+on which $q$ lies in the relative interior.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Boundary point, one-dimensional face}
+Let $q = (21,13)$.
+\begin{verbatim}
+> q <- c(21,13)
+> ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
+     [,1]  [,2] 
+[1,] "0"   "0"  
+[2,] "2"   "8"  
+[3,] "-10" "-12"
+[4,] "-9"  "-10"
+[5,] "-3"  "-8" 
+> W <- cbind( 0, 0, W )
+> ( lin.active <- linearity( W, rep = "V" ) )
+[1] 1
+> ( L <- W[ lin.active, , drop=FALSE] )
+     [,1] [,2] [,3] [,4]
+[1,] "0"  "0"  "0"  "0" 
+\end{verbatim}
+In this example, \texttt{linearity} identifies only the zero vector, which
+trivially satisfies the definition of a subspace.  Here, the point $q = (21,13)$
+is a one-dimensional face, lying in the relative interior of itself.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Empirical face}
+We began this chapter under the more realistic setting that we do not know
+$C$ and are generating MCMC samples in the sample space to explore it.  
+Thus the convex hulls we have to work are those of accumulated samples,
+after it has been ascertained that the inquiry point is either in the interior
+or boundary of the hull.  The \texttt{linearity} function applied to the extreme points of a hull identify empirically a face $F$ on which $q$ lies.  
+If \texttt{linearity} returns all the indices, then $q$ is an interior point.  Otherwise, \texttt{linearity} returns the indices that characterize the extreme
+points of a face on the boundary of the hull.  By construction, $q$ lies in the
+the relative interior of this face.
+
+We will often be interested in determining which points in 
+a new sample fall on the face we previously defined.  We could
+\begin{enumerate}
+\item Apply \texttt{lpcdd} for every point in the sample.
+\item Get the H-representation of the face.  Apply the inequalities to every point in the sample.
+\item Find the set $S \cap H$ of all points that comprise the face.  The set is bounded in size because the sample space is finite and discrete (though this may
+not be particularly reassuring).  Then compare the sample points to this set for matches. 
+\end{enumerate}
+The appropriateness of each method may depend on the number of dimensions of the 
+sample space.  For high dimensional problems, \texttt{scdd} should be avoided,
+suggesting that perhaps the first way is best.  However, for low dimensional 
+sample spaces, the \texttt{scdd} approach to H-representation may be fastest.
+
+%points in $S = g(\YY)$ that are in the
+%hyperplane $H$, that is, the points on the face of $C$ in which
+%$g(\yobs)$ lies in the relative interior
+%\begin{align*}
+%S \cap H = S \cap(\yobs + \spanl L).
+%\end{align*}
 
 %Let $\widetilde{T}_C(x)$ be the empirical tangent cone at the point $x$ constructed 
 %from a set of points $W$ all in $C$.  That is,
@@ -612,24 +738,21 @@ $S \cap H = S \cap(\yobs + \spanl (L))$.  We are interested in $\spanl L$.
 %Then for $V = \widetilde{T}_C(g(\yobs))$, the linearity corresponds to the set of 
 %points from $W$ (shifted by $g(\yobs)$) that form what we refer to as the empirical 
 %face $F$.  
-%In our algorithm, we use the MCMC sample points for $W$.  \citet{Geyer:gdor} provides 
-%the function \texttt{linearity} in the R package \texttt{rcdd} to do this computation.
-
-%Consider the case when $g(\yobs) \in \rintr C$.  Then the MLE exists, and the 
-%linearity will correspond to all the points $W \in C$.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Normal and tangent cones}
-how to find?
-From H-representation,
+\section{Normal and tangent cones}
+We are often interested in the normal cone and tangent cones after it has been
+determined that $q$ is on the boundary of a  hull.  
+
+The H-representation of a polyhedral convex set $C$ can be presented as
 \begin{align*}
 	C = \{ x: \inner{a_i, x} \leq b_i, i \in I \text{ and } 
 				\inner{a_i, x} = b_i, i \in E \}.
 \end{align*}
-To find the tangent cone at a particular point $x \in C$,
+The tangent cone at a particular point $x \in C$ can then simply be gleaned from 
+this H-representation by
 \begin{align*}
-	T_C(x) = \{ x: \inner{a_i, x} \leq 0, i \in A \text{ and } 
-				\inner{a_i, x} = 0, i \in E \}
+	T_C(x) = \{ y: \inner{a_i, y} \leq 0, i \in A \text{ and } 
+				\inner{a_i, y} = 0, i \in E \}
 \end{align*}
 where 
 \begin{align*}
@@ -637,16 +760,52 @@ where
 \end{align*}
 is the active set of inequality constraints (the inactive constraints have been
  dropped, and now $x$ is the new origin).
-
-Polarity?
+%Actually, tangent cone we have
+%already been using: it is the space spanned by the rays identified by \texttt{linearity}.  Passing these rays to \texttt{scdd} will return an H-representation
+%of the tangent cone.
+We may then use the polarity of the tangent and normal cones to read the 
+V-representation of the normal cone right off the H-representation 
+of the tangent cone:
 \begin{align*}
 	N_C(x) = \pos( \{ a_i: i \in A \cup E \} \cup \{ -a_i: i \in E \} )
 \end{align*}
+We apply this to the point (21,13) on the same hull as we have been using,
+where there are no equality constraints:
+\begin{verbatim}
+> q <- as.matrix( c("21","13") )
+> sample.gy.Hrep
+$output
+     [,1] [,2]      [,3]    [,4] 
+[1,] "0"  "43"      "-8/3"  "1"  
+[2,] "0"  "37/4"    "-1"    "7/4"
+[3,] "0"  "-21"     "2"     "-1" 
+[4,] "0"  "-183/11" "18/11" "-1" 
+[5,] "0"  "71"      "-4"    "1"  
+attr(,"representation")
+[1] "H"
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Rational arithmetic}
-The \texttt{rcdd} package also provides the necessary matrix arithmetic functions to 
-work with the rational representation.
+> l <- sample.gy.Hrep$output[ ,1]
+> b <- sample.gy.Hrep$output[ ,2]
+> a <- sample.gy.Hrep$output[ ,-c(1,2)]
+> ( active <- qpq( qmatmult( a, q ), b ) == "0" )
+      [,1]
+[1,]  TRUE
+[2,] FALSE
+[3,] FALSE
+[4,] FALSE
+[5,]  TRUE
+> tcone.Hrep <- sample.gy.Hrep$output[ active, , drop=FALSE]
+> tcone.Hrep[ ,2 ] <- "0"
+> tcone.Hrep
+     [,1] [,2] [,3]   [,4]
+[1,] "0"  "0"  "-8/3" "1" 
+[2,] "0"  "0"  "-4"   "1" 
+> # normal cone
+> ( ncone.Vrep <- qneg( tcone.Hrep ) )
+     [,1] [,2] [,3]  [,4]
+[1,] "0"  "0"  "8/3" "-1"
+[2,] "0"  "0"  "4"   "-1"
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling}
