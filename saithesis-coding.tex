@@ -64,7 +64,7 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 %\State , $on.boundary$ = FALSE, $on.interior$ = FALSE.
 %\State Set $face.cutoff = 0.30$.
 
-\While{$\lVert \nabla \ell( \eta_k) \rVert > \epsilon$}
+\While{$\lVert \nabla \ell*( \eta_k) \rVert > \epsilon$}
 \State \textbf{Find} a step size $\alpha_k$ that satisfies the curvature condition \eqref{E:Wolfe-ll}
 \begin{align*}%\label{E:curvature}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k.
@@ -130,10 +130,10 @@ direction.
 
 There are several computational geometric operations implied in the above pseudocode:
 \begin{itemize}
-\item Find the convex hull of a set of points.  \hl{V-rep?  H-rep?}
+\item Find the convex hull of a set of points.
 \item Determine if a point is in the interior, exterior, or  boundary of a convex hull.
 \item Determine the face of a convex hull on which a points lies in the relative interior.
-\item Find normal and tangent cones.
+\item Find a GDOR.
 \end{itemize}
 
 Before we can discuss how to performs these, some background notation
@@ -416,10 +416,11 @@ The separate and combined convex hulls are displayed in Figure~\ref{F:combined-h
 There are five inequalities here, one for each side.
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=4.5in]{combined-hull}
+\includegraphics[width=4.5in]{combined-hull-norm}
 \end{center}
 \caption{The convex hulls for two separate ten-point samples (dotted lines).  The 
-convex hull for the combined is the solid line.}
+convex hull for the combined is the solid line.  Boundaries of the normal cones
+at two points, (20,31/3), and (21,13), shifted to start at those two points, are depicted as arrows.}
 \label{F:combined-hull}
 \end{figure}
 
@@ -643,7 +644,7 @@ Let $q = (20,12)$, a point on the interior.
 [5,] "0"  "0"  "-2" "-7" 
 \end{verbatim}
 Here, \texttt{linearity} returned the indices for all vectors put in.  Adding
-back $q$ to the rays will return the original extreme points.
+back $q$ to the rays will return the original extreme points of the convex hull.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Boundary point, two-dimensional face}
@@ -705,23 +706,22 @@ We began this chapter under the more realistic setting that we do not know
 $C$ and are generating MCMC samples in the sample space to explore it.  
 Thus the convex hulls we have to work are those of accumulated samples,
 after it has been ascertained that the inquiry point is either in the interior
-or boundary of the hull.  The \texttt{linearity} function applied to the extreme points of a hull identify empirically a face $F$ on which $q$ lies.  
+or boundary of the hull.  The \texttt{linearity} function applied to the extreme points of a hull identifies the face $F$ on which $q$ lies in the relative interior.  
 If \texttt{linearity} returns all the indices, then $q$ is an interior point.  Otherwise, \texttt{linearity} returns the indices that characterize the extreme
-points of a face on the boundary of the hull.  By construction, $q$ lies in the
-the relative interior of this face.
+points of a face on the boundary of the hull.  
 
-We will often be interested in determining which points in 
-a new sample fall on the face we previously defined.  We could
-\begin{enumerate}
-\item Apply \texttt{lpcdd} for every point in the sample.
-\item Get the H-representation of the face.  Apply the inequalities to every point in the sample.
-\item Find the set $S \cap H$ of all points that comprise the face.  The set is bounded in size because the sample space is finite and discrete (though this may
-not be particularly reassuring).  Then compare the sample points to this set for matches. 
-\end{enumerate}
-The appropriateness of each method may depend on the number of dimensions of the 
-sample space.  For high dimensional problems, \texttt{scdd} should be avoided,
-suggesting that perhaps the first way is best.  However, for low dimensional 
-sample spaces, the \texttt{scdd} approach to H-representation may be fastest.
+%We will often be interested in determining which points in 
+%a new sample fall on the face we previously defined.  We could
+%\begin{enumerate}
+%\item Apply \texttt{lpcdd} for every point in the sample.
+%\item Get the H-representation of the face.  Apply the inequalities to every point in the sample.
+%\item Find the set $S \cap H$ of all points that comprise the face.  The set is bounded in size because the sample space is finite and discrete (though this may
+%not be particularly reassuring).  Then compare the sample points to this set for matches. 
+%\end{enumerate}
+%The appropriateness of each method may depend on the number of dimensions of the 
+%sample space.  For high dimensional problems, \texttt{scdd} should be avoided,
+%suggesting that perhaps the first way is best.  However, for low dimensional 
+%sample spaces, the \texttt{scdd} approach to H-representation may be fastest.
 
 %points in $S = g(\YY)$ that are in the
 %hyperplane $H$, that is, the points on the face of $C$ in which
@@ -740,8 +740,11 @@ sample spaces, the \texttt{scdd} approach to H-representation may be fastest.
 %face $F$.  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Normal and tangent cones}
-We are often interested in the normal cone and tangent cones after it has been
-determined that $q$ is on the boundary of a  hull.  
+We may be interested in the normal cone and tangent cones after it has been
+determined that $q$ is on the boundary of a  hull.  The approaches described
+in this section rely on an H-representation of the convex hull and so we avoid 
+using these in our algorithm.  Nevertheless, they are useful to have for
+comparison purposes.
 
 The H-representation of a polyhedral convex set $C$ can be presented as
 \begin{align*}
@@ -769,8 +772,48 @@ of the tangent cone:
 \begin{align*}
 	N_C(x) = \pos( \{ a_i: i \in A \cup E \} \cup \{ -a_i: i \in E \} )
 \end{align*}
-We apply this to the point (21,13) on the same hull as we have been using,
-where there are no equality constraints:
+We apply this to the same boundary points and hull (where there are no 
+equality constraints).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Boundary point, two-dimensional face}
+\begin{verbatim}
+> q <- as.matrix( c("20","31/3") )
+> sample.gy.Hrep
+$output
+     [,1] [,2]      [,3]    [,4] 
+[1,] "0"  "43"      "-8/3"  "1"  
+[2,] "0"  "37/4"    "-1"    "7/4"
+[3,] "0"  "-21"     "2"     "-1" 
+[4,] "0"  "-183/11" "18/11" "-1" 
+[5,] "0"  "71"      "-4"    "1"  
+attr(,"representation")
+[1] "H"
+
+> l <- sample.gy.Hrep$output[ ,1]
+> b <- sample.gy.Hrep$output[ ,2]
+> a <- sample.gy.Hrep$output[ ,-c(1,2)]
+> ( active <- qpq( qmatmult( a, q ), b ) == "0" )
+      [,1]
+[1,]  TRUE
+[2,] FALSE
+[3,] FALSE
+[4,] FALSE
+[5,] FALSE
+> tcone.Hrep <- sample.gy.Hrep$output[ active, , drop=FALSE]
+> tcone.Hrep[ ,2 ] <- "0"
+> tcone.Hrep
+     [,1] [,2] [,3]   [,4]
+[1,] "0"  "0"  "-8/3" "1" 
+> # normal cone
+> ( ncone.Vrep <- qneg( tcone.Hrep ) )
+     [,1] [,2] [,3]  [,4]
+[1,] "0"  "0"  "8/3" "-1"
+\end{verbatim}
+Since this point lies in the relative interior of the line segment,
+the normal cone consists of a single direction, depicted in Figure~\ref{F:combined-hull}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Boundary point, one-dimensional face}
 \begin{verbatim}
 > q <- as.matrix( c("21","13") )
 > sample.gy.Hrep
@@ -806,6 +849,113 @@ attr(,"representation")
 [1,] "0"  "0"  "8/3" "-1"
 [2,] "0"  "0"  "4"   "-1"
 \end{verbatim}
+These boundaries the normal cone, shifted to start at $q$, are 
+depicted in Figure~\ref{F:combined-hull}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Calculating a GDOR}
+A GDOR $\delta$ is an vector in the relative interior of $N_C(g(\yobs))$ when
+$N_C(g(\yobs))$ is not a vector subspace.  
+
+By Theorem 7, $\delta$ isa GDOR if and only if
+\begin{align*}
+	\inner{w,\delta} & = 0 	\quad w \in L\\
+	\inner{w,\delta} & < 0 	\quad w \in W \setminus L
+\end{align*}
+where $L$ is the linearity set and W is the tangent cone $T_C(g(\yobs))$.
+\citet{Geyer:gdor} describes a linear programming problem designed to find one
+such GDOR:
+\begin{align*}
+	\text{maximize } 	&\epsilon\\
+	\text{subject to } 	&\epsilon \leq 1\\
+	&\inner{v,\delta} = 0, \quad v \in L \\
+	&\inner{v,\delta} \leq -\epsilon, \quad v \in W \setminus L.
+\end{align*}
+We demonstrate this in R, using the same convex hull and the points as before,
+treating the convex hull as the convex support $C$ and the point $q$ as $g(\yobs)$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{A GDOR when $g(\yobs)$ on two-dimensional face}
+\begin{verbatim}
+> q <-  c("20","31/3")
+> d <- length( q )
+> ( hull.pts <- sample.gy.combined$output[ , -c(1:2) ] ) # get points in hull
+     [,1] [,2]
+[1,] "21" "13"
+[2,] "23" "21"
+[3,] "11" "1" 
+[4,] "12" "3" 
+[5,] "18" "5" 
+> ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
+     [,1] [,2]   
+[1,] "1"  "8/3"  
+[2,] "3"  "32/3" 
+[3,] "-9" "-28/3"
+[4,] "-8" "-22/3"
+[5,] "-2" "-16/3"
+> W <- cbind( 0, 0, W )
+> ( lin.active <- linearity( W, rep = "V" ) )
+[1] 1 5
+> ( objv <- d2q( c( rep(0,d), 1) ) )
+[1] "0" "0" "1"
+> hrep <- cbind( qneg(W), 0 ) 
+> hrep[ lin.active, 1 ] <- 1
+> hrep[ -lin.active, ncol(hrep) ] <- "-1"
+> hrep <- rbind( hrep, c( 0, 1, rep(0,d), -1 ) )
+> hrep
+     [,1] [,2] [,3] [,4]    [,5]
+[1,] "1"  "0"  "-1" "-8/3"  "0" 
+[2,] "0"  "0"  "-3" "-32/3" "-1"
+[3,] "0"  "0"  "9"  "28/3"  "-1"
+[4,] "0"  "0"  "8"  "22/3"  "-1"
+[5,] "1"  "0"  "2"  "16/3"  "0" 
+[6,] "0"  "1"  "0"  "0"     "-1"
+> lpout <- lpcdd( hrep, objv, minimize = FALSE )
+> ( gdor  <- lpout$primal.solution[ -(d+1) ] )
+[1] "1"    "-3/8"
+\end{verbatim}
+The GDOR of $(1, -\frac{3}{8} )$ agrees with the one found earlier.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{A GDOR when $g(\yobs)$ on one-dimensional face}
+\begin{verbatim}
+> q <-  c("21","13")
+> d <- length( q )
+> ( hull.pts <- sample.gy.combined$output[ , -c(1:2) ] ) # get points in hull
+     [,1] [,2]
+[1,] "21" "13"
+[2,] "23" "21"
+[3,] "11" "1" 
+[4,] "12" "3" 
+[5,] "18" "5" 
+> ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
+     [,1]  [,2] 
+[1,] "0"   "0"  
+[2,] "2"   "8"  
+[3,] "-10" "-12"
+[4,] "-9"  "-10"
+[5,] "-3"  "-8" 
+> W <- cbind( 0, 0, W )
+> ( lin.active <- linearity( W, rep = "V" ) )
+[1] 1
+> ( objv <- d2q( c( rep(0,d), 1) ) )
+[1] "0" "0" "1"
+> hrep <- cbind( qneg(W), 0 ) 
+> hrep[ lin.active, 1 ] <- 1
+> hrep[ -lin.active, ncol(hrep) ] <- "-1"
+> hrep <- rbind( hrep, c( 0, 1, rep(0,d), -1 ) )
+> hrep
+     [,1] [,2] [,3] [,4] [,5]
+[1,] "1"  "0"  "0"  "0"  "0" 
+[2,] "0"  "0"  "-2" "-8" "-1"
+[3,] "0"  "0"  "10" "12" "-1"
+[4,] "0"  "0"  "9"  "10" "-1"
+[5,] "0"  "0"  "3"  "8"  "-1"
+[6,] "0"  "1"  "0"  "0"  "-1"
+> lpout <- lpcdd( hrep, objv, minimize = FALSE )
+> ( gdor  <- lpout$primal.solution[ -(d+1) ] )
+[1] "2"    "-5/8"
+\end{verbatim}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling}
