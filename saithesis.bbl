@@ -1,4 +1,4 @@
-\begin{thebibliography}{80}
+\begin{thebibliography}{83}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -89,11 +89,28 @@
 \newblock \textit{Journal of the American Statistical Association}, \textbf{81}
   832--842.
 
+\bibitem[{Fukuda(2004)}]{Fukuda:2004}
+\textsc{Fukuda, K.} (2004).
+\newblock Frequently asked questions in polyhedral computation.
+\newblock Tech. rep., Swiss Federal Institute of Technology.
+\newblock \urlprefix\url{http://www.ifor.math.ethz.ch/
+  ̃fukuda/polyfaq/polyfaq.html}.
+
+\bibitem[{Fukuda(2008)}]{Fukuda:2008}
+\textsc{Fukuda, K.} (2008).
+\newblock \texttt{cddlib} package, version 094f.
+
 \bibitem[{Geyer(1990)}]{Geyer:1990}
 \textsc{Geyer, C.~J.} (1990).
 \newblock \textit{Likelihood and Exponential Families}.
 \newblock Ph.D. thesis, University of Washington, http://purl.umn.edu/56330.
 \newblock \urlprefix\url{http://purl.umn.edu/56330}.
+
+\bibitem[{Geyer(1994)}]{Geyer:1994}
+\textsc{Geyer, C.~J.} (1994).
+\newblock On the convergence of monte carlo maximum likelihood calculations.
+\newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
+  \textbf{56} 261--274.
 
 \bibitem[{Geyer(2009{\natexlab{a}})}]{Geyer:gdor}
 \textsc{Geyer, C.~J.} (2009{\natexlab{a}}).
@@ -101,14 +118,20 @@
   recession.
 \newblock \textit{Electronic Journal of Statistics}, \textbf{3} 259--289.
 
-\bibitem[{Geyer(2009{\natexlab{b}})}]{mcmc:R}
+\bibitem[{Geyer(2009{\natexlab{b}})}]{Geyer:2009}
 \textsc{Geyer, C.~J.} (2009{\natexlab{b}}).
+\newblock More supporting theory and data analysis for "likelihood inference in
+  exponential families and directions of recession".
+\newblock Tech. Rep. 673, University of Minnesota.
+
+\bibitem[{Geyer(2009{\natexlab{c}})}]{mcmc:R}
+\textsc{Geyer, C.~J.} (2009{\natexlab{c}}).
 \newblock \texttt{mcmc}: {M}arkov chain {M}onte {C}arlo.
 \newblock R pakage version 0.7-3.,
   \urlprefix\url{http://CRAN.R-project.org/package=mcmc}.
 
-\bibitem[{Geyer(2009{\natexlab{c}})}]{trust:R}
-\textsc{Geyer, C.~J.} (2009{\natexlab{c}}).
+\bibitem[{Geyer(2009{\natexlab{d}})}]{trust:R}
+\textsc{Geyer, C.~J.} (2009{\natexlab{d}}).
 \newblock \texttt{trust}: {T}rust {R}egion {O}ptimization.
 \newblock R pakage version 0.1-2.,
   \urlprefix\url{http://www.stat.umn.edu/geyer/trust/}.
@@ -130,14 +153,6 @@
 \newblock R pakage version 1.1-3. Incorporates code from cddlib (ver 0.94f)
   written by Komei Fukuda,
   \urlprefix\url{http://cran.r-project.org/web/packages/rcdd}.
-
-\bibitem[{Geyer et~al.(2009)Geyer, Meeden and incorporates code from cddlib
-  (ver 0.94f) written~by Komei~Fukuda}]{rcdd}
-\textsc{Geyer, C.~J.}, \textsc{Meeden, G.~D.} and \textsc{incorporates code
-  from cddlib (ver 0.94f) written~by Komei~Fukuda} (2009).
-\newblock \textit{rcdd: rcdd (Computation Geometry)}.
-\newblock R package version 1.1-3,
-  \urlprefix\url{http://CRAN.R-project.org/package=rcdd}.
 
 \bibitem[{Geyer and Thompson(1992)}]{Geyer:1992}
 \textsc{Geyer, C.~J.} and \textsc{Thompson, E.~A.} (1992).
