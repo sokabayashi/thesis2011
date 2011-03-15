@@ -22,8 +22,8 @@ building, that is, driven by actor-specific attributes or by the structure of  t
 \begin{center}
 \includegraphics[width=4.5in]{florentine} %,keepaspectratio
 \end{center}
-\caption{\citeauthor{Padgett}'s \citeyearpar{Padgett} marriage network among 16 
-Florentine families around 1430.  At the time, two factions, one revolving around the 
+\caption[\citeauthor{Padgett}'s \citeyearpar{Padgett} Florentine marriage network]{
+\citeauthor{Padgett}'s \citeyearpar{Padgett} Florentine marriage network.  \citeauthor{Padgett} recorded the marriage network among 16 Florentine families around 1430.  At the time, two factions, one revolving around the 
 Medicis and the other around the Strozzis, vied for political control of the city.   
 Data is available through and plotted using the \texttt{ergm} package \citep*{ergm} in 
 R.}
@@ -34,7 +34,8 @@ R.}
 \begin{center}
 \includegraphics[width=4.5in]{samplike}
 \end{center}
-\caption{\citeauthor{Sampson}'s \citeyearpar{Sampson} ``liking" network among 18 monks 
+\caption[\citeauthor{Sampson}'s \citeyearpar{Sampson} monastery affinity network]
+{\citeauthor{Sampson}'s \citeyearpar{Sampson} monastery affinity network.  \citeauthor{Sampson} collected data to define a ``liking" network among 18 monks 
 in a New England monastery in the late 1960s.  Since ``liking" is a directional 
 relation, the presence of a relation is depicted by an arrow rather than a line.  Data 
 is available through and plotted using the \texttt{ergm} package \citep{ergm} in R.}
@@ -134,7 +135,7 @@ Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the
 \begin{center}
 \includegraphics[width=4.5in]{ecoli}
 \end{center}
-\caption{\textit{E. coli} transcriptional regulation network of \citet{Salgado,Shen-Orr}.  Each node is an operon and a directed edge from one node to another indicates 
+\caption[\textit{E. coli} transcriptional regulation network of \citet{Salgado,Shen-Orr}]{\textit{E. coli} transcriptional regulation network of \citet{Salgado,Shen-Orr}.  Each node is an operon and a directed edge from one node to another indicates 
 that the first encodes the transcription factor that regulates the second.
 Data is available through and plotted using the \texttt{ergm} package \citep{ergm} in 
 R.}
@@ -701,8 +702,7 @@ In fact, the probability of obtaining fewer than 88 ties for the $\eta=1$ model 
 {\includegraphics[width=2.95in]{mcmc-mle1}}
 {\includegraphics[width=2.95in]{mcmc-mle-1}}
 \end{center} 
-\caption{Log likelihood ratios for different values of $\eta$ for Sampson's 
-Monastery data set.  Left: $\eta^0 = 1$, right: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
+\caption[Log likelihood ratio approximations for Sampson's monastery data set]{Log likelihood ratio approximations for Sampson's monastery data set.  Left: $\eta^0 = 1$, right: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
 approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  Data for plots are produced using code accompanying \citet{Hummel}.} 
 \end{figure} 
 
@@ -804,7 +804,7 @@ The following table summarizes the advantages and disadvantages of the parameter
 All methods assume that the MLE exists before the search algorithm is applied.
 
 \begin{table}[h] 
-\caption{Appeal and drawbacks of various parameter estimation methods. MPLE=Maximum pseudolikelihood estimator, Newton=Newton-Raphson,
+\caption[Comparison of various parameter estimation methods]{Comparison of various parameter estimation methods. MPLE=Maximum pseudolikelihood estimator, Newton=Newton-Raphson,
 MCMC-MLE=Markov chain Monte Carlo-maximum likelihood estimator, SA=stochastic approximation.}
 \begin{tabular}{|c|l|l|}
 \hline 
@@ -915,13 +915,12 @@ situations described above.
 \begin{figure}[h]
 \centering
 \includegraphics[height=4in,width=4in]{Figures/g9-hull}
-\caption{The sample space of the edge and triangle network statistics for the 9-node 
-network studied by \citet{Rinaldo:2009}.  
-The shading of a point corresponds to the frequency of 
-graphs with that network statistic.  
+\caption[Sample space of two-dimensional statistic of 9-node network]{Sample space 
+of two-dimensional statistic of 9-node network.  \citet{Rinaldo:2009} focused
+on edge and triangle statistics.  The shading of a point corresponds to 
+the frequency of graphs with that network statistic.  
 The convex hull of all points is the gray, sail-shaped polytope.  Points on the 
-boundary have an 
-outlined circle and extreme points are square.}
+boundary have an outlined circle and extreme points are square.}
 \label{F:g9-hull}
 \end{figure}
 
@@ -1075,9 +1074,10 @@ $\ell(\eta_{k+1})$ are depicted in Figure~\ref{F:alpha_region}.
 \begin{figure}[h]
 \centering
     \scalebox{.4}{\input{Figures/alphamax.pdf_t}}
-	\caption{The acceptable region for step size $\alpha_k$ along a particular search 
-direction $p_k$ according to the modified curvature condition \eqref{E:curvature mod}.  
-The step sizes $\alpha_{c}$ and $\alpha_{\textrm{max}}$ 
+	\caption[Acceptable region for step size along a search 
+direction according to modified curvature condition]{Acceptable region for step size 
+along a search direction according to modified curvature condition 
+\eqref{E:curvature mod}. The step sizes $\alpha_{c}$ and $\alpha_{\textrm{max}}$ 
 correspond to values of $\nabla \ell( \eta_k + \alpha p_k)^T p_k$ equaling 
 $c \nabla \ell(\eta_k)^T p_k$ and $0$, 
 respectively.  The condition ensures sufficient increase in the log likelihood along 

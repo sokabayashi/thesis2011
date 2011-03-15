@@ -415,7 +415,8 @@ There are five inequalities here, one for each side.
 \begin{center}
 \includegraphics[width=4.5in]{combined-hull-norm}
 \end{center}
-\caption{The convex hulls for two separate ten-point samples (dotted lines).  The 
+\caption[Convex hulls for two separate ten-point samples]
+{Convex hulls for two separate ten-point samples (dotted lines).  The 
 convex hull for the combined is the solid line.  Boundaries of the normal cones
 at two points, (20,31/3), and (21,13), shifted to start at those two points, are depicted as arrows.}
 \label{F:combined-hull}
@@ -995,7 +996,8 @@ obtained in the previous section, $\delta = (1, -3/8)$.
 [10,] "-1/4"
 \end{verbatim}
 This method identifies the first six points as being orthogonal to $\delta$.
-If we are using the same face as before of the line segment between (18,5) and (21,13), then actually the first and sixth points, $(17, 7/3)$ and $(22,47/3)$, 
+If we are using the same face as before of the line segment between (18,5) and (21,13), 
+then actually the first and sixth points, $(17, 7/3)$ and $(22,47/3)$, 
 are \emph{not} on the face.  This may cause for concern, but let us 
 think about the context in which we will use this.  From an MCMC sample of points,
 we identify via \texttt{linearity} a face on which $g(\yobs)$ lies in the relative
@@ -1005,11 +1007,10 @@ points of the face.  We may still want to be aware that what we had previously
 perceived as the face was incomplete; thus we may need to keep track of a 
 V-representation of the face after all.
 
-\section{Sampling from the LCM distribution}
-It is not obvious that when we draw $g(Y_1), \ldots, g(Y_m)$ from the 
-original model with parameter value $\eta$ that the subsample restricted to the 
-support is in fact a sample from the LCM with parameter value $\eta$.  
-But that is in fact example what Theorem~\ref{Thm:LCM} tells us: 
+When it is determined that the face is in fact the support of the new LCM,
+then the subsample of the draws from original model with parameter value $\eta$ 
+restricted to the support is in fact a sample from the LCM with parameter value $\eta$.  
+This comes directly from Theorem~\ref{Thm:LCM}: 
 \begin{align*}
 P_{LCM, \eta} = P_\eta( \cdot \mid g(Y) \in H ).
 \end{align*}

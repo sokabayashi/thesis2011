@@ -1,5 +1,6 @@
-Our algorithm minimizes the objective function $f$ by performing repeated one-
-dimensional updates.  We need the 
+%Our algorithm minimizes the objective function $f$ by performing repeated one-
+%dimensional updates.  
+Before getting to the proof of this theorem, we need the 
 following lemma to transfer global properties of the objective function to the 
 objective function restricted to a 
 search direction.
@@ -42,12 +43,12 @@ function $f(\cdot)$ since this is the convention in the optimization literature 
 {NW,Rockafellar}.  %\citet{Okabayashi:longrange} prove a special case when the minimum exists, and this proof mimics that one with 
 
 The negative log likelihood function $-\ell(\cdot)$ is strictly convex by 
-\eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by \hl{LEHMAN} \citep{TPE2}.
+\eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by 
+\hl{LEHMAN} \citep{TPE2}.
 It is bounded below by the negative LCM log likelihood as described by \eqref{E:LCM ll bound}.
 
 The objective function $f$ is bounded below, strictly convex, and lower semicontinuous 
-by assumption, and so by Lemma~
-\ref{Lemma:f min}, the global minimum exists.  
+by assumption, and so by Lemma~\ref{Lemma:f min}, the global minimum exists.  
 Then by Lemma~\ref{Lemma:f min}, all level sets of type $\lev_{\leq a} f$, $a \in \RR$ are bounded in $\RR^n$.  Restricting the set to be along a search 
 direction $p_k$ maintains the 
 boundedness of these sets.  By Lemma~\ref{Lemma:f min} again, the minimum in this 
@@ -71,9 +72,8 @@ These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
 \begin{figure}
 \centering
 \scalebox{.4}{\input{Figures/Wolfe-mod.pdf_t}}
-\caption{The acceptable region for $\alpha$ according to the curvature condition 
-\eqref{E:Wolfe-ll} when restricting 
-$f$ to direction $p_k$.}
+\caption{Acceptable region for $\alpha$ according to curvature condition 
+\eqref{E:Wolfe-ll} along direction $p_k$.}
 \label{F:Wolfe-mod}
 \end{figure}
 
