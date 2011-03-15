@@ -98,6 +98,240 @@ that
 \end{align*}
 \end{theorem}
 
+Before getting to the proof of this theorem, we need the 
+following lemma to transfer global properties of the objective function to the 
+objective function restricted to a 
+search direction.
+
+%%%%%%%%%%% BEGIN LEMMA %%%%%%%%%%%%%%
+\begin{lemma} \label{Lemma:f min} 
+Suppose a function $f:\RR^n \to \RR$ is proper, lower semicontinuous, and strictly 
+convex.  Then the minimum for $f$ 
+exists and is unique if and only if every nonempty level set $\lev_{\leq \alpha} f$ is 
+bounded.
+\end{lemma}
+
+%%%%%%%%%%% PROOF - LEMMA %%%%%%%%%%%%%%
+
+\begin{proof}[Proof of Lemma~\ref{Lemma:f min}]
+Assume every non-empty level set is bounded.  Then by Theorem~1.9 in \citet
+{Rockafellar}, the minimum of $f$ is finite 
+and thus exists.  By strict convexity, this minimum is also unique.
+
+Now assume the minimum for $f$ exists, denoted by $\min f$.  By assumption, the level 
+set $\lev_{\leq \min f} f$ 
+contains exactly one point.  By Corollary~8.7.1 in \citet{Rockafellar:1970}, the level 
+sets $\lev_{\leq \alpha} f$ are 
+bounded for every $\alpha$.  
+\end{proof}
+
+
+\begin{proof}[Proof of Theorem~\ref{Thm:log like max}]
+Let $f(\cdot)$ represent the negative log likelihood $- \ell(\cdot)$, the objective 
+function to be minimized.  We proceed from the perspective of a minimization of a 
+function $f(\cdot)$ since this is the convention in the optimization literature \citep
+{NW,Rockafellar}.  %\citet{Okabayashi:longrange} prove a special case when the minimum exists, and this proof mimics that one with 
+
+The negative log likelihood function $-\ell(\cdot)$ is strictly convex by 
+\eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by 
+\hl{LEHMAN} \citep{TPE2}.
+It is bounded below by the negative LCM log likelihood as described by \eqref{E:LCM ll bound}.
+
+The objective function $f$ is bounded below, strictly convex, and lower semicontinuous 
+by assumption, and so by Lemma~\ref{Lemma:f min}, the global minimum exists.  
+Then by Lemma~\ref{Lemma:f min}, all level sets of type $\lev_{\leq a} f$, $a \in \RR$ are bounded in $\RR^n$.  Restricting the set to be along a search 
+direction $p_k$ maintains the 
+boundedness of these sets.  By Lemma~\ref{Lemma:f min} again, the minimum in this 
+restriction exists and is unique.     
+
+Then, unless $\nabla f( x_k ) = 0$ in which case $x_k$ is already the solution, for 
+each $k$, we can uniquely define $
+\alpha_{c_k}$ and $\alpha_{min_k}$ as follows: 
+\begin{align}
+%	\theta_k &= \cos^{-1} \left( \frac{ -\nabla f_k^T p_k }{ ||\nabla f_k|| \, ||
+%p_k||} \right) \label{E:cosine} \\
+	\nabla f( x_k + \alpha_{c_k} p_k)^T p_k &= c \nabla f(x_k)^T p_k \label{E:alphac} 
+\\
+	\nabla f( x_k + \alpha_{min_k} p_k)^T p_k &= 0. \label{E:alphamin} 
+\end{align}
+The point $\alpha_{c_k}$ is uniquely defined because it is the minimizer of $\alpha 
+\mapsto f( x_k + \alpha p_k) - 
+\alpha c \nabla f( x_k )^T p_k$.
+These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
+%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
+\begin{figure}
+\centering
+\scalebox{.4}{\input{Figures/Wolfe-mod.pdf_t}}
+\caption{Acceptable region for $\alpha$ according to curvature condition 
+\eqref{E:Wolfe-ll} when restricting to direction $p_k$.}
+\label{F:Wolfe-mod}
+\end{figure}
+
+%These values are illustrated on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.  
+%Equation \eqref{E:alphamin} defines $\alpha_{min_k}$ to be the step size that would 
+%make the 
+%gradient at $x_{k+1}$ equal to zero and hence minimizes $f(x_{k+1})$, equation \eqref
+%{E:alphac} 
+%defines \alpha_{c_k} to be the step size that would make the gradient at $x_{k+1}$ 
+%equal to 
+
+By the strict convexity of $f$ and Theorem~2.14 in \citet{Rockafellar}, 
+\begin{align}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) +  \bigl[ \nabla f(x_k + \alpha_{c_k} p_k) 
+\bigr]^T \alpha_{c_k} p_k. \notag 
+\\
+	\intertext{Applying \eqref{E:alphac} to the right hand side of the above gives}
+	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k. 
+	\label{E:b-less-a}
+	\end{align}	
+(See points $a$ and $b$ in Figure \ref{F:Wolfe-mod}).
+
+The subproblem $\alpha \mapsto f(x_k + \alpha p_k)$ is strictly convex and hence 
+monotonically decreasing at $\alpha_k$ 
+such that $\alpha_{c_k} \leq \alpha_k \leq \alpha_{min_k}$ (in Figure \ref{F:Wolfe-mod}, see points $b$ and $c$).  That is,
+\begin{align}
+	f( x_k + \alpha_{min}p_k) &\leq f( x_k + \alpha_k p_k) \leq f( x_k + \alpha_{c_k} p_k). \label{E:f-sandwich}
+\end{align}
+	
+Combining the second inequality of \eqref{E:f-sandwich} with \eqref{E:b-less-a}, we 
+have	
+\begin{align}
+	f( x_k + \alpha_k p_k ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k,  
+	\label{E:decrease}
+	\intertext{which can be rearranged as}
+	f(x_k)-f( x_k + \alpha_k p_k ) &>  -\alpha_{c_k} c \nabla f(x_k)^T p_k. 
+	\label{E:f-lb}
+\end{align}
+This last inequality \eqref{E:f-lb} expresses a lower bound for the amount of decrease 
+in our objective function at 
+each step (the right-hand side is positive since $\nabla f(x_k)^T p_k < 0$ by 
+assumption that $p_k$ is a descent 
+direction).  It is this lower bound that we will use to cover the distance to the 
+minimum of the objective function.  
+
+We now turn our attention to \eqref{E:alphac}.  Define $x_{c_k} = x_k + \alpha_{c_k} p_k$.  Then
+\begin{align}
+	\nabla f( x_{c_k} )^T p_k &= c \nabla f(x_k)^T p_k. \notag
+\end{align}
+Subtracting $\nabla f(x_k)^T p_k$ from both sides gives
+\begin{align}
+	\left( \nabla f( {x_{c_k}} ) - \nabla f(x_k) \right )^T p_k &= ( c - 1 ) 
+	\nabla f(x_k)^T p_k.  \label{E:c-1}
+\end{align}
+
+%\textbf{NEW: SAI 1/17/11}\\
+\textbf{
+By \eqref{E:nabla2 ell}, $\nabla^2 \ell(\eta)$ is bounded for finite state space $g(\YY)$, which is true by assumption.  Thus $| \nabla^2 f(x) | \leq K$ for some 
+constant K for all $x$. 
+Then by Theorems 9.2 and 9.7 in \citet{Rockafellar}, 
+%since $\nabla^2 f(x)$ is assumed to be finite, 
+$\nabla f(x)$ is Lipschitz continuous relative to the convex set $\RR^n$.}
+
+%By Corollary~25.5.1 in \citet{Rockafellar:1970}, since $f$ is convex and 
+%differentiable on the open convex set $\NN$, 
+%it is actually continuously differentiable on $\NN$.  It is then Lipschitz 
+%continuously differentiable relative to any 
+%compact subset of $\NN$. 
+
+Applying this to the compact level set $\lev_{\leq f(x_k)} f$, 
+%which is contained in $\NN$ by assumption, 
+there exists a constant $L < \infty$ such that
+	\begin{align}
+		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || \quad \text
+{for all $x, \tilde{x} \in \lev_
+{\leq f(x_0)} f$}. \label{E:Lipschitz}
+	\end{align} 
+
+Applying \eqref{E:Lipschitz} to $x_{c_k}$ and $x_k$, we have
+\begin{align}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || x_{c_k} - x_k || \notag
+\intertext{or}
+|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || \alpha_{c_k} p_k ||. \notag	
+\end{align}
+
+Multiplying both sides by $\lVert p_k \rVert$ gives
+\begin{align}
+	|| \nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || &\leq \alpha_{c_k} L || p_k ||^2 
+	\notag \\
+\intertext{and by Cauchy-Schwarz this implies}
+	( \nabla f(x_{c_k}) - \nabla f(x_k) )^T p_k & \leq || 
+	\nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || \label{E:from-Lipschitz} \\ 
+	&\leq \alpha_{c_k} L || p_k ||^2. \notag
+\end{align}
+Substituting \eqref{E:c-1} into the left-hand side of this last inequality 
+\eqref{E:from-Lipschitz} gives
+\begin{align}
+( c - 1 ) \nabla f(x_k)^T p_k &\leq \alpha_{c_k} L || p_k ||^2 \notag\\
+\intertext{or}
+-\alpha_{c_k} &\leq \frac{( 1 - c )}{L} \frac{ \nabla f(x_k)^T p_k}{ || p_k ||^2}. 
+\label{E:-alpha}
+\end{align}
+
+%%%%%%
+%%%%%%
+Write out the first $k+1$ inequalities of \eqref{E:f-lb}:
+\begin{align}
+\begin{split}
+	f( x_1 ) &< f(x_0) + \alpha_{c_0} c \nabla f(x_0)^T p_0 \\
+	f( x_2 ) &< f(x_1) + \alpha_{c_1} c \nabla f(x_1)^T p_1  \\
+	\ldots  \\
+	f( x_{k} ) &< f(x_{k-1}) + \alpha_{c_{k-1}} c \nabla f(x_{k-1})^T p_{k-1}  \\
+	f( x_{k+1} ) &< f(x_k) + \alpha_{c_k} c \nabla f(x_k)^T p_k 
+\end{split}
+	\label{E:to telescope}
+\end{align}
+Telescoping the right-hand side of \eqref{E:to telescope},
+\begin{align*}
+	f( x_{k+1} ) &< f(x_0) + c \sum_{j=0}^{k} \alpha_{c_j} \nabla f(x_j)^T p_j. \notag
+\end{align*}
+Noting that $\nabla f(x_j)^T p_j < 0$, we can substitute our upper bound 
+\eqref{E:-alpha} for $-\alpha_{c_j}$ in the right-hand side above,
+\begin{align}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
+	\frac{\nabla f(x_j)^T p_j}{ || p_j ||^2 } \nabla f(x_j)^T p_j \notag \\
+	\intertext{which simplies to}
+	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
+	\frac{ (\nabla f(x_j)^T p_j)^2}{ || p_j ||^2 }. 
+\notag
+\end{align}
+
+Because $f(x)$ is bounded below by assumption, there exists some $M < \infty$ such 
+that $f(x_0) - f(x_{k+1}) < M$ for 
+all $k$. Then rearranging the above yields,
+
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{k}   
+	\frac{ ( \nabla f(x_j)^T p_j )^2}{ || p_j ||^2 } &< M < \infty.
+ \end{align*}
+The angle $\theta_j$ between the search direction $p_k$ and steepest descent direction 
+$-\nabla f_k$ can be expressed 
+by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{||\nabla f_j|| \cdot || p_j||}$.  
+Substituting this into the equation 
+above and taking $k \to \infty$,
+\begin{align*}
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty.
+\end{align*}
+Since $0 < c < 1$,
+\begin{align}
+	\sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty. \label{E:Z's}
+\end{align}
+
+The convergent series in \eqref{E:Z's} implies that 
+\begin{align*}
+	\cos^2 \theta_k || \nabla f(x_k) ||^2 &\to 0 \text{ as } k \to \infty.
+\end{align*}
+With the additional restriction on the search direction $p_k$ such that $\cos \theta_k 
+\geq \delta > 0$ for some choice 
+of $\delta$, for all choices of $k$, we get the desired convergence result of
+\begin{align*}
+	\lim_{k \to \infty} || \nabla f(x_k) || &= 0.
+\end{align*}
+
+\end{proof}
+
+
+
+
 In fact, Theorem~\ref{Thm:log like max} and its proof can be adapted to the more
 general setting
 of optimizing any proper, lower semi-continuous function with an added assumption of 
@@ -116,6 +350,83 @@ Theorem~\ref{Thm:log like max} can be applied to the negative log likelihood fun
 $-\ell(\eta)$ so that a search 
 starting at any $\eta_0 \in \Xi$ will converge to the MLE of $\eta$.
 \end{theorem}
+
+Theorem 3.1 shows that the gradient of the objective function converges to 0.  The 
+proof for Theorem 3.2 is concerned 
+with the conditions for mapping this convergence to the convergence of the iterated 
+parameter estimates $\eta_k$ to the 
+unique MLE.  In particular, the mapping from $\eta_k$ to the gradient must be globally 
+invertible.
+
+
+\begin{proof}[Proof of Theorem~\ref{Thm:Line Search works}]
+
+The Fisher information for a regular exponential family is non-singular by 
+\eqref{E:FI} and thus invertible.  If we consider the map defined by
+\begin{align*}
+	h(\eta) = \nabla c(\eta)
+\end{align*}
+where $c(\eta) = \log \kappa(\eta)$ is the cumulant function introduced in Section~\ref{S:ERGM setup}, its first derivative matrix is
+\begin{align}
+	\nabla h(\eta) = \nabla^2 c(\eta) = I(\eta) \label{E:nabla h eta}
+\end{align}
+which is again non-singular.  Since this is true for any $\eta$, by the inverse 
+function theorem, $h$ is everywhere 
+locally invertible.
+
+In fact, $h$ is globally invertible. For any $\mu$ in the range of $h$, consider the 
+function
+\begin{align*}
+	q(\eta) = \mu^T\eta - c(\eta).
+\end{align*}
+Since $\nabla^2 q(\eta) = - I(\eta)$ by \eqref{E:nabla h eta}, $q$ is strictly 
+concave.  Therefore, a maximizer for $q$, call it $\hat{\eta}$, is unique if it exists and satisfies the first-order condition
+\begin{align*}
+	\nabla q( \hat{\eta} ) = 0.
+\end{align*}
+This in turn implies that
+\begin{align*}
+	\mu - h(\hat{\eta}) = 0
+\end{align*} 
+or
+\begin{align*}
+	\mu = h( \hat{\eta} ). %\label{E:mu eta hat}
+\end{align*}
+Because of the assumption that $\mu$ is in the range of $h$, this means that 
+$\hat{\eta}$ in fact exists, and by the 
+strict concavity of $q$, is unique.  This implies that $h$ must be one-to-one and 
+hence globally invertible.
+
+
+Since $c$ is infinitely differentiable by Theorem~2.7.1 in \citet{TSH}, so is $h$, and 
+by the inverse function theorem, 
+so is $h^{-1}$ (even if we do not know the form of $h^{-1}$).  The first derivative of 
+$h^{-1}$ can be expressed as
+\begin{align*}
+	\nabla h^{-1}(\mu) = \left [ \nabla h(\eta) \right ]^{-1} 
+		= \left [ I(\eta) \right ]^{-1}
+\end{align*}
+when $\mu = h(\eta)$ and is thus non-singular everywhere, including at the MLE of 
+$\eta$, $\etaMLE$.
+
+Thus our algorithm, which concludes that 
+$|| \nabla \ell( \eta_k) ||  = || g(y) - h(\eta_k) || \to 0$, implies that 
+\begin{align*}
+	\mu_k = h(\eta_k) \to g(y), 
+\end{align*}
+or
+\begin{align*}
+	h^{-1}(\mu_k)  \to h^{-1}\left (g(y) \right),
+\end{align*}
+or
+\begin{align*}
+	\eta_k  \to  \etaMLE.
+\end{align*}
+
+\end{proof}
+
+
+
 
 \section{Refinements of algorithm}
 
@@ -185,7 +496,7 @@ through the previous few updates (See Figure \ref{F:zigzag} (right)).
 \centering
 \includegraphics[height=2.6in,width=2.6in]{Figures/zigzag-eta}
 \includegraphics[height=2.6in,width=2.6in]{Figures/zagplusnorm-eta}
-\caption{Contour plots of an ERGM log likelihood when the MLE does not exist.  The surface 
+\caption[Contour plots of an ERGM log likelihood when the MLE does not exist]{Contour plots of an ERGM log likelihood when the MLE does not exist.  The surface 
 tends to flatten, though technically it is still concave.  This can cause 
 the steepest descent 
 algorithms to zigzag, which is inefficient (left).  However, by periodically using 
@@ -231,13 +542,14 @@ more challenging.
 
 
 \section{MCMC approximations} \label{S:MCMC approx}
-Our algorithm requires us to be able to calculate $\nabla \ell(\eta)$ using \eqref
-{E:nabla ell}.  For many 
+Our algorithm requires us to be able to calculate $\nabla \ell(\eta)$ using 
+\eqref{E:nabla ell}.  For many 
 applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC.  That is,
-\begin{align}
- 	\nabla \ell (\eta) = g(y) - \E_\eta g(Y) \approx g(y) - \frac{1}{m}\sum_{i=1}^m g
-(Y_i), \label{E:nabla ell approx}
+\begin{align} \label{E:nabla ell approx}
+ 	\nabla \ell (\eta) = g(y) - \E_\eta g(Y) \approx g(y) 
+	- \frac{1}{m}\sum_{i=1}^m g(Y_i), 
 \end{align}
+
 where $Y_1, \ldots, Y_m$ are MCMC draws from the distribution with parameter $\eta$.  
 There are many MCMC algorithms 
 such as Metropolis-Hastings or Swensen-Wang (used for the Ising model example in 
