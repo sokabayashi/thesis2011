@@ -1008,11 +1008,12 @@ perceived as the face was incomplete; thus we may need to keep track of a
 V-representation of the face after all.
 
 When it is determined that the face is in fact the support of the new LCM,
-then the subsample of the draws from original model with parameter value $\eta$ 
-restricted to the support is in fact a sample from the LCM with parameter value $\eta$.  
-This comes directly from Theorem~\ref{Thm:LCM}: 
+then the subsample of the draws from the original model with parameter value $\eta$ 
+restricted to the support is in fact a sample from the LCM with 
+parameter value $\eta$.  This comes directly from Theorem~\ref{Thm:LCM} and can be
+expressed succinctly as
 \begin{align*}
-P_{LCM, \eta} = P_\eta( \cdot \mid g(Y) \in H ).
+P_{LCM, \eta}(\fatdot) = P_\eta( \fatdot \mid g(Y) \in H ).
 \end{align*}
 
 
