@@ -33,8 +33,8 @@ defined on a $32\times 32$ square lattice where each entry takes values of 0 or 
 has $2^{1024} \approx 10^{300}$ elements.  
 A loop with this many iterations takes too long no matter how programmed.
 
-A useful property of all exponential families \cite[p.~27]{TPE2} on which we rely 
-heavily is that 
+A useful property of all exponential families \cite[p.~27]{TPE2} when 
+$\eta$ is in the interior of $\Xi$ is that 
 \begin{align*}
 	\E_\eta(g(Y)) &= \nabla c(\eta)	\\
 	\Var_\eta(g(Y)) &= \nabla^2 c( \eta ).
@@ -52,7 +52,7 @@ and thereby avoid evaluation of the problematic cumulant function $c$.
 
 By the strict concavity of the log likelihood function is assured by \eqref{E:nabla2 
 ell} being strictly positive definite, which in turn is assured by the natural statistic
-not being concentrated on a hyper plane.  The global 
+not being concentrated on a hyperplane.  The global 
 maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \eta ) = 
 0$, or, using \eqref{E:nabla ell}, by setting ``expected equal to observed"
 \begin{align}
@@ -131,15 +131,20 @@ since no three-dimensional ball will lie in that set.  The closure of a set $C$,
 where $B$ is a Euclidean ball \citep{Rockafellar:1970}.  The \emph{relative boundary} of a set $C$, denoted $\rbd C$, is the set difference $\cl C \setminus \rint C$.
 
 A nonempty \emph{face} of a convex polytope $C$ is a convex subset of $C$ such that 
-every line segment in $C$ with a relative interior point in $F$ has both end points in 
-$F$ \citep{Rockafellar:1970}.  It is itself a convex polytope.
+every line segment in $C$ with a relative interior point in $F$ has 
+both end points in $F$ \citep{Rockafellar:1970}.  It is itself a convex polytope.
 A \emph{proper} face is a face that is not the empty set or $C$, and 
 \emph{facets} are proper faces of the highest dimension.
 
-The \emph{tangent cone}\footnote{Typically, the tangent cone is defined 
-as the \emph{closure} of the above set, but
-this is unnecessary when $C$ is polyhedral.}
- of a convex polyhedral set $C$ at a point $x \in C$ is
+For a polyhedral convex $C$, every face is \emph{exposed} (SEE \citep{Rockafellar:1970}), meaning there exists a vector $\delta$ such that
+\begin{align*}
+	F = \{ x \in C: \inner{x, \delta} = \sup_{y in C} \inner{y,\delta}  \}
+\end{align*}
+For smooth convex sets like the convex hull of a torus, do not have every face
+exposed.  IMPLICATIONS TO THEOREM 2.8.
+
+
+The \emph{tangent cone} of a polyhedral convex set $C$ at a point $x \in C$ is
 \begin{align*}
 	T_C(x) = \{s(w-x):w \in C \text{ and } s \geq 0 \}.
 \end{align*}
@@ -154,7 +159,11 @@ The \emph{normal cone} of a convex set $C$ in $\RR^d$ at a point $x \in C$ is
 Tangent and normal cones are \emph{polars} of each other, that is, each determines the other.  
 The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 \begin{align*}
-	N_C(x) 	&= \{ w \in \RR^d: \inner{ w, v } \leq 0 \text{ for all } v \in T_C(x) \}.
+	N_C(x) 	&= \{ w \in \RR^d: \inner{ w, v } \leq 0 \text{ for all } v \in T_C(x) \} 
+\end{align*}
+and the tangent cone at $x$ in terms of the normal cone at $x$ by
+\begin{align*}
+	T_C(x) 	&= \{ v \in \RR^d: \inner{ w, v } \leq 0 \text{ for all } w \in N_C(x) \}.
 \end{align*}
 
 %\hl{DEFINE \emph{direction of recession}, \emph{direction of constancy}.}  \textbf{get from 
@@ -167,17 +176,19 @@ The normal cone at $x$ can be defined in terms of the tangent cone at $x$ by
 We now present two equivalent approaches to determine the existence of an MLE
 in the conventional sense.  
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Approach of \citet{Barndorff}}
 The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} 
 relates the relative location of the observed statistic to the boundaries of 
 the convex support and is formally stated as follows:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}[Corollary 9.6 in \citep{Barndorff}] \label{Thm:MLE rint}
 For a regular exponential family with convex support $C$ and observed statistic $g(\yobs)$, the MLE exists in the conventional sense if and only if 
 $g(\yobs) \in \rint(C)$ and is unique if and only if $\intr(C)$ is nonempty, which
 happens if and only if $\rint(C) = \intr(C)$. 
 \end{theorem}
 
-While the above theorem is in fact quite elegant and simple, we note that in order to apply this result, the geometry of $C$ must be fully known.
+While the above theorem is concise, we note that in order to apply this result, the geometry of $C$ must be fully known in order for it to be useful.
 
 \subsection{Approach of \citet{Geyer:gdor}}
 \citet{Geyer:1990,Geyer:gdor} related MLE existence to
@@ -185,6 +196,20 @@ While the above theorem is in fact quite elegant and simple, we note that in ord
 
 We retrace the blocks leading to this result, and present simpler proofs where possible:
 \begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]\label{Thm:e_c}
+For a full exponential family with
+\begin{itemize}
+%\item log likelihood function $\ell(\eta)$ as in \eqref{E:loglike},
+\item density function $f_\eta(y)$ as in \eqref{E:ERGM},
+\item natural parameter space $\Xi$ as in \eqref{E:paramspace},
+\item natural statistic $g(Y)$,
+%\item observed data $\yobs$ such that $g(\yobs) \in
+\item convex support $C$,
+\item  a non-zero direction $\delta$,
+\item $P_\eta(g(Y) \in H ) > 0$ for some distribution in the family,
+\item $\sigma_C (\delta) = \sup_{g(y) \in C} \inner{ g(y), \delta}$,
+\item $H = \set{w: \inner{w, \delta} = \sigma_C(\delta) }$.
+\end{itemize}
+Then
 \begin{align*}
 e^{c(\eta + s \delta) - bs} &\to 
 		\begin{cases} 
@@ -194,11 +219,7 @@ e^{c(\eta + s \delta) - bs} &\to
 		\end{cases}
 & \text{as } s \to +\infty.
 \end{align*}
-where $\delta$ is a non-zero direction, $C$ the convex support, and
-\begin{align*}
-	\sigma_C (\delta) &= \sup_{g(y) \in C} \inner{ g(y), \delta} \\
-	H &= \set{w: \inner{w, \delta} = \sigma_C(\delta) }.
-\end{align*}
+
 \end{theorem}
 Here, $H$ is the supporting hyperplane to the set $C$ with normal vector $\delta$.
 
@@ -274,8 +295,9 @@ Then returning to the original expression of interest,
 	&= \left( \lim_{s\to \infty} e^{ c(\eta + s \delta ) - \sigma_C(\delta)s} 
 \right ) \left(  \lim_{s\to \infty} e^{ s[ \sigma_C(\delta) - b] } \right )\\
 	&= \left (e^{c(\eta) }P(g(Y)\in H) \right ) \cdot \left ( + \infty \right ) 
-= + \infty.
+= + \infty,
 \end{align*}
+since $P_\eta(g(Y)\in H) > 0$ by assumption.
 \end{proof}
 
 We now define directions of constancy and recession in terms of Theorems 1
@@ -287,8 +309,9 @@ For a full exponential family with
 \item log likelihood function $\ell(\eta)$ as in \eqref{E:loglike},
 \item natural parameter space $\Xi$ as in \eqref{E:paramspace},
 \item natural statistic $g(Y)$,
-\item observed data $\yobs$ such that $g(\yobs) \in C$, the convex 
-support,
+\item observed data $\yobs$ %such that $g(\yobs) \in C$, the convex support,
+% 3/15/11: Charlie says don't need the rest of the above since always true for 
+% discrete 
 \end{itemize}
 the following are equivalent:
 \begin{enumerate}
@@ -419,7 +442,7 @@ $-v \in T_C(g(\yobs))$.  But by Proposition 3.8 in \citep{Rockafellar}, the latt
 on  $T_C(g(\yobs))$ is necessary and sufficient for  $T_C(g(\yobs))$ to be a vector subspace.
 \end{proof}
 With the addition of Condition 5 to Theorem~4 of \citep{Geyer:gdor}, we now have the 
-tied this approach to the one previously described of \citep{Barndorff} in Theorem~\ref{MLE rint}.
+tied this approach to the one previously described of \citep{Barndorff} in Theorem~\ref{Thm:MLE rint}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
@@ -428,6 +451,7 @@ direction of recession that is not a direction of constancy,
 then for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta+s\delta)$ is strictly
 increasing on the interval where it is finite.
 \end{corollary}
+%%%%%%%%%%%%%%%%%%%%%
 
 This corollary is implied by Theorems \ref{Thm:DOC} and \ref{Thm:DOR}; if
 $\delta$ is a direction of recession that is not a direction of constancy, 
@@ -468,18 +492,24 @@ For a full exponential family with the setting of Theorem~\ref{Thm:DOC}, and
 additionally,
 \begin{enumerate}
 \item density function $f_{\eta}(y)$ defined by \eqref{E:ERGM},
-\item direction of recession, $\delta$,
+\item direction of recession $\delta$,
 \item $H = \{ w \in \RR^d: \inner{ w-g(\yobs), \delta } = 0 \}$,
 \item $P( g(Y) \in H) > 0$ for some distribution in the family,
+\item $\sigma_C (\delta) = \sup_{g(y) \in C} \inner{ g(y), \delta}$,
 \end{enumerate}
 then for all $\eta \in \Xi$
 \begin{align} \label{E:LCM}
 \lim_{s \to \infty} f_{\eta+s\delta}(y) = 
 			\begin{cases} 
-			0 								& \inner{g(y) - g(\yobs), \delta} < 0 \\
-			\frac{f_\eta(y)}{P_\eta(g(Y) \in H)} 	& \inner{g(y) - g(\yobs),
-\delta} = 0 \\
-			+\infty							& \inner{g(y) - g(\yobs), \delta} > 0.
+		0 								
+			& \inner{g(y), \delta} < \sigma_C(\delta) \\
+			%& \inner{g(y) - g(\yobs), \delta} < 0 \\
+		\frac{f_\eta(y)}{P_\eta(g(Y) \in H)} 	
+			& \inner{g(y),\delta} =  \sigma_C(\delta)\\
+			%& \inner{g(y) - g(\yobs),\delta} = 0 \\
+		+\infty							
+			& \inner{g(y), \delta} > \sigma_C(\delta).
+			%& \inner{g(y) - g(\yobs), \delta} > 0.
 		\end{cases}
 \end{align}
 If $\delta$ is not a direction of constancy, 
@@ -494,7 +524,7 @@ By Theorem~\ref{Thm:DOR}, if $\delta$ is a direction of recession, then
 $\inner{g(Y) - g(\yobs), \delta} \leq 0$ almost surely, which implies 
 that $\inner{g(Y), \delta} \leq \inner{g(\yobs), \delta}$.  
 So, the largest value that $\inner{g(Y), \delta}$ can take is 
-$\inner{g(\yobs), \delta}$.  Using our earlier notation, 
+$\inner{g(\yobs), \delta}$.  Then 
 \begin{align*}
 \sigma_C(\delta) = \sup_{g(y) \in C}\inner{g(y), \delta} = 
 \inner{g(\yobs), \delta}.
@@ -558,7 +588,7 @@ Then taking the limit of $s \to +\infty$ via Theorem~\ref{Thm:e_c} gives
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsection{Remarks on Theorem~\ref{Thm:LCM}}
 There are many implications of Theorem~\ref{Thm:LCM} described in \citep{Geyer:gdor}
-which we repeat here, though we go into more detail for further clarity.
+which we repeat here and go into more detail for further clarity.
 
 The event $\inner{g(Y),\delta} > \inner{g(\yobs),\delta}$ has zero probability by 
 Theorem~\ref{Thm:DOR}(2) and thus the $+\infty$ case need not be considered.
@@ -604,15 +634,19 @@ Then the conditional density for $Y \mid [g(Y)\in H]$ can be expressed
 \end{align*}
 which is exactly the right-hand side of \eqref{E:LCM}.
 
-The log likelihood for $f_\eta( \, \cdot\,  \mid g(y) \in H)$ for $\eta \in \Xi$ can be expressed as
+The log likelihood for $f_\eta( \fatdot \mid g(y) \in H)$ for $\eta \in \Xi$ can be expressed as
 \begin{align*}
 %	\ell_{LCM}(\eta) &= 
 	\inner{\eta, g(\yobs)} - c(\eta) - \log P_\eta(g(Y) \in H) 
 %			&= \ell(\eta) - \log P_\eta(g(Y) \in H)
 \end{align*}
 which clearly has exponential family form with the same natural parameter $\eta$ and 
-statistic $g(\yobs)$ as the original exponential family.  The cumulant function is different,
-however, and thus the family may not be full.  The full family containing this exponential family is at least as large as
+statistic $g(\yobs)$ as the original exponential family.  The cumulant function is 
+different but is always finite since it only involves a summation over a finite 
+number of terms.  Thus the parameter space for $f_\eta( \fatdot \mid g(y) \in H)$, 
+$\eta \in \Xi$ is always the whole Euclidean space, and this new exponential
+family is full.  The full family containing this exponential family is 
+at least as large as
 \begin{align*}
 \{ f_{\eta}(\, \cdot\,  \mid g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
 { and } \gamma \in \Gammalim \},

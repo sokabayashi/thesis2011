@@ -684,4 +684,12 @@ algorithm for $2d$ steps before switching seems reasonable.
 
 \hl{BRING IN APPROACH OF HUMMEL.}
 
+\section{Estimating standard error} \label{S:SE}
+The methods to estimate Monte Carlo standard errors described in 
+Section~\ref{S:MCMC approx} pertain to estimates of functions of $\nabla \ell(\eta)$.
+However, the we are primarily interested in estimating the MLE of $\eta$ and thus
+want standard errors of our estimates of this MLE.
+%These cannot be obtained with our application of our algorithm, since we can
+%only evaluate the accuracy of our estimate by how small $\lVert \nabla \ell(\eta) \rVert$ is.  Here again the switch to another algorithm seems most appropriate.
 
+Approach of \citet{Geyer:1994}, explained in detail in the context of ERGMs by \citet{Hunter:2006},

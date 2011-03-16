@@ -109,8 +109,8 @@ the observed network.  Researchers can then use these
 to further test hypotheses about the process of relationship formation.  
 In this dissertation, we consider the ability to do statistical inference 
 as the end goal of parameter estimation rather than the parameter values 
-themselves.  This requires obtaining the maximum likelihood distribution by which
-to construct confidence intervals and evaluate hypotheses.
+themselves.  This requires obtaining the maximum likelihood distribution which
+can then be used to construct confidence intervals and evaluate hypotheses.
 
 %Similarly, exponential random graph models have a deceptively simple form \eqref
 %{E:ERGM} that belies the challenges involved in estimating the model parameters.  
@@ -329,7 +329,7 @@ customize and create her own network statistic of interest and model in the
 %%%%%% TABLE OF COMMONLY USED NETWORK STATISTICS
 
   \citet*{Handcock:2006, Hunter:2006, recentp*} developed new network statistics with 
-particular emphasis on the sensibileness of the distributions generated from the specified models.  
+particular emphasis on the sensibleness of the distributions generated from the specified models.  
 These came about in response to the repeated discovery that poorly behaving models can
 result when a researcher only considers the scientific significance of network
 statistics without worrying about any overlap or conflict in role of the 
@@ -352,7 +352,7 @@ For an undirected network with $n$ actors, there are $N=2^{{n\choose 2} }$
 different possible networks in $\YY$.  Table~\ref{T:number graphs} shows how rapidly this number grows; 
 \emph{unless dealing with networks of 9 actors or less, the likelihood function 
 should not be directly evaluated.}  See Appendix~\ref{A:Triangle count}
-for our computational approach for counting simple statistics in the 9 actor network
+for our computational approach for counting simple statistics in the 9-node network
 relying on numerous tricks in data representation and counting.
 
 \begin{table}[h] \label{T:number graphs}
@@ -589,14 +589,25 @@ many cases with dyad dependence, MPLE still yield reasonable approximations of t
 true MLEs.  
 
 However, \citet*{Geyer:1992, Snijders:2002, Duijn:2009} demonstrated that 
-MPLEs can produce very misleading results when dependence is strong.  
+the pseudolikelihood approach can produce very misleading results 
+when dependence is strong.  
 \citet*{Composite} showed that the pseudolikelihood approach can be 
 improved upon in a generalization 
 called the \emph{composite likelihood} approach; this method is identical
 to pseudolikelihood except that the conditional distributions used to build the \emph{composite likelihood function}---analogous to the pseudolikelihood function---are for multiple dyads rather than a single dyad.
-Nevertheless, researchers now avoid citing parameter estimates based on these approaches.
+%Nevertheless, researchers now avoid citing parameter estimates based on these approaches.
+\citet{Hummel} raise two additional issues with the pseudolikelihood approach
+(which also apply to the composite likelihood approach)
+in the context of network models. The first is that this approach requires
+an actual network $\yobs$ from which to derive the MPLE, as opposed to a network
+statistics $g(\yobs)$ which may be some vector of theoretical interest to 
+which we would like to fit an ERGM.  Thus given a $g(\yobs)$, one would then
+need to take the extra step of finding a $\yobs$ that matches this vector of
+interest.  The second point is that there are several networks that
+will yield the same $g(\yobs)$.  Because ERGMs only depend on $g(\yobs)$,
+these will all yield the same MLE.  However, there is no guarantee that they will yield the same MPLE.
 Network software packages such as \texttt{statnet} \citep*{statnet:R} in the R 
-platform now overwhelmingly use MLE methods.  
+platform now overwhelmingly use MLE methods, using MPLE only as a starting point.
 
 
 \subsection{Newton-Raphson}
@@ -772,7 +783,8 @@ This specification requires experimentation and care: there can be significant
 variation in performance depending on choice of these constants. 
 A large body of more recent research presents support for a sequence that goes to 0 
 more slowly than $1/k$ 
-for faster convergence \citep[Chapter 11]{Kushner:1997}.  
+for faster convergence \citep[Chapter 11]{Kushner:1997}, but still requires 
+experimentation.  
 %Regardless of the exact form, there is no guarantee the likelihood function will 
 %increase at each update. 
 
@@ -797,11 +809,13 @@ Hence methods which rely on
 the Fisher information matrix may fail when the starting point for $\eta$ is far from 
 the MLE \citep{Younes:1989,Gu:2001}.
 Of course, one may try different starting points until a ``good'' one is found, but 
-this comes with no theoretical guarantees and can be cumbersome in practice
+this comes with no theoretical guarantees and can be cumbersome in practice.
 
 \subsection{Summary of parameter estimation methods}
 The following table summarizes the advantages and disadvantages of the parameter estimations discussed.  
 All methods assume that the MLE exists before the search algorithm is applied.
+
+\hl{CHARLIE SAYS ADD PENTTINEN.}  \citep{Penttinen:1984}
 
 \begin{table}[h] 
 \caption[Comparison of various parameter estimation methods]{Comparison of various parameter estimation methods. MPLE=Maximum pseudolikelihood estimator, Newton=Newton-Raphson,
@@ -861,8 +875,9 @@ and the location of the observed data relative to this support.
 When the MLE does not exist for
 an exponential family in the conventional sense, 
 it may exist in the \emph{Barndorff-Nielsen completion} of the family.
-However, until recently, there have not been computationally convenient
-solutions to this problem.
+However, before this dissertation, there have been no 
+computationally convenient solutions to this problem for social network models
+and other models with complex dependence.
 
 \citet{Geyer:1992} separated the search for the MLE of an exponential family model
 with complex dependence into a two-phase algorithm, 
@@ -872,11 +887,11 @@ The MCMC-MLE method discussed in Section~\ref{S:MCMC-MLE} corresponds to phase I
 this approach.
 In the special case of generalized linear models including logistic regression and contingency 
 tables, \citet{Geyer:gdor} outline a methodology to detect non-existent MLEs and construct 
-one-sided confidence intervals \textbf{[WHY]}.
+one-sided confidence intervals.
 The approach applies linear programming to the polyhedral convex support of 
 the model to determine the \emph{face} on which the observed data lies.  
 This face in turn defines the convex support for a new exponential family for which the MLE 
-does exist and can be found using conventional methods.  \textbf{[MORE DETAIL?]}
+does exist and can be found using conventional methods (see Section~\ref{S:LCM}).
 The linear programming 
 functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd:R},
 which we will rely on heavily.
@@ -933,7 +948,7 @@ polyhedral convex support of the model;
 the convex support for the 9-node ERGM with a two-dimensional network statistic of
 edges and triangles
 studied by \citeauthor{Rinaldo:2009} is depicted in Figure~\ref{F:g9-hull}.
-\citeauthor{Rinaldo:2009} show that the \emph{normal fans} of this support 
+\citeauthor{Rinaldo:2009} show that the normal cones of this support 
 explain which portions of the natural parameter space are more likely to correspond to 
 degenerate models.  In light of this, the degenerate behavior described in 
 points 3 and 4 are not ``unusual" in that they can be explained by the underlying
