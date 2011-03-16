@@ -24,12 +24,12 @@ form, this network has all zeros except for ones in entires of (1,2), (1,3), (2,
 (2,1), (3,1), (3,2).
 We then compare each of the 69 billion possible graphs to this collection.
 Every time a comparison yields a match, that particular configuration is present
-and the count for that statistic should be incremented by one.  
+and the count for that statistic is incremented by one.  
 The reason this is efficient is because we can actually represent the 
-graphs as binary numbers and do bitwise comparisons for far greater speed and efficiency.
+a graph as a single binary number and do bitwise comparisons for far greater speed.
 
-We can explain this most easily by focusing first on counting triangles.
-We know there are ${9 \choose 3} = 84$ possible triangles, and so create
+We can explain this in further detail with triangles.
+We know there are ${9 \choose 3} = 84$ possible triangles, and so we create
 84 graphs, each with only one triangle present among 3 actors.  
 So, the first element corresponds to a graph with ties present between 
 actors 1, 2, and 3, and no other ties present, the second element corresponds 
@@ -56,20 +56,21 @@ For example, the last index corresponding to $2^{36}-1$ has binary form of
 For each graph index, we can loop through our set of 84 triangle numbers
 and perform bitwise logic operations (the \texttt{\&} operator in C) to 
 compare the binary form of the graph index to each of the triangle numbers.  
-In binary form, if there are ones in all the digits that the triangle number has a 1 in, 
+In binary form, if there are ones in all the digits that the triangle number has a 
+one in, 
 then the graph has this particular triangle present.
-For example, the operation $2^{36}-1$ \& $60,129,542,144$ would return 
+For example, the operation $(2^{36}-1)$ \& $60,129,542,144$ would return 
 111000000000000000000000000000000000 in binary form, indicating that this 
 particular triangle is present.  This is confirmed by comparing the
 result of the binary operation back to the original triangle number,
-which would return TRUE  Proceeding through all the other triangle numbers, 
+which would return TRUE.  Proceeding through all the other triangle numbers, 
 we get a count of how many triangles are present for this graph index.
 
 A similar method is employed for counting two-stars, where we would similarly
 first calculate the $3\times84 = 252$ two-stars graph numbers before iterating
 through the graph indices.
 
-To count edges, there are well-known, clever tricks to count the number of ones 
+To count edges, there are well-known tricks to count the number of ones 
 in a binary number in C which cleverly use the `\texttt{>>}' shift operator.
 By taking the graph index \texttt{>> 1}, it moves all the digits to the 
 right by dropping off the rightmost digit and adding a 0 to the 

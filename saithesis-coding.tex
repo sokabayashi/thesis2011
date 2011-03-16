@@ -53,7 +53,7 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 
 \noindent \begin{algorithmic}[1]
 \State Get an initial value, $\eta_1 = (0, \ldots 0)$.
-\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{1}$.  
+\State \textbf{Sample} $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\eta_{1}$.  
 \State Set $ty.hull = \con(g(Y_1), \ldots, g(Y_m) )$.
 \State Approximate 
 \begin{align*}
@@ -72,54 +72,57 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 %\State for some $0 < c < 1$. % (Calculating $\nabla \ell(\cdot)$ requires more sampling)
 
 \State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
-\State \textbf{Sample} $Y_1, \ldots, Y_m$ from the distribution with parameter $\eta_{k+1}$.
+\State \textbf{Sample} $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\eta_{k+1}$.
 \If{$LCM.flag=$TRUE}
-	\State Restrict sample points to those in empirical face.
+	\State $sample.dp = \inner{ g(Y_1), \ldots, g(Y_m), \delta}$, where $\delta$ is a GDOR.
+	\If{Any of $sample.dp >0$}
+		\State $F$ is not actually a face.  
+		\State Set $LCM.flag = FALSE$.
+	\Else
+		\State Restrict sample to those with $sample.dp == 0$
+	\EndIf
 \EndIf
 \State Call the resulting sample points $g(Y_{(1)}), \ldots, g(Y_{(p)})$.
-\State \textbf{Update} $ty.hull$ to reflect new sample points, $g(Y_{(1)}), \ldots, g(Y_{(p)})$.\\
-\State \textbf{Question: $g(\yobs) \in \rbd( \con(g(Y_{(1)}), \ldots, g(Y_{(p)}) ))$? }
-%\If{Yes, $g(\yobs)$ is outside the convex hull}
-%	\State  Keep sampling.  
-%%	\State $on.boundary$ = FALSE.
+\State \textbf{Update} $ty.hull$ to incorporate new sample points, $g(Y_{(1)}), \ldots, g(Y_{(p)})$.\\
+\State \textbf{Question: $g(\yobs) \notin \con(g(Y_{(1)}), \ldots, g(Y_{(p)}) )$? }
+\If{Yes, $g(\yobs)$ is outside the convex hull}
+	\State  Continue.  
+%	\State $on.boundary$ = FALSE.
 %	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
-%\ElsIf{No, $\yobs$ is inside the convex hull}
+\Else{ No, $g(\yobs)$ is in interior or on boundary of convex hull}
 %	\State \textbf{The MLE exists}.  Finding it should be straightforward, (except 
 %when 
 %	\State it isn't ...) 
 %	\State $on.boundary$ = FALSE, $on.interior$ = TRUE.
 %	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
 %\Else 
-\If{Yes} %\Comment{$g(\yobs)$ is on the boundary of convex hull}
-	\State \textbf{Either:}
-	\State (1) the MLE exists but the sample just touches $g(\yobs)$, 
-	\State (2) the MLE does \emph{not} exist; both $g(\yobs)$ and our sample points  
-	\State are touching the boundary of $C$.
-	\State \textbf{Find} the empirical face $F$ of $ty.hull$ on which $g(\yobs)$ lies.
-%	\State \textbf{Calculate} $face.prop$, the proportion of the sample that falls on
-%	\State this face.\\
-%\newpage
-	\If{$>60\%$ of the sample points are on $F$}
-		\State Conclude that we are in case (2); case (1) is very unlikely.
-		\State \textbf{Set} $LCM.flag$ = TRUE.
+	\State Find the empirical face $F$ of $ty.hull$ on which $g(\yobs)$ lies.
+	\If{$F$ is full dimensional} 
+		\State $g(\yobs) \in \rint( g(Y_{(1)}), \ldots, g(Y_{(p)}) ) \implies$ MLE exists.
+	\ElsIf{$g(\yobs) \in \rbd( g(Y_{(1)}), \ldots, g(Y_{(p)}))$}
+		\State \textbf{Either:}
+		\State (1) the MLE exists but the sample just touches $g(\yobs)$, 
+		\State (2) the MLE does \emph{not} exist; both $g(\yobs)$ and our sample points  
+		\State are touching the boundary of $C$.
+
+		\If{$>60\%$ of the sample points are on $F$}
+			\State Conclude that we are in case (2); case (1) is very unlikely.
+			\State \textbf{Set} $LCM.flag$ = TRUE.
+		\EndIf
 	\EndIf
 \EndIf\\
 %\State \textbf{Calculate} $\nabla \ell( \eta_{k+1})$ as follows: \label{Calc:nabla}
 %\If{ $LCM.flag$ == FALSE }
 %	\State $\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{m}\sum_{i=1}^m g(Y_i)$
 %\Else
-	\State Approximate
+	\State Approximate 
 	\begin{align} \label{E:nabla ell approx LCM}
 	\nabla \ell( \eta_{k+1}) \approx g(\yobs) - \frac{1}{p}\sum_{i=1}^p g(Y_{(i)}).
 	\end{align}
-
-%, where the sample mean is restricted 
-%	\State to empirical face points.
-%\EndIf\\
-
+	\State where if $LCM.flag == TRUE$, sample mean is on subsample
 \State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent 
 direction.
-\State This may be a normal or regression direction or $\nabla \ell( \eta_{k+1})$.
+\State This may be a recession or regression direction or $\nabla \ell( \eta_{k+1})$.
 \State $k = k + 1$.
 \EndWhile
 \end{algorithmic}

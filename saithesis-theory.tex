@@ -70,14 +70,17 @@ $\mu$ such that
 \begin{align*}
 	\mu = \E_\eta g(Y).
 \end{align*}
-The space for the mean value parameterization is the same as the convex support of the 
-natural statistics and thus lends itself to easier interpretability  \citep
-{Handcock:degeneracy, Rinaldo:2009}.  In particular, $\mu = g(\yobs)$ is the MLE in 
-the mean value parameterization.  \citeauthor{Handcock:degeneracy} observed that mean 
+Thus mean value parameters are the expectation of a more easily interpretable quantity
+\citep{Handcock:degeneracy, Rinaldo:2009}.
+The space for the mean value parameterization is the relative interior of the 
+convex support of the natural statistics.  
+In particular, $\mu = g(\yobs)$ is the MLE in the mean value parameterization,
+as established by \eqref{E:Observed-Expected}.  
+
+\citeauthor{Handcock:degeneracy} observed that mean 
 value parameters located too close to the boundary of the convex support tend to 
 correspond to degenerate distributions; this was corroborated by 
 \citeauthor{Rinaldo:2009} from the perspective of Shannon's entropy function.
-
 \hl{ADD ANYTHING ELSE?}
 %\textbf{[NONONO]}. \hl{ There exists a one-to-one mapping between a natural parameter and its mean value 
 %parameter, and one can calculate mean value parameters from natural parameters. In 
@@ -547,10 +550,10 @@ $s \to +\infty$ by applying Theorem~\ref{Thm:e_c},
 \delta) - \inner{g(y),\delta}s } } 
 	\to	
 			\begin{cases} 
-			0 					& \inner{g(y),\delta} < \inner{g(\yobs),\delta} \\
+			0 					& \inner{g(y),\delta} < \sigma_C(\delta) \\
 			\frac{f_\eta(y)}{P_\eta(g(Y) \in H)} 	& 
-								\inner{g(y),\delta} = \inner{g(\yobs),\delta} \\
-			+\infty				& \inner{g(y),\delta} > \inner{g(\yobs),\delta}.
+								\inner{g(y),\delta} = \sigma_C(\delta) \\
+			+\infty				& \inner{g(y),\delta} > \sigma_C(\delta).
 			\end{cases}
 \end{align*}
 This gets us \eqref{E:LCM}.  We next show the behavior of 
@@ -641,18 +644,17 @@ The log likelihood for $f_\eta( \fatdot \mid g(y) \in H)$ for $\eta \in \Xi$ can
 %			&= \ell(\eta) - \log P_\eta(g(Y) \in H)
 \end{align*}
 which clearly has exponential family form with the same natural parameter $\eta$ and 
-statistic $g(\yobs)$ as the original exponential family.  The cumulant function is 
-different but is always finite since it only involves a summation over a finite 
-number of terms.  Thus the parameter space for $f_\eta( \fatdot \mid g(y) \in H)$, 
-$\eta \in \Xi$ is always the whole Euclidean space, and this new exponential
-family is full.  The full family containing this exponential family is 
-at least as large as
-\begin{align*}
-\{ f_{\eta}(\, \cdot\,  \mid g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
-{ and } \gamma \in \Gammalim \},
-\end{align*}
-where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  \mid g(Y) \in H)$,
+statistic $g(\yobs)$ as the original exponential family,
 and is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
+The cumulant function is different but is always finite since it only 
+involves a summation over a finite number of terms.  The parameter space for 
+$f_\eta( \fatdot \mid g(y) \in H)$, $\eta \in \Xi$ is still the 
+whole Euclidean space, as in the original family.  
+%\begin{align*}
+%\{ f_{\eta}(\, \cdot\,  \mid g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
+%{ and } \gamma \in \Gammalim \},
+%\end{align*}
+%where $\Gammalim$ is the constancy space of $f_{\eta}( \, \cdot\,  \mid g(Y) \in H)$,
 
 When $\delta$ is a direction of recession that is not a direction of constancy, 
 we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
@@ -771,26 +773,30 @@ Thus $x$ will equal a convex combination of just the points in $S \cap H$.  Sinc
 true if and only if $x \in C \cap H$, we have that $C \cap H = \con( S\cap H)$.
 \end{proof}
 
+\begin{corollary} \label{Cor:LCM MLE exists}
+For a full exponential family having finite polyhedral convex support $C$ and 
+observed value of the natural statistic $g(\yobs)$ such that $g(\yobs) \in C$, 
+suppose $\delta$ is a GDOR.  Then the LCM found by using $\delta$ has convex
+support $C \cap H$ for which $g(\yobs)$ lies in its relative interior, and the MLE exists.
+\end{corollary}
+\begin{proof}
+By Theorem~\ref{Thm:C-H}, the LCM found by maximizing along $\delta$ has 
+convex support $C \cap H$.  By Corollary~\ref{Cor:spanL},  the tangent cone 
+$T_{C \cap H} (g(\yobs))$ is in fact a vector subspace and thus 
+$g(\yobs) \in \rint (C \cap H$).  Finally, by Theorem~\ref{Thm:MLE existence}, 
+the MLE for this model must then exist.
+\end{proof}
 
-
-Theorem~\ref{Thm:C-H} and Corollary~\ref{Cor:spanL} tells us that by maximizing the 
-original log likelihood along a GDOR, we will converge to an LCM which has $C \cap H$ for
-its convex support.  Because the tangent cone $T_{C \cap H} (g(\yobs))$ 
-is in fact a vector subspace, then by Theorem~\ref{Thm:MLE existence}, the MLE for 
-this model must exist.  Corollary~\ref{Cor:spanL} also tells us that when the MLE
-does not exist, $g(\yobs)$ lies in the relative interior of $C \cap H$.
+When we find the MLE in the LCM, we say we have found an MLE in the Barndorff-Nielsen completion of the original family.
 
 The last part of Theorem~\ref{Thm:LCM} says that for the sequence of distributions with parameter 
 value $\eta+s\delta$, the probability of $g(Y)$ occurring on the hyperplane $H$ is strictly 
 increasing, going to 1.  We may think of this as 
 ``probability accumulating on the boundary"---where by boundary 
 we  actually mean the face $C \cap H$ on which $g(\yobs)$ sits in the relative interior.
-
-\hl{Thus} the MLE for the LCM maximizes the likelihood in \hl{the family} that is the 
-union of the LCM and the original family.  When 
-this happens, we say we have found an MLE in the Barndorff-Nielsen completion of the 
-original family.
-
+%\hl{Thus} the MLE for the LCM maximizes the likelihood in \hl{the family} that is the 
+%union of the LCM and the original family.  
+\hl{DEFINE $\Gammalim$.}
 
 From a practical perspective, Theorem~\ref{Thm:LCM} tells us that when 
 $\delta$ is a GDOR, $\etaLCM$ is the MLE of the LCM, and $\gamma \in \Gammalim$, then

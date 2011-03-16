@@ -5,7 +5,8 @@ likelihood is strictly increasingly but is bounded above by the log likelihood o
 as described by \eqref{E:LCM ll bound}, which itself has a maximum.  In such a case,
 this algorithm will climb the log likelihood until the gradient is sufficiently close to zero.
 The algorithm and requirements are presented in Theorem~\ref{Thm:log like max} and \ref{Thm:Line Search works}.  The theory is divided into two parts: the first
-guarantees that the log likelihood gradient converges to zero, the second shows that when the MLE exists, this is equivalent to finding the MLE.  Proofs are in Appendix~\ref{Section:Proofs}. 
+guarantees that the log likelihood gradient converges to zero, the second shows that when the MLE exists, this is equivalent to finding the MLE.  
+%Proofs are in Appendix~\ref{Section:Proofs}. 
 
 %We apply the algorithm described in Theorem~\ref{Thm:Line Search works} to the specific setting of finding the MLE in a regular 
 %exponential family when the MLE is known to exist and be unique and the gradient can 
@@ -25,7 +26,7 @@ defined on $\RR^d$.
 %used to minimize the objective function $f$, which satisfies the following 
 %assumptions:
 %\begin{enumerate}
-%	\item The objective function $f$ is bounded below in $\RR^n$. \label{ass:one}
+%	\item The objective function $f$ is bounded below in $\RR^d$. \label{ass:one}
 %	\item The objective function $f$ is proper, lower semicontinuous, and strictly 
 %convex.
 %	\item The objective function $f$ is differentiable in an open set $\NN$ containing 
@@ -105,7 +106,7 @@ search direction.
 
 %%%%%%%%%%% BEGIN LEMMA %%%%%%%%%%%%%%
 \begin{lemma} \label{Lemma:f min} 
-Suppose a function $f:\RR^n \to \RR$ is proper, lower semicontinuous, and strictly 
+Suppose a function $f:\RR^d \to \RR$ is proper, lower semicontinuous, and strictly 
 convex.  Then the minimum for $f$ 
 exists and is unique if and only if every nonempty level set $\lev_{\leq \alpha} f$ is 
 bounded.
@@ -139,7 +140,7 @@ It is bounded below by the negative LCM log likelihood as described by \eqref{E:
 
 The objective function $f$ is bounded below, strictly convex, and lower semicontinuous 
 by assumption, and so by Lemma~\ref{Lemma:f min}, the global minimum exists.  
-Then by Lemma~\ref{Lemma:f min}, all level sets of type $\lev_{\leq a} f$, $a \in \RR$ are bounded in $\RR^n$.  Restricting the set to be along a search 
+Then by Lemma~\ref{Lemma:f min}, all level sets of type $\lev_{\leq a} f$, $a \in \RR$ are bounded in $\RR^d$.  Restricting the set to be along a search 
 direction $p_k$ maintains the 
 boundedness of these sets.  By Lemma~\ref{Lemma:f min} again, the minimum in this 
 restriction exists and is unique.     
@@ -220,12 +221,11 @@ Subtracting $\nabla f(x_k)^T p_k$ from both sides gives
 \end{align}
 
 %\textbf{NEW: SAI 1/17/11}\\
-\textbf{
 By \eqref{E:nabla2 ell}, $\nabla^2 \ell(\eta)$ is bounded for finite state space $g(\YY)$, which is true by assumption.  Thus $| \nabla^2 f(x) | \leq K$ for some 
 constant K for all $x$. 
 Then by Theorems 9.2 and 9.7 in \citet{Rockafellar}, 
 %since $\nabla^2 f(x)$ is assumed to be finite, 
-$\nabla f(x)$ is Lipschitz continuous relative to the convex set $\RR^n$.}
+$\nabla f(x)$ is Lipschitz continuous relative to the convex set $\RR^d$.
 
 %By Corollary~25.5.1 in \citet{Rockafellar:1970}, since $f$ is convex and 
 %differentiable on the open convex set $\NN$, 
@@ -233,13 +233,15 @@ $\nabla f(x)$ is Lipschitz continuous relative to the convex set $\RR^n$.}
 %continuously differentiable relative to any 
 %compact subset of $\NN$. 
 
-Applying this to the compact level set $\lev_{\leq f(x_k)} f$, 
+%Applying this to the compact level set $\lev_{\leq f(x_k)} f$, 
 %which is contained in $\NN$ by assumption, 
-there exists a constant $L < \infty$ such that
+Thus there exists a constant $L < \infty$ such that
 	\begin{align}
-		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || \quad \text
-{for all $x, \tilde{x} \in \lev_
-{\leq f(x_0)} f$}. \label{E:Lipschitz}
+		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || 
+		\quad \text
+{for all $x, \tilde{x} \in \RR^d$}. 
+%{for all $x, \tilde{x} \in \lev_{\leq f(x_0)} f$}. 
+\label{E:Lipschitz}
 	\end{align} 
 
 Applying \eqref{E:Lipschitz} to $x_{c_k}$ and $x_k$, we have
