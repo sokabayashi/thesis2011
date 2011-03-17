@@ -15,15 +15,15 @@ t.y 	<- Y.all.mat[ ,c(1,2) ]
 nu 		<- Y.all.mat[ ,3 ]
 ##########################################################################
 #y.obs 	  <- c( 21, 4 ) # NOT on boundary - problematic. (21,4), (23,12) also bad but (24,16) ok.
-#y.obs 	  <- c( 31, 50 ) # boundary face
+y.obs 	  <- c( 31, 50 ) # boundary face
 #y.obs 	  <- c( 27,27 ) # extreme pt
-y.obs 	  <- c( 29,47 ) # interior - no problem
+#y.obs 	  <- c( 29,47 ) # interior - no problem
 #y.obs 	  <- c( 19, 0 ) # 
 verbose.flag 	<- TRUE
 MC.flag			<- TRUE
 c 				<- 0.2
 del.len.cutoff	<- 1e-2
-samp.size 		<- 10000
+samp.size 		<- 30000
 seed 			<- 2
 set.seed( seed )
 max.k			<- 25
@@ -104,15 +104,30 @@ gdor <- c("0","0")
 ####  main loop ##########################################
 while( k <= max.k && del.ll.len > del.len.cutoff )
 {
-	####  Step size search ##########################################
-	# Find alpha that works - exact as possible, cheat and use uniroot
+  ####  Step size search ##########################################
+	# Find alpha that works - exact as possible, cheat and use uniroot (requires knowing exact distribution)
 	if( LCM.flag )
 	{	uni.mat <- temp.face.mat
-	} else uni.mat <- Y.all.mat			# uniroot needs to know exact distribution
+	} else uni.mat <- Y.all.mat			# exact distribution, to pass on to uniroot
 
+	####  error check for MC sample size  ##########################################
+	del.ll.exact <- y.obs - theta2mu( theta.current, uni.mat )  
+	if( del.ll.exact %*% p.current < 0 )
+	{
+		cat( "p: ", p.current, 
+			"\n del.ll.exact: ", del.ll.exact, 
+			"\n inner prod: ", p.current %*% del.ll.exact, "\n" )
+		cat( "\n", k, ": The MC estimate and exact value for del.ll are in opposite direction\n, making
+		it impossible to meet curvature condition.  This likely occurs because the MC sample size \n
+		is too small.  On the flip side, this only happens when del.ll is very small as well,\n  
+		so we are close to the maximum.  Exiting loop!\n" )
+		break
+	}	
+	####  don't use uniroot when p is a GDOR: no root!  ##########################################
 	if( all( p.current == q2d(gdor) ) ) # GDOR direction
-	{	alpha.current <- 20 # if we are going in GDOR direction, then uniroot will find no zero 
+	{	alpha.current <- 20 # 20 seems a large enough step size to go in GDOR direction 
 	} else{
+	####  uniroot - at last  ##########################################
 		uni.exact.out <- uniroot( nabla.loglike.t.p, lower = .Machine$double.eps, upper = 10000000, tol = .Machine$double.eps, theta=theta.current, p=p.current, y.obs=y.obs, Y.all.mat=uni.mat ) 
 		alpha.current <- uni.exact.out$root
 	}
@@ -129,9 +144,9 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 	theta.current 	<- theta.old + alpha.current * p.current
 	theta.hist[k,]	<- theta.current
 	cat( sprintf("\n\n %s: New step length: %11.6f del.ll.len old: %11.6f\n", k, alpha.current, del.ll.len  ) )
-	cat( "theta", theta.current, "\n" )
+	cat( "theta current (updated)", theta.current, "\n" )
 	
-	#### New sample at this new theta ##########################################
+	#### New sample at this new theta, from ORIGINAL model ####################################
 	sample.g.new 			<- get.network.sample( samp.size, theta.current, Y.all.mat )
 	sample.ty.new  			<- Y.all.mat[ sample.g.new, c(1,2), drop = FALSE ]
 	
@@ -157,6 +172,7 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 			on.boundary <- FALSE
 			ty.hull <- ty.hull.old
 		} else {
+			sample.ty.old	<- sample.ty.new # keep a copy around -- if just for plotting
 			temp.face.ty 	<- sample.ty.new[ sample.dp == 0, , drop = FALSE ]
 			# assign to sample.ty.new
 			sample.ty.new <- temp.face.ty # may have different size than default samp.size
@@ -169,23 +185,35 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 	{
 		sample.reduced.new 		<- redundant( d2q(sample.Vrep.new), rep = "V" )
 		sample.reduced.ty.new 	<- q2d( sample.reduced.new$output[,-c(1:2), drop =FALSE] )
-	} else sample.reduced.ty.new <- sample.Vrep.new[ , -c(1:2), drop = FALSE ] 
+	} else sample.reduced.ty.new <- sample.Vrep.new[,-c(1:2), drop =FALSE]
 	#### Construct CUMULATIVE convex hull ##########################################
 	temp.hull 				<- unique( rbind( ty.hull, sample.reduced.ty.new ) )
-	temp.hull.Vrep 			<- cbind( 0, 1, temp.hull )
-	temp.hull.reduced 		<- redundant( d2q(temp.hull.Vrep), rep = "V" )
-	temp.hull.ty			<- q2d( temp.hull.reduced$output[,-c(1:2)] )
- 	ty.hull 				<- temp.hull.ty[ chull( temp.hull.ty ), ]
+	temp.hull.Vrep 		<- cbind( 0, 1, temp.hull )
+	if( nrow( temp.hull.Vrep ) > 1 )
+	{
+		temp.hull.reduced 	<- redundant( d2q(temp.hull.Vrep), rep = "V" )
+		temp.hull.ty			<- q2d( temp.hull.reduced$output[,-c(1:2), drop=FALSE] )
+	} else temp.hull.ty 		<- temp.hull
+	
+ 	ty.hull 				<- temp.hull.ty[ chull( temp.hull.ty ), , drop=FALSE]
  	ty.hull.extreme.count  	<- nrow( ty.hull )
 #	temp.ncone <- get.ncone( y.obs, ty.hull )
 
 	#### Plot hulls ##########################################
 	par( mfrow=c(1,2) )
-	plot( sample.ty.new, xlim = c(0,38), ylim= c(0,85) ); points( t(y.obs), pch = 19, col = "blue" )
+	if( LCM.flag == FALSE )
+	{
+		plot( sample.ty.new, xlim = c(0,38), ylim= c(0,85) ); points( t(y.obs), pch = 19, col = "blue" )
+		polygon( ty.hull, border = "orange", lty = "dashed" )
+	} else {
+		plot( sample.ty.old, xlim = c(0,38), ylim= c(0,85) ); points( t(y.obs), pch = 19, col = "blue" ) 
+		polygon( ty.hull.old, border = "orange", lty = "dashed" )
+	}
 	hullplot.pts <- sample.reduced.ty.new[ chull( sample.reduced.ty.new ), , drop=FALSE]
 	polygon( hullplot.pts, border = "blue", lty = "dotted" )
-	polygon( ty.hull, border = "orange", lty = "dashed" )
-	#### Plot thetas ##########################################	plot( theta.hist, pch=20 )
+	
+	#### Plot thetas ##########################################
+	plot( theta.hist, pch=20 )
 	arrows( theta.old[1], theta.old[2], theta.current[1], theta.current[2], length = 0.05 )
 	if( gdor.true[1] != 0 ) {
 		abline( a = 0, b = gdor.true[2]/gdor.true[1], col = "orange", lty = "dotted" )
@@ -207,10 +235,14 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 		##### NOT exterior case: boundary or interior #########################################
 		cat( k, ": y.obs is in interior or boundary.\n" )
 		##### Find the empirical face at y.obs #########################################
-		# apply linearity to CUMULATIVE HULL to find face
-		W <- sweep( ty.hull, 2, y.obs, FUN = "-" )
-		W <- d2q( cbind( 0, 0, W ) )
-		lin.active 		<- linearity( W, rep = "V" )
+		# apply linearity to CUMULATIVE HULL to find face, but only if ty.hull has more than 1 point
+		if( nrow( ty.hull ) > 1 )
+		{	# linearity breaks if there is only one point
+			W <- sweep( ty.hull, 2, y.obs, FUN = "-" )
+			W <- d2q( cbind( 0, 0, W ) )
+			lin.active 		<- linearity( W, rep = "V" )
+		} else lin.active <- 1 # if ty.hull has only 1 point, then that's the face!
+
 		face.hull.ty 	<- ty.hull[ lin.active, , drop = FALSE ]
 		face.extreme.count 		<- nrow( face.hull.ty )
 		if( face.extreme.count == 0 )
@@ -227,7 +259,7 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 			on.boundary <- TRUE
 			on.interior <- FALSE
 			cat( k, ": y.obs is on the boundary of the convex hull of samples.\n" )
-			cat( "Empirical face has dimension: ", length(lin.active), "\n" )
+			cat( "Empirical face has dimension: ", length(lin.active)-1, "\n" )
 
 			##### Find a GDOR to this face #######################
 			objv <- d2q( c( rep(0,d), 1) )
@@ -247,7 +279,7 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 			temp.face.ty.unique <- unique( temp.face.ty )
 			temp.face.counts <- apply( temp.face.ty.unique, 1, function( pair ) count.pair( pair, temp.face.ty ) )
 			temp.face.total <- sum( temp.face.counts )
-			# Cheat.  Compare to answers
+			# Cheat and get exact probabilities to compare to.
 			temp.face.theta.probs <- t.likelihood.tset( theta.current, temp.face.ty.unique, Y.all.mat, pt.flag = TRUE )
 			temp.face.theta.probsum <- sum( temp.face.theta.probs )
 			cat( "The empirical face points are: \n" )
@@ -273,7 +305,7 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 			{
 				cat( sprintf( "Only %s point(s) out of %s occurred on face.  Keep sampling!\n\n", temp.face.total, samp.size.effective ) )
 			} else {
-				##############################################
+				##### It's a real FACE.  Let's go #########################################
 				cat( sprintf( "We've got %s points out of %s on this face.  MOVE ON TO LCM!\n\n", temp.face.total, samp.size ) )
 				LCM.flag <- TRUE
 				ty.hull.old				<- ty.hull
@@ -302,24 +334,26 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 			mu.current	<- theta2mu( theta.current, temp.face.mat )
 		}
 	}
-
+	if( verbose.flag ) cat( "mu.current: ", mu.current, "\n" )
+	
 	#### Update del.ll ##################################################
 	del.ll 		<- y.obs - mu.current
 	del.ll.len 	<- sqrt( del.ll %*% del.ll )
 
-	if( LCM.flag == FALSE && on.interior == FALSE && k %% 5 == 0 )
+	if( LCM.flag == FALSE && on.boundary == TRUE && k %% 5 == 0 )
 	{
 		cat( "Use GDOR:\n" )
 		p.current <- q2d( gdor )
 	} else if( LCM.flag == FALSE && k>=9 && k%%3==0 )
 	{
 		cat( "Original ML: use regression direction:\n" )
-		temp.data <- theta.hist[ (k-8):k, ]
+		temp.data <- theta.hist[ (k-7):k, ]
 		m.temp <- lm( temp.data[,2] ~ temp.data[,1] )
 		p.current <- gdor.prop <- c(1, coef(m.temp)[2])
 		# if this is *not* an ascent direction, use the closet allowable ascent direction
 		if( t(p.current) %*% del.ll <= 0 )
-			p.current <- closest.ascent.dir( p.current, del.ll )
+			p.current <- -p.current
+#			p.current <- closest.ascent.dir( p.current, del.ll )
 	} else {
 		cat( "Use steepest ascent direction:\n" )
 		p.current <- del.ll
@@ -329,20 +363,24 @@ while( k <= max.k && del.ll.len > del.len.cutoff )
 	print.table( p.current )
 	del.ll.tp.current <- t(del.ll) %*% p.old
 	face.current.probs <- t.likelihood.tset( theta.current, face.ty, Y.all.mat, pt.flag = TRUE )
-	if( LCM.flag ) cat( "Maximizing LCM ...\n" )
+	if( LCM.flag ) cat( "Maximizing LCM ..." )
 
 #	cat( sprintf("Step length: %11.6f del.ll.len: %11.6f\n", alpha.current, del.ll.len  ) )
-	if( verbose.flag )
-		cat( "Current theta face probs: ", face.current.probs, ":", sum( face.current.probs ), "\n\n\n" )
+#	if( verbose.flag )
+#		cat( "Current theta face probs: ", face.current.probs, ":", sum( face.current.probs ), "\n\n\n" )
 	
-	if( LCM.flag ) 
-		LCM.k <- LCM.k+1
+	if( LCM.flag ) LCM.k <- LCM.k+1
+
 	k <- k+1
+	cat( "--------------------------\n\n\n\n" )
+	
 }
 cat( "Exited main loop!  del.ll.len: ", del.ll.len, "theta", theta.current, "\n" )
 
+cbind( theta.current, theta.MLE, theta.LCM )
+cat( gdor )
 m1 <- lm( V2 ~ V1, data = as.data.frame(theta.hist[-1,]) )
-summary( m1 )
+#summary( m1 )
 abline( m1 )
 abline( a = coef(m1)[1], b = gdor.true[2]/gdor.true[1], col = "orange", lty = "dotted" )
 ##########################################################################
@@ -355,16 +393,22 @@ prob.data <- data.frame( t.y, prob )
 #{	print.table( cbind( face.ty, face.probs,face.current.probs ) )
 #} else cat( face.ty, face.probs,face.current.probs )
 theta.current
-(theta2mu( theta.current, Y.all.mat ) )  # use full space for support
-(theta2mu( theta.current, face.freq.mat ) )  # use "right" answer for support
-(theta2mu( theta.current, temp.face.mat ) )
-#Y.all.freq[ pair2g( y.obs, Y.all.mat ), ]
+(theta2mu( theta.current, Y.all.mat ) )  # using full space for support
+(theta2mu( theta.current, face.freq.mat ) )  # using "true" support, based on our full knowledge
+
+
+
 
 
 
 #########################################################################################
 # One-sided CI
 #########################################################################################
+
+if( LCM.flag )
+{
+(theta2mu( theta.current, temp.face.mat ) )
+#Y.all.freq[ pair2g( y.obs, Y.all.mat ), ]
 
 temp.face.mat
 temp.face.ty.unique
@@ -396,14 +440,15 @@ s.val <- uniroot( prob.on.face.minus, c(-20,20), 0.05, theta.current, delta, tem
 s.val
 prob.on.face( s.val$root, theta.current, delta, temp.face.ty.unique, Y.all.mat, samp.size )
 ( theta.endpt <- theta.current + s.val$root*delta )
+cat( "CI for theta: ", theta.endpt )
 
 # in mean value parameterization?
-sample.CI <- get.network.sample( samp.size, theta.endpt, Y.all.mat ) 
-sample.CI.mat 	<- Y.all.mat[ sample.CI, ]
-sample.CI.ty  		<- sample.CI.mat[ , c(1,2) ]
-colMeans( sample.CI.ty )
+#sample.CI <- get.network.sample( samp.size, theta.endpt, Y.all.mat ) 
+#sample.CI.mat 	<- Y.all.mat[ sample.CI, ]
+#sample.CI.ty  		<- sample.CI.mat[ , c(1,2) ]
+#colMeans( sample.CI.ty )
 
-theta2mu( theta.endpt, Y.all.mat )
-theta2mu( theta.endpt + 100*delta, Y.all.mat )
-theta2mu( theta.MLE, Y.all.mat )
-
+#theta2mu( theta.endpt, Y.all.mat )
+#theta2mu( theta.endpt + 100*delta, Y.all.mat )
+#theta2mu( theta.MLE, Y.all.mat )
+}
