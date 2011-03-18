@@ -14,8 +14,8 @@ Y.all.mat <- as.matrix( Y.all.freq )
 t.y 	<- Y.all.mat[ ,c(1,2) ]
 nu 		<- Y.all.mat[ ,3 ]
 ##########################################################################
-#y.obs 	  <- c( 21, 4 ) # NOT on boundary - problematic. (21,4), (23,12) also bad but (24,16) ok.
-y.obs 	  <- c( 31, 50 ) # boundary face
+y.obs 	  <- c( 21, 4 ) # NOT on boundary - problematic. (21,4), (23,12) also bad but (24,16) ok.
+#y.obs 	  <- c( 31, 50 ) # boundary face
 #y.obs 	  <- c( 27,27 ) # extreme pt
 #y.obs 	  <- c( 29,47 ) # interior - no problem
 #y.obs 	  <- c( 19, 0 ) # 
@@ -23,8 +23,8 @@ verbose.flag 	<- TRUE
 MC.flag			<- TRUE
 c 				<- 0.2
 del.len.cutoff	<- 1e-2
-samp.size 		<- 30000
-seed 			<- 2
+samp.size 		<- 10000
+seed 			<- 1
 set.seed( seed )
 max.k			<- 25
 face.cutoff 	<- 0.30
