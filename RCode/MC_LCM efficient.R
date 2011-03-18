@@ -27,7 +27,7 @@ samp.size 		<- 10000
 seed 			<- 1
 set.seed( seed )
 max.k			<- 25
-face.cutoff 	<- 0.30
+face.cutoff 	<- 0.60
 ##########################################################################
 # ANSWERS - use knowledge of hull to look up answers which we can compare against
 ##########################################################################
