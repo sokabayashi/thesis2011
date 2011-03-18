@@ -25,7 +25,7 @@ building, that is, driven by actor-specific attributes or by the structure of  t
 \caption[\citeauthor{Padgett}'s \citeyearpar{Padgett} Florentine marriage network]{
 \citeauthor{Padgett}'s \citeyearpar{Padgett} Florentine marriage network.  \citeauthor{Padgett} recorded the marriage network among 16 Florentine families around 1430.  At the time, two factions, one revolving around the 
 Medicis and the other around the Strozzis, vied for political control of the city.   
-Data is available through and plotted using the \texttt{ergm} package \citep*{ergm} in 
+Data is available through and plotted using the \texttt{ergm} package \citep*{ergm:R} in 
 R.}
 \label{F:Florentine}
 \end{figure}
@@ -38,7 +38,7 @@ R.}
 {\citeauthor{Sampson}'s \citeyearpar{Sampson} monastery affinity network.  \citeauthor{Sampson} collected data to define a ``liking" network among 18 monks 
 in a New England monastery in the late 1960s.  Since ``liking" is a directional 
 relation, the presence of a relation is depicted by an arrow rather than a line.  Data 
-is available through and plotted using the \texttt{ergm} package \citep{ergm} in R.}
+is available through and plotted using the \texttt{ergm} package \citep{ergm:R} in R.}
 \label{F:Sampson}
 \end{figure}
 
@@ -71,7 +71,7 @@ the relational structures, such as a triangle of relations between actors $A$, $
 and $C$, as factors in the analysis \citep{Wasserman:1994}.  This perspective has 
 garnered increasing attention across different social and behavioral science 
 disciplines over the last forty years, as evidenced by the rapid growth in publication 
-of social network related papers \citep{Knoke:2008}.
+of social network related papers \citep[Chapter 1]{Knoke:2008}.
 % in the social science literature 
   
 For the statistician, the network perspective means that the model should not break the 
@@ -137,7 +137,7 @@ Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the
 \end{center}
 \caption[\textit{E. coli} transcriptional regulation network of \citet{Salgado,Shen-Orr}]{\textit{E. coli} transcriptional regulation network of \citet{Salgado,Shen-Orr}.  Each node is an operon and a directed edge from one node to another indicates 
 that the first encodes the transcription factor that regulates the second.
-Data is available through and plotted using the \texttt{ergm} package \citep{ergm} in 
+Data is available through and plotted using the \texttt{ergm} package \citep{ergm:R} in 
 R.}
 \label{F:ecoli}
 \end{figure}
@@ -355,9 +355,9 @@ should not be directly evaluated.}  See Appendix~\ref{A:Triangle count}
 for our computational approach for counting simple statistics in the 9-node network
 relying on numerous tricks in data representation and counting.
 
-\begin{table}[h] \label{T:number graphs}
+\begin{table}[h] 
 \caption{Sample space size for networks with different number of actors.}
-\begin{tabular}{ccl}
+\begin{tabular}{ccl} 
 \hline 
 Nodes & Possible Edges & Total Graphs \\ [1ex]
 \hline
@@ -368,7 +368,7 @@ Nodes & Possible Edges & Total Graphs \\ [1ex]
 9 & ${9 \choose 2} = 36$ & $2^{36} = 68,719,476,736$ \\ [1ex]
 10 & ${10 \choose 2} = 45$ & $2^{45} = 3.518437\times10^{13}$ \\ [1ex]
 \hline 
-\end{tabular}
+\end{tabular} \label{T:number graphs}
 \end{table}
 %%%%%%
 
@@ -656,7 +656,7 @@ expectation can be approximated by the sample mean for large sample size,
 \end{align*}
 where $Y_1, \ldots, Y_m$ are draws from the exponential family distribution with 
 parameter $\eta^0$.  This sample can be generated using Markov chain Monte Carlo 
-methods such as Metropolis-Hastings (used for ERGMs) or Swensen-Wang (used for the Ising model example in Section~\ref{S:Examples:Ising}); see 
+methods such as Metropolis-Hastings (used for ERGMs) or Swensen-Wang (used for the Ising model example in Section~\ref{S:Example:Ising}); see 
 \citep{Brooks} and references cited therein.
 
 Thus \eqref{E:r} can be approximated by
@@ -708,13 +708,14 @@ This is a very high probability relative to the sparsity of relations in the obs
 set, which suggest a much smaller probability of tie formation of $88/306= 0.288$.  
 In fact, the probability of obtaining fewer than 88 ties for the $\eta=1$ model is nearly zero at $2.3 \times 10^{-59}$, calculated using a binomial distribution with $n=306$, $p =0.731$.  
 
-\begin{figure}[h]  \label{F:MCMC-MLE}
+\begin{figure}[h]  
 \begin{center} 
 {\includegraphics[width=2.95in]{mcmc-mle1}}
 {\includegraphics[width=2.95in]{mcmc-mle-1}}
 \end{center} 
 \caption[Log likelihood ratio approximations for Sampson's monastery data set]{Log likelihood ratio approximations for Sampson's monastery data set.  Left: $\eta^0 = 1$, right: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
-approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  Data for plots are produced using code accompanying \citet{Hummel}.} 
+approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  Data for plots are generated using code accompanying \citet{Hummel}.} 
+\label{F:MCMC-MLE}
 \end{figure} 
 
 The MCMC-MLE algorithm maximizes the approximated log 
@@ -812,7 +813,7 @@ Of course, one may try different starting points until a ``good'' one is found, 
 this comes with no theoretical guarantees and can be cumbersome in practice.
 
 \subsection{Summary of parameter estimation methods}
-The following table summarizes the advantages and disadvantages of the parameter estimations discussed.  
+Table~\ref{T:Compare estimation} summarizes the advantages and disadvantages of the parameter estimations discussed.  
 All methods assume that the MLE exists before the search algorithm is applied.
 
 \hl{CHARLIE SAYS ADD PENTTINEN.}  \citep{Penttinen:1984}
@@ -843,7 +844,8 @@ Method & Appeal & Drawbacks \\ [1ex]
 & 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Sensitive to starting point \\
 & 	converge to MLE if it exists & \\[1ex]
 \hline 
-\end{tabular}
+\end{tabular} 
+\label{T:Compare estimation}
 \end{table}
 %%%%%%
 

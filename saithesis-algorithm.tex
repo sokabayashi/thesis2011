@@ -134,8 +134,7 @@ function $f(\cdot)$ since this is the convention in the optimization literature 
 {NW,Rockafellar}.  %\citet{Okabayashi:longrange} prove a special case when the minimum exists, and this proof mimics that one with 
 
 The negative log likelihood function $-\ell(\cdot)$ is strictly convex by 
-\eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by 
-\hl{LEHMAN} \citep{TPE2}.
+\eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by Theorem~5.8 in \citet{TPE2}.
 It is bounded below by the negative LCM log likelihood as described by \eqref{E:LCM ll bound}.
 
 The objective function $f$ is bounded below, strictly convex, and lower semicontinuous 
@@ -555,7 +554,7 @@ applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC.  That is,
 where $Y_1, \ldots, Y_m$ are MCMC draws from the distribution with parameter $\eta$.  
 There are many MCMC algorithms 
 such as Metropolis-Hastings or Swensen-Wang (used for the Ising model example in 
-Section~\ref{S:Examples:Ising}); see \citep{Brooks} and references cited therein.
+Section~\ref{S:Example:Ising}); see \citep{Brooks} and references cited therein.
 We show examples in the next section where $\nabla \ell(\eta)$ can be calculated 
 exactly and where it must be 
 approximated.
