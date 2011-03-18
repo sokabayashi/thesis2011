@@ -1,21 +1,28 @@
 We apply our algorithm to several different settings:
 \begin{itemize}
-\item Logistic regression where the MLE exists.  The gradient $\nabla \ell(\beta)$ can be calculated exactly in this setting and thus our algorithm is guaranteed to converge.  We compare the results to those attained by the \texttt{glm} function in R and compare the performance to stochastic approximation.  We choose a starting value for which Newton-Raphson fails.
+\item Logistic regression where the MLE exists.  The gradient $\nabla \ell(\beta)$ can be calculated exactly in this problem and thus our algorithm is guaranteed to converge to
+the MLE by Theorem~\ref{Thm:Line Search works}.  We compare parameter estimates to those attained by the \texttt{glm} function in R and compare performance to stochastic approximation.  We choose a starting value for which Newton-Raphson fails.
 
 \item Ising model where the MLE exists.  The gradient $\nabla \ell(\eta)$ must be approximated in this setting via MCMC.  Although our algorithm is not guaranteed to converge in theory, it is still effective in practice.  We again compare the performance to stochastic approximation.
 
-\item Sampson's monastery data.  We revisit the exam from Section~\ref{S:MCMC-MLE} which
-discussed how MCMC-MLE will struggle to converge when the starting value is far
+\item Sampson's monastery data.  We revisit the example from Section~\ref{S:MCMC-MLE} which
+showed how MCMC-MLE struggles to converge when the starting value is far
 from the true MLE.  The model used here is the simple Erd\H{o}s-R\'{e}nyi-Gilbert model 
 described in Section~\ref{S:Erdos} with network statistic $g(y)$ equal to the total number of edges present.
 
+\item An adolescent friendship network data set of 1,461 students in grade 7--12 derived 
+from the National Longitudinal Study of Adolescent Health.  \citet{statnet-tutorial}
+fit a more realistic model to this relatively large network data set, involving covariate
+factors as well as network structures.  We compare our results to those attained by
+\citeauthor{statnet-tutorial} who use MCMC-MLE starting from a very good MPLE estimate.
+
 \item ERGM with two-dimensional sufficient statistics on a 9-node undirected network.  
-Here we explore cases where the MLE does and does not exist.  
-Our algorithm finds the MLE when
-exists, and finds the LCM MLE and its support when it does not.  These can then
-be used to constructed one-sided confidence intervals for the natural parameters.
+Here we explore cases where the MLE may not exist in the conventional sense.  
+Our algorithm finds the MLE if it exists, and finds the LCM MLE and its support when 
+it does not.  We then constructed one-sided confidence intervals for the natural parameters.
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Example: logistic regression} \label{S:Example:logistic}
 We illustrate the application of our algorithm in the case of a logistic regression 
 with a starting point far from the 
@@ -943,7 +950,8 @@ which is well within our 95\% confidence intervals.
   
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Case: MLE exists but observed statistic is very near boundary}
+\subsection{Case: MLE exists but observed statistic is very near boundary} 
+\label{S:Example:9node problematic point}
 If the observed data has network statistic $(21, 4)$, it is on the interior of 
 the convex support $C$ (see Figure~\ref{F:MC problem}) and so the MLE exists.
 It lies very close to the boundary, however, and the approaches of 
