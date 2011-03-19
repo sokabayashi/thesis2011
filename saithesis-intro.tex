@@ -125,8 +125,9 @@ fact be applied to problems in a broad range of disciplines including political
 science, biology, epidemiology, and computer science and may be of particular interest
 to business practitioners in utilities or transportation.  
 Actors often represent individuals but 
-they may also represent entities like nation-states, protein molecules, or 
-corporations.  The relation that connects actors is often friendship or actor $A$ 
+they may also represent entities like nation-states, protein molecules, airports, 
+computers, or corporations.  The relation that connects actors 
+is often friendship or actor $A$ 
 ``liking'' actor $B$, as in Sampson's monk data depicted in Figure~\ref{F:Sampson}, 
 but the relation can be any kind of relation such as a business transaction or the 
 Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the 
@@ -645,7 +646,7 @@ time of this writing, the MCMC-MLE routine in \texttt{statnet} uses by default 1
 Monte Carlo samples spaced 100 samples apart and a maximum of three iterations, using the 
 MPLE as the initial value for $\eta^0$ \citep{statnet:R}.  
 Improvements to the MCMC-MLE approach is an active area of research \citep*{Bartz}.
-\hl{ We discuss one particular} \citep{Hummel}. 
+An extension of this method by \citet{Hummel} is discussed in the next section.
 
 \citet{ergm} illustrate the practical difficulty associated with a poor initial 
 value in the MCMC-MLE algorithm with Sampson's monastery data set depicted in 
@@ -690,8 +691,24 @@ starting with $\eta^0 = 1$ is only able to obtain an estimate for $\eta$ as
 small as $\eta = -0.364$.  With 10 iterations, it does in fact 
 arrive at the MLE of $-0.907$.
  
-\subsection{Steplength MCMC-MLE}
+\subsection{Steplength MCMC-MLE} \label{S:Hummel}
+\citet{Hummel} look to improve the range for which iterated MCMC-MLE will converge by
+allowing for reasonable steps in $\eta_k$ after each sample.  As noted in the 
+simple example with 
+Sampson's monastery data in Section~\ref{S:MCMC-MLE}, MCMC-MLE approach can only work 
+if $g(\yobs)$ is inside the range of MCMC samples.  
+\citeauthor{Hummel}'s approach involves 
+replacing $g(\yobs)$ with a value $\hat{\xi}_1$ close to $g(\yobs)$ but within
+the range of the current model's MCMC samples
+and then applying MCMC-MLE to update $\eta_0$.  This allows MCMC-MLE to have
+a maximizer, with the update $\eta_1$ closer to $\etaMLE$.
 
+The approach is effective for the Sampson's monastery example discussed, and was also applied
+to E. Coli transcriptional regulation network data of \citet{Shen-Orr} when 
+starting from the MPLE.  Care is needed in finding a $\hat{\xi}_1$ that is inside
+the range of the current model, and if $\eta_0$ is very far from $\etaMLE$, it is 
+not clear if the steps taken by this approach will be large enough to traverse
+the distance between $\eta_0$ and $\etaMLE$ in any reasonable amount of time.
 
 
 
@@ -930,7 +947,7 @@ model and thus avoid the degenerate behavior of \hl{type 2 and 3}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Research overview} \label{S:Research overview}
-In this paper, we propose a simple and practical line search algorithm which
+In this dissertation, we propose a simple and practical line search algorithm which
 accomplishes the following objectives:
 \begin{enumerate}
 \item The algorithm converges to the MLE of any regular exponential family 
@@ -944,10 +961,13 @@ accompanying direction of recession necessary to construct one-sided
 confidence intervals in the manner of \citet{Geyer:gdor}.
 \end{enumerate}
 
-In short, our proposed algorithm addresses many of the drawbacks of the algorithms
-described in Section~\ref{S:ERGM examples} as well as providing a general framework
-for dealing with non-existent MLEs.  
-We prove convergence in the case where the MLE exists and the first 
+In short, our proposed algorithm, outlined in the next section,
+ addresses many of the drawbacks of the methods
+described in Section~\ref{S:ERGM examples} as well as providing a general methodology
+for dealing with non-existent MLEs.  We are not aware of any general approaches for
+handling non-existent MLEs for ERGMs.  
+
+We prove convergence for our algorithm in the case where the MLE exists and the first 
 derivative of the log likelihood can be calculated exactly.
 When the first derivative cannot be calculated exactly, 
 it has a particularly convenient form that is 
@@ -957,8 +977,11 @@ The appeal of this algorithm is its usability: no trial and error is needed.
 Experimentation with multiple starting points or tuning parameters is not necessary 
 and no unrealistic \emph{a priori} information about the problem need be specified.  
 It is currently used in the \texttt{aster2} contributed R package 
-\citep{aster:R} as the safeguard for steepest ascent and Newton-Raphson iterations in finding the MLE for aster models.
+\citep{aster:R} as the safeguard for steepest ascent and Newton-Raphson
+ iterations in finding the MLE for aster models.
 
+Our algorithm utilizes first derivative information only, evaluating 
+neither the likelihood function itself nor derivatives of higher order than first.
 The desire to avoid calculation of higher order derivatives in our algorithm
 is motivated not just by 
 computational considerations, but 
@@ -972,28 +995,28 @@ reason, the best use of our algorithm may be from ``long range,'' filling a gap 
 be expedient to switch to another algorithm like Newton-Raphson or MCMC-MLE 
 after significant progress is made and the Fisher information matrix becomes useful.  
 
-In the case where the MLE may not exist in the conventional sense, 
-our algorithm returns the information necessary
-to construct one-sided confidence intervals for the MLEs, which are actually off 
-``at infinity".  Our algorithm requires little modification; in fact,
-whether or not the MLE exists for a model and observed data cannot be known \emph{a priori} 
-of the MLE search if the convex support is not known, which is usually the case
-for ERGMs.
+In the case where the MLE does not exist in the conventional sense, 
+it is actually off ``at infinity" in some direction of the parameter space.
+Our algorithm returns the information necessary to construct one-sided confidence 
+intervals for how close $\eta$ is to infinity.  
+Previous work in this area utilized full knowledge
+of the convex support \citep{Handcock:degeneracy,Rinaldo:2009}, something
+that is not generally available for ERGMs, and provided no such confidence intervals.
 
-In \citet{Handcock:degeneracy,Rinaldo:2009}, the authors 
-authors work with small networks for which they have full knowledge of 
-the convex support, as in the case of the 9-node network depicted in Figure~\ref{F:g9-hull}.  While the authors dissect the various scenarios on these small networks
-in great detail, they recommend no general methodology 
-or tools to detect nor cope with non-exist MLEs in other networks.  
-Thus although we visit the same 9-node network example, we do so using a general 
-methodology that assumes no knowledge of the convex support \emph{a priori} and 
-outline a methodology that is generally applicable.
+%In \citet{Handcock:degeneracy,Rinaldo:2009}, the authors 
+%authors work with small networks for which they have full knowledge of 
+%the convex support, as in the case of the 9-node network depicted in Figure~\ref{F:g9-hull}.  While the authors dissect the various scenarios on these small networks
+%in great detail, they recommend no general methodology 
+%or tools to detect nor cope with non-exist MLEs in other networks.  
+%Thus although we visit the same 9-node network example, we do so using a general 
+%methodology that assumes no knowledge of the convex support \emph{a priori} and 
+%outline a methodology that is generally applicable.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Long range search algorithm overview}  \label{S:algorithm overview}
 
-Our algorithm generates iterated estimates $\eta_k$ of the MLE $\hat{\eta}$ of the 
+Our algorithm generates iterated estimates $\eta_k$ of the MLE $\etaMLE$ of the 
 form 
 \begin{align} \label{E:eta update}
 	\eta_{k+1} = \eta_k + \alpha_k p_k
@@ -1107,17 +1130,22 @@ direction. \\
 \textbf{end while}\\
 
 The exit condition from this algorithm is that $\lVert \nabla \ell( \eta_k) \rVert$
-is close to zero.  As noted earlier, the log likelihood $\ell(\eta)$ is a strictly
-concave function; when the global maximum exists, $\lVert \nabla \ell( \eta_k) \rVert = 0$.  When the MLE does not exist, $\ell(\eta)$ does not bend back down
-as depicted in Figure~\ref{F:alpha_region}, but instead continues to increase.
-As discussed in Section~\ref{S:LCM}, $\ell(\eta)$ is still bounded even if
-no maximum exists by the \emph{limiting conditional model} which is another
-exponential family defined on a support for which the MLE is
-guaranteed to exist.
-Our algorithm looks to find this new maximizer.  In order to do so, however, it must 
-recognize that the objective function it seeks to maximize has changed.
-We discuss in Chapter~\ref{Chapter:Linear programming} the adjustments that need to 
-be made to the algorithm to handle this situation.
+is close to zero.  As noted earlier, the log likelihood $\ell(\fatdot)$ is a strictly
+concave function; when the global maximum $\etaMLE$ exists, $\lVert \nabla \ell( \etaMLE) \rVert = 0$.  
+When the MLE does not exist in the conventional sense, $\ell(\fatdot)$ does not bend
+ back down as depicted in Figure~\ref{F:alpha_region}, but instead continues to increase along some direction.  Hence the maximizer can be thought of as off at infinity.
+The log likelihood function is, however, still bounded by 
+the log likelihood of 
+the \emph{limiting conditional model}, which 
+is another exponential family defined on a support for which the MLE is
+guaranteed to exist, as discussed in Section~\ref{S:LCM}.
+As part of the process to construct one-sided confidence intervals 
+for how close $\eta$ is to infinity, 
+our algorithm looks to find the maximizer for this new model.  
+Some modification of this algorithm is necessary, which we discuss in 
+Chapter~\ref{Chapter:Linear programming}.  In particular, the objective function
+$\ell( \fatdot)$ that is being maximized must switch to that of the new model.
+However, the overall structure of the algorithm is essentially the same.
 
 %DOES THE REST OF THIS CHAPTER NEED TO BE HERE AT ALL?  It is a well-known theorem of exponential families that the non-existence of the MLE 
 %is synonymous with the the observed data occurring on a boundary of the 

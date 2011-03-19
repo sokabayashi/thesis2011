@@ -22,6 +22,9 @@ demonstrated by the Ising model
 example.  We have also described a way to construct and use confidence intervals to 
 make convergence highly probable.
 
+
+\section{Areas for Improvement}
+\subsection{Step size search}
 The algorithm can be computationally demanding.  When the current iteration approaches 
 the solution, the 
 curvature condition for step size becomes more difficult to satisfy and the method may 
@@ -46,7 +49,7 @@ when the current iteration is far from the MLE.
 
 One way to improve performance is to use conjugate gradient search directions rather 
 than steepest ascent.  In our 
-examples, this reduced the number of iterations by over 25\%.  However, in other 
+examples, this reduced the number of iterations by over 20\%.  However, in other 
 problems we tried with different 
 dimensionality, this performance varied significantly and it appears that no guarantee 
 can be made about quantity of 
@@ -57,6 +60,7 @@ algorithm is well known (but
 we know of no literature about ``preconditioners'' for 
 maximum likelihood in exponential families).
 
+\subsection{Convergence}
 There are several outstanding issues.  Most notably, we have not showed convergence of 
 the algorithm when the gradient 
 is approximated via MCMC.  This is a more difficult theoretical problem and is the 
@@ -67,6 +71,7 @@ condition \eqref{E:Wolfe-ll} to the
 approach of \citet{Andrieu:2005} or \citet{Liang:2010} in MCMC stochastic 
 approximation.  
 
+\subsection{Switch criteria}
 Another remaining issue is the stopping criteria: what value should be chosen for $
 \epsilon$ in the exit condition
 $\lVert  \nabla \ell( \eta_k ) \rVert < \epsilon$?  Because the value of $\lVert  
@@ -78,6 +83,7 @@ our use of 10,000 for the MCMC
 sample size and 0.005 for $\epsilon$ were successful in obtaining a reasonable 
 parameter estimate. 
 
+\subsection{Monte Carlo standard errors}
  A final remaining issue is estimation of Monte Carlo error of the estimates.  Here 
 too we recommend switching to another
 algorithm at the end.  The MCMC-MLE procedure gives accurate error estimates 
