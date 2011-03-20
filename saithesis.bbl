@@ -1,4 +1,4 @@
-\begin{thebibliography}{85}
+\begin{thebibliography}{87}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -357,6 +357,13 @@
 \newblock \textit{British Journal of Mathematical and Statistical Psychology},
   \textbf{52} 169--193.
 
+\bibitem[{Penttinen(1984)}]{Penttinen:1984}
+\textsc{Penttinen, A.} (1984).
+\newblock Modelling interactions in spatial point patterns: parameter
+  estimation by the maximum likelihood method.
+\newblock \textit{Jyv\"{a}skyl\"{a} Studies in Computer Science, Economics and
+  Statistics}, \textbf{7}.
+
 \bibitem[{Potts(1952)}]{Potts}
 \textsc{Potts, R.~B.} (1952).
 \newblock Some generalized order-disorder transformations.
@@ -491,6 +498,11 @@
 \newblock A framework for the comparison of maximum pseudo-likelihood and
   maximum likelihood estimation of exponential family random graph models.
 \newblock \textit{Social Networks}, \textbf{31} 52--62.
+
+\bibitem[{Wang and Swendsen(1990)}]{Swendsen-Wang:1990}
+\textsc{Wang, J.~S.} and \textsc{Swendsen, R.~H.} (1990).
+\newblock Cluster {M}onte {C}arlo algorithms.
+\newblock \textit{Physics A}, \textbf{167} 565--579.
 
 \bibitem[{Wasserman and Faust(1994)}]{Wasserman:1994}
 \textsc{Wasserman, S.} and \textsc{Faust, K.} (1994).
