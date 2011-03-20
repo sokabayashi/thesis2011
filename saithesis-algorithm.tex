@@ -344,7 +344,7 @@ family log likelihood that guarantee us the necessary Lipschitz continuous gradi
 
 We now apply Theorem~\ref{Thm:log like max} to find the MLE when it is known to exist:  
 
-\begin{theorem}[] \label{Thm:Line Search works}
+\begin{theorem}[MLE convergence] \label{Thm:Line Search works}
 For a regular exponential family with minimal representation where the MLE exists, the 
 line search described in 
 Theorem~\ref{Thm:log like max} can be applied to the negative log likelihood function 
@@ -443,8 +443,8 @@ curvature condition \eqref{E:Wolfe-ll} with $0 < c < 1$, but it would be useful 
 know if certain values of $c$ are 
 better than others.
 
-\section{Search directions}
-In our examples in Section~\ref{S:Examples}, we default to steepest descent directions 
+\section{Search directions} \label{S:Search directions}
+In our examples in Chapter~\ref{S:Examples}, we default to steepest descent directions 
 in our implementation for 
 transparency.  Although often effective in early steps, steepest descent directions 
 can result in an inefficient zigzagging 
@@ -497,7 +497,7 @@ through the previous few updates (See Figure \ref{F:zigzag} (right)).
 \centering
 \includegraphics[height=2.6in,width=2.6in]{Figures/zigzag-eta}
 \includegraphics[height=2.6in,width=2.6in]{Figures/zagplusnorm-eta}
-\caption[Contour plots of an ERGM log likelihood when the MLE does not exist]{Contour plots of an ERGM log likelihood when the MLE does not exist.  The surface 
+\caption[Contour plots of ERGM log likelihood when MLE does not exist]{Contour plots of an ERGM log likelihood when the MLE does not exist.  The surface 
 tends to flatten, though technically it is still concave.  This can cause 
 the steepest descent 
 algorithms to zigzag, which is inefficient (left).  However, by periodically using 
@@ -677,20 +677,22 @@ or Newton-Raphson safeguarded by our line search algorithm.  Our algorithm with
 steepest ascent or conjugate gradient search direction
 should be used initially from ``long range'', when one has no good intuition for an 
 initial value.
-It is well known that when the objective function is quadratic the conjugate gradient 
+
+It is well known that when the objective function is quadratic, the conjugate gradient 
 method with exact arithmetic converges to the solution
 in at most $d$ steps, where $d$ is the dimension of the problem \citep{NW}.  As a rule 
-of thumb, we think using our 
-algorithm for $2d$ steps before switching seems reasonable.
+of thumb then, we think using our 
+algorithm for $2d$ steps before switching seems reasonable when using conjugate
+gradient directions.  Determining when we are inside the ``radius of convergence"
+for algorithms like Newton-Raphson or MCMC-MLE is an area for further research.
 
-\hl{BRING IN APPROACH OF HUMMEL.}
 
-\section{Estimating standard error} \label{S:SE}
-The methods to estimate Monte Carlo standard errors described in 
-Section~\ref{S:MCMC approx} pertain to estimates of functions of $\nabla \ell(\eta)$.
-However, the we are primarily interested in estimating the MLE of $\eta$ and thus
-want standard errors of our estimates of this MLE.
-%These cannot be obtained with our application of our algorithm, since we can
-%only evaluate the accuracy of our estimate by how small $\lVert \nabla \ell(\eta) \rVert$ is.  Here again the switch to another algorithm seems most appropriate.
-
-Approach of \citet{Geyer:1994}, explained in detail in the context of ERGMs by \citet{Hunter:2006},
+%\section{Estimating standard error} \label{S:SE}
+%The methods to estimate Monte Carlo standard errors described in 
+%Section~\ref{S:MCMC approx} pertain to estimates of functions of $\nabla \ell(\eta)$.
+%However, the we are primarily interested in estimating the MLE of $\eta$ and thus
+%want standard errors of our estimates of this MLE.
+%%These cannot be obtained with our application of our algorithm, since we can
+%%only evaluate the accuracy of our estimate by how small $\lVert \nabla \ell(\eta) \rVert$ is.  Here again the switch to another algorithm seems most appropriate.
+%
+%Approach of \citet{Geyer:1994}, explained in detail in the context of ERGMs by \citet{Hunter:2006},

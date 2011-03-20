@@ -121,7 +121,7 @@ iterations finding an acceptable step size for each update.
 % latex table generated in R 2.10.1 by xtable 1.5-6 package
 % Tue May  4 17:37:01 2010
 \begin{table}
-\caption[Comparison of MLEs of $\beta$ for Example 1]{Comparison of MLEs of $\beta$ for Example 1: MLE = \texttt{glm}, Steep = line 
+\caption[Comparison of MLEs of $\beta$ for logistic regression example]{Comparison of MLEs of $\beta$ for Example 1: MLE = \texttt{glm}, Steep = line 
 search using steepest ascent, 
 CG = line search using conjugate gradient, and SA =  SA with step size = $1/k$, 
 terminated at 10,000 iterations,
@@ -148,7 +148,7 @@ $-7.153$ & 1.255 & 0.264 \\
 \end{table}
 
 \begin{table}
-\caption[Comparison of step sizes for SA and our algorithm for Example 1]{The first 20 step sizes used by  SA (with step size $1/k$) and our algorithm 
+\caption[Comparison of step sizes for SA and our algorithm for logistic regression example]{The first 20 step sizes used by  SA (with step size $1/k$) and our algorithm 
 for Example 1.  The step sizes 
 used by our algorithm do not diminish like $1/k$.
 }
@@ -202,7 +202,7 @@ vertically (but not diagonally).
 \includegraphics[width=4.5in,keepaspectratio]{potts}
 \end{center}
 \caption[A realized sample from an Ising model on a $32 \times 32$ lattice with 
-$\eta = \left(0, \log(1 + \sqrt{2}) \right)^T$]
+$\eta$ at phase transition value.]
 {A realized sample from an Ising model on a $32 \times 32$ lattice with 
 $\eta = \left(0, \log(1 + \sqrt{2}) \right)^T$.  This value of $\eta$ corresponds to the phase transition point, where 
 the sample images are mostly one 
@@ -287,7 +287,7 @@ total MCMC sample sizes used were $62\times10,0000 = 620,000$ and $45\times10,00
 
 
 \begin{table}
-\caption[Comparison of MLEs for $\eta$ for Example 2]{Comparison of MLEs for $\eta$ for Example 2: MLE = Newton-Raphson starting 
+\caption[Comparison of MLEs for $\eta$ for Ising model example]{Comparison of MLEs for $\eta$ for Example 2: MLE = Newton-Raphson starting 
 from the true $\eta$, Steep = 
 line search using steepest ascent, CG = line search using conjugate gradient, and SA = 
 SA with step size = $1/k$.  All 
@@ -326,7 +326,7 @@ $1/3000$.  So, the $1/k$ step size used
 by SA in fact occasionally satisfies our curvature condition when $k$ is large. 
 
 \begin{table}
-\caption[Comparisons of step sizes for SA and our algorithm for Example 2]{The first 17 step sizes used by SA (with step size $1/k$) and our algorithm 
+\caption[Comparisons of step sizes for SA and our algorithm for Ising model example]{The first 17 step sizes used by SA (with step size $1/k$) and our algorithm 
 for Example 2.  The step sizes 
 used by our algorithm are initially much smaller than $1/k$.}
 \begin{center}
@@ -373,7 +373,7 @@ is shown in Figure~\ref{F:ising-hist}.
 \begin{center}
 \includegraphics[width=4.5in,keepaspectratio]{ising-hist}
 \end{center}
-\caption[Histogram of the $\eta$ component for 1000 MLEs for an Ising model on a $32 \times 32$ lattice with $\eta = \left(0, \log(1 + \sqrt{2}) \right)^T$]
+\caption[Histogram of the $\eta$ component for 1000 MLEs for an Ising model on a $32 \times 32$ lattice with $\eta$ at phase transition value.]
 {Histogram of the $\eta[2]$ component for 1000 MLEs for 
 an Ising model on a $32 \times 32$ lattice with $\eta = \left(0, \log(1 + \sqrt{2}) 
 \right)^T$.  The vertical line is at $\log(1 + \sqrt{2}) = 0.881$. }
@@ -455,9 +455,10 @@ the simulation is necessitated to maintain confidentiality.
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=5in]{Figures/fmh-grade}
+\includegraphics[width=5in]{Figures/fmh-gradesex}
 \caption[Faux Magnolia High friendship network without isolates, colored by grade]
-{Faux Magnolia High friendship network without isolates, colored by grade.  The data is made available in \texttt{ergm} \citep{ergm:R}.}
+{Faux Magnolia High friendship network without isolates, colored by grade.  Boys
+are depicted by square nodes, girls by circles.  The data is made available in \texttt{ergm} \citep{ergm:R}.}
 \label{F:fmh}
 \end{figure}
 
@@ -509,8 +510,7 @@ estimates are reported in Table~\ref{T:FauxMagnolia}.
 % Wed Mar  9 23:32:59 2011
 \begin{table}[h]  
 \begin{center} 
-\caption[Comparison of coefficients estimates for Faux Magnolia High from 
-MCMC-MLE and our algorithm]{Comparison of coefficients estimates for Faux Magnolia High from MCMC-MLE and our algorithm.  MCMC-MLE is the default algorithm
+\caption[Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example]{Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example.  MCMC-MLE is the default algorithm
 in \texttt{ergm}, and is run here through 5 iterations starting
 at the MPLE ($\etaMLE$ below).
 Our algorithm is run for 40 steps ($\hat{\eta}_{\textrm{Steep}}$ below),
@@ -570,6 +570,9 @@ established---does much better, with
 From this value, MCMC-MLE is able to attain the MLE in one update.  In fact,
 our algorithm itself will not improve much from this point without increasing sample
 sizes.
+
+Although safeguarded applications of other algorithms is an option, a better condition
+for switching is desirable.
 
 \item MCMC sampler.  We have developed our algorithm assuming that it would have access
 to an effective MCMC sampler.  In this example, some tuning of the MCMC
@@ -778,12 +781,19 @@ relative interior of,
 \end{enumerate}  
 
 The first task can be done using the linear programming methods described 
-in Chapter~\ref{Chapter:Linear programming} which require first calculating a GDOR, 
+in Chapter~\ref{Chapter:Linear programming}.  This approach requires first 
+calculating a GDOR by the methods in Section~\ref{S:GDOR calc}, which here give us
 \begin{align*}
 	\delta = (6,-1).
 \end{align*}
+If this $\delta$ is a GDOR and $g(\yobs) \in \rbd C$, then 
+\begin{align} \label{E:Face check}
+	\inner{w - g(\yobs), \delta=0}
+\end{align}
+for all $w \in F$.  Thus \eqref{E:Face check} gives an easy way to check if 
+any point is in the empirical face $F$.
 (This GDOR can also be used as an effective search direction 
-in the same manner as the regression direction described in Section~\ref{S:Search directions}.)
+in the same manner as the regression direction described in Section~\ref{S:Search directions}, when it is not yet determined that this $F$ is a boundary of $C$.)
 
 The second task turns out to be very difficult to do.  
 For now, we assume that if a substantial portion of the sample points generated, say 
@@ -1049,10 +1059,10 @@ empirically determined face is summarized in Table~\ref{T:LCMvsMLE}.
 % Fri Sep 10 13:22:25 2010
 \begin{table}[h!] 
 \begin{center}
-\caption[Comparison of probabilities assigned by LCM model indexed by $\etaLCM$ and 
-original model indexed by $\etaMLE$ to empirical face]
-{Probabilities assigned by LCM model indexed by $\etaLCM$ and original model 
-indexed by $\etaMLE$ to points on the empirical face.  The observed statistic is 
+\caption[Comparison of probabilities assigned by LCM model and 
+original MLE model to empirical face of 9-node network]
+{Probabilities assigned by LCM model and original MLE model 
+to points on empirical face of 9-node network.  The observed statistic is 
 $(21,4)$.  For the MLE model, the probabilities do not sum to 1 since it assigns 
 positive probability to points other than these six.}
 

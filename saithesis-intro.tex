@@ -293,6 +293,8 @@ statistics is in \citet*{Morris:2008}.
 %addressed though \citet{GOF} have begun making strides in this area.  Both of these 
 %areas are active area of research.
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Intractable normalizing constant} \label{S:intractable}
 We now return to the issue of why parameter estimation for ERGMs and 
@@ -304,8 +306,8 @@ networks in the sample space $\YY$ and can be prohibitively expensive to
 evaluate for networks of even moderate size.
 For an undirected network with $n$ actors, there are $2^{{n\choose 2} }$ 
 different possible networks in $\YY$.  Table~\ref{T:number graphs} shows how rapidly this number grows; 
-\emph{unless dealing with networks of 9 actors or less, the likelihood function 
-should not be directly evaluated.}  See Appendix~\ref{A:Triangle count}
+unless dealing with networks of 9 actors or less, the likelihood function 
+should not be directly evaluated.  See Appendix~\ref{A:Triangle count}
 for our approach for counting simple network statistics in the 9-node network
 relying on numerous tricks in data representation and computation.
 
@@ -566,18 +568,28 @@ these will all yield the same MLE.  However, there is no guarantee that they wil
 Network software packages such as \texttt{statnet} \citep*{statnet:R} in the R 
 platform now overwhelmingly use MLE methods, using MPLEs only as starting points.
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Newton-Raphson}
-Newton-Raphson is the one of the most commonly used root-finding algorithms, attractive
-for its speed and relative simplicity.  It relies on iterated updates of the root 
-function.  In our case, we seek are root for the gradient function $\ell(\eta)$.
-The updates are of the following form:
+Newton-Raphson is one of the most commonly used root-finding algorithms
+in optimization, attractive
+for its speed.  It relies on iterated updates of a root 
+function, which here is the gradient function of the log likelihood, $\nabla \ell(\eta)$.  
+The algorithm also requires the Hessian matrix $\nabla^2 \ell(\eta)$ and has updates 
+of the following form:
 \begin{align}
 	\eta_{k+1} = \eta_k - \left[ \nabla^2 \ell(\eta_k) \right ]^{-1} \nabla \ell(\eta_k) 	
 \end{align}
+This of course requires a positive definite matrix for $\nabla^2 \ell(\eta_k)$, which
+may not always be available.  Most problematic is that the algorithm is not guaranteed to 
+converge, which can occur when the initial $\eta_k$ is far from the solution.  However,
+when Newton-Raphson does converge, it converges extremely fast, 
+where the number of accurate digits roughly doubles at each step.
 
-MCMC Newton \citep{Penttinen:1984}
-
+We use a stochastic version of Newton-Raphson in Section~\ref{S:Example:Ising} where we wish
+to calculate the MLE and can start the algorithm from the known true parameter value.
+We use MCMC methods to approximate both $\nabla \ell(\eta)$ and $\nabla^2 \ell(\eta)$ 
+in the manner of \citep{Penttinen:1984}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Markov chain Monte Carlo maximum likelihood} \label{S:MCMC-MLE}
 \citet{Geyer:1992, Corander:1998, Snijders:2002} developed Markov chain Monte Carlo 
 (MCMC) methods to approximate the MLE of an exponential family.  Of these, \citeauthor
@@ -691,7 +703,8 @@ iterations of MCMC-MLE in the \texttt{statnet} package, the algorithm
 starting with $\eta^0 = 1$ is only able to obtain an estimate for $\eta$ as 
 small as $\eta = -0.364$.  With 10 iterations, it does in fact 
 arrive at the MLE of $-0.907$.
- 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \subsection{Steplength MCMC-MLE} \label{S:Hummel}
 \citet{Hummel} look to improve the range for which iterated MCMC-MLE will converge by
 allowing for reasonable steps in $\eta_k$ after each sample.  As noted in the 
@@ -721,7 +734,7 @@ the distance between $\eta_0$ and $\etaMLE$ in any reasonable amount of time.
 %ERGMs in our most complicated applications.
 
     
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Stochastic approximation}
 
 Variations on the Robbins-Monro \emph{stochastic approximation} (SA) algorithm 
@@ -788,6 +801,7 @@ the MLE \citep{Younes:1989,Gu:2001}.
 Of course, one may try different starting points until a ``good'' one is found, but 
 this comes with no theoretical guarantees and can be cumbersome in practice.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Summary of parameter estimation methods}
 Tablse\ref{T:Compare estimation} and \ref{T:Compare MCMCestimation} summarize the advantages and disadvantages of the exact and MCMC parameter estimations discussed.  
 All methods assume that the MLE exists before the search algorithm is applied.
@@ -834,7 +848,7 @@ Method & Appeal & Drawbacks \\ [1ex]
 \multirow{3}{0.5in}{MCMC-MLE}
 & 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Highly sensitive to starting point \\ 
 & 	converge to MLE if it exists 					& \textbullet \, May require enormous MC sample sizes\\ 
-&	\textbullet \, Can calculate MCSEs			& \textbullet \, May require several iterations of algorithm\\ [1ex]
+&				& \textbullet \, May require several iterations of algorithm\\ [1ex]
 \hline
 \multirow{3}{0.5in}{MCMC SA} 		
 & 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Sensitive to starting point \\
@@ -866,15 +880,15 @@ increasing in some direction of the parameter space, called a
 \emph{direction of recession}, so that the the MLE is actually off ``at infinity".
 The theoretical background 
 for this situation has been understood for many years 
-(see \citep{Barndorff,Brown:1986}): whether or not an MLE exists is a
+(see \citep{Barndorff,Brown:1986}): MLE existence is a
 geometric problem relating to properties of the \emph{convex support} of the model,
-which is  is the smallest closed convex set 
-that the contains the natural statistic \citep{Geyer:gdor},
-and the location of the observed data relative to this support.
-When the MLE does not exist for
-an exponential family in the conventional sense, 
+which is  the smallest closed convex set 
+that the contains the natural statistic \citep{Geyer:gdor}.  
+As we will discuss Section~\ref{S:MLE existence}, the MLE does not exist
+in the conventional sense if the observed data is on the relative boundary of this 
+convex support.  When this occurs, 
 it may exist in the \emph{Barndorff-Nielsen completion} of the family.
-However, before this dissertation, there have been no 
+Before this dissertation, there have been no 
 computationally convenient solutions to this problem for social network models
 and other discrete exponential family models with complex dependence.
 
@@ -893,49 +907,18 @@ on which the observed data lies.
 This face in turn defines the convex support for a new exponential family for which the MLE 
 does exist and can be found using conventional methods (see Section~\ref{S:LCM}).
 The linear programming 
-functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd:R},
-which we rely on heavily.
-%However, this approach cannot be directly applied to the complex dependent problems 
-%we consider here because the polyhedral convex support is not known except for simple 
-%problems.  
+functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd:R}.
 
 \citet*{Handcock:degeneracy, Rinaldo:2009} focus on problematic instances of parameter 
-estimation for ERGMs, which have come to very loosely be referred 
+estimation for ERGMs.  These have come to loosely be referred 
 to as \emph{degeneracy}.  Strictly speaking, a distribution in an exponential
 family is degenerate when it concentrates the distribution of the natural statistic
 on a hyperplane.  If the family is minimal, this occurs if and only if the MLE does not
-exist in the conventional sense.  
-
-NEAR DEGENERATE.
-
-From the practitioner's perspective, degeneracy and near degeneracy
-are confounded with models that are 
-
-According to \citet{Handcock:degeneracy}, degeneracy includes the 
-case of non-existent MLEs but also 
-
-cases where a model concentrates most its probability on only a few different sample 
-points in the space.  \citet{Rinaldo:2009} clarifies model degeneracy to refer 
-to instances where
-\begin{enumerate}
-\item The MLE does not exist or   
- MLE is difficult to obtain, including cases where MCMC methods fail to converge
-or converge very slowly.
-\item Random graphs generated from the fitted model lack variability, often only 
-giving rise to empty graphs and complete or nearly complete graphs
-\item The fitted model makes the observed network very unlikely.
-\end{enumerate}
-
-%
-The issue is serious enough to be a barrier to progress in the field and 
-prevents the wider adoption of ERGMs \citep{advancesp*}.  
-\citet{statnet-tutorial} utilizes a adolescent friendship network data set 
-of 1,461 students in grade 7--12 derived from the National Longitudinal Study of 
-Adolescent Health (AddHealth)\footnote{The data set, which \citeauthor{statnet-tutorial} refer to as Faux 
-Magnolia High School, is a model-based simulation from the original data set, where 
-the simulation is necessitated to maintain confidentiality.
-} and demonstrate that naively fit ERGMs can result in one of the
-situations described above.
+exist in the conventional sense.  However, the term degeneracy
+appears to now be invoked if there are undesirable behaviors of the calibrated model or 
+in the model fitting process itself
+\citep{Handcock:degeneracy,advancesp*,recentp*,statnet-tutorial}.
+We will only use the term for its original meaning here.   
 
 \begin{figure}[h]
 \centering
@@ -949,7 +932,7 @@ boundary have an outlined circle and extreme points are square.}
 \label{F:g9-hull}
 \end{figure}
 
-To fully understand the pathologies, \citeauthor{Handcock:degeneracy,Rinaldo:2009}
+To better understand ERGM pathologies, \citeauthor{Handcock:degeneracy,Rinaldo:2009}
 study small networks with 7 and 9 nodes.  At these sizes, it is still 
 possible to explicitly evaluate the likelihood function \eqref{E:ERGM} and thus 
 find MLEs using standard numerical optimization routines.  
@@ -958,23 +941,22 @@ polyhedral convex support of the model;
 the convex support for the 9-node ERGM with a two-dimensional network statistic of
 edges and triangles
 studied by \citeauthor{Rinaldo:2009} is depicted in Figure~\ref{F:g9-hull}.
-\citeauthor{Rinaldo:2009} show that the normal cones of this support 
+\citeauthor{Rinaldo:2009} show that the normal cones of this support
 explain which portions of the natural parameter space are more likely to correspond to 
-degenerate models.  In light of this, the degenerate behavior described in 
-\hl{points 3 and 4} are not ``unusual" in that they can be explained by the underlying
-theory of exponential families.  The perceived pathologies then, are a result of 
-poor model specification rather than any pernicious theoretical oddity.
+degenerate and nearly degenerate models, where $\E_\eta(g(Y))$ is nearly 
+on the boundary of the convex support.  Some of the perceived pathologies then, 
+are explained by exponential family theory.
 
-Due to the ambiguity over the usage of the term ``degeneracy'', we will
-instead say that the MLE does not exist in the conventional sense.
-
-\citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
+It is possible for a well-fit model to poorly describe or ``resemble" the observed data 
+\citep{ergm}.
+This is almost certainly a result of a poorly specified model---ERGMs give one tremendous
+flexibility in specifying a model but with no guarantees that a model will behave exactly as 
+desired.  \citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
 Their tools, available in the \texttt{statnet} package, compare characteristics of 
 the distribution of networks simulated from the fitted model to the observed data.
 These can be utilized to help choose between network statistics to include in a 
-model and thus avoid the degenerate behavior of \hl{type 2 and 3}. 
+model. 
 
-%
 %\citet{Okabayashi:longrange} present a ``long range" search algorithm to climb the log 
 %likelihood of an exponential family, intended for settings where the initial guess of 
 %the parameter value may be far from the MLE.  The algorithm is guaranteed to converge 
@@ -1107,8 +1089,8 @@ $\ell(\eta_{k+1})$ are depicted in Figure~\ref{F:alpha_region}.
 \begin{figure}[h]
 \centering
     \scalebox{.4}{\input{Figures/alphamax.pdf_t}}
-	\caption[Acceptable region for step size along a search 
-direction according to modified curvature condition]{Acceptable region for step size 
+	\caption[Acceptable region for step size $\alpha$ along search 
+direction $p$ according to modified curvature condition]{Acceptable region for step size 
 along a search direction according to modified curvature condition 
 \eqref{E:curvature mod}. The step sizes $\alpha_{c}$ and $\alpha_{\textrm{max}}$ 
 correspond to values of $\nabla \ell( \eta_k + \alpha p_k)^T p_k$ equaling 
