@@ -82,7 +82,7 @@ returns 01111111111111111111111111111111111 (where there are now 35 ones instead
 In this manner, the shifts can be continued and ones counted 
 (done by another bit comparison to '01' using the `\texttt{\&}' again) 
 until there are no more ones.  This approach avoids any arithmetic and is thus much faster.  
-It should be noted that a computer always stores the \texttt{long int} in binary form 
+It should be noted that a computer stores the \texttt{long int} in binary form 
 and so the 36-digit representation used here is entirely for our benefit only.
 
 Finally, we can further speed up the calculations by parallelizing this computation.  

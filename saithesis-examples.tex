@@ -12,7 +12,7 @@ described in Section~\ref{S:Erdos} with network statistic $g(y)$ equal to the to
 
 \item An adolescent friendship network data set of 1,461 students in grade 7--12 derived 
 from the National Longitudinal Study of Adolescent Health.  \citet{statnet-tutorial}
-fit a more realistic model to this relatively large network data set, involving covariate
+fit a more realistic model to this large network data set, involving covariate
 factors as well as network structures.  We compare our results to those attained by
 \citeauthor{statnet-tutorial} who use MCMC-MLE starting from a very good MPLE estimate.
 
@@ -463,18 +463,19 @@ the simulation is necessitated to maintain confidentiality.
 
 %\subsection{MLE exists}
 \citet{statnet-tutorial} run analyses and settle on a model with the following terms: 
-Grade, Race, Sex, edges, and a geometrically weighted edgewise share partner (GWESP).\footnote{the model selection issue is one we do not address here.  See \citet{GOF}
- for methods of goodness-of-fit.}  
+Grade, Race, Sex, edges, and a geometrically weighted edgewise share partner (GWESP). The model selection issue is one we do not address here---see \citep{GOF}
+ for a discussion on methods goodness-of-fit.  
 Grade, Race, and Sex are covariate factors specific to the 
 actors and reflect whether or not the two actors in a dyad are of the same type.  
-The incorporation of these into an ERGM was 
-discussed in Section~\ref{S:Covariate}.  The GWESP statistic is not one we
+The issue of incorporating of these into an ERGM was 
+discussed in Section~\ref{S:Covariate}.  The GWESP network statistic is not one we
 have discussed previously but has been alluded to in Section~\ref{S:ERGM setup} as
-one of the newly developed statistics designed to reduce degeneracy 
+one of the newly developed statistics designed to reduce problematic models
+(the loose usage of ``degeneracy") 
 \citep{Handcock:2006, Hunter:2006, recentp*}.  This particular statistics can be 
 thought of as a variant of triangles.
 
-We run our algorithm through 40 search directions, starting from an initial value for 
+We ran our algorithm through 40 search directions, starting from an initial value for 
 $\eta$ of $(0, 0, 0, 0, 0)$.  As in the example with Sampson's monastery data
 in Section~\ref{S:Example:Sampson}, we rely
 on the \texttt{simulate.formula} command provided in the \texttt{ergm} package to
@@ -510,8 +511,10 @@ estimates are reported in Table~\ref{T:FauxMagnolia}.
 \begin{center} 
 \caption[Comparison of coefficients estimates for Faux Magnolia High from 
 MCMC-MLE and our algorithm]{Comparison of coefficients estimates for Faux Magnolia High from MCMC-MLE and our algorithm.  MCMC-MLE is the default algorithm
-in \texttt{ergm}, and is run here through 5 iterations ($\etaMLE$ below).
-Our algorithm is run for 40 steps ($\hat{\eta}_{\textrm{Steep}}$ below).}
+in \texttt{ergm}, and is run here through 5 iterations starting
+at the MPLE ($\etaMLE$ below).
+Our algorithm is run for 40 steps ($\hat{\eta}_{\textrm{Steep}}$ below),
+starting from $(0,0,0,0,0)$.}
 \begin{tabular}{rrrrrr}
   \hline
  & edges & Grade & Race & Sex & GWESP \\ 
@@ -523,18 +526,18 @@ $\hat{\eta}_{\textrm{Steep}}$ & -9.879 & 2.810 & 0.942 & 0.786 & 1.809 \\
 \end{center}
 \end{table}
 
-We compare our estimates to MLEs obtained by running the default MCMC-MLE algorithm 
+We compare our estimates to those obtained by running the default MCMC-MLE algorithm 
 in \texttt{ergm}, which starts from a MPLE of
 \begin{align*}
 	\hat{\eta}_{MPLE } = ( -9.8665, 2.8626, 0.9944, 0.8261, 1.6950 ).
 \end{align*}
 It is noteworthy that MCMC-MLE would have had exactly the difficulties 
-described in Section~\ref{S:MCMC-MLE} and again in the example in
-Section~\ref{S:Example:Sampson} if it were started at $(0, 0, 0, 0, 0)$ as well:
+described in Section~\ref{S:MCMC-MLE} if it were started at $(0, 0, 0, 0, 0)$ 
+as well:
 after 15 iterations, all the coefficient estimates would still effectively be zeros
-(all parameter estimates are $< 0.05$ in absolute value).
+($< 0.05$ in absolute value).
 Thus its successful convergence here is due entirely to its use of 
-a remarkably good MPLE estimate, which cannot always be relied upon.
+a remarkably good MPLE starting point, which cannot always be relied upon.
 
 Our algorithm is very time consuming.  Whereas running MCMC-MLE through 15 iterations with MCMC sample sizes of 100,000 at intervals of 100 steps as done 
 by \citet{statnet-tutorial} takes only a few minutes, 
@@ -547,65 +550,68 @@ attain values as small as $9.6$.
  
 A few remarks:
 \begin{itemize}
-\item The goal here is to show that our algorithm can find the MLE for a more realistic model and a large data set, starting from any initial value.
+\item The goal here was to show that our algorithm can find the MLE for a more realistic model and a large data set, starting from any initial value.
 Although it is not computationally expedient, 
-we obtain a reasonable estimate after 40 updates of $\eta_k$.
+we obtain a reasonable estimate after 40 updates of $\eta_k$.  
 
 \item Our recommended use of this algorithm is in combination with other algorithms,
-as discussed in Section~\ref{S:Combine}.  Thus, although it is satisfying to see a reasonable estimate of the MLE, what is more useful is the value of $\eta$ 
+as discussed in Section~\ref{S:Combine}.  Thus, although it is satisfying to see a reasonable estimate of the MLE, what is more useful is the value of $\eta_k$ 
 at say $2d$ iterations, where $d$ is the dimension of $\eta$.  
-Here we see that at 10 iterations,
+Here we found that at 10 iterations using steepest ascent direction,
 \begin{align*}
 	\eta_{10} =( -8.330,  2.462,  0.565,  0.430,  0.879) 
 \end{align*}
-which makes for a good starting point for MCMC-MLE to converge in 1 iteration.
-Using conjugate gradient directions here does even better, with
+which is still too far for MCMC-MLE to converge.
+However, using conjugate gradient directions---for which the $2d$ criteria was
+established---does much better, with
 \begin{align*}
 	\eta_{10} =( -9.963,  2.965,  0.927,  0.742,  1.784).
 \end{align*}
-\item MCMC sampler.  We have developed our algorithm assuming that it would have access
-to a reasonably efficient MCMC sampler.  In this example, we found that the MCMC
-sampler performs much better with a larger interval between samples.  This is unsurprising given the very large number of nodes (1461 actors) 
-and the challenging issues of generating less dependent discrete samples.  
-%In fact,
-%our brief experience with this sampler, it would seem that the default 100 interval 
-%used may not have been sufficient.  
+From this value, MCMC-MLE is able to attain the MLE in one update.  In fact,
+our algorithm itself will not improve much from this point without increasing sample
+sizes.
 
-\item MCMC sample sizes.  A more pragmatic way to implement our algorithm would have
+\item MCMC sampler.  We have developed our algorithm assuming that it would have access
+to an effective MCMC sampler.  In this example, some tuning of the MCMC
+sampler is necessary.  
+This is unsurprising given the very large number of points in the sample space 
+and the challenge of generating less dependent discrete samples, discussed 
+in \citep{ergm,Morris:2008}.
+This does indicate that the usefulness of our algorithm in practice is dependent on the 
+effectiveness of the MCMC sampler.
+
+\item Variable MCMC sample sizes.  A more pragmatic way to implement our 
+algorithm would have
 been to increase the MCMC sample sizes as the algorithm progressed.  That is, when
 we are very far away, crude estimates of the gradient and step size should be sufficient
 to get $\eta$ ``closer" and satisfy the curvature condition \eqref{E:Wolfe-ll}.
 As noted in Section~\ref{S:MCMC approx}, when $\lVert \nabla \ell(\eta) \rVert$ gets
-smaller, the curvature condition is more difficult to satisfy and sharper estimates---resulting from larger MCMC sizes---are necessary.
+smaller, the curvature condition is more difficult to satisfy and sharper estimates---requiring larger MCMC sizes---are necessary.
 \end{itemize}
 
-
-%\subsection{Degenerate}
-%\citet{statnet-tutorial} also considered the edges-triangles model, and concluded
-%that it is degenerate because the fitted model with coefficients $(-7.31, 4.504)$
-% generates samples that look nothing like the observed data.  
-% We apply our algorithm to this setting to see if we can detect a non-existent MLE.
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Example: 9-node network} \label{S:Example:9node}
-We now dive into the more difficult cases for ERGMs where the MLE may not exist.
+We now consider the cases for ERGMs where the MLE may not exist.
 Like \citet{Handcock:degeneracy, Rinaldo:2009}, we focus on small networks (9 nodes or 
-fewer) with only two or three network statistics.  
+fewer) with only two network statistics.  
 Because we need to compare our algorithm to the truth---whether or not the MLE exists, 
 and what its value
-is if it does---we work with networks for which it is feasible to evaluate the likelihood
-function.  For an undirected 9-node network this requires a summation over  $2^{{9\choose 2}}$, or about 69 billion different graphs.  Determining the existence of the MLE
-requires knowledge of the convex support of the sufficient statistics.  See Appendix~\ref{A:Triangle count} for our approach to enumerate all possible graphs in a 9-node network with counts of three network statistics: edges, two-stars, and triangles.
+is if it does---we work with networks for which it is feasible to 
+evaluate the likelihood
+function.  For an undirected 9-node network, this requires a summation 
+over  $2^{{9\choose 2}}$, or about 69 billion different graphs.  Determining the existence of the MLE
+requires knowledge of the convex support of the sufficient statistics.  See 
+Appendix~\ref{A:Triangle count} for our approach for enumerating all possible 
+graphs in a 9-node network with counts of three network statistics: edges, two-stars, and triangles.
 
 %We also use a model with 
 %a three-dimensional statistic comprising edges, triangles, and two-stars to get a 
 %greater variety of empirical faces and normal cones.
 
-For comparison purposes with \citet{Rinaldo:2009}, we focus first on a model with the number 
+For comparison purposes with \citet{Rinaldo:2009}, we focus on a model with the number 
 of edges and triangles as the natural statistics.  A two-dimensional statistic 
-naturally also lends itself to more easily interpretable figures.  The relevant convex support for this model is displayed in Figure~\ref{F:g9-hull}.  Although there are nearly 69 billion
-possible graphs, there are only 444 possible combinations of edges and triangles.
+also naturally lends itself to more easily interpretable figures.  The relevant convex support for this model is displayed in Figure~\ref{F:g9-hull}.  Although there are nearly 69 billion points in the sample space $\YY$, there are only 444 possible combinations of edges and triangles.
 Let the space of these sufficient statistics be denoted $\TT = g(\YY)$.
 The summation in the normalizing constant \eqref{E:kappa} over all graphs in $\YY$ can in fact be simplified
  to a weighted sum over the 444 points in $\TT$ as follows:
@@ -613,7 +619,7 @@ The summation in the normalizing constant \eqref{E:kappa} over all graphs in $\Y
 	\kappa(\eta) = \sum_{y \in \YY} e^{\inner{g(y),\eta} } = 	\sum_{t \in \TT} e^{\inner{t,\eta} } \nu(t)
 \end{align*}
 where $\nu(t)$ is the frequency of the network statistic $t$ across all $y \in \YY$.  
-This does require knowing $\nu(t)$ for all $t \in \TT$, something we calculate
+This does require knowing $\nu(t)$ for all $t \in \TT$, which we calculate once
 and save to file in our enumeration of all possible graphs.
 
 In fact, we will find it easier to work directly with the distribution of the sufficient
@@ -640,7 +646,7 @@ We can then calculate exact values for the gradient of the log likelihood $\nabl
 					  &= g(\yobs) - \frac{1}{\kappa(\eta)}  \sum_{t \in \TT} t e^{\inner{t,\eta} } \nu(t).
 \end{align*}
 
-To address concerns for overflow possibilities where $e^x$ can become too large, we 
+To address concerns for overflow where $e^x$ can become too large, we 
 can subtract $a = \max_t \inner{t, \eta}$ from each term in the summations, so that
 \begin{align*}
 	\nabla \ell (\eta) &= g(\yobs) - \frac{1}{\sum_{t \in \TT} e^{\inner{t,\eta}-a} \nu(t)}  \sum_{t \in \TT} t e^{\inner{t,\eta}-a} \nu(t).
@@ -655,17 +661,17 @@ expressed in term of the sufficient statistic.  By \eqref{E:nabla2 ell},
 				&= - \frac{1}{\kappa(\eta)} \sum_{t\in \TT}
 					(t - \E_\eta T)(t - \E_\eta T)^T e^{\inner{t,\theta}} \nu(t).
 \end{align*}
-The same adjustment for overflow as used for $\nabla \ell(\eta)$ can be applied here.
+The same adjustment for overflow used for $\nabla \ell(\eta)$ can be applied here.
 
 Being able to evaluate $\nabla \ell(\eta)$ and 
 $\nabla^2 \ell(\eta)$ exactly is useful when searching directly from MLEs;
 optimization routines such as \texttt{trust} \citep{trust:R} in R will use these
 as inputs.  
 
-For the 9-node undirected network model with edge and triangle sufficient statistics,
-we are now equipped with the knowledge of the convex support and a log likelihood we 
+We are now equipped with knowledge of the convex support and a log likelihood we 
 can evaluate and numerically maximize.  The linear programming functions in 
-\texttt{rcdd} will determine whether an observed network falls on the boundary 
+\texttt{rcdd} described in Chapter~\ref{Chapter:Linear programming} 
+can be used to determine whether an observed network falls on the boundary 
 or interior of the convex support.  These will allow us to establish the ``truth" 
 against which we can compare our algorithm.
 
@@ -678,21 +684,22 @@ our analysis cleaner:
 \begin{enumerate}
 \item MC sampler.  We use a perfect Monte Carlo sampler to generate our draws \\
 $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\eta$, rather than a 
-MCMC sampler. \\
- Although we have replicated the results of the algorithm using the 
+MCMC sampler.
+Although we have replicated the results of the algorithm using the 
  \texttt{simulate.formula} MCMC sampler provided in the R package \texttt{ergm} 
- \citep{ergm:R}, we wish to identify here what 
-issues would still be present even with a perfect MC sampler, which we can easily build for 
-this small network since the likelihood function can be evaluated.  Some issues 
-related to the challenges of MCMC sampling for ERGMs are discussed in 
-\citep{ergm,Morris:2008}; we do not concern ourselves with these issue here.
+ \citep{ergm:R}, we wish to identify here the 
+issues that would still be present even with a perfect MC sampler.  This can 
+easily be built for this small network since the likelihood function can be 
+evaluated exactly.  
+
 
 \item Step length search.  The search for the step length $\alpha_k$ that satisfied the 
 curvature condition \eqref{E:Wolfe-ll} can be time consuming, as discussed in
 Section~\ref{S:MCMC approx} and evident in our previous examples.
 Here we use our ability to evaluate the gradient function $\nabla \ell(\cdot)$ exactly;  
 we solve for the value that sets $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k = 0$ 
-using a simple root-finding algorithm.  That is, for a given 
+using a simple root-finding algorithm \texttt{uniroot}, with a slight 
+adjustment to satisfy \eqref{E:Wolfe-ll}.  So, for a given 
 direction $p_k$, we find the step size that maximizes the log likelihood in that 
 direction.
 
@@ -704,17 +711,13 @@ such as updating search directions $p_k$.
 We believe that neither of these undermine the validity of our overall methodology, 
 though they undoubtedly simplify and speed up its application.
 
-%We now return to the examples from Section~\ref{S:Example}.  We describe the relevant 
-%R functions, which unless otherwise noted are in the \texttt{rcdd} package \citep{rcdd:R}.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Two-dimensional sufficient statistic}\label{S:example 2dim}
 The MLE for an exponential family model will exist if and only if the observed 
-statistic lies in the interior of the polyhedral convex support $C$, which is the sail-shaped polytope in Figure \ref{F:g9-hull}. Here, $C$ has six sides (and six vertices).
+statistic lies in the relative interior of the polyhedral convex support $C$, which 
+is the sail-shaped polytope in Figure \ref{F:g9-hull}. Here, $C$ has six 
+sides (and six vertices).
 
 \subsection{Case: MLE exists}
 Suppose the observed network data has 29 edges and 47 triangles.  Then $g(\yobs) = (29,47)$
@@ -757,7 +760,8 @@ $g(\yobs) = (31,50)$ lies on the boundary of the convex support as depicted in
 Figure \ref{F:MC face}.  To be precise, the observed network statistic $(31,50)$ lies 
 on the interior of a line segment on the boundary of the convex support with 
 end points $(30,44)$ and $(32,56)$. 
-By Theorem~\ref{Thm:MLE rint}, it is clear that the MLE does not exist.
+By Theorem~\ref{Thm:MLE existence}, it is clear that the MLE does not exist
+in the conventional sense.
 
 Our algorithm begins as before, generating MC sample point clouds to explore the 
 space, as depicted in Figure \ref{F:MC face} (top).  Because the convex 
@@ -768,26 +772,35 @@ likelihood surface, with successive point clouds moving towards the observed sta
 Eventually, the observed statistic will lie exactly on the boundary of a point cloud.
 When this occurs, the algorithm must 
 \begin{enumerate}
-\item determine empirically the face $F$ on which the observed statistic lies in the 
+\item determine empirically the face $F$ in which the observed statistic lies in the 
 relative interior of,
 \item decide if $F$ is in fact the boundary of the convex support $C$.
 \end{enumerate}  
 
-The first task can be done using the linear programming functions provided to us in 
-the \texttt{rcdd} package and described in Chapter~\ref{Chapter:Linear programming}.  The second task turns out to be very difficult to do.  
+The first task can be done using the linear programming methods described 
+in Chapter~\ref{Chapter:Linear programming} which require first calculating a GDOR, 
+\begin{align*}
+	\delta = (6,-1).
+\end{align*}
+(This GDOR can also be used as an effective search direction 
+in the same manner as the regression direction described in Section~\ref{S:Search directions}.)
+
+The second task turns out to be very difficult to do.  
 For now, we assume that if a substantial portion of the sample points generated, say 
 60\%, land on this empirically determined face $F$, then it is in fact a boundary of 
 the convex support $C$.  
 
 
-In this example, the algorithm uses the \texttt{linearity} function to determine empirically that three points from the MC sample---$(30,44)$, $(31,50)$, 
-and $(32,56)$---lie on a one-dimensional face, as depicted in Figure \ref{F:MC face} 
+In this example, the algorithm determines empirically that three points 
+from the MC sample---$(30,44)$, $(31,50)$, and $(32,56)$---lie on a 
+one-dimensional face, as depicted in Figure \ref{F:MC face} 
 (bottom).  If less than 60\% of the sample points land on this empirical face, the 
 algorithm continues to sample, trying to get a sample point cloud even closer to the 
-observed statistic.  We choose such a high proportion for a cut off to eliminate---or 
+observed statistic.  We choose such a high proportion for a cutoff to eliminate---or 
 at least, greatly reduce---the possibility of misidentifying a boundary.
 (We deal later with a case where 100\% of the MC sample points form a face which is 
-\emph{not} on the boundary of $C$.)
+\emph{not} on the boundary of $C$.)  Eventually this threshold is met (as shown in 
+Figure~\ref{F:MC face} (bottom)).
 \begin{figure}[!ht]
 \centering
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
@@ -807,20 +820,20 @@ lighter colored polytope is the convex hull of all previously sampled points.
 \label{F:MC face}
 \end{figure}
 
-By identifying the empirical face $F$ on whose relative interior the observed 
+By identifying the empirical face $F$ in whose relative interior the observed 
 statistic lies, 
 the algorithm has not only concluded that the MLE does not exist in the conventional 
 sense, it has also defined $F$ as the convex support for the new limiting conditional 
-model for which the MLE must exist by Theorem~\ref{Cor:spanL} and \ref{Thm:C-H}.
+model for which the MLE must exist by Corollary~\ref{Cor:LCM MLE exists}.
 The algorithm then maximizes this new exponential family using the same 
 iterative approach as before.  The gradient of the LCM log likelihood is approximated 
 using \eqref{E:nabla ell approx LCM},
 \begin{align*}
-	\nabla \ell( \eta )^{LCM} \approx g(\yobs) - \frac{1}{k} \sum_{i=1}^k g(Y_{(k)})
+	\nabla \ell( \eta )^{LCM} \approx g(\yobs) - \frac{1}{p} \sum_{i=1}^p g(Y_{(p)})
 \end{align*}
-where $g(Y_{(1)}), \ldots, g(Y_{(k)})$ is the subsample of the MC sample points 
+where $g(Y_{(1)}), \ldots, g(Y_{(p)})$ is the subsample of the MC sample points 
 restricted to the empirical face, $(30,44)$, $(31,50)$, and $(32,56)$ in this case.  
-The maximizer of this log likelihood $\etaLCM$ is found by the algorithm to
+The maximizer $\etaLCM$ of this log likelihood is found to
 be
 \begin{align*}
 \etaLCM = (126.8, -21.1).
@@ -828,49 +841,36 @@ be
 %    edges triangles 
 %126.75482 -21.10183 
 \end{align*}
-\hl{The LCM, however, is not identifiable, since the support is now only one-dimensional 
-compared to two in the original model. } 
-That is, there must exist a constancy space of this new model, $\Gammalim$, such that 
+The LCM, however, is not identifiable, since the support is now only one-dimensional 
+compared to two in the original model.  That is, there must exist a constancy space 
+of this new model, $\Gammalim$, such that 
 \begin{align} \label{E:Gammalim}
 \ell( \eta + \gamma )^{LCM} = \ell( \eta )^{LCM}
 \end{align}
-for any $\gamma \in \Gammalim$.
-
-The empirical face $F$ and the observed statistic also define a normal cone by Theorem~\ref{Thm:DOR}, which in this case is a single direction, 
-\begin{align*}
-	\delta = (6,-1)
-\end{align*}
-and is also a GDOR by definition, since it is the only direction in the 
-relative interior of the normal cone which is itself not a vector subspace.  
-The normal 
-cone is derived by the methods described in Chapter~\ref{Chapter:Linear programming}.
-By Corollary~\ref{Cor:strictly increasing}, a GDOR $\delta$ is a direction along which the log likelihood function is strictly increasing, and by 
-Theorem~\ref{Thm:LCM}, we know that
-\begin{align} \label{E:GDOR lim}
-	\lim_{s \to +\infty} \ell( \etaLCM + s \delta) = \sup_{\eta} \ell(\eta).
-\end{align}
-
-
-The GDOR $\delta$ of the original model is also a direction of constancy for the new 
-model [WHY].  \hl{USE AS A SEARCH DIRECTION.  REFER BACK TO PICTURE OF CONTOURS.}
+for any $\gamma \in \Gammalim$.  By Theorem~\ref{Thm:DOC}, the GDOR $\delta$ 
+that the algorithm found is one such $\gamma$.
+%By Corollary~\ref{Cor:strictly increasing}, a GDOR $\delta$ is a direction along which the log likelihood function is strictly increasing, and by 
+%Theorem~\ref{Thm:LCM}, we know that
+%\begin{align} \label{E:GDOR lim}
+%	\lim_{s \to +\infty} \ell( \etaLCM + s \delta) = \sup_{\eta} \ell(\eta).
+%\end{align}
 %Then by \eqref{E:Gammalim} and \eqref{E:GDOR lim}, note that $\ell(\etaLCM + \gamma + 
 %s \delta)$ goes off to $+\infty$ as $s$ increases.  
 
-In order to construct a one-sided confidence intervals, we need to find the value of 
-$s$ for which the the distribution indexed by $\etaLCM + s \delta$ assigns a probability
-of 0.05 to the event that a sample falls on the face of interest is.  That is,
+To construct one-sided 95\% confidence intervals, we need to find the value of 
+$s$ for which the the distribution indexed by $\etaLCM + \gamma + s \delta$ 
+assigns a probability of 0.05 to the event that a sample falls on the 
+face of interest is.  That is, find $s$ such that
 \begin{align*}
 P_{\etaLCM + \gamma + s \delta}(g(Y) \in F ) = 0.05.
 \end{align*}
-Although we cannot evaluate the probability function above, we can generate MC samples 
-of $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\etaLCM + s 
+We can generate MC samples 
+of $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\etaLCM + \gamma + s 
 \delta$ and see for what value of $s$, 5\% of the sample lies in the 
-empirical face we found.  
-\hl{CHARLIE SAYS: USE IMPORTANCE SAMPLING FORMULA---MORE EFFICIENT}
-
-Some numerical calculations shows that the original exponential family index by
- $\eta = (9.145, -1.500)$ puts 5\% of the MC sample on this face.  
-Expressing this as a non-simultaneous 95\% confidence intervals for the components of $\eta$,
+empirical face we found.  Some numerical calculations show that the original
+ exponential family index by $\eta = (9.145, -1.500)$ puts 5\% of
+  the MC sample on this face.  
+Expressing this as a non-simultaneous 95\% confidence intervals for the components of $\eta$, we get
 \begin{align*}
 	[9.145, +\infty)\\
 	(-\infty, -1.500],
@@ -882,11 +882,8 @@ We also applied a trust optimization routine on the original log
 likelihood in attempt to maximize it.  The maximum of course does not exist, but
 because the surface flattens so much, the routine returns a value it perceives as a maximizer,  
 \begin{align*}
- 	\hat{\eta}_{\textrm{trust}} = (135.6, -22.6),
+ 	\hat{\eta}_{\textrm{trust}} = (135.6, -22.6).
  \end{align*}
-which are well within our confidence intervals.
-
-
 %Alternatively, in mean value parameterization, the
 %non-simultaneous 95\% confidence intervals for the edge and triangle parameters are
 %\begin{align*}
@@ -895,13 +892,16 @@ which are well within our confidence intervals.
 %\end{align*}
 %where the upper bounds are the observed data and hence the MLE in this parameterization.
 %%Incidentally, the mean parameterization of $\hat{\eta}_{\textrm{trust}}$ is $(31,50)$, 
-To summarize, our algorithm has realized the MLE for this model does not exist.
-It has found the one-dimensional face $F$ with end points $(30,44)$  
-and $(32,56)$ on which the observed statistic lies, where $F$ is also the
-convex support of the LCM.  The algorithm has also identified a GDOR $\delta = (6,-1)$
-along which the log likelihood is strictly increasing.  Finally, the algorithm 
-has returned the end points for one-sided confidence intervals for the natural
-parameters.
+To summarize, our algorithm realized correctly that the MLE for 
+this model does not exist in the conventional sense.
+The algorithm first identified a GDOR, $\delta = (6,-1)$, along which 
+the log likelihood is strictly increasing.  It then used this GDOR to determine
+a one-dimensional face $F$ in which the observed statistic lies 
+in the relative interior.  The algorithm then found $\etaLCM$, the 
+maximizer of the exponential family
+which has $F$ as its convex support.  Finally, the algorithm used the
+values of $\etaLCM$ and $\delta$ to calculate the end points for 
+one-sided confidence intervals for the natural parameters.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -922,16 +922,18 @@ any value for $\eta$ will be a maximizer.  Our particular implementation found t
 \end{align*}
 %29.96274 -7.216648
 The normal cone to the observed statistic $N_C (g(\yobs) )$ in this case is a two-dimensional cone (and not a subspace), bounded by 
-two vectors,
+two directions,
 \begin{align*}
 	 \{ (3.857,   -1),	(5.667,   -1) \}.
 \end{align*}
-The linear programming in our algorithm found a GDOR of $\delta = (4.4, -1)$, clearly 
-in the relative interior of this normal cone.
+The linear programming routine in our algorithm found a GDOR of 
+$\delta = (4.4, -1)$, clearly 
+in the relative interior of this normal cone, which is itself not calculated by
+our algorithm but done here for comparison purposes.
 Proceeding as before, we find 95\% one-sided confidence intervals for $\eta$ of 
 \begin{align*}
-	[14.4, +\infty)\\
-	(-\infty, -3.7],
+	[14.32, +\infty)\\
+	(-\infty, -3.65],
 \end{align*}
 
 %The 95\% one-sided confidence intervals for mean parameterization is
@@ -941,19 +943,17 @@ Proceeding as before, we find 95\% one-sided confidence intervals for $\eta$ of
 %	[15.6, 27].
 %\end{align*}
 
-Again applying a trust optimization routine on the original log 
+For comparison, a trust optimization routine on the original log 
 likelihood yielded a value it perceives as a maximizer,  
 \begin{align*}
 %  66.13789     -14.67444
- 	\hat{\eta}_{\textrm{trust}} = (66.1, -14.7),
+ 	\hat{\eta}_{\textrm{trust}} = (66.1, -14.7).
  \end{align*}
-which is well within our 95\% confidence intervals.
-  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Case: MLE exists but observed statistic is very near boundary} 
 \label{S:Example:9node problematic point}
-If the observed data has network statistic $(21, 4)$, it is on the interior of 
+If the observed data has network statistic $(21, 4)$, it is in the relative interior of 
 the convex support $C$ (see Figure~\ref{F:MC problem}) and so the MLE exists.
 It lies very close to the boundary, however, and from a mean value parameter 
 perspective, this observed statistic 
@@ -969,10 +969,11 @@ themselves are nearly identical.  Using a trust optimization routine we calculat
 \etaMLE = (28.86, -7.76).
 \end{align*}
 The most problematic aspect of this model for us here, however, is that our algorithm 
-may conclude---incorrectly---that the MLE does \emph{not} exist, and proceeds to 
+may occasionally conclude---incorrectly---that the MLE does \emph{not} exist, 
+and proceeds to 
 calculate the MLE of an LCM as in the previous examples.  In this case, we used
-an MC sample size of 10,000 (and recall that we are using a perfect Monte Carlo sampler
-from the exactly distribution rather than an MCMC sampler).
+an MC sample size of 10,000 (recall that we are using a perfect Monte Carlo sampler
+from the exact distribution rather than an MCMC sampler).
 
 How does this happen?  Does this make our algorithm not useful in practice?
 
@@ -985,13 +986,15 @@ The observed value $(21,4)$ is one of these six points, and the algorithm conclu
 that it has found an empirical face on the boundary of $C$ and that 
 this observed value lies on the boundary.
 
-In order for the algorithm to have correctly concluded that $(21,4)$ was on the 
-interior, the extreme point $(27,27)$ would need to have occurred in the MC sample.  However, although this point is not far from the end point $(25,20)$ of our line
-segment, the model index by the current parameter value 
+In order for the algorithm to have correctly concluded that $(21,4)$ was in the 
+interior, the extreme point $(27,27)$ would need to have occurred in the MC sample
+(as it occasionally did, in which case the algorithm found the MLE as usual).  
+However, though this point is not far from the end point $(25,20)$ of our line
+segment, the model indexed by the current parameter value 
 assigns a probability of 0.000032 to this point.  In fact, even the 
 MLE model only assigns a probability of 0.00045 to this point.  
 So, the extreme point that is critical for fully determining the convex support 
-is assigned very low probability.
+is assigned very low probability and may not appear in a MC sample of 10,000.
 
 \begin{figure}[!h]
 \centering
@@ -1011,8 +1014,9 @@ sampled points used to derive this empirical face.}
 \end{figure}
 
 Our algorithm treats the line segment as a boundary of the 
-convex support on which the observed statistic lies in the relative interior, and 
-concludes the MLE does not exist.  It does not stop there; it proceeds as in the first
+convex support in which the observed statistic lies in the relative interior, and 
+concludes that the MLE does not exist.  It does not stop there; 
+it proceeds as in the first
 example and seeks to find the MLE of the LCM,
 \begin{align*}
 	\etaLCM = (35.38, -9.39),
@@ -1030,7 +1034,7 @@ What is the purpose in finding the MLE?  In particular, what does one do with th
 If the end goal is to try to interpret meaning out of these numbers by their sign and  
 magnitude, then we indeed have a problem---our numbers are just wrong.  
 However, if the MLE is viewed as an 
-index into a specific model that assigns the highest probability to the observed data,
+index to a specific model that assigns the highest probability to the observed data,
 then we claim that the model we have found---the LCM with parameter value $\etaLCM$---
 is in fact remarkably similar to the original model indexed by the true MLE.  A 
 reasonable metric for this comparison is a sum of the absolute difference in 
@@ -1049,7 +1053,7 @@ empirically determined face is summarized in Table~\ref{T:LCMvsMLE}.
 original model indexed by $\etaMLE$ to empirical face]
 {Probabilities assigned by LCM model indexed by $\etaLCM$ and original model 
 indexed by $\etaMLE$ to points on the empirical face.  The observed statistic is 
-$(21,4)$.  For the MLE model, the probability do not sum to 1 since it assigns 
+$(21,4)$.  For the MLE model, the probabilities do not sum to 1 since it assigns 
 positive probability to points other than these six.}
 
 \begin{tabular}{rrrrr}
@@ -1076,14 +1080,14 @@ insignificant for most applications.
 Of course, there are practical issues: even if a researcher is interested in the 
 MLE distribution, she may want the software to simply 
 return MLE values to keep around for later analysis.  Here, we are suggesting that the 
-analysis return LCM MLE values and an LCM model (perhaps in the form of the convex 
-support).  The researcher may understandably be confused, especially if she knew in 
-advance that the MLE was guaranteed to exist.  However, any distributional analysis 
-would be almost identical, though perhaps not ``out of the box".
+analysis return LCM MLE values and an LCM model (perhaps in the form of a GDOR or
+convex support).  
+The researcher may understandably be confused, especially if she knew in 
+advance that the MLE was guaranteed to exist.  However, any probability calculations---and hence inference---would be nearly identical, though perhaps not ``out of the box".
 
 It may be of interest to note that $\etaLCM$ and $\etaMLE$ index nearly identical 
 models in the LCM, with the difference due almost entirely to the lack of 
-identifiability of the LCM.  A normal direction to the (incorrect) empirical face is 
+identifiability of the LCM.  A GDOR to the (incorrect) empirical face is 
 $\delta = (4,-1)$, which is also a direction of constancy for the LCM. 
 %(that is, $\delta \in \Gammalim$).  
 Then by \eqref{E:Gammalim}, 

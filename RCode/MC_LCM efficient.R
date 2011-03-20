@@ -24,7 +24,7 @@ MC.flag			<- TRUE
 c 				<- 0.2
 del.len.cutoff	<- 1e-2
 samp.size 		<- 10000
-seed 			<- 1
+seed 			<- 2
 set.seed( seed )
 max.k			<- 25
 face.cutoff 	<- 0.60

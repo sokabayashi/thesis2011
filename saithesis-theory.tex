@@ -65,15 +65,16 @@ maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \et
 \subsection{Mean value parameterization}
 
 An alternative parameterization of an exponential family is the mean value 
-parameterization.  For each natural parameter $\eta$, we can define the mean parameter 
+parameterization.  For a natural parameter $\eta$, we can define the mean parameter 
 $\mu$ such that
 \begin{align*}
 	\mu = \E_\eta g(Y).
 \end{align*}
-Thus mean value parameters are the expectation of a more easily interpretable quantity
-\citep{Handcock:degeneracy, Rinaldo:2009}.
-The space for the mean value parameterization is the relative interior of the 
-convex support of the natural statistics.  
+This maps any $\eta \in \Xi$ for which the expectation exists to a point in
+the relative interior of the convex support.
+Thus mean value parameters are more easily interpretable quantity, since
+they reside in the same space as the natural statistics 
+\citep{Handcock:degeneracy,Rinaldo:2009}.
 In particular, $\mu = g(\yobs)$ is the MLE in the mean value parameterization,
 as established by \eqref{E:Observed-Expected}.  
 
@@ -81,13 +82,6 @@ as established by \eqref{E:Observed-Expected}.
 value parameters located too close to the boundary of the convex support tend to 
 correspond to degenerate distributions; this was corroborated by 
 \citeauthor{Rinaldo:2009} from the perspective of Shannon's entropy function.
-\hl{ADD ANYTHING ELSE?}
-%\textbf{[NONONO]}. \hl{ There exists a one-to-one mapping between a natural parameter and its mean value 
-%parameter, and one can calculate mean value parameters from natural parameters. In 
-%general there is no simply way to get the natural parameter value from the mean value 
-%parameter (if there was, then finding MLEs would be very easy and we wouldn't need all 
-%these algorithms!).}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -126,25 +120,26 @@ where $A$ is a matrix and $b$ a vector.
 
 The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
 relative to its affine hull.  The concept is motivated by the idea that a triangle
-$\RR^3$ does have a natural interior which does not meet the definition of an interior
+in $\RR^3$ does have a natural interior which does not meet the definition of an interior
 since no three-dimensional ball will lie in that set.  The closure of a set $C$, denoted $\cl C$, is equal to
 \begin{align*}
 	\cl C = \bigcap \{C + \epsilon B \mid \epsilon > 0 \}
 \end{align*}
-where $B$ is a Euclidean ball \citep{Rockafellar:1970}.  The \emph{relative boundary} of a set $C$, denoted $\rbd C$, is the set difference $\cl C \setminus \rint C$.
+where $B$ is a Euclidean ball \citep[Chapter 1]{Rockafellar:1970}.  The \emph{relative boundary} of a set $C$, denoted $\rbd C$, is the set difference $\cl C \setminus \rint C$.
 
-A nonempty \emph{face} of a convex polytope $C$ is a convex subset of $C$ such that 
+A nonempty \emph{face} $F$ of a convex polytope $C$ is a convex subset of $C$ such that 
 every line segment in $C$ with a relative interior point in $F$ has 
 both end points in $F$ \citep{Rockafellar:1970}.  It is itself a convex polytope.
 A \emph{proper} face is a face that is not the empty set or $C$, and 
 \emph{facets} are proper faces of the highest dimension.
 
-For a polyhedral convex $C$, every face is \emph{exposed} (SEE \citep{Rockafellar:1970}), meaning there exists a vector $\delta$ such that
+For a polyhedral convex $C$, every face $F$ is \emph{exposed} \citep{Rockafellar:1970}, 
+meaning there exists a vector $\delta$ such that
 \begin{align*}
-	F = \{ x \in C: \inner{x, \delta} = \sup_{y in C} \inner{y,\delta}  \}
+	F = \{ x \in C: \inner{x, \delta} = \sup_{y \in C} \inner{y,\delta}  \}
 \end{align*}
-For smooth convex sets like the convex hull of a torus, do not have every face
-exposed.  IMPLICATIONS TO THEOREM 2.8.
+Smooth convex sets like the convex hull of a torus, do not have every face
+exposed.  
 
 
 The \emph{tangent cone} of a polyhedral convex set $C$ at a point $x \in C$ is
@@ -176,12 +171,12 @@ and the tangent cone at $x$ in terms of the normal cone at $x$ by
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{MLE existence in exponential families}
-We now present two equivalent approaches to determine the existence of an MLE
+We now present two equivalent approaches to determining the existence of an MLE
 in the conventional sense.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Approach of \citet{Barndorff}}
-The well-known condition for the existence of the MLE \citep{Barndorff, Brown:1986} 
+The well-known condition for the existence of the MLE 
 relates the relative location of the observed statistic to the boundaries of 
 the convex support and is formally stated as follows:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,13 +186,14 @@ $g(\yobs) \in \rint(C)$ and is unique if and only if $\intr(C)$ is nonempty, whi
 happens if and only if $\rint(C) = \intr(C)$. 
 \end{theorem}
 
-While the above theorem is concise, we note that in order to apply this result, the geometry of $C$ must be fully known in order for it to be useful.
+While the above theorem is concise, we note that in order to apply this result, 
+the geometry of $C$ must be fully known in order for it to be useful.
 
 \subsection{Approach of \citet{Geyer:gdor}}
 \citet{Geyer:1990,Geyer:gdor} related MLE existence to
  not only the boundary of the convex support, but also to behavior of the log likelihood function along certain directions.
 
-We retrace the blocks leading to this result, and present simpler proofs where possible:
+We retrace the steps leading to this result, and present simpler proofs where possible:
 \begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]\label{Thm:e_c}
 For a full exponential family with
 \begin{itemize}
@@ -360,7 +356,7 @@ Any vector $\delta$ that satisfies any of the conditions above is called a
 \emph{direction of recession} of the log likelihood.  Every direction of constancy
 is a direction of recession.
 
-\citeauthor{Geyer:gdor} uses Corollary 2.4.1 in \citep{Geyer:1990} to prove the 
+\citeauthor{Geyer:gdor} uses Corollary 2.4.1 in \citet{Geyer:1990} to prove the 
 equivalence of conditions 1 and 2 of Theorem~\ref{Thm:DOR}.  Here we present
 a more accessible proof without the use of this corollary.  It is the equivalence
 of these two conditions the relates the behavior of the log likelihood function
@@ -440,12 +436,12 @@ following are equivalent
 \end{theorem}
 \begin{proof}
 The equivalence of 1 -- 4 are shown in \citep{Geyer:gdor}.  We have added condition 5 above
-and show the equivalency of this condition to condition 4.  By Theorem~6.4 in \citep{Rockafellar:1970}, the point $g(\yobs) \in C$ if and only if $v \in T_C(g(\yobs))$ implies
-$-v \in T_C(g(\yobs))$.  But by Proposition 3.8 in \citep{Rockafellar}, the latter condition
-on  $T_C(g(\yobs))$ is necessary and sufficient for  $T_C(g(\yobs))$ to be a vector subspace.
+and show the equivalency of this condition to condition 4.  By Theorem~6.4 in 
+\citet{Rockafellar:1970}, the point $g(\yobs) \in C$ if and only if 
+$v \in T_C(g(\yobs))$ implies $-v \in T_C(g(\yobs))$.  But by Proposition 3.8 in 
+\citet{Rockafellar}, the latter condition on  $T_C(g(\yobs))$ is necessary and sufficient 
+for  $T_C(g(\yobs))$ to be a vector subspace.
 \end{proof}
-With the addition of Condition 5 to Theorem~4 of \citep{Geyer:gdor}, we now have the 
-tied this approach to the one previously described of \citep{Barndorff} in Theorem~\ref{Thm:MLE rint}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
@@ -456,28 +452,25 @@ increasing on the interval where it is finite.
 \end{corollary}
 %%%%%%%%%%%%%%%%%%%%%
 
-This corollary is implied by Theorems \ref{Thm:DOC} and \ref{Thm:DOR}; if
-$\delta$ is a direction of recession that is not a direction of constancy, 
-then $\ell(\eta+s\delta)$ is nondecreasing with respect to $s$ by 
-Theorem \ref{Thm:DOR} but cannot be constant by Theorem \ref{Thm:DOC}.  Therefore,
-it must be strictly increasing.
+%This corollary is implied by Theorems \ref{Thm:DOC} and \ref{Thm:DOR}; if
+%$\delta$ is a direction of recession that is not a direction of constancy, 
+%then $\ell(\eta+s\delta)$ is nondecreasing with respect to $s$ by 
+%Theorem \ref{Thm:DOR} but cannot be constant by Theorem \ref{Thm:DOC}.  Therefore,
+%it must be strictly increasing.
 
+%Theorem~\ref{Thm:MLE rint} relates the non-existence of the MLE to the location
+%of $g(\yobs)$ relative to the boundary of $C$.  
+With the addition of Condition 5 in Theorem~\ref{Thm:MLE existence}, we have now  
+tied this approach to the one previously described of \citet{Barndorff} in 
+Theorem~\ref{Thm:MLE rint}.  
 The MLE does not exist in the conventional sense if there exists a vector 
 $\delta$ that is a direction of recession but not a direction of constancy.  
-If in addition $\delta \in \rint N_C(g(\yobs))$, then $\delta$ is called a 
-\emph{generic direction of recession} (GDOR).  \hl{Normal cones are convex sets and
-relative interiors of nonempty convex sets are nonempty.}  Thus 
-a GDOR exists if and only if the MLE does not exist.
+According to Corollary~\ref{Cor:strictly increasing}, this is very intuitive:
+it means the log likelihood is always increasing in that direction.  
+Theorem~\ref{Thm:MLE existence} relates this
+precisely to the setting where $g(\yobs)$ is on the relative boundary of
+the convex support.
 
-Theorem~\ref{Thm:MLE rint} relates the non-existence of the MLE to the location
-of $g(\yobs)$ relative to the boundary of $C$.  
-Here in the approach of \citet{Geyer:gdor}, Theorems \ref{Thm:DOC}, 
-\ref{Thm:DOR}, \ref{Thm:MLE existence}, and Corollary~\ref{Cor:strictly increasing} relate the non-existence of the MLE
-to a strictly increasing log likelihood function.  This in turn
-occurs when $g(\yobs)$ is such that $\inner{w - g(\yobs), \delta} \leq 0$ for all
-$w \in T_C(g(\yobs))$.  This is
-exactly the criteria that puts $g(\yobs)$ on the boundary of the convex support,
-thus agreeing with Theorem~\ref{Thm:MLE rint}.
 
 
 
@@ -488,7 +481,8 @@ thus agreeing with Theorem~\ref{Thm:MLE rint}.
 When the MLE does not exist for an exponential family in the conventional sense, there 
 exists a direction of recession that is not a direction of constancy 
 along which the log likelihood is strictly increasing.  The behavior of the 
-density function of the distribution is described in the following theorem:
+density function of the distribution along such a direction 
+is described in the following theorem:
 
 \begin{theorem}[Theorem 6 from \citet{Geyer:gdor}] \label{Thm:LCM}
 For a full exponential family with the setting of Theorem~\ref{Thm:DOC}, and 
@@ -598,7 +592,7 @@ Theorem~\ref{Thm:DOR}(2) and thus the $+\infty$ case need not be considered.
 The right-hand side of \eqref{E:LCM} can be viewed as a conditional density of a 
 distribution with parameter $\eta$ given $g(Y) \in H$, and expressed as $f_{\eta}
 (\, \cdot\,  \mid g(y) \in H)$.  This is because the numerator
-is in fact a joint density, which can be reasoned as follows.
+is in fact a joint density, which can be reasoned as follows:
 
 Let $W = I(g(Y) \in H)$, which has density 
 \begin{align*}
@@ -648,7 +642,7 @@ statistic $g(\yobs)$ as the original exponential family,
 and is called the \emph{limiting conditional model} (LCM) \citep{Geyer:gdor}.  
 The cumulant function is different but is always finite since it only 
 involves a summation over a finite number of terms.  The parameter space for 
-$f_\eta( \fatdot \mid g(y) \in H)$, $\eta \in \Xi$ is still the 
+$f_\eta( \fatdot \mid g(y) \in H)$ is still the 
 whole Euclidean space, as in the original family.  
 %\begin{align*}
 %\{ f_{\eta}(\, \cdot\,  \mid g(Y) \in H) \text{ for }  \eta + \gamma: \eta \in \Xi \text
@@ -661,6 +655,10 @@ we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 \begin{align*}
 \lim_{s \to \infty} f_{\eta+s\delta}(y) = f_{\eta}( y \mid g(y) \in H).
 \end{align*}
+The last part of Theorem~\ref{Thm:LCM} says that for the sequence of distributions with parameter 
+value $\eta+s\delta$, the probability of $g(Y)$ occurring on the hyperplane $H$ is strictly 
+increasing, going to 1.  We may think of this as 
+``probability accumulating on the boundary."
 
 We can express the log likelihood of the LCM as a function of the 
 log likelihood of the original family,
@@ -671,16 +669,21 @@ implying
 \begin{align*}
 	\ell(\eta) < \ell_{LCM}(\eta).	
 \end{align*}
-The inequality above is strict since the log likelihood is strictly increasing
-when $\delta$ is a GDOR by Corollary~\ref{Cor:strictly increasing}
-and so $P_\eta(g(Y) \in H)$ cannot be equal to 1.
+The inequality above is strict: by Corollary~\ref{Cor:strictly increasing}, the 
+log likelihood is strictly increasing on the entire interval on which it is finite
+and hence $P_\eta(g(Y) \in H)$ cannot equal 1.
 Thus even though the MLE does not exist for the original family, its log likelihood
 $\ell(\eta)$ is bounded by the LCM log likelihood and the function increases strictly
 towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
 
-
-
-
+We now define a special kind of direction of recession called a 
+\emph{generic direction of recession} (GDOR) that facilitates finding the 
+LCM for which the MLE exists.
+The vector $\delta$ is a GDOR if in addition to being a direction of recession,  
+$\delta \in \rint N_C(g(\yobs))$ and $N_C(g(\yobs))$ is not a vector subspace.
+Since normal cones are convex sets and relative interiors of nonempty convex sets 
+are nonempty, by Theorem~\ref{Thm:MLE existence},
+a GDOR exists if and only if the MLE does not exist.
 
 The following theorems and corollaries provide us with some foundation for
 finding both a GDOR and then the MLE in the LCM.
@@ -702,17 +705,17 @@ only if
 \end{align*}
 \end{theorem}
 It is not immediately obvious why defining $L$ in such a manner is helpful; in fact,
-the motivation is rooted in linear programming.  We rely on this theorem heavily in 
+the motivation is rooted in linear programming.  We explain the use of this theorem in 
 Chapter~\ref{Chapter:Linear programming}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 8 from \citet{Geyer:gdor}]
-Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, a GDOR is not a direction of constancy.
+Under the assumptions of Theorem~\ref{Thm:L-GDOR}, a GDOR is not a direction of constancy.
 \end{corollary}
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 9 from \citet{Geyer:gdor}] \label{Cor:spanL}
-Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDOR.  Then
+Under the assumptions of Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDOR.  Then
 \begin{align*}
 	T_{C \cap H} (g(\yobs)) &= \spanl L \\
 	C \cap H &= C \cap (g(\yobs) + \spanl L ). \\
@@ -720,7 +723,7 @@ Under the assumptions of the Theorem~\ref{Thm:L-GDOR}, suppose $\delta$ is a GDO
 \end{corollary}
 
 The following theorem shows that $C \cap H$ defines the support of the LCM 
-in the finite state space setting that is of interest to us.  
+in the \emph{finite} state space setting that is of interest to us.  
 %%%%%%%%%%%%%%%%%%%%%
 \begin{theorem} \label{Thm:C-H}
 For a full exponential family having finite polyhedral convex support $C$ and observed value 
@@ -758,7 +761,7 @@ If a point $x \in C$, it is a convex combination of a finite set points in $S$,
 \end{align*}
 where $\alpha_i \geq 0$, $\sum_i \alpha_i = 1$, and $w_i \in S$.
 
-We claim for any $x \in C \cap H$, the coefficients of the $w_i$ not in $S \cap H$ must all be zero.  Suppose to get a contradiction that for an $x \in S \cap H$, there exist $\alpha_j > 0$ for $w_j \notin S \cap H$ for $j \in J$.  Then
+We claim for any $x \in C \cap H$, the coefficients of the $w_i$ not in $S \cap H$ must all be zero.  Suppose to get a contradiction that for an $x \in S \cap H$, there exist $\alpha_j > 0$ for $w_j \notin S \cap H$ for $j \in J$.  Then 
 \begin{align*}
 	\inner{x - g(\yobs), \delta } &= \left \inner{ \sum_i \alpha_i w_i - g(\yobs), \delta \right } \\
 	&= \left \inner{ \sum_i \alpha_i \left( w_i - g(\yobs) \right), \delta \right }\\
@@ -787,64 +790,34 @@ $g(\yobs) \in \rint (C \cap H$).  Finally, by Theorem~\ref{Thm:MLE existence},
 the MLE for this model must then exist.
 \end{proof}
 
-When we find the MLE in the LCM, we say we have found an MLE in the Barndorff-Nielsen completion of the original family.
-
-The last part of Theorem~\ref{Thm:LCM} says that for the sequence of distributions with parameter 
-value $\eta+s\delta$, the probability of $g(Y)$ occurring on the hyperplane $H$ is strictly 
-increasing, going to 1.  We may think of this as 
-``probability accumulating on the boundary"---where by boundary 
-we  actually mean the face $C \cap H$ on which $g(\yobs)$ sits in the relative interior.
-%\hl{Thus} the MLE for the LCM maximizes the likelihood in \hl{the family} that is the 
-%union of the LCM and the original family.  
-\hl{DEFINE $\Gammalim$.}
-
-From a practical perspective, Theorem~\ref{Thm:LCM} tells us that when 
-$\delta$ is a GDOR, $\etaLCM$ is the MLE of the LCM, and $\gamma \in \Gammalim$, then
-\begin{align*}
-	\lim_{s \to +\infty} \ell(\etaLCM + \gamma + s\delta) = \sup_{\RR^d} \ell(\eta).
-\end{align*}
-
-When no GDOR exists and thus the MLE exists in the conventional sense, then the 
-original family is the LCM, corresponding to $\delta=0$ in Theorem~\ref{Thm:LCM}.
+When we find the MLE in the LCM, $\etaLCM$, we say we have found an MLE in the Barndorff-Nielsen completion of the original family.  This LCM MLE maximizes the likelihood in 
+the family that is the union of the LCM family and the original family.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Summary}
-%By the well-known theorem of MLE existence for exponential families (Theorem~\ref{Thm:MLE rint}), when the observed statistic, $g(\yobs)$, is 
-%on the boundary of the convex support $C$, the MLE does not exist in the conventional 
-%sense.
-%Here, we have expressed this result with more detail: by Theorem~\ref{Thm:MLE existence}, there must exist a GDOR.
-%
-%According to Theorem~\ref{Thm:LCM}, as we move in the natural parameter space in the 
-%direction of a GDOR, the distribution with this parameter value will 
-%put increasing probability on points for  
-%on the face $H \cap C$ on which $g(\yobs)$ lies in the interior of.  
-%This face is orthogonal to $\delta
-%$ by construction.  Samples generated 
-%from these models will therefore increasingly fall on the face on which $g(\yobs)$ 
-%lies as $\eta$ increases in the direction of $\delta$.  Eventually, all generated sample points will fall on this boundary.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{One-sided confidence interval}
-
-Consider the probability distributions defined with log likelihood $\ell( \eta + s 
-\delta)$ as defined 
-by \eqref{E:loglike}, where $s$ is a real scalar, $\delta$ is a GDOR and 
-we have found $\etaLCM$, the MLE in the LCM, and $\gamma \in \Gammalim$
-(and hence $\etaLCM + \gamma$ also indexes the same LCM MLE distribution).  Then 
-as $s$ goes from $-\infty$ to $+\infty$, the probability of observing $g(Y) \in H$ 
-goes from zero to one in a strictly increasing manner, per Theorem~\ref{Thm:LCM}.  Thus we can find the unique $s$, call it $\hat{s}$, that makes 
-this probability 0.05.  That is, we find the unique $s$ such that
+\section{One-sided confidence interval} \label{S:CI}
+Theorem~\ref{Thm:LCM} and Corollary~\ref{Cor:LCM MLE exists} 
+tells us that when $\ell(\fatdot)$ is the log likelihood for the original model,
+$s$ is a scalar, and $\delta$ a GDOR, then
 \begin{align*}
-	P_{\etaLCM + \gamma + s\delta}\left (g(Y) \in H \right ) = \alpha.
+	\lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\RR^d} \ell(\eta).
 \end{align*}
-Then $[\hat{s}, +\infty)$ is a 95\% confidence interval for 
-the scalar parameter 
-$s$, and, in turn, $[\etaLCM + \gamma + \hat{s}\delta, +\infty)$ gives 
-a 95\% confidence interval for the parameter $\etaLCM + s \delta$.
+The MLE for the original model, which we may think of as ``off to infinity", has
+more structure in this context---it is $\etaLCM$ sent to infinity in direction $\delta$.
 
-\subsection{Confidence interval for mean value parameterization}
-The confidence intervals calculated for the natural parameters can of 
-course be converted to those for mean value parameters, where the observed
-data, and hence MLE, are known.  
+We may be interested in knowing how close the natural parameter $\eta$ is to infinity.
+As $s$ goes from $-\infty$ to $+\infty$, the probability of observing $g(\yobs)$
+goes from zero to one in a strictly increasing manner.  This event of observing
+$g(\yobs)$ corresponds exactly to the event $g(Y) \in H$, and thus we look to find the
+unique $s$, call it $\hat{s}$, that makes this probability $\alpha$.  
+That is, we find the unique $s$ such that
+\begin{align*}
+	P_{\etaLCM + s\delta}\left (g(Y) \in H \right ) = \alpha.
+\end{align*}
+Then $[\hat{s}, +\infty)$ is a $1-\alpha$ confidence interval for the scalar parameter 
+$s$, and, in turn, $[\etaLCM + \hat{s}\delta, +\infty)$ gives 
+a $1-\alpha$ confidence region then for the parameter $\etaLCM + s \delta$, which we can
+think of as a confidence region for how close the natural parameter is to infinity.
+Note that when $\eta$ is multi-dimensional, these are non-simultaneous 
+multiple confidence intervals.
+
 
