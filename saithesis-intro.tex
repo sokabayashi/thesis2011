@@ -18,7 +18,7 @@ monks in a monastery in New England in the late 1960s \citep{Sampson} is depicte
 Figure~\ref{F:Sampson}.  In such settings, a social scientist is often interested in 
 understanding whether relations arise out of friendliness or a strategy for alliance 
 building, that is, driven by actor-specific attributes or by the structure of  the relations themselves.
-\begin{figure}
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=4.5in]{florentine} %,keepaspectratio
 \end{center}
@@ -30,7 +30,7 @@ R.}
 \label{F:Florentine}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=4.5in]{samplike}
 \end{center}
@@ -135,7 +135,7 @@ Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the
 \citet*{Shen-Orr} based on the RegulonDB data of \citet*{Salgado} and modeled with 
 ERGMs by \citet*{Saul:2007,Hummel}.
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=4.5in]{ecoli}
 \end{center}
@@ -573,11 +573,11 @@ platform now overwhelmingly use MLE methods, using MPLEs only as starting points
 Newton-Raphson is one of the most commonly used root-finding algorithms
 in optimization, attractive
 for its speed.  It relies on iterated updates of a root 
-function, which here is the gradient function of the log likelihood, $\nabla \ell(\eta)$.  
+function, which in our setting is the gradient of the log likelihood, $\nabla \ell(\eta)$.  
 The algorithm also requires the Hessian matrix $\nabla^2 \ell(\eta)$ and has updates 
 of the following form:
 \begin{align}
-	\eta_{k+1} = \eta_k - \left[ \nabla^2 \ell(\eta_k) \right ]^{-1} \nabla \ell(\eta_k) 	
+	\eta_{k+1} = \eta_k - \left[ \nabla^2 \ell(\eta_k) \right ]^{-1} \nabla \ell(\eta_k).
 \end{align}
 This of course requires a positive definite matrix for $\nabla^2 \ell(\eta_k)$, which
 may not always be available.  Most problematic is that the algorithm is not guaranteed to 
@@ -586,8 +586,8 @@ when Newton-Raphson does converge, it converges extremely fast,
 where the number of accurate digits roughly doubles at each step.
 
 We use a stochastic version of Newton-Raphson in Section~\ref{S:Example:Ising} where we wish
-to calculate the MLE and can start the algorithm from the known true parameter value.
-We use MCMC methods to approximate both $\nabla \ell(\eta)$ and $\nabla^2 \ell(\eta)$ 
+to calculate the MLE and are able to start the algorithm from the known true parameter value.
+Both $\nabla \ell(\eta)$ and $\nabla^2 \ell(\eta)$ are approximated using MCMC 
 in the manner of \citep{Penttinen:1984}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Markov chain Monte Carlo maximum likelihood} \label{S:MCMC-MLE}
@@ -707,21 +707,21 @@ arrive at the MLE of $-0.907$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \subsection{Steplength MCMC-MLE} \label{S:Hummel}
 \citet{Hummel} look to improve the range for which iterated MCMC-MLE will converge by
-allowing for reasonable steps in $\eta_k$ after each sample.  As noted in the 
+allowing for larger steps in $\eta_k$ after each sample.  As noted in the 
 simple example with 
-Sampson's monastery data in Section~\ref{S:MCMC-MLE}, MCMC-MLE approach can only work 
+Sampson's monastery data in Section~\ref{S:MCMC-MLE}, MCMC-MLE can only work 
 if $g(\yobs)$ is inside the range of MCMC samples.  
 \citeauthor{Hummel}'s approach involves 
 replacing $g(\yobs)$ with a value $\hat{\xi}_1$ close to $g(\yobs)$ but within
-the range of the current model's MCMC samples
+the range of the current model's MCMC samples,
 and then applying MCMC-MLE to update $\eta_0$.  This allows MCMC-MLE to have
 a maximizer, with the update $\eta_1$ closer to $\etaMLE$.
 
-The approach is effective for the Sampson's monastery example discussed, and was also applied
-to E. Coli transcriptional regulation network data of \citet{Shen-Orr} when 
+The approach is effective for Sampson's monastery example discussed, and was also applied
+to the E. Coli transcriptional regulation network data of \citet{Shen-Orr} when 
 starting from the MPLE.  Care is needed in finding a $\hat{\xi}_1$ that is inside
-the range of the current model, and if $\eta_0$ is very far from $\etaMLE$, it is 
-not clear if the steps taken by this approach will be large enough to traverse
+the range of the current model. In addition, if $\eta_0$ is very far from $\etaMLE$, it is 
+not clear that the steps taken by this approach will be large enough to traverse
 the distance between $\eta_0$ and $\etaMLE$ in any reasonable amount of time.
 
 
@@ -808,7 +808,8 @@ All methods assume that the MLE exists before the search algorithm is applied.
 
 \begin{table}[h] 
 \caption[Comparison of exact parameter estimation methods]{Comparison of exact parameter estimation methods. MPLE=Maximum pseudolikelihood estimator, Newton=Newton-Raphson,
-SA=stochastic approximation.}
+SA=stochastic approximation.\\}
+
 \begin{tabular}{|c|l|l|}
 \hline 
 Method & Appeal & Drawbacks \\ [1ex]
@@ -834,7 +835,10 @@ Method & Appeal & Drawbacks \\ [1ex]
 
 \begin{table}[h] 
 \caption[Comparison of MCMC parameter estimation methods]{Comparison of MCMC parameter estimation methods. MCMC Newton=MCMC Newton-Raphson,
-MCMC-MLE=Markov chain Monte Carlo-maximum likelihood estimator, MCMC SA=stochastic approximation.}
+MCMC-MLE=Markov chain Monte Carlo-maximum likelihood estimator, 
+step MCMC-MLE=steplength MCMC-MLE,
+MCMC SA=stochastic approximation.\\}
+
 \begin{tabular}{|c|l|l|}
 \hline 
 Method & Appeal & Drawbacks \\ [1ex]
@@ -847,13 +851,18 @@ Method & Appeal & Drawbacks \\ [1ex]
 \hline
 \multirow{3}{0.5in}{MCMC-MLE}
 & 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Highly sensitive to starting point \\ 
-& 	converge to MLE if it exists 					& \textbullet \, May require enormous MC sample sizes\\ 
-&				& \textbullet \, May require several iterations of algorithm\\ [1ex]
+& 	converge to MLE 					& \textbullet \, May require enormous MC sample sizes\\ 
+&				& \textbullet \, May require several iterations\\ [1ex]
+\hline
+\multirow{3}{0.5in}{step MCMC-MLE}
+& 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Sensitive to starting point \\ 
+& 	converge to MLE 					& \textbullet \, May require setup expertise\\ 
+& \textbullet \, Increased range 		& \textbullet \, May require several iterations\\ [1ex]
 \hline
 \multirow{3}{0.5in}{MCMC SA} 		
 & 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Sensitive to starting point \\
-& 	converge to MLE under & \\
-& 	certain conditions.  & \\[1ex]
+& 	converge to MLE, though & \\
+& 	under restrictive conditions.  & \\[1ex]
 \hline 
 \end{tabular} 
 \label{T:Compare MCMCestimation}
@@ -941,7 +950,7 @@ polyhedral convex support of the model;
 the convex support for the 9-node ERGM with a two-dimensional network statistic of
 edges and triangles
 studied by \citeauthor{Rinaldo:2009} is depicted in Figure~\ref{F:g9-hull}.
-\citeauthor{Rinaldo:2009} show that the normal cones of this support
+\citeauthor{Rinaldo:2009} showed that the normal cones of this support
 explain which portions of the natural parameter space are more likely to correspond to 
 degenerate and nearly degenerate models, where $\E_\eta(g(Y))$ is nearly 
 on the boundary of the convex support.  Some of the perceived pathologies then, 
@@ -949,9 +958,8 @@ are explained by exponential family theory.
 
 It is possible for a well-fit model to poorly describe or ``resemble" the observed data 
 \citep{ergm}.
-This is almost certainly a result of a poorly specified model---ERGMs give one tremendous
-flexibility in specifying a model but with no guarantees that a model will behave exactly as 
-desired.  \citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
+This is not an issue with the parameter estimation method; instead, it is a result of a poorly specified model---ERGMs give tremendous
+flexibility model specification but with no guarantees that a model will behave exactly as desired.  \citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
 Their tools, available in the \texttt{statnet} package, compare characteristics of 
 the distribution of networks simulated from the fitted model to the observed data.
 These can be utilized to help choose between network statistics to include in a 
@@ -1123,6 +1131,8 @@ Euclidean norm function, and $\epsilon$
 a small value greater than 0.  \\
 
 % ALGORITHM 
+{\singlespacing 
+{\small  
 \noindent Get an initial value, $\eta_0$.\\ 
 Set $k=0$. \\
 Calculate $\nabla \ell( \eta_k)$, the direction of steepest ascent. \\
@@ -1145,7 +1155,7 @@ $\eta_{k+1} = \eta_k + \alpha_k p_k$.\\
 direction. \\
 \indent $k = k + 1$.  \\
 \textbf{end while}\\
-
+}}
 The exit condition from this algorithm is that $\lVert \nabla \ell( \eta_k) \rVert$
 is close to zero.  As noted earlier, the log likelihood $\ell(\fatdot)$ is a strictly
 concave function; when the global maximum $\etaMLE$ exists, $\lVert \nabla \ell( \etaMLE) \rVert = 0$.  

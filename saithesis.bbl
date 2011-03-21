@@ -1,4 +1,4 @@
-\begin{thebibliography}{87}
+\begin{thebibliography}{88}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -160,6 +160,13 @@
 \newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
   \textbf{54} 657--699.
 
+\bibitem[{Geyer and Thompson(1995)}]{Geyer:1995}
+\textsc{Geyer, C.~J.} and \textsc{Thompson, E.~A.} (1995).
+\newblock Annealing {M}arkov chain {M}onte {C}arlo with applications to
+  ancestral inference.
+\newblock \textit{Journal of the American Statistical Association}, \textbf{90}
+  909--920.
+
 \bibitem[{Gilbert(1959)}]{Gilbert}
 \textsc{Gilbert, E.~N.} (1959).
 \newblock Random graphs.
@@ -205,6 +212,16 @@
 \newblock Assessing degeneracy in statistical models of social networks.
 \newblock Working Paper~39, University of Washington, Seattle.
 
+\bibitem[{Handcock et~al.(2010)Handcock, Hunter, Butts, Goodreau,  and
+  Morris}]{ergm:R}
+\textsc{Handcock, M.~S.}, \textsc{Hunter, D.~R.}, \textsc{Butts, C.~T.},
+  \textsc{Goodreau, P.~N., Steven M.~Krivitsky},  and \textsc{Morris, M.}
+  (2010).
+\newblock \texttt{ergm}: A package to fit, simulate, and diagnose
+  exponentail-family models for networks.
+\newblock Version 2.2-7. Project home page at {http://statnetproject.org},
+  \urlprefix\url{http://CRAN.R-project.org/package=ergm}.
+
 \bibitem[{Handcock et~al.(2003)Handcock, Hunter, Butts, Goodreau and
   Morris}]{statnet:R}
 \textsc{Handcock, M.~S.}, \textsc{Hunter, D.~R.}, \textsc{Butts, C.~T.},
@@ -213,15 +230,6 @@
   network data.
 \newblock Version 2.0. Project home page at {http://statnetproject.org},
   \urlprefix\url{http://CRAN.R-project.org/package=statnet}.
-
-\bibitem[{Handcock et~al.(2010)Handcock, Hunter, Butts, Goodreau and
-  Morris}]{ergm:R}
-\textsc{Handcock, M.~S.}, \textsc{Hunter, D.~R.}, \textsc{Butts, C.~T.},
-  \textsc{Goodreau, S.~M.} and \textsc{Morris, M.} (2010).
-\newblock \texttt{ergm}: A package to fit, simulate, and diagnose
-  exponentail-family models for networks.
-\newblock Version 2.2-4. Project home page at {http://statnetproject.org},
-  \urlprefix\url{http://CRAN.R-project.org/package=ergm}.
 
 \bibitem[{Holland and Leinhardt(1981)}]{Holland:1981}
 \textsc{Holland, P.~W.} and \textsc{Leinhardt, S.} (1981).

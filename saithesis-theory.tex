@@ -17,9 +17,11 @@ plant ecology \citep{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1
 {Shaw:2008}.
 
 Although motivated by ERGMs, the methods we propose are rooted in fundamental
-exponential family theory and applicable to any finite state space 
+exponential family theory and applicable to any 
 exponential family model.  Thus the theory presented in this section is from
-the perspective of this more general setting.
+the perspective of this more general setting; in fact, only Theorem~\ref{C-H} and
+Corollaries~\ref{LCM MLE exists} and \ref{Cor:LCM mu-space} require 
+the additional assumption of a finite state space.
 
 \section{Exponential Family Theory}
 Much of the fundamental background for exponential families has already been
@@ -677,6 +679,7 @@ $\ell(\eta)$ is bounded by the LCM log likelihood and the function increases str
 towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
 
 Another consequence of Theorem~\ref{Thm:LCM} is in the mean parameter space:
+%%%%%%%%%%%%%%%
 \begin{corollary} \label{Cor:LCM mu-space}
 Under the setting of Theorem~\ref{Thm:LCM}, let $\delta$ be a direction of 
 recession that is not a direction of constancy and $\YY$ be a finite space.  Then

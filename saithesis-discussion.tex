@@ -1,9 +1,11 @@
-The goal of this dissertation is to present a generally applicable approaching
-to finding MLEs to discrete exponential families.
+The goal of this dissertation is to introduce a new practical approach
+for finding the MLE of a discrete exponential family when the MLE exists
+in the conventional sense,
+and calculating one-sided confidence intervals for the parameters when it does not.
 
-We have presented a simple line search algorithm for finding the MLE of a regular 
-exponential family when the MLE 
-exists.  The algorithm avoids the trial and error experimentation of tuning parameters 
+%We have presented a simple line search algorithm for finding the MLE of a regular 
+%exponential family when the MLE exists.  
+The algorithm avoids the trial and error experimentation of tuning parameters 
 and starting points commonly associated with optimization routines
 not invented by optimization specialists.  Our algorithm is modeled after algorithms 
 discussed in optimization textbooks \citep{Fletcher,NW,Sun:2006},
@@ -13,18 +15,22 @@ all of which are safeguarded to ensure rapid automatic convergence.
 %matrices that plague methods like Newton-Raphson.  The reliant on a curvature 
 %condition for step size makes it less 
 %sensitive to poor initial values that are problematic for MCMC-MLE and  SA in 
-practice.
+%practice.
 
-Convergence is guaranteed when the gradient can be calculated exactly.  Even when the 
+In the setting where the MLE exists, convergence is guaranteed when the gradient 
+can be calculated exactly.  Even when the 
 gradient cannot be calculated 
 exactly and is only estimable via MCMC, the algorithm is still useful in practice, as 
-demonstrated by the Ising model 
-example.  We have also described a way to construct and use confidence intervals to 
+demonstrated by the Ising model and Faux Magnolia High
+examples.  We have also described a way to construct and use confidence intervals to 
 make convergence highly probable.
 
+For the setting where the MLE does not exist, our approach uses MCMC sampling to
+both direct the search towards the face in which the observed statistic lies
+while exploring the geometry of the convex support.  
+We know of no other general approaches for dealing with the setting where
+the convex support is unknown in advance.
 
-\section{Areas for further development}
-\subsection{Step size search}
 The algorithm can be computationally demanding.  When the current iteration approaches 
 the solution, the 
 curvature condition for step size becomes more difficult to satisfy and the method may 
@@ -60,6 +66,7 @@ algorithm is well known (but
 we know of no literature about ``preconditioners'' for 
 maximum likelihood in exponential families).
 
+\section{Areas for further research}
 \subsection{Convergence}
 There are several outstanding issues.  Most notably, we have not showed convergence of 
 the algorithm when the gradient 
@@ -71,42 +78,37 @@ condition \eqref{E:Wolfe-ll} to the
 approach of \citet{Andrieu:2005} or \citet{Liang:2010} in MCMC stochastic 
 approximation.  
 
+\subsection{Step size search}
+As noted above as well as in Section~\ref{S:MCMC approx}, when the gradient must be approximated
+via MCMC, the curvature condition 
+\eqref{E:Wolfe-ll} becomes increasingly difficult to satisfy as the algorithm nears the
+solution.  One cause of this is that our approach requires two independent MCMC samples, one for
+the distribution at $\eta$, the other at $\eta + \alpha p$.  By using simulating tempering
+in the manner of \citep{Geyer:1995}, we might effective introduce a correlation between these
+samples.  Another approach might be to apply MCMC-MLE to this optimization problem itself.
+
 \subsection{Switch criteria}
-Another remaining issue is the stopping criteria: what value should be chosen for $
-\epsilon$ in the exit condition
-$\lVert  \nabla \ell( \eta_k ) \rVert < \epsilon$?  Because the value of $\lVert  
-\nabla \ell( \eta_k ) \rVert$ can only 
-be approximated via MCMC, one cannot be certain if this condition is actually 
-satisfied.  Here again, the switch to 
-another methodology may be appropriate, though at least in our Ising model example, 
-our use of 10,000 for the MCMC 
-sample size and 0.005 for $\epsilon$ were successful in obtaining a reasonable 
-parameter estimate. 
+Another remaining issue is the stopping or switching criteria: while our Ising model example
+in Section~\ref{S:Example:Ising} illustrated that it is in fact possible to get reasonable 
+parameter estimates only using our algorithm, we believe it will be more computationally
+efficient to switch to another algorithm like Newton-Raphson or MCMC-MLE.  
 
-Faux Magnolia example in Section~\ref{S:Example:FauxMagnolia}
-
-MCMC-MLE converges if and only if the importance weights $w_i$ 
-for each unique $Y_i$ in sample don't get out of line.
-\begin{align*}
-	w_i &= e^{\inner{g(Y_i) - g(\yobs), \theta_1 - \theta_0}}\\
-	\sum w_i &= 1\\
-\end{align*}
-
-
-Apply Geyer and Thompson step size search.
-
-Hypothesis testing, Rao test.
+But when?  
+The Faux Magnolia example in Section~\ref{S:Example:FauxMagnolia} showed that using 
+our algorithm for $2d$ steepest ascent updates was not enough (though it was adequate when
+ using conjugate gradient directions).
+As noted in Section~\ref{S:Combine} MCMC-MLE converges if and only 
+if the importance weights for the sample in \eqref{E:r_hat} are not too 
+``spread out."  Establishing criteria on these importance weights should make it 
+possible to switch to MCMC-MLE only when it can attain the MLE in one update.
 
 \subsection{Monte Carlo standard errors}
- A final remaining issue is estimation of Monte Carlo error of the estimates.  Here 
-too we recommend switching to another
-algorithm at the end.  The MCMC-MLE procedure gives accurate error estimates 
-\citep{Geyer:1994}.
-For very small steps these are essentially the same as the Monte Carlo error of a 
-single unsafeguarded Newton-Raphson step,
+ A final remaining issue is estimation of Monte Carlo error of the estimates.  
+ Here too we recommend switching to another
+algorithm at the end.  The MCMC-MLE procedure gives accurate error estimates \citep{Geyer:1994,Hunter:2006}.
+For very small steps these are essentially the same as the Monte Carlo error of a single unsafeguarded Newton-Raphson step,
 so the method in \citep{Geyer:1994} can be used for either.
 
-\section{non-existent MLE}
-ALSO.  simulated tempering for faster convergence.
 
-MLE.  What does it mean to ``find the MLE"?
+
+

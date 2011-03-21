@@ -197,7 +197,7 @@ comprising the number of entries with value one and the number of ``neighbor'' e
 with the same value.  Entries are 
 considered ``neighbors'' if they are adjacent to one another horizontally or 
 vertically (but not diagonally).  
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=4.5in,keepaspectratio]{potts}
 \end{center}
@@ -369,7 +369,7 @@ observed lattices, we find the empirical average for the $\eta[2]$ component to 
 standard error of 0.036.  The histogram for the $\eta[2]$ component of the MLE 
 is shown in Figure~\ref{F:ising-hist}. 
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=4.5in,keepaspectratio]{ising-hist}
 \end{center}
@@ -569,10 +569,12 @@ established---does much better, with
 \end{align*}
 From this value, MCMC-MLE is able to attain the MLE in one update.  In fact,
 our algorithm itself will not improve much from this point without increasing sample
-sizes.
+sizes.  The difference between $\eta_{10}$ and $\etaMLE$ is already quite small,
+ with $\sqrt{ \sum( \etaMLE - \eta_{10})^2} = 0.277$.
 
 Although safeguarded applications of other algorithms is an option, a better condition
-for switching is desirable.
+for switching is desirable.  An idea based on importance sampling weights was mentioned
+in Section~\ref{S:Combine}.
 
 \item MCMC sampler.  We have developed our algorithm assuming that it would have access
 to an effective MCMC sampler.  In this example, some tuning of the MCMC
@@ -733,7 +735,7 @@ the cloud of sample points will move towards
 the observed statistic and eventually engulf it.  
 When the value for $\eta$ is equal to the MLE, the mean of the MC sample points will 
 equal $(29,47)$(see Figure \ref{F:MC cloud} (bottom)).  
-\begin{figure}[!ht]
+\begin{figure}[h!]
 \centering
 %\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
 %\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-MLE}
@@ -811,7 +813,7 @@ at least, greatly reduce---the possibility of misidentifying a boundary.
 (We deal later with a case where 100\% of the MC sample points form a face which is 
 \emph{not} on the boundary of $C$.)  Eventually this threshold is met (as shown in 
 Figure~\ref{F:MC face} (bottom)).
-\begin{figure}[!ht]
+\begin{figure}[h!]
 \centering
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
@@ -969,7 +971,7 @@ It lies very close to the boundary, however, and from a mean value parameter
 perspective, this observed statistic 
 corresponds to a nearly degenerate distribution. The Shannon entropy function would show this 
 point to have extremely small entropy, corresponding to a model that puts most of its 
-probability on very few points.
+probability on very few points \citep{Rinaldo:2009}.
 
 The log likelihood for this model is extremely flat, causing some disagreement among 
 numerical optimization routines for MLE estimates, though log likelihood values 
@@ -1006,7 +1008,7 @@ MLE model only assigns a probability of 0.00045 to this point.
 So, the extreme point that is critical for fully determining the convex support 
 is assigned very low probability and may not appear in a MC sample of 10,000.
 
-\begin{figure}[!h]
+\begin{figure}[h!]
 \centering
 %%\includegraphics[height=2.4in,width=2.4in]{Figures/MCsample-problem}
 \includegraphics[height=4.5in,width=4.5in]{Figures/MCsample-fakeface}
@@ -1091,9 +1093,13 @@ Of course, there are practical issues: even if a researcher is interested in the
 MLE distribution, she may want the software to simply 
 return MLE values to keep around for later analysis.  Here, we are suggesting that the 
 analysis return LCM MLE values and an LCM model (perhaps in the form of a GDOR or
-convex support).  
-The researcher may understandably be confused, especially if she knew in 
-advance that the MLE was guaranteed to exist.  However, any probability calculations---and hence inference---would be nearly identical, though perhaps not ``out of the box".
+convex support).  The researcher may understandably be confused, especially if she knew in 
+advance that the MLE was guaranteed to exist.  
+To make matters yet more confusing, it is possible that the
+algorithm does produce the extreme point $(27,27)$ in a sample and finds the MLE
+in the original model.  Thus by randomness the researcher might get either conclusion.
+However, we emphasize again that
+any probability calculations---and hence inference---would be nearly identical, though perhaps not ``out of the box".
 
 It may be of interest to note that $\etaLCM$ and $\etaMLE$ index nearly identical 
 models in the LCM, with the difference due almost entirely to the lack of 
