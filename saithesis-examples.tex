@@ -373,7 +373,7 @@ is shown in Figure~\ref{F:ising-hist}.
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=4.5in,keepaspectratio]{ising-hist}
+\includegraphics[width=5in]{ising-hist}
 \end{center}
 \caption[Histogram of the $\eta$ component for 1000 MLEs for an Ising model on a $32 \times 32$ lattice with $\eta$ at phase transition value.]
 {Histogram of the $\eta[2]$ component for 1000 MLEs for 
@@ -460,9 +460,9 @@ Adolescent Health.  The data set, which \citeauthor{statnet-tutorial} refer to a
 Magnolia High School, is a model-based simulation from the original data set, where 
 the simulation is necessitated to maintain confidentiality.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
 \centering
-\includegraphics[width=5in]{Figures/fmh-gradesex}
+\includegraphics[width=6.5in]{Figures/fmh-gradesex}
 \caption[Faux Magnolia High friendship network without isolates, colored by grade]
 {Faux Magnolia High friendship network without isolates, colored by grade.  Boys
 are depicted by square nodes, girls by circles.  The data is made available in \texttt{ergm} \citep{ergm:R}.}
@@ -746,15 +746,14 @@ equal $(29,47)$ (see Figure \ref{F:MC cloud} (bottom)).
 \centering
 %\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
 %\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-MLE}
-\includegraphics[width=3.8in]{Figures/MCsample-far}
-\includegraphics[width=3.8in]{Figures/MCsample-MLE}
+\includegraphics[width=3.4in]{Figures/MCsample-far}
+\includegraphics[width=3.4in]{Figures/MCsample-MLE}
 \caption[Network statistics for 10,000 Monte Carlo samples when MLE exists]
 {Network statistics for 10,000 Monte Carlo samples generated from models 
-with $\eta$ set to $(0,0)$ (top) and the MLE $(-0.389, 0.418)$ 
-(bottom).  The observed data has network statistics of $(29,47)$, depicted by the 
-larger point with white outline.  When $\eta$ is the MLE, the observed statistic is 
-exactly the mean of the MC sample points generated from the model indexed with this parameter 
-value. }
+with $\eta= (0,0)$, top, and $\eta = \etaMLE = (-0.389, 0.418)$,
+bottom.  The observed network statistic is $(29,47)$, depicted by the 
+larger point.  When $\eta$ is the MLE, the observed statistic is 
+the mean of the MC sample points generated. }
 \label{F:MC cloud}
 % (-0.3890151, 0.4177752) % from trust
 \end{figure}
@@ -772,11 +771,11 @@ $g(\yobs) = (31,50)$ lies on the boundary of the convex support as depicted in
 Figure \ref{F:MC face}.  To be precise, the observed network statistic $(31,50)$ lies 
 on the interior of a line segment on the boundary of the convex support with 
 end points $(30,44)$ and $(32,56)$. 
-By Theorem~\ref{Thm:MLE existence}, it is clear that the MLE does not exist
+By Theorem~\ref{Thm:MLE existence}, the MLE does not exist
 in the conventional sense.
 
-Our algorithm begins as before, generating MC sample point clouds to explore the 
-space, as depicted in Figure \ref{F:MC face} (top).  Because the convex 
+Our algorithm begins as before, generating MC sample point clouds 
+from the distribution indexed by $\eta = (0,0)$.  Because the convex 
 support is not assumed to be known, 
 the algorithm cannot determine at the outset that the MLE does 
 not exist; rather, it can only generate more sample point clouds as it climbs the log 
@@ -814,8 +813,8 @@ the convex support $C$.
 
 In this example, the algorithm determines empirically that three points 
 from the MC sample---$(30,44)$, $(31,50)$, and $(32,56)$---lie on a 
-one-dimensional face, as depicted in Figure \ref{F:MC face} 
-(bottom).  If less than 60\% of the sample points land on this empirical face, the 
+one-dimensional face, as depicted in Figure \ref{F:MC face}.  
+If less than 60\% of the sample points land on this empirical face, the 
 algorithm continues to sample, trying to get a sample point cloud even closer to the 
 observed statistic.  We choose such a high proportion for a cutoff to eliminate---or 
 at least, greatly reduce---the possibility of misidentifying a boundary.
@@ -824,23 +823,24 @@ at least, greatly reduce---the possibility of misidentifying a boundary.
 can also be used as an effective search direction when it is not yet determined that 
 $F$ is a boundary of $C$.  If $F$ is in fact a boundary of $C$, then 
 by Theorem~\ref{Thm:LCM}, this threshold will be met.  A sample meeting this requirement 
-is depicted in Figure~\ref{F:MC face} (bottom). 
+is depicted in Figure~\ref{F:MC face}. 
 
 \begin{figure}[h!]
 \centering
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
-\includegraphics[width=3.7in]{Figures/MCsample-boundary}
-\includegraphics[width=3.7in]{Figures/MCsample-77face}
+%\includegraphics[width=3.5in]{Figures/MCsample-boundary}
+\includegraphics[width=5in]{Figures/MCsample-77face}
 \caption[Network statistics for 10,000 Monte Carlo samples when MLE does not exist]
 {Network statistics for 10,000 Monte Carlo samples when the MLE does not exist.  
-The observed network statistic is $(31,50)$, depicted by the larger point with white 
-outline, lying on the boundary of the convex support (top).
-In the bottom figure, the algorithm has identified a face defined by $(30,44)$, 
-$(31,50)$, and $(32,56)$, marked by triangles in the figure (the triangle for 
-$(31,50)$ is not visible since it is the observed statistic).  
-Here, 77\% of the MC sample points fall on these three points.  The 
-lighter colored polytope is the convex hull of all previously sampled points.
+The observed statistic, $(31,50)$, is the larger point on the boundary.
+A face has been identified,
+defined by $(30,44)$, $(31,50)$, and $(32,56)$ and marked 
+by triangles (the triangle for 
+$(31,50)$ is not visible since it is also the observed statistic).  
+Here, 77\% of the MC sample points fall on these three points.
+The lighter colored polytope is the convex hull of all previously 
+sampled points.
 }
 \label{F:MC face}
 \end{figure}
@@ -1026,17 +1026,18 @@ is assigned very low probability and may not appear in a MC sample of 10,000.
 \begin{figure}[h!]
 \centering
 %%\includegraphics[height=2.4in,width=2.4in]{Figures/MCsample-problem}
-\includegraphics[height=4.5in,width=4.5in]{Figures/MCsample-fakeface}
+\includegraphics[width=5in]{Figures/MCsample-fakeface}
 \caption[Network statistics for 10,000 Monte Carlo samples when the observed 
 statistic is very close to a boundary]
 {Network statistics for 10,000 Monte Carlo samples when the observed 
-statistic is very close to a boundary.  The observed statistic is $(21,4)$, 
-in the interior of the convex hull but 
-close to the boundary.  It is quite feasible to generate 10,000 MC 
-samples where all 10,000 points lie on a line segment that appear to be 
-a one-dimensional face, marked by the triangles in the figure above.  
+statistic is very close to a boundary.  The observed statistic is $(21,4)$.  Here, 
+all 10,000 samples fall on six points (marked by triangles) on a line segment 
+that appears to be on the boundary of the convex support.  However,
+all points except $(20,0)$ are in the interior.  The absence of the 
+extreme point $(27,27)$ in this sample---and all previous samples---leads
+to this misidentification.
 The lighter colored polytope is the convex hull of all previously 
-sampled points used to derive this empirical face.}
+sampled points.}
 \label{F:MC problem}
 \end{figure}
 

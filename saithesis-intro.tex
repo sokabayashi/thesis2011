@@ -20,19 +20,19 @@ understanding whether relations arise out of friendliness or a strategy for alli
 building, that is, driven by actor-specific attributes or by the structure of  the relations themselves.
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=4.5in]{florentine} %,keepaspectratio
+\includegraphics[width=5in]{florentine} %,keepaspectratio
 \end{center}
 \caption[\citeauthor{Padgett}'s \citeyearpar{Padgett} Florentine marriage network]{
 \citeauthor{Padgett}'s \citeyearpar{Padgett} Florentine marriage network.  \citeauthor{Padgett} recorded the marriage network among 16 Florentine families around 1430.  At the time, two factions, one revolving around the 
 Medicis and the other around the Strozzis, vied for political control of the city.   
 Data is available through and plotted using the \texttt{ergm} package \citep*{ergm:R} in 
-R.}
+R \citep*{R}.}
 \label{F:Florentine}
 \end{figure}
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=4.5in]{samplike}
+\includegraphics[width=5in]{samplike}
 \end{center}
 \caption[\citeauthor{Sampson}'s \citeyearpar{Sampson} monastery affinity network]
 {\citeauthor{Sampson}'s \citeyearpar{Sampson} monastery affinity network.  \citeauthor{Sampson} collected data to define a ``liking" network among 18 monks 
@@ -132,17 +132,16 @@ is often friendship or actor $A$
 but the relation can be any kind of relation such as a business transaction or the 
 Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the 
 \textit{Escherichia Coli} transcriptional regulation network among 423 operons of
-\citet*{Shen-Orr} based on the RegulonDB data of \citet*{Salgado} and modeled with 
-ERGMs by \citet*{Saul:2007,Hummel}.
+\citet*{Shen-Orr} based on the RegulonDB data of \citet*{Salgado}. These were 
+modeled with ERGMs by \citet*{Saul:2007} and later by \citet*{Hummel}.
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=4.5in]{ecoli}
+\includegraphics[width=5in]{ecoli}
 \end{center}
 \caption[\textit{E. coli} transcriptional regulation network of \citet{Shen-Orr}]{\textit{E. coli} transcriptional regulation network of \citet{Shen-Orr}.  Each node is an operon and a directed edge from one node to another indicates 
 that the first encodes the transcription factor that regulates the second.
-Data is available through and plotted using the \texttt{ergm} package \citep{ergm:R} in 
-R and further explored by \citet{Hummel}.}
+Data is available through and plotted using the \texttt{ergm} package \citep{ergm:R} in R.}
 \label{F:ecoli}
 \end{figure}
 
@@ -161,7 +160,7 @@ model can see past noise in the data to
 provide clarity of the underlying forces that shape the structure of an observed network
 \citep*{Goodreau:2009}.   
 
-In the context of epidemiology, a network modeling  
+In the context of epidemiology, a model for  
 a \emph{contact network}, which is a network of the potential disease-causing ties between individuals, may be useful in understanding the general mechanism by which an epidemic can spread.  This may in turn help formulate an intervention strategy \citep*{Welch:2011}.
 In computational biology, network models may be used to better understand the processes
 by which proteins interact \citep*{Goldenberg:2009}.  
@@ -274,7 +273,8 @@ here; in fact, there is essentially an unlimited number of potential network sta
 What is important is that these statistics can be transparently calculated for a 
 given network and the inclusion of them in $g(y)$, paired with their parameter 
 components in $\eta$, allows the model \eqref{E:ERGM} to calculate probabilities of 
-different global network outcomes $y$.  \citet*{ergm:userterms} describe how one can
+different global network outcomes $y$.  \citet*{ergm:userterms} 
+go so far as to provide an interface for one to
 customize and create her own network statistic of interest and model it in the 
 \texttt{ergm} package in R.
 
@@ -284,7 +284,8 @@ new network statistics with particular emphasis on the sensibleness of
 the distributions generated from the specified models.  
 These came about in response to the repeated discovery that poorly behaving models can
 result when a researcher only considers the scientific significance of network
-statistics and not their role in a statistical model.  To be fair, it is not 
+statistics before including them in a model.
+To be fair, it is not 
 at all obvious from their definitions which network structures might work poorly
 together in an ERGM.  A fairly complete description of these more recent network 
 statistics is in \citet*{Morris:2008}.  
@@ -311,8 +312,10 @@ should not be directly evaluated.  See Appendix~\ref{A:Triangle count}
 for our approach for counting simple network statistics in the 9-node network
 relying on numerous tricks in data representation and computation.
 
-\begin{table}[h] 
-\caption{Sample space size for networks with different number of actors.}
+\begin{table}[h!] 
+\caption{Sample space size for networks with different number of 
+actors.}
+
 \begin{tabular}{ccl} 
 \hline 
 Nodes & Possible Edges & Total Graphs \\ [1ex]
@@ -555,7 +558,7 @@ improved upon in a generalization
 called the \emph{composite likelihood} approach; this method is identical
 to pseudolikelihood except that the conditional distributions used to build the \emph{composite likelihood function}---analogous to the pseudolikelihood function \eqref{E:PL}---are for multiple dyads rather than a single dyad.
 %Nevertheless, researchers now avoid citing parameter estimates based on these approaches.
-However, \citet{Hummel} raised two additional issues with the pseudolikelihood approach, 
+\citet{Hummel} raised two additional issues with the pseudolikelihood approach, 
 which also apply to the composite likelihood approach. 
 The first is that this approach requires
 an actual network $\yobs$ from which to derive the MPLE, as opposed to a network
@@ -563,7 +566,7 @@ statistics $g(\yobs)$ which may be some vector of theoretical interest to
 which one would like to fit an ERGM.  Thus given a $g(\yobs)$, one would then
 need to take the extra step of finding a $\yobs$ that matches this vector of
 interest.  The second point is that there are several networks that
-yield the same $g(\yobs)$.  Because ERGMs depend directly on $g(\yobs)$ and not $\yobs$,
+yield the same $g(\yobs)$.  Because ERGMs depend only on $g(\yobs)$ and not $\yobs$,
 these will all yield the same MLE.  However, there is no guarantee that they will yield the same MPLE.
 Network software packages such as \texttt{statnet} \citep*{statnet:R} in the R 
 platform now overwhelmingly use MLE methods, using MPLEs only as starting points.
@@ -579,9 +582,8 @@ of the following form:
 \begin{align}
 	\eta_{k+1} = \eta_k - \left[ \nabla^2 \ell(\eta_k) \right ]^{-1} \nabla \ell(\eta_k).
 \end{align}
-This of course requires a positive definite matrix for $\nabla^2 \ell(\eta_k)$, which
-may not always be available.  Most problematic is that the algorithm is not guaranteed to 
-converge, which can occur when the initial $\eta_k$ is far from the solution.  However,
+The algorithm may fail to 
+converge, which typically occurs when the initial $\eta_k$ is far from the solution.  However,
 when Newton-Raphson does converge, it converges extremely fast, 
 where the number of accurate digits roughly doubles at each step.
 
@@ -680,13 +682,17 @@ This is a very high probability relative to the sparsity of relations in the obs
 set, which suggest a much smaller probability of tie formation of $88/306= 0.288$.  
 In fact, the probability of obtaining fewer than 88 ties for the $\eta=1$ model is nearly zero at $2.3 \times 10^{-59}$, calculated using a binomial distribution with $n=306$, $p =0.731$.  
 
-\begin{figure}[h]  
+\begin{figure}[h!]  
 \begin{center} 
-{\includegraphics[width=2.95in]{mcmc-mle1}}
-{\includegraphics[width=2.95in]{mcmc-mle-1}}
+%{\includegraphics[width=2.95in]{mcmc-mle1}}
+%{\includegraphics[width=2.95in]{mcmc-mle-1}}
+{\includegraphics[width=3.2in]{mcmc-mle1}}
+{\includegraphics[width=3.2in]{mcmc-mle-1}}
 \end{center} 
-\caption[Log likelihood ratio approximations for Sampson's monastery data set]{Log likelihood ratio approximations for Sampson's monastery data set.  Left: $\eta^0 = 1$, right: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
-approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  Data for plots are produced using code accompanying \citet{Hummel}.} 
+\caption[Log likelihood ratio approximations for Sampson's monastery data set]{Log likelihood ratio approximations for Sampson's monastery data set.  Top: $\eta^0 = 1$, Bottom: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
+approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  
+MLE is at $-0.9072$.
+Data for plots are produced using code accompanying \citet{Hummel}.} 
 \label{F:MCMC-MLE}
 \end{figure} 
 
@@ -695,10 +701,10 @@ likelihood ratio \eqref{E:r_hat}.  However, the first derivative of $\hat{r}(\et
 to $\eta$ shows that if the MCMC sampler is unable to generate any $g(Y)< g(\yobs)$, 
 the derivative of 
 \eqref{E:r_hat} will be strictly negative, resulting in $\hat{r}(\eta,\eta^0)$ with no
-maximum.  This is depicted by the dotted-line in Figure \ref{F:MCMC-MLE} (left).  
+maximum.  This is depicted by the dotted-line in Figure \ref{F:MCMC-MLE} (top).  
 The problem is not present when the initial value is close to the true MLE, such as 
 when $\eta^0 = -1$; the corresponding $r(\eta,\eta^0)$ and $\hat{r}(\eta,\eta^0)$ 
-functions are depicted in Figure \ref{F:MCMC-MLE} (right).  With the default three 
+functions are depicted in Figure \ref{F:MCMC-MLE} (bottom).  With the default three 
 iterations of MCMC-MLE in the \texttt{statnet} package, the algorithm 
 starting with $\eta^0 = 1$ is only able to obtain an estimate for $\eta$ as 
 small as $\eta = -0.364$.  With 10 iterations, it does in fact 
@@ -931,9 +937,9 @@ in the model fitting process itself
 \citep{Handcock:degeneracy,advancesp*,recentp*,statnet-tutorial}.
 We will only use the terms for its original meanings here.   
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \centering
-\includegraphics[height=4in,width=4in]{Figures/g9-hull}
+\includegraphics[width=5in]{Figures/g9-hull}
 \caption[Sample space of two-dimensional statistic of 9-node network]{Sample space 
 of two-dimensional statistic of 9-node network.  \citet{Rinaldo:2009} focused
 on edge and triangle statistics.  The shading of a point corresponds to 
@@ -1106,7 +1112,7 @@ $\ell(\eta_{k+1})$ are depicted in Figure~\ref{F:alpha_region}.
 
 \begin{figure}[h]
 \centering
-    \scalebox{.4}{\input{Figures/alphamax.pdf_t}}
+    \scalebox{.55}{\input{Figures/alphamax.pdf_t}}
 	\caption[Acceptable region for step size $\alpha$ along search 
 direction $p$ according to modified curvature condition]{Acceptable region for step size 
 along a search direction according to modified curvature condition 

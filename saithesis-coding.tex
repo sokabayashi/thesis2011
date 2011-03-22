@@ -428,9 +428,9 @@ attr(,"representation")
 }
 The separate and combined convex hulls are displayed in Figure~\ref{F:combined-hull}.
 There are five inequalities here, one for each side of the hull.
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{center}
-\includegraphics[width=4.5in]{combined-hull-norm}
+\includegraphics[width=5.6in]{combined-hull-norm}
 \end{center}
 \caption[Convex hulls for two separate ten-point samples]
 {Convex hulls for two separate ten-point samples (dotted lines).  The 
@@ -749,16 +749,16 @@ Let $q = (21,13)$, an extreme point of the face.
 \end{verbatim}
 }
 In this example, \texttt{linearity} identifies only the zero vector, which
-trivially satisfies the definition of a subspace.  Here, the point $q = (21,13)$
+trivially satisfies the definition of a subspace.  Thus the point $(21,13)$
 is a zero-dimensional face, lying in the relative interior of itself.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Finding an empirical face}
 We began this chapter under the more realistic setting that we do not know
 $C$ and are generating MCMC samples in order to uncover its geometry.  
-The convex hulls we have to work with then are those of our accumulated samples.
+The convex hull we have to work with then is that of our combined accumulated samples.
 After ascertaining that $g(\yobs)$ is either in the interior
-or boundary of the hull, we apply \texttt{linearity} to the extreme points of it 
+or boundary of this hull, we apply \texttt{linearity} to the extreme points of it 
 to identify the face $F$ in which $g(\yobs)$ lies in the relative interior.  
 If \texttt{linearity} returns all indices, then $g(\yobs)$ is an interior point, not just
 of the convex hull of our samples, but of $C$.  Otherwise, \texttt{linearity} returns 
