@@ -19,7 +19,7 @@ or exactly on a boundary of $C$.
 %convex support $C$ to be known in advance, and thus must combine a way to explore the
 %sample space while simultaneously 
 Further complicating this process is that the representation of 
-numbers in computers is not exact, e.g., \texttt{0.3 / 3 == 1} evaluates
+numbers in computers is not exact, e.g., \texttt{0.3 / 3 == 0.1} evaluates
 to \texttt{FALSE}.  Fortunately the rational arithmetic-based linear programming
 tools we need have already 
 been made available to us through the \texttt{rcdd} package \citep{rcdd:R} in R.  
@@ -31,10 +31,10 @@ look for the MLE in the LCM.
 We then point out the specific functionality that is necessary,
 and describe the commands by which each of these operations can be performed in R.
 We do not provide theoretical derivations for the linear programming operations here
-and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
+and refer the interested reader to \citet{Fukuda:2004,Fukuda:2008}.
 
 %\newpage
-\section{Algorithm pseudocode} \label{S:pseudocode new}
+\section{Algorithm pseudocode extension} \label{S:pseudocode new}
 %Below are a few comments about notation and equations:
 %\begin{itemize}
 %\item $C$ is the convex support.
@@ -51,9 +51,7 @@ and refer the interested reader to \citep{Fukuda:2004,Fukuda:2008}.
 %\end{itemize}
 %\newpage
 {\singlespacing 
-{\small
-\noindent \textbf{LCM MLE Algorithm}
-
+{
 \noindent \begin{algorithmic}
 \State Get an initial value, $\eta_1 = (0, \ldots 0)$.
 \State \textbf{Sample} $g(Y_1), \ldots, g(Y_m)$ from distribution with parameter $\eta_{1}$.  
@@ -140,7 +138,7 @@ direction.
 Note that if it is determined that the MLE does not exist in the conventional sense,
 the algorithm smoothly transitions to looking for the MLE in the LCM, using the 
 face $F$ as the support for this new model.  The approximation for $\nabla \ell (\eta)$
-also switches from one for the original model to one for the LCM, based on the restricted
+also switches from one for the original model to one for the LCM based on the restricted
 sample.  
 
 There are several operations in the above pseudocode that involve computational geometry:
@@ -159,7 +157,7 @@ using the \texttt{rcdd} package (version 1.1-3).  While software and syntax may 
 we think it is still useful to provide actual R output that illustrate the
 inputs and results, and hopefully illuminate the underlying issues.  Most of the  
 \texttt{rcdd} commands have been adapted from the vignette accompanying the package
-or \citep{Geyer:2009}.
+or \citet{Geyer:2009}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Convex polytope representation}
@@ -175,7 +173,7 @@ to be inputed in the following matrix form:
 \begin{align} \label{E:V-rep}
 	\left[\begin{array}{ccc}l & b & V\end{array}\right]
 \end{align}
-where $l$ and $b$ are column vectors and $V$ is a matrix such that the polytope
+where $l$ and $b$ are column vectors and $V$ is a matrix such that the polyhedron
 is the set of points $y$ of the form
 \begin{align*}
 	y = \lambda^T V
@@ -268,7 +266,7 @@ first, find the unique points in this sample, and then eliminate redundant gener
 which is in the \texttt{base} package of R, the second requires defining a V-representation and then applying the \texttt{redundant} function in the \texttt{rcdd}
 package which eliminates the redundant generators.
 We demonstrate this using 10 samples of a two-dimensional vector:
-\begin{verbatim}
+{\singlespace \begin{verbatim}
 > sample.gy <- t(matrix( c(
 + 19, 11,
 + 21, 14,
@@ -307,6 +305,8 @@ $redundant
 $new.position
 [1] 0 0 1 2 3 0 4 0
 \end{verbatim}
+}
+
 In the first step, $(19,11)$ and $(21,13)$ each appear twice and are eliminated
 using \texttt{unique}.  Then, a V-rep of these points is constructed.  Before
 passing to \texttt{redundant}, we first convert it to rational number format
@@ -324,7 +324,7 @@ the calculations performed by \texttt{redundant}.
 \subsubsection{H-representation of a convex hull}
 We can convert this to an H-representation of the convex hull 
 using the \texttt{scdd} function described previously:
-\begin{verbatim}
+{\singlespace \begin{verbatim}
 > ( sample.gy.Hrep <- scdd( sample.gy.reduced$output, rep = "V" ) )
 $output
      [,1] [,2]   [,3]   [,4]
@@ -335,6 +335,7 @@ $output
 attr(,"representation")
 [1] "H"
 \end{verbatim}
+}
 
 This route of \texttt{unique} $\rightarrow$ \texttt{redundant} $\rightarrow$ 
 \texttt{scdd} is our preferred approach to obtain the H-representation of the convex hull from a set of points since \texttt{scdd} is the most computationally demanding
@@ -344,6 +345,7 @@ operation.
 \subsubsection{Adding points to convex hull}
 Suppose we generate additional points and want to combine these with the previously 
 calculated convex hull.  We obtain the non-redundant points as before:
+{ \singlespace
 \begin{verbatim}
 > sample.gy2 <- t(matrix( c(
 + 20, 14,
@@ -386,11 +388,12 @@ $redundant
 $new.position
  [1] 1 2 0 3 0 0 0 4 0 5
 \end{verbatim}
+}
 
-We then combine these new, reduced points with the extreme points of the previously
+We then combine these new reduced points with the extreme points of the previously
 obtained convex hull.  On this combined set, we apply \texttt{unique}, 
 \texttt{redundant} as before, and, if we desire the H-representation, \texttt{scdd}.
-
+{ \singlespace
 \begin{verbatim}
 > sample.gy.combined <- unique( rbind( sample.gy.reduced$output, 
 sample.gy2.reduced$output ) )
@@ -422,7 +425,7 @@ $output
 attr(,"representation")
 [1] "H"
 \end{verbatim}
-
+}
 The separate and combined convex hulls are displayed in Figure~\ref{F:combined-hull}.
 There are five inequalities here, one for each side of the hull.
 \begin{figure}[h]
@@ -458,6 +461,7 @@ To the vector comprising these points, we multiply
  particular inequality has been satisfied: positive indicates that it has not, 
  negative indicates that it is strictly satisfied, and a zero indicates that it is
  met with an equality.  Rational arithmetic in such comparisons is essential.
+{ \singlespace
 \begin{verbatim}
 > x <- rbind( c(20,10), c(20,12), c(21,13) )
 > l <- sample.gy.Hrep$output[ ,1]
@@ -475,6 +479,7 @@ To the vector comprising these points, we multiply
 > apply( axb, 2, function(pair) max(qsign(pair)) )
 [1]  1 -1  0
 \end{verbatim}
+}
 For each inquiry point, we need only consider the largest sign of the five quantities
 to classify the point as exterior, interior, or boundary.
  The first point (20,10) which we observed to be an exterior point 
@@ -482,7 +487,9 @@ to classify the point as exterior, interior, or boundary.
  a positive result of $\frac{1}{3}$.  Thus we get a positive sign (represented by a 1), 
  indicating an exterior point.  The second point (20,12) which we observed to be an 
  interior point is strictly negative on all five inequalities, indicating that they 
- have all been strictly satisfied, resulting in a negative sign.  Finally, the point (21,13) which we observed to be on the boundary satisfies three inequalities 
+ have all been strictly satisfied, resulting in a negative sign
+ (represented by a $-1$).  Finally, the point (21,13) which we observed to 
+ be on the boundary satisfies three inequalities 
  strictly, and meets two with equality, returning a 0 for the largest sign.  
  This agrees with our observation 
  that (21,13) is an extreme point of the hull and thus on the boundary.
@@ -493,7 +500,7 @@ to classify the point as exterior, interior, or boundary.
 \citet{Fukuda:2008} describes a more efficient way to determine whether a single 
 inquiry point $q$ is in or out of the convex hull of many other points $p_i$.  
 This approach looks for a strongly separating hyperplane $H$ between a 
-point $q$ and the convex hull of a set of points $\{p_i : i \in I\}$
+point $q$ and the convex hull of a set of points $\{p_i : i \in I\}$ where
 \begin{align*}
 	H = \{x : z^T x = z_0\}
 \end{align*}
@@ -528,6 +535,7 @@ construct directly to represent the constraints \eqref{E:Hyperplane Hrep}
 rather than a conversion of a convex hull V-representation.  Some care needs to
 be taken in constructing this input, as illustrated in the following examples.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\singlespace
 \subsubsection{Exterior point}
 Let $q = (20,10)$, on the exterior.
 \begin{verbatim}
@@ -551,53 +559,60 @@ Let $q = (20,10)$, on the exterior.
 > lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
 [1] "1"
 \end{verbatim}
+}
 The \texttt{hrep} variable above holds the coefficients for $z_0$ (scalar) and $z$ (vector), 
 in that order, as described by \eqref{E:Hyperplane Hrep}, where the last row 
 is the artificially added second constraint.  Clearly only the V-representation of the
  hull is used.
 The objective function to be maximized is similarly passed the coefficients for $(z_0, z)$,
 as described by \eqref{E:Hyperplane objv}.
-
 The maximum value of 1 is strictly positive so $(20,10)$ is on the exterior, as expected.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Interior point}
-Let $q = (20,12)$, a point on the interior.
-\begin{verbatim}
-> q <- c(20,12) 
->  hull.pts <- sample.gy.combined$output[ , -c(1:2) ]  # get points in hull
-> hrep <- cbind( 0, 0, 1, qneg(hull.pts) )	# s.t. 1st ineq
-> ( hrep <- rbind( hrep, c(0, 1, 1, -q) ) )	# 2nd (artifical) ineq
-     [,1] [,2] [,3] [,4]  [,5] 
-[1,] "0"  "0"  "1"  "-21" "-13"
-[2,] "0"  "0"  "1"  "-23" "-21"
-[3,] "0"  "0"  "1"  "-11" "-1" 
-[4,] "0"  "0"  "1"  "-12" "-3" 
-[5,] "0"  "0"  "1"  "-18" "-5" 
-[6,] "0"  "1"  "1"  "-20" "-12"
-> lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
-[1] "0"
-\end{verbatim}
-The maximum value of $f$ here is 0, so $(20,12)$ is on the boundary or the interior.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Boundary point}
-Let $q = (21,13)$, one of the extreme points of the convex hull.
-\begin{verbatim}
-> q <- c(21,13) 
->  hull.pts <- sample.gy.combined$output[ , -c(1:2) ]  # get points in hull
-> hrep <- cbind( 0, 0, 1, qneg(hull.pts) )	# s.t. 1st ineq
-> ( hrep <- rbind( hrep, c(0, 1, 1, -q) ) )	# 2nd (artifical) ineq
-     [,1] [,2] [,3] [,4]  [,5] 
-[1,] "0"  "0"  "1"  "-21" "-13"
-[2,] "0"  "0"  "1"  "-23" "-21"
-[3,] "0"  "0"  "1"  "-11" "-1" 
-[4,] "0"  "0"  "1"  "-12" "-3" 
-[5,] "0"  "0"  "1"  "-18" "-5" 
-[6,] "0"  "1"  "1"  "-21" "-13"
-> lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
-[1] "0"
-\end{verbatim}
-The maximum value of $f$ here is again 0, so $(21,13)$ is on the boundary or the interior.
-From this output we cannot distinguish between the two.
+\subsubsection{Interior and boundary point}
+We applied this approach to $(20,12)$, an interior point, and again to $(21,13)$,
+ a boundary point.  In both cases, the maximum value of $f$ is 0, 
+indicating that these points are not in the exterior.  However, this 
+ approach does not help us distinguish between interior and boundary points.
+%{ \singlespace
+%\begin{verbatim}
+%> q <- c(20,12) 
+%>  hull.pts <- sample.gy.combined$output[ , -c(1:2) ]  # get points in hull
+%> hrep <- cbind( 0, 0, 1, qneg(hull.pts) )	# s.t. 1st ineq
+%> ( hrep <- rbind( hrep, c(0, 1, 1, -q) ) )	# 2nd (artificial) ineq
+%     [,1] [,2] [,3] [,4]  [,5] 
+%[1,] "0"  "0"  "1"  "-21" "-13"
+%[2,] "0"  "0"  "1"  "-23" "-21"
+%[3,] "0"  "0"  "1"  "-11" "-1" 
+%[4,] "0"  "0"  "1"  "-12" "-3" 
+%[5,] "0"  "0"  "1"  "-18" "-5" 
+%[6,] "0"  "1"  "1"  "-20" "-12"
+%> lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
+%[1] "0"
+%\end{verbatim}
+%}
+%The maximum value of $f$ here is 0, so $(20,12)$ is on the boundary or the interior.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{Boundary point}
+%Let $q = (21,13)$, one of the extreme points of the convex hull.
+%{ \singlespace
+%\begin{verbatim}
+%> q <- c(21,13) 
+%>  hull.pts <- sample.gy.combined$output[ , -c(1:2) ]  # get points in hull
+%> hrep <- cbind( 0, 0, 1, qneg(hull.pts) )	# s.t. 1st ineq
+%> ( hrep <- rbind( hrep, c(0, 1, 1, -q) ) )	# 2nd (artificial) ineq
+%     [,1] [,2] [,3] [,4]  [,5] 
+%[1,] "0"  "0"  "1"  "-21" "-13"
+%[2,] "0"  "0"  "1"  "-23" "-21"
+%[3,] "0"  "0"  "1"  "-11" "-1" 
+%[4,] "0"  "0"  "1"  "-12" "-3" 
+%[5,] "0"  "0"  "1"  "-18" "-5" 
+%[6,] "0"  "1"  "1"  "-21" "-13"
+%> lpcdd( hrep, d2q( c(-1, q) ), minimize = FALSE )$optimal.value
+%[1] "0"
+%\end{verbatim}
+%}
+%The maximum value of $f$ here is again 0, so $(21,13)$ is on the boundary or the interior.
+%From this output we cannot distinguish between the two.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Linearity}\label{S:linearity}
@@ -650,6 +665,7 @@ point and two points on the boundary, using the same convex hull as before.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Interior point}
 Let $q = (20,12)$, a point on the interior.
+{ \singlespace
 \begin{verbatim}
 > q <- c(20,12)
 > ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
@@ -670,9 +686,11 @@ Let $q = (20,12)$, a point on the interior.
 [4,] "0"  "0"  "-8" "-9" 
 [5,] "0"  "0"  "-2" "-7" 
 \end{verbatim}
-Here, \texttt{linearity} returned the indices for all rays inputted.  Adding
+}
+Here, \texttt{linearity} returned the indices, assigned to \texttt{lin.active}, 
+for all rays inputted.  Adding
 back $q$ to the rays will return the original extreme points of the convex hull.
-Thus the resulting face is in fact the original hull.
+Thus the resulting face here is the original hull.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Boundary point, one-dimensional face}
@@ -681,6 +699,7 @@ inequalities of the hull.  This point falls on the line $y = \frac{8}{3}x - 43$ 
 the extreme points $(18,5)$ and $(21,13)$. Of course in the ERGM setting we consider,
 it is impossible to generate a non-integer count of network structures,
 but we ignore this issue here.
+{\singlespace
 \begin{verbatim}
 > q <- c("20","31/3")
 > ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
@@ -702,6 +721,7 @@ but we ignore this issue here.
 [1,] "21" "13"
 [2,] "18" "5" 
 \end{verbatim}
+}
 The \texttt{linearity} function identifies the rays in opposite directions
 running along $y = \frac{8}{3}x + 43$, starting at $(20,31/3)$.  From this, we
 identify a one-dimensional face, the line segment between $(18,5)$ and $(21,13)$
@@ -710,6 +730,7 @@ in which $(20,31/3)$ lies in the relative interior.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Boundary point, zero-dimensional face}
 Let $q = (21,13)$, an extreme point of the face.
+{ \singlespace
 \begin{verbatim}
 > q <- c(21,13)
 > ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
@@ -726,6 +747,7 @@ Let $q = (21,13)$, an extreme point of the face.
      [,1] [,2] [,3] [,4]
 [1,] "0"  "0"  "0"  "0" 
 \end{verbatim}
+}
 In this example, \texttt{linearity} identifies only the zero vector, which
 trivially satisfies the definition of a subspace.  Here, the point $q = (21,13)$
 is a zero-dimensional face, lying in the relative interior of itself.
@@ -798,6 +820,7 @@ equality constraints in its H-representation.
 \subsection{Boundary point, one-dimensional face} \label{S:ncone 1dim}
 Let $q = (20, 31/3)$, a point on the line segment of the boundary
 between $(18,5)$ and $(21,13)$.
+{\singlespace
 \begin{verbatim}
 > q <- as.matrix( c("20","31/3") )
 > sample.gy.Hrep
@@ -831,6 +854,7 @@ attr(,"representation")
      [,1] [,2] [,3]  [,4]
 [1,] "0"  "0"  "8/3" "-1"
 \end{verbatim}
+}
 Since this point lies in the relative interior of the line segment,
 the normal cone consists of a single direction, $(8/3, -1)$.
 This direction (shifted to originate at $(20,31/3)$) is depicted 
@@ -838,43 +862,46 @@ as an arrow in Figure~\ref{F:combined-hull}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary point, zero-dimensional face} \label{S:ncone 0dim}
-Let $q = (21,13)$, an extreme point of the hull.
-\begin{verbatim}
-> q <- as.matrix( c("21","13") )
-> sample.gy.Hrep
-$output
-     [,1] [,2]      [,3]    [,4] 
-[1,] "0"  "43"      "-8/3"  "1"  
-[2,] "0"  "37/4"    "-1"    "7/4"
-[3,] "0"  "-21"     "2"     "-1" 
-[4,] "0"  "-183/11" "18/11" "-1" 
-[5,] "0"  "71"      "-4"    "1"  
-attr(,"representation")
-[1] "H"
-
-> l <- sample.gy.Hrep$output[ ,1]
-> b <- sample.gy.Hrep$output[ ,2]
-> a <- sample.gy.Hrep$output[ ,-c(1,2)]
-> ( active <- qpq( qmatmult( a, q ), b ) == "0" )
-      [,1]
-[1,]  TRUE
-[2,] FALSE
-[3,] FALSE
-[4,] FALSE
-[5,]  TRUE
-> tcone.Hrep <- sample.gy.Hrep$output[ active, , drop=FALSE]
-> tcone.Hrep[ ,2 ] <- "0"
-> tcone.Hrep
-     [,1] [,2] [,3]   [,4]
-[1,] "0"  "0"  "-8/3" "1" 
-[2,] "0"  "0"  "-4"   "1" 
-> # normal cone
-> ( ncone.Vrep <- qneg( tcone.Hrep ) )
-     [,1] [,2] [,3]  [,4]
-[1,] "0"  "0"  "8/3" "-1"
-[2,] "0"  "0"  "4"   "-1"
-\end{verbatim}
-The directions $(8/3, -1)$ and $(4,-1)$ are the boundaries of the normal cone.
+We apply the same methodology to the point $(21,13)$, an extreme point of the hull.
+%{\singlespace
+%\begin{verbatim}
+%> q <- as.matrix( c("21","13") )
+%> sample.gy.Hrep
+%$output
+%     [,1] [,2]      [,3]    [,4] 
+%[1,] "0"  "43"      "-8/3"  "1"  
+%[2,] "0"  "37/4"    "-1"    "7/4"
+%[3,] "0"  "-21"     "2"     "-1" 
+%[4,] "0"  "-183/11" "18/11" "-1" 
+%[5,] "0"  "71"      "-4"    "1"  
+%attr(,"representation")
+%[1] "H"
+%
+%> l <- sample.gy.Hrep$output[ ,1]
+%> b <- sample.gy.Hrep$output[ ,2]
+%> a <- sample.gy.Hrep$output[ ,-c(1,2)]
+%> ( active <- qpq( qmatmult( a, q ), b ) == "0" )
+%      [,1]
+%[1,]  TRUE
+%[2,] FALSE
+%[3,] FALSE
+%[4,] FALSE
+%[5,]  TRUE
+%> tcone.Hrep <- sample.gy.Hrep$output[ active, , drop=FALSE]
+%> tcone.Hrep[ ,2 ] <- "0"
+%> tcone.Hrep
+%     [,1] [,2] [,3]   [,4]
+%[1,] "0"  "0"  "-8/3" "1" 
+%[2,] "0"  "0"  "-4"   "1" 
+%> # normal cone
+%> ( ncone.Vrep <- qneg( tcone.Hrep ) )
+%     [,1] [,2] [,3]  [,4]
+%[1,] "0"  "0"  "8/3" "-1"
+%[2,] "0"  "0"  "4"   "-1"
+%\end{verbatim}
+%}
+In this case, the method returns two directions, 
+$(8/3, -1)$ and $(4,-1)$, which are the boundaries of the normal cone at this point.
 They are depicted as arrows in Figure~\ref{F:combined-hull} (after shifting to 
 originate at $(21,13)$).
 
@@ -910,6 +937,7 @@ the points $q$ as $g(\yobs)$.
 \subsection{A GDOR when $g(\yobs)$ on one-dimensional face} \label{S:GDOR 1dim}
 Let $q = (20, 31/3)$, a point on the line segment of the boundary
 between $(18,5)$ and $(21,13)$.
+{\singlespace
 \begin{verbatim}
 > q <-  c("20","31/3")
 > d <- length( q )
@@ -948,6 +976,7 @@ between $(18,5)$ and $(21,13)$.
 > ( gdor  <- lpout$primal.solution[ -(d+1) ] )
 [1] "1"    "-3/8"
 \end{verbatim}
+}
 We need to first apply \texttt{linearity} to separate the set $W$ into points in the 
 linearity set $L$, to which equality constraints are applied, and 
 $W \setminus L$, to which inequality constraints are applied.  
@@ -959,51 +988,55 @@ in Section~\ref{S:ncone 1dim}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A GDOR when $g(\yobs)$ on zero-dimensional face} \label{S:GDOR 0dim}
-Let $q = (21,13)$, an extreme point of the hull.
-\begin{verbatim}
-> q <-  c("21","13")
-> d <- length( q )
-> ( hull.pts <- sample.gy.combined$output[ , -c(1:2) ] ) # get points in hull
-     [,1] [,2]
-[1,] "21" "13"
-[2,] "23" "21"
-[3,] "11" "1" 
-[4,] "12" "3" 
-[5,] "18" "5" 
-> ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
-     [,1]  [,2] 
-[1,] "0"   "0"  
-[2,] "2"   "8"  
-[3,] "-10" "-12"
-[4,] "-9"  "-10"
-[5,] "-3"  "-8" 
-> W <- cbind( 0, 0, W )
-> ( lin.active <- linearity( W, rep = "V" ) )
-[1] 1
-> ( objv <- d2q( c( rep(0,d), 1) ) )
-[1] "0" "0" "1"
-> hrep <- cbind( qneg(W), 0 ) 
-> hrep[ lin.active, 1 ] <- 1
-> hrep[ -lin.active, ncol(hrep) ] <- "-1"
-> hrep <- rbind( hrep, c( 0, 1, rep(0,d), -1 ) )
-> hrep
-     [,1] [,2] [,3] [,4] [,5]
-[1,] "1"  "0"  "0"  "0"  "0" 
-[2,] "0"  "0"  "-2" "-8" "-1"
-[3,] "0"  "0"  "10" "12" "-1"
-[4,] "0"  "0"  "9"  "10" "-1"
-[5,] "0"  "0"  "3"  "8"  "-1"
-[6,] "0"  "1"  "0"  "0"  "-1"
-> lpout <- lpcdd( hrep, objv, minimize = FALSE )
-> ( gdor  <- lpout$primal.solution[ -(d+1) ] )
-[1] "2"    "-5/8"
-\end{verbatim}
+Applying this same approach to $(21,13)$, an extreme point of the hull, 
+we find that  $(2, -5/8)$ is a GDOR.
 In Section~\ref{S:ncone 0dim}, we identified the directions $(8/3, -1)$ and $(4,-1)$ 
-as the boundaries of the normal cone at this same point.  Here our methodology
-has identified $(2, -5/8)$ as a GDOR, which rescales to $(16/5,-1)$, and falls
-nice between the boundaries of the normal cone.  Note that our approach gives us 
+as the boundaries of the normal cone at this same point.  
+Our GDOR can be rescaled to $(16/5,-1)$ and hence falls
+nicely in the relative interior of this normal cone.  Note that our approach gives us 
 only one of the possible GDORs and no information about the boundaries of the relevant
 normal cone.
+
+%{\singlespace
+%\begin{verbatim}
+%> q <-  c("21","13")
+%> d <- length( q )
+%> ( hull.pts <- sample.gy.combined$output[ , -c(1:2) ] ) # get points in hull
+%     [,1] [,2]
+%[1,] "21" "13"
+%[2,] "23" "21"
+%[3,] "11" "1" 
+%[4,] "12" "3" 
+%[5,] "18" "5" 
+%> ( W <- sweep( hull.pts, 2, q, FUN = qmq ) )
+%     [,1]  [,2] 
+%[1,] "0"   "0"  
+%[2,] "2"   "8"  
+%[3,] "-10" "-12"
+%[4,] "-9"  "-10"
+%[5,] "-3"  "-8" 
+%> W <- cbind( 0, 0, W )
+%> ( lin.active <- linearity( W, rep = "V" ) )
+%[1] 1
+%> ( objv <- d2q( c( rep(0,d), 1) ) )
+%[1] "0" "0" "1"
+%> hrep <- cbind( qneg(W), 0 ) 
+%> hrep[ lin.active, 1 ] <- 1
+%> hrep[ -lin.active, ncol(hrep) ] <- "-1"
+%> hrep <- rbind( hrep, c( 0, 1, rep(0,d), -1 ) )
+%> hrep
+%     [,1] [,2] [,3] [,4] [,5]
+%[1,] "1"  "0"  "0"  "0"  "0" 
+%[2,] "0"  "0"  "-2" "-8" "-1"
+%[3,] "0"  "0"  "10" "12" "-1"
+%[4,] "0"  "0"  "9"  "10" "-1"
+%[5,] "0"  "0"  "3"  "8"  "-1"
+%[6,] "0"  "1"  "0"  "0"  "-1"
+%> lpout <- lpcdd( hrep, objv, minimize = FALSE )
+%> ( gdor  <- lpout$primal.solution[ -(d+1) ] )
+%[1] "2"    "-5/8"
+%\end{verbatim}
+%}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling} \label{S:Subsampling}
@@ -1014,6 +1047,7 @@ we simply take the dot product of all the new sample points with our GDOR
 and take the points for which this evaluate to zero.
 We demonstrate this at the point $(20, 31/3)$, using the GDOR $\delta = (1, -3/8)$
 that we obtained in Section~\ref{S:GDOR 1dim}.
+{\singlespace
 \begin{verbatim}
 > gdor <- as.matrix(c( "1", "-3/8" ) )
 > q <- c( "20", "31/3" )
@@ -1043,6 +1077,7 @@ that we obtained in Section~\ref{S:GDOR 1dim}.
  [9,] "-1/8"
 [10,] "-1/4"
 \end{verbatim}
+}
 This method identifies the first six points as being orthogonal to $\delta$.
 Recalling that our face in this example is the line segment between $(18,5)$ and $(21,13)$,
 this is correct for the second through fifth points, but
