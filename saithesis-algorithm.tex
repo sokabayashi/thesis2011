@@ -290,7 +290,7 @@ Noting that $\nabla f(x_j)^T p_j < 0$, we can substitute our upper bound
 \begin{align}
 	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
 	\frac{\nabla f(x_j)^T p_j}{ || p_j ||^2 } \nabla f(x_j)^T p_j \notag \\
-	\intertext{which simplies to}
+	\intertext{which simplifies to}
 	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
 	\frac{ (\nabla f(x_j)^T p_j)^2}{ || p_j ||^2 }. 
 \notag
@@ -691,7 +691,7 @@ enough to $g(\yobs)$ so that it is within the convex hull of the MCMC samples is
 necessary condition for this algorithm to converge (in fact, this appears to be the
 impetus for the steplength MCMC-MLE approach of \citep{Hummel}).  However, this is not
 sufficient.  An effective approach may be to examine the importance sampling weights
-used in \eqref{E:r_hat} in the previous iteration, and look for them to stabilize.
+used in \eqref{E:r_hat} in the previous iteration, and look for them to stabilize \citep{Geyer:1992}.
 This ``rearview" approach should inform us if the previous $\eta_k$ was close 
 enough to apply MCMC-MLE directly.
 %\section{Estimating standard error} \label{S:SE}

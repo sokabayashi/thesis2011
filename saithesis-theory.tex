@@ -141,7 +141,8 @@ meaning there exists a vector $\delta$ such that
 	F = \{ x \in C: \inner{x, \delta} = \sup_{y \in C} \inner{y,\delta}  \}
 \end{align*}
 Smooth convex sets like the convex hull of a torus, do not have every face
-exposed.  
+exposed; here we deal only with convex polyhedral sets, so all the faces we
+encounter are exposed.
 
 
 The \emph{tangent cone} of a polyhedral convex set $C$ at a point $x \in C$ is
@@ -834,22 +835,22 @@ $s$ is a scalar, and $\delta$ a GDOR, then
 	\lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\RR^d} \ell(\eta).
 \end{align*}
 The MLE for the original model, which we may think of as ``off to infinity", has
-more structure in this context---it is $\etaLCM$ sent to infinity in direction $\delta$.
+more structure in this context---it is the value $\etaLCM$ sent to 
+infinity in direction $\delta$.
 
-We may be interested in knowing how close the natural parameter $\eta$ is to infinity.
+We may be interested in knowing how close we are to the LCM.
 As $s$ goes from $-\infty$ to $+\infty$, the probability of observing 
-$g(\yobs)$ in mean parameterization goes from zero to one in a strictly increasing manner.  This event of observing
-corresponds exactly to the event $g(Y) \in H$, 
-and thus we look to find the
-unique $s$, call it $\hat{s}$, that makes this probability $\alpha$.  
-That is, we find the unique $s$ such that
+$g(Y) \in H$ strictly increases to 1.  
+From a one-sided $1-\alpha$ confidence interval perspective, 
+we look to find the unique $s$, 
+call it $\hat{s}$, such that
 \begin{align*}
 	P_{\etaLCM + s\delta}\left (g(Y) \in H \right ) = \alpha.
 \end{align*}
 Then $[\hat{s}, +\infty)$ is a $1-\alpha$ confidence interval for the scalar parameter 
 $s$, and, in turn, $[\etaLCM + \hat{s}\delta, +\infty)$ gives 
-a $1-\alpha$ confidence region then for the parameter $\etaLCM + s \delta$, which we can
-think of as a confidence region for how close the natural parameter is to infinity.
+a $1-\alpha$ confidence region for the parameter $\etaLCM + s \delta$, 
+which we can think of as indices to distributions in the neighborhood of the LCM.
 Note that when $\eta$ is multi-dimensional, these are non-simultaneous 
 multiple confidence intervals.
 

@@ -3,7 +3,8 @@ We apply our algorithm to several different settings:
 \item Logistic regression where the MLE exists.  The gradient $\nabla \ell(\beta)$ can be calculated exactly in this problem and thus our algorithm is guaranteed to converge to
 the MLE by Theorem~\ref{Thm:Line Search works}.  We compare parameter estimates to those attained by the \texttt{glm} function in R and compare performance to stochastic approximation.  We choose a starting value for which Newton-Raphson fails.
 
-\item Ising model where the MLE exists.  The gradient $\nabla \ell(\eta)$ must be approximated in this setting via MCMC.  Although our algorithm is not guaranteed to converge in theory, it is still effective in practice.  We again compare the performance to stochastic approximation.
+\item Ising model where the MLE exists.  The gradient $\nabla \ell(\eta)$ must be approximated in this setting via MCMC.  Although our algorithm is not guaranteed to converge in theory, it is still effective in practice.  
+We compare the performance to MCMC stochastic approximation.
 
 \item Sampson's monastery data.  We revisit the example from Section~\ref{S:MCMC-MLE} which
 showed how MCMC-MLE struggles to converge when the starting value is far
@@ -19,7 +20,7 @@ factors as well as network structures.  We compare our results to those attained
 \item ERGM with two-dimensional sufficient statistics on a 9-node undirected network.  
 Here we explore cases where the MLE may not exist in the conventional sense.  
 Our algorithm finds the MLE if it exists, and finds the LCM MLE and its support when 
-it does not.  We then constructed one-sided confidence intervals for the natural parameters.
+it does not.  We then construct one-sided confidence intervals for the natural parameters.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,8 +43,8 @@ predictors $1, x_1, \ldots, x_{q}$, so that
 \,i} = \beta^T x_i \qquad
 i = 1, \ldots, n
 \end{align*}
-where $\beta = (\beta_0, \ldots, \beta_{q} )^T$ and $x_i = ( 1, x_{1i}, \ldots, x_{q 
-i})^T$.  
+where $\beta = (\beta_0, \ldots, \beta_{q} )$ and $x_i = ( 1, x_{1i}, \ldots, x_{q 
+i})$.  
 
 Defining the model matrix $M$ to be the $n \times (q+1)$ matrix with the $x_i$ as 
 rows, we can express $\theta = M \beta
@@ -62,34 +63,34 @@ where $\E_{\beta}(Y) = \frac{1}{1 + \exp(-M \beta)}$ can be calculated exactly. 
 allows us to directly apply 
 Theorem~\ref{Thm:Line Search works}.
 
-Suppose we specify our true parameter value to be $\beta = (0, 2, 2, 1, 1, 0, 0, 0)^T$ 
+Suppose we specify our true parameter value to be $\beta = (0, 2, 2, 1, 1, 0, 0, 0)$ 
 and use 100 independent draws 
 from a correlated multivariate normal distribution centered at 0 as our predictors to 
 generate 100 independent 
 Bernoulli trials.  
 Fitting these data using the R function \texttt{glm}, we find the MLE of $\beta$ to be
 \begin{align*}
-	\betaMLE = (  0.635,  5.949, 1.273, 0.180, 1.006, 1.536, -2.252, -0.472 )^T,
+	\betaMLE = (  0.635,  5.949, 1.273, 0.180, 1.006, 1.536, -2.252, -0.472 ),
 \end{align*}
 where the disparity to the true value of $\beta$ results from a relatively small 
 sample size of $n=100$.
-We use $\beta_0 = ( 5, 4, 3, 2, 1, 0, -1, -2)^T$ for the starting point for our line 
+We use $\beta_0 = ( 5, 4, 3, 2, 1, 0, -1, -2)$ for the starting point for our line 
 search algorithm, a point for 
 which Newton-Raphson fails due to a nearly singular Hessian matrix.  
 
 We measure the performance of our algorithm in terms of the total number of iterations 
 used, where each iteration 
-requires the evaluation of the gradient, $\nabla \ell( \beta_k + \alpha_k p_k )$.  
+requires evaluation of the gradient, $\nabla \ell( \beta_k + \alpha_k p_k )$.  
 Typically, several iterations take 
 place in an inner loop to find a step size $\alpha_k$ that meets the curvature 
-condition \eqref{E:curvature mod}, a 
+condition \eqref{E:Wolfe-ll}, a 
 process that grows increasingly difficult as the estimates near the MLE since the 
-rightmost term in \eqref{E:curvature 
-mod} gets smaller in magnitude.  Once an acceptable step size is found, the parameter 
+rightmost term in \eqref{E:Wolfe-ll} gets smaller in magnitude.  
+Once an acceptable step size is found, the parameter 
 estimate $\beta_k$ is updated and 
 a new search direction is determined, requiring another evaluation of the gradient.
 
-Our algorithm took 54 iterations over 20 different search directions to get $\lVert 
+Our algorithm took 54 iterations over 20 different search directions to obtain $\lVert 
 \nabla \ell( \beta_k ) \rVert < 
 0.01$ and arrive at an estimate for the MLE that differs from the \texttt{glm} result 
 by 0.0117 in Euclidean distance 
@@ -120,7 +121,7 @@ iterations finding an acceptable step size for each update.
 
 % latex table generated in R 2.10.1 by xtable 1.5-6 package
 % Tue May  4 17:37:01 2010
-\begin{table}
+\begin{table}[h!]
 \caption[Comparison of MLEs of $\beta$ for logistic regression example]{Comparison of MLEs of $\beta$ for Example 1: MLE = \texttt{glm}, Steep = line 
 search using steepest ascent, 
 CG = line search using conjugate gradient, and SA =  SA with step size = $1/k$, 
@@ -147,7 +148,7 @@ $-7.153$ & 1.255 & 0.264 \\
 \label{Table:Logistic}
 \end{table}
 
-\begin{table}
+\begin{table}[h!]
 \caption[Comparison of step sizes for SA and our algorithm for logistic regression example]{The first 20 step sizes used by  SA (with step size $1/k$) and our algorithm 
 for Example 1.  The step sizes 
 used by our algorithm do not diminish like $1/k$.
@@ -185,7 +186,7 @@ used by our algorithm do not diminish like $1/k$.
 \end{table}
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Example: Ising model} \label{S:Example:Ising}
 In this example, we apply our gradient-based line search algorithm to an Ising model 
 \citep{Ising} on a toroidal square 
@@ -204,7 +205,7 @@ vertically (but not diagonally).
 \caption[A realized sample from an Ising model on a $32 \times 32$ lattice with 
 $\eta$ at phase transition value.]
 {A realized sample from an Ising model on a $32 \times 32$ lattice with 
-$\eta = \left(0, \log(1 + \sqrt{2}) \right)^T$.  This value of $\eta$ corresponds to the phase transition point, where 
+$\eta = \left(0, \log(1 + \sqrt{2}) \right)$.  This value of $\eta$ corresponds to the phase transition point, where 
 the sample images are mostly one 
 color with small but significant portions of the other color.  There is no preference 
 for the dominant color to be 
@@ -238,14 +239,14 @@ performed here using the Swendsen-Wang algorithm
 \citep{Swendsen-Wang:1987,Swendsen-Wang:1990}, available in the contributed R 
 package \texttt{potts} \citep{Geyer:potts}.
 
-We choose $\eta = \left(0, \log(1 + \sqrt{2} ) \right)^T$ to generate a $32 \times 32$ 
+We choose $\eta = \left(0, \log(1 + \sqrt{2} ) \right)$ to generate a $32 \times 32$ 
 lattice, which we will use as 
 our observed data (Figure~\ref{F:pottsimage}).  This value for $\eta$ is of particular 
 interest because it corresponds 
 to the phase transition point \citep{Potts} and has been shown to be difficult to 
 estimate \citep{Geyer:1990}.  In 
 order to get a good estimate of the MLE to which we can compare our algorithm's 
-results, we use 10 iterations of Newton-Raphson starting 
+results, we use 10 iterations of MCMC Newton-Raphson \citep{Penttinen:1984} starting 
 from the true value of $\eta$ so that we can be confident it will converge.
 
 %%%% 1/25/11 - added Newton
@@ -265,7 +266,7 @@ from the true value of $\eta$ so that we can be confident it will converge.
 %%%%%%%%
 
 
-We apply our line search algorithm to this data using an arbitrary initial value of $
+We apply our line search algorithm to this data using a far off initial value of $
 \eta^{(0)} = ( 2, 0.001)$ and a 
 fixed MCMC sample size of 10,000.  Our algorithm used 62 iterations (gradient 
 evaluations) over 17 search directions to 
@@ -286,7 +287,7 @@ total MCMC sample sizes used were $62\times10,0000 = 620,000$ and $45\times10,00
 
 
 
-\begin{table}
+\begin{table}[h!]
 \caption[Comparison of MLEs for $\eta$ for Ising model example]{Comparison of MLEs for $\eta$ for Example 2: MLE = Newton-Raphson starting 
 from the true $\eta$, Steep = 
 line search using steepest ascent, CG = line search using conjugate gradient, and SA = 
@@ -314,7 +315,7 @@ True $\eta$  & & 0.000 & 0.881 \\
 \label{Table:Potts}
 \end{table}
 
-We also applied SA, again with step size $1/k$ from the same starting point $\eta^
+We also applied MCMC SA, again with step size $1/k$ from the same starting point $\eta^
 {(0)}$, and used
 a MCMC sample size of 1,000 for gradient calculation.  
 Here SA converged in 1368 iterations or 1,368,000 MC samples, comparable to our 
@@ -325,8 +326,9 @@ initially very small compared to $1/k$, but stay in a range of about $1/300$ to
 $1/3000$.  So, the $1/k$ step size used 
 by SA in fact occasionally satisfies our curvature condition when $k$ is large. 
 
-\begin{table}
-\caption[Comparisons of step sizes for SA and our algorithm for Ising model example]{The first 17 step sizes used by SA (with step size $1/k$) and our algorithm 
+\begin{table}[h!]
+\caption[Comparisons of step sizes for SA and our algorithm for Ising model example]
+{The first 17 step sizes used by SA (with step size $1/k$) and our algorithm 
 for Example 2.  The step sizes 
 used by our algorithm are initially much smaller than $1/k$.}
 \begin{center}
@@ -366,7 +368,7 @@ $32 \times 32$ or even $100 \times 100$), the distribution appears to be skewed 
 biased \citep{Composite}.  In the sample run above, the MLE happens to be very close 
 to the true parameter value.  However, by calculating MLEs for 1000 different $32 \times 32$
 observed lattices, we find the empirical average for the $\eta[2]$ component to be $0.856$ with a
-standard error of 0.036.  The histogram for the $\eta[2]$ component of the MLE 
+standard error of 0.036, compared to the true value of $0.881$.  The histogram for the $\eta[2]$ component of the MLE 
 is shown in Figure~\ref{F:ising-hist}. 
 
 \begin{figure}[h!]
@@ -376,7 +378,7 @@ is shown in Figure~\ref{F:ising-hist}.
 \caption[Histogram of the $\eta$ component for 1000 MLEs for an Ising model on a $32 \times 32$ lattice with $\eta$ at phase transition value.]
 {Histogram of the $\eta[2]$ component for 1000 MLEs for 
 an Ising model on a $32 \times 32$ lattice with $\eta = \left(0, \log(1 + \sqrt{2}) 
-\right)^T$.  The vertical line is at $\log(1 + \sqrt{2}) = 0.881$. }
+\right)$.  The vertical line is at $\log(1 + \sqrt{2}) = 0.881$. }
 \label{F:ising-hist}
 \end{figure}
 
@@ -390,8 +392,8 @@ an Ising model on a $32 \times 32$ lattice with $\eta = \left(0, \log(1 + \sqrt{
 %
 %
 %\begin{align*}
-%%\theta_{MLE} = (0.004626115, 0.003245121, -0.001108131, 1.06203 )^T
-%%\theta_{MLE} = (0.00463, 0.00325, -0.00111, 1.062 )^T
+%%\theta_{MLE} = (0.004626115, 0.003245121, -0.001108131, 1.06203 )
+%%\theta_{MLE} = (0.00463, 0.00325, -0.00111, 1.062 )
 %\end{align*}
 %with a standard deviation of 0.028 for $\theta_*$ (the sample standard deviation of 
 %the 455 $\theta$ values we calculated).
@@ -401,7 +403,7 @@ an Ising model on a $32 \times 32$ lattice with $\eta = \left(0, \log(1 + \sqrt{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Example: Sampson's monastery data} \label{S:Example:Sampson}
-As discussed in Section~\ref{S:MCMC-MLE}, the MCMC-MLE may struggle to converge when the 
+As discussed in Section~\ref{S:MCMC-MLE}, MCMC-MLE may struggle to converge when the 
 starting value is far from the true MLE.  This was illustrated on Sampson's monastery data set with the Erd\H{o}s-R\'{e}nyi-Gilbert model with network statistic $g(y)$ equal to 
 the total number of edges present.
 The observed network, depicted in Figure \ref{F:Sampson}, is directed with 18 actors and 
@@ -415,13 +417,18 @@ We start from this same initial value, using the \texttt{simulate.formula} funct
 from the \texttt{ergm} package in R to generate 10,000 MCMC samples, $g(Y_1), \ldots, g(Y_
 {10000})$, with each sample spaced 1000 apart from one another.
 
-It took our algorithm 21 gradient evaluations over 5 different search directions to get $\lVert \nabla \ell( \eta_k ) \rVert < 0.1$ and arrive at an estimate for the MLE of  $-0.9069$.  The intermediate steps are presented in Table~\ref{T:Sampson redo}.  
+It took our algorithm 21 gradient evaluations over 5 different search 
+directions to get $\lVert \nabla \ell( \eta_k ) \rVert < 0.1$ and arrive at an 
+estimate for the MLE of  $-0.9069$.  The intermediate steps are presented in 
+Table~\ref{T:Sampson redo}.  Similar results were attained using much smaller 
+MCMC sample sizes (as small as 200).
 
-\begin{table} \label{T:Sampson redo}
+\begin{table}[h!] \label{T:Sampson redo}
 \caption[Long range algorithm applied to Sampson's monastery data]{
 Long range algorithm applied to Sampson's 
 monastery data.  The starting point of $\eta^0 = 1$ can be thought of as ``far" from the
-true MLE of $-0.9072$.  The inner loop count is the number of iterations spent searching for an $\alpha_k$ that meets the curvature condition.  
+true MLE of $-0.9072$.  The inner loop count is the number of iterations spent 
+searching for an $\alpha_k$ that meets the curvature condition.  
 }
 \begin{center}
 \begin{tabular}{rrrrrrlrr}
@@ -467,13 +474,13 @@ are depicted by square nodes, girls by circles.  The data is made available in \
 Grade, Race, Sex, edges, and a geometrically weighted edgewise share partner (GWESP). The model selection issue is one we do not address here---see \citep{GOF}
  for a discussion on methods goodness-of-fit.  
 Grade, Race, and Sex are covariate factors specific to the 
-actors and reflect whether or not the two actors in a dyad are of the same type.  
-The issue of incorporating of these into an ERGM was 
+actors and reflect whether or not two actors in a dyad are of the same type.  
+The issue of incorporating these factors into an ERGM was 
 discussed in Section~\ref{S:Covariate}.  The GWESP network statistic is not one we
 have discussed previously but has been alluded to in Section~\ref{S:ERGM setup} as
 one of the newly developed statistics designed to reduce problematic models
 (the loose usage of ``degeneracy") 
-\citep{Handcock:2006, Hunter:2006, recentp*}.  This particular statistics can be 
+\citep{Handcock:2006, Hunter:2006, recentp*}.  This particular statistic can be 
 thought of as a variant of triangles.
 
 We ran our algorithm through 40 search directions, starting from an initial value for 
@@ -508,13 +515,14 @@ estimates are reported in Table~\ref{T:FauxMagnolia}.
 
 % latex table generated in R 2.12.1 by xtable 1.5-6 package
 % Wed Mar  9 23:32:59 2011
-\begin{table}[h]  
+\begin{table}[h!]  
 \begin{center} 
 \caption[Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example]{Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example.  MCMC-MLE is the default algorithm
 in \texttt{ergm}, and is run here through 5 iterations starting
 at the MPLE ($\etaMLE$ below).
 Our algorithm is run for 40 steps ($\hat{\eta}_{\textrm{Steep}}$ below),
-starting from $(0,0,0,0,0)$.}
+starting from $(0,0,0,0,0)$.\\
+}
 \begin{tabular}{rrrrrr}
   \hline
  & edges & Grade & Race & Sex & GWESP \\ 
@@ -527,7 +535,7 @@ $\hat{\eta}_{\textrm{Steep}}$ & -9.879 & 2.810 & 0.942 & 0.786 & 1.809 \\
 \end{table}
 
 We compare our estimates to those obtained by running the default MCMC-MLE algorithm 
-in \texttt{ergm}, which starts from a MPLE of
+in \texttt{ergm}, which starts from an MPLE of
 \begin{align*}
 	\hat{\eta}_{MPLE } = ( -9.8665, 2.8626, 0.9944, 0.8261, 1.6950 ).
 \end{align*}
@@ -544,9 +552,9 @@ by \citet{statnet-tutorial} takes only a few minutes,
 we used over 100 iterations over 40 search directions, 
 each iteration using MCMC sample sizes of 
 10,000 spaced 5,000 iterations apart, taking over an hour.  We actually stopped the 
-algorithm at 40 search direction; we did not attain our desired cutoff value for 
+algorithm at 40 search direction; we did not attain our desired cutoff of 
 $\lVert \nabla \ell(\eta) \rVert < 0.1$ and were only able to 
-attain values as small as $9.6$.
+attain values of $\lVert \nabla \ell(\eta) \rVert$ as small as $9.6$.
  
 A few remarks:
 \begin{itemize}
@@ -561,7 +569,7 @@ Here we found that at 10 iterations using steepest ascent direction,
 \begin{align*}
 	\eta_{10} =( -8.330,  2.462,  0.565,  0.430,  0.879) 
 \end{align*}
-which is still too far for MCMC-MLE to converge.
+which is still too far away for MCMC-MLE to converge.
 However, using conjugate gradient directions---for which the $2d$ criteria was
 established---does much better, with
 \begin{align*}
@@ -570,20 +578,19 @@ established---does much better, with
 From this value, MCMC-MLE is able to attain the MLE in one update.  In fact,
 our algorithm itself will not improve much from this point without increasing sample
 sizes.  The difference between $\eta_{10}$ and $\etaMLE$ is already quite small,
- with $\sqrt{ \sum( \etaMLE - \eta_{10})^2} = 0.277$.
+ $0.277$ in Euclidean distance.
 
-Although safeguarded applications of other algorithms is an option, a better condition
-for switching is desirable.  An idea based on importance sampling weights was mentioned
-in Section~\ref{S:Combine}.
+Although safeguarding other algorithms is an option, a better condition
+for switching is nonetheless desirable.  An idea based on importance sampling weights was mentioned
+in Section~\ref{S:Combine} and warrants further research.
 
 \item MCMC sampler.  We have developed our algorithm assuming that it would have access
 to an effective MCMC sampler.  In this example, some tuning of the MCMC
 sampler is necessary.  
 This is unsurprising given the very large number of points in the sample space 
-and the challenge of generating less dependent discrete samples, discussed 
-in \citep{ergm,Morris:2008}.
-This does indicate that the usefulness of our algorithm in practice is dependent on the 
-effectiveness of the MCMC sampler.
+and the challenge of generating less dependent discrete samples. 
+\citet{ergm,Morris:2008} discuss the ERGM MCMC sampler issues further.
+
 
 \item Variable MCMC sample sizes.  A more pragmatic way to implement our 
 algorithm would have
@@ -598,9 +605,9 @@ smaller, the curvature condition is more difficult to satisfy and sharper estima
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Example: 9-node network} \label{S:Example:9node}
 We now consider the cases for ERGMs where the MLE may not exist.
-Like \citet{Handcock:degeneracy, Rinaldo:2009}, we focus on small networks (9 nodes or 
-fewer) with only two network statistics.  
-Because we need to compare our algorithm to the truth---whether or not the MLE exists, 
+Like \citet{Handcock:degeneracy, Rinaldo:2009}, we focus on a small 9-node networks
+with only two network statistics.  
+Because we wish to compare our algorithm to the truth---whether or not the MLE exists, 
 and what its value
 is if it does---we work with networks for which it is feasible to 
 evaluate the likelihood
@@ -618,14 +625,14 @@ For comparison purposes with \citet{Rinaldo:2009}, we focus on a model with the 
 of edges and triangles as the natural statistics.  A two-dimensional statistic 
 also naturally lends itself to more easily interpretable figures.  The relevant convex support for this model is displayed in Figure~\ref{F:g9-hull}.  Although there are nearly 69 billion points in the sample space $\YY$, there are only 444 possible combinations of edges and triangles.
 Let the space of these sufficient statistics be denoted $\TT = g(\YY)$.
-The summation in the normalizing constant \eqref{E:kappa} over all graphs in $\YY$ can in fact be simplified
+The summation in the normalizing constant \eqref{E:kappa} over all graphs in $\YY$ can then be simplified
  to a weighted sum over the 444 points in $\TT$ as follows:
 \begin{align*}
 	\kappa(\eta) = \sum_{y \in \YY} e^{\inner{g(y),\eta} } = 	\sum_{t \in \TT} e^{\inner{t,\eta} } \nu(t)
 \end{align*}
 where $\nu(t)$ is the frequency of the network statistic $t$ across all $y \in \YY$.  
 This does require knowing $\nu(t)$ for all $t \in \TT$, which we calculate once
-and save to file in our enumeration of all possible graphs.
+and save to file in our enumeration of all graphs.
 
 In fact, we will find it easier to work directly with the distribution of the sufficient
 statistic $T=g(Y)$:
@@ -652,7 +659,7 @@ We can then calculate exact values for the gradient of the log likelihood $\nabl
 \end{align*}
 
 To address concerns for overflow where $e^x$ can become too large, we 
-can subtract $a = \max_t \inner{t, \eta}$ from each term in the summations, so that
+can subtract $a = \max_t \inner{t, \eta}$ in the exponent, so that
 \begin{align*}
 	\nabla \ell (\eta) &= g(\yobs) - \frac{1}{\sum_{t \in \TT} e^{\inner{t,\eta}-a} \nu(t)}  \sum_{t \in \TT} t e^{\inner{t,\eta}-a} \nu(t).
 \end{align*}
@@ -664,12 +671,13 @@ expressed in term of the sufficient statistic.  By \eqref{E:nabla2 ell},
 	&= - \E (T - \E_\eta T)( T - \E_\eta T)^T \\
 				&= - \sum_{t \in \TT} (t - \E_\eta T)(t - \E_\eta T)^T P(T=t)\\
 				&= - \frac{1}{\kappa(\eta)} \sum_{t\in \TT}
-					(t - \E_\eta T)(t - \E_\eta T)^T e^{\inner{t,\theta}} \nu(t).
+					(t - \E_\eta T)(t - \E_\eta T)^T e^{\inner{t,\eta}} \nu(t).
 \end{align*}
 The same adjustment for overflow used for $\nabla \ell(\eta)$ can be applied here.
 
 Being able to evaluate $\nabla \ell(\eta)$ and 
-$\nabla^2 \ell(\eta)$ exactly is useful when searching directly from MLEs;
+$\nabla^2 \ell(\eta)$ exactly is useful when searching directly for MLEs
+by likelihood evaluation;
 optimization routines such as \texttt{trust} \citep{trust:R} in R will use these
 as inputs.  
 
@@ -690,8 +698,8 @@ our analysis cleaner:
 \item MC sampler.  We use a perfect Monte Carlo sampler to generate our draws \\
 $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\eta$, rather than a 
 MCMC sampler.
-Although we have replicated the results of the algorithm using the 
- \texttt{simulate.formula} MCMC sampler provided in the R package \texttt{ergm} 
+Although we have replicated the results of the algorithm using the MCMC sampler 
+ provided by the \texttt{simulate.formula}  function in the R package \texttt{ergm} 
  \citep{ergm:R}, we wish to identify here the 
 issues that would still be present even with a perfect MC sampler.  This can 
 easily be built for this small network since the likelihood function can be 
@@ -702,13 +710,12 @@ evaluated exactly.
 curvature condition \eqref{E:Wolfe-ll} can be time consuming, as discussed in
 Section~\ref{S:MCMC approx} and evident in our previous examples.
 Here we use our ability to evaluate the gradient function $\nabla \ell(\cdot)$ exactly;  
-we solve for the value that sets $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k = 0$ 
+we solve for the value of $\alpha_k$ that sets $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k = 0$ 
 using a simple root-finding algorithm \texttt{uniroot}, with a slight 
 adjustment to satisfy \eqref{E:Wolfe-ll}.  So, for a given 
 direction $p_k$, we find the step size that maximizes the log likelihood in that 
 direction.
-
-We do not use this shortcut in any other portions of our approach that 
+We do not use this shortcut in any other portions of our method that 
 require $\nabla \ell(\cdot)$, 
 such as updating search directions $p_k$.
 
@@ -729,12 +736,12 @@ Suppose the observed network data has 29 edges and 47 triangles.  Then $g(\yobs)
 lies in the interior of the convex support as depicted in Figure \ref{F:MC cloud} 
 (top) and the MLE exists.
 Our algorithm, arbitrarily starting at the natural parameter value of $\eta = (0,0)$, 
-generates Monte Carlo samples from the model with this initial parameter value.  As 
+generates 10,000 Monte Carlo samples from the model with this initial parameter value.  As 
 the algorithm climbs the log likelihood surface, 
 the cloud of sample points will move towards 
 the observed statistic and eventually engulf it.  
 When the value for $\eta$ is equal to the MLE, the mean of the MC sample points will 
-equal $(29,47)$(see Figure \ref{F:MC cloud} (bottom)).  
+equal $(29,47)$ (see Figure \ref{F:MC cloud} (bottom)).  
 \begin{figure}[h!]
 \centering
 %\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
@@ -782,26 +789,28 @@ relative interior of,
 \item decide if $F$ is in fact the boundary of the convex support $C$.
 \end{enumerate}  
 
-The first task can be done using the linear programming methods described 
-in Chapter~\ref{Chapter:Linear programming}.  This approach requires first 
-calculating a GDOR by the methods in Section~\ref{S:GDOR calc}, which here give us
+The first task can be done using the linear programming methods 
+described in Chapter~\ref{Chapter:Linear programming}.  
+In particular, by use of the \texttt{linearity} function, we can identify the 
+extreme points of the empirical face $F$.
+ 
+
+The second task turns out to be more difficult.  
+We first calculate an empirical GDOR by the methods in Section~\ref{S:GDOR calc}, which here give us
 \begin{align*}
 	\delta = (6,-1).
 \end{align*}
+
 If this $\delta$ is a GDOR and $g(\yobs) \in \rbd C$, then 
 \begin{align} \label{E:Face check}
 	\inner{w - g(\yobs), \delta=0}
 \end{align}
-for all $w \in F$.  Thus \eqref{E:Face check} gives an easy way to check if 
+for all $w \in F$.  
+Thus \eqref{E:Face check} gives an easy way to check if 
 any point is in the empirical face $F$.
-(This GDOR can also be used as an effective search direction 
-in the same manner as the regression direction described in Section~\ref{S:Search directions}, when it is not yet determined that this $F$ is a boundary of $C$.)
-
-The second task turns out to be very difficult to do.  
-For now, we assume that if a substantial portion of the sample points generated, say 
-60\%, land on this empirically determined face $F$, then it is in fact a boundary of 
+We then assume that if a substantial portion of the sample points generated, say 
+more than 60\%, land on this empirically determined face $F$, then it is in fact a boundary of 
 the convex support $C$.  
-
 
 In this example, the algorithm determines empirically that three points 
 from the MC sample---$(30,44)$, $(31,50)$, and $(32,56)$---lie on a 
@@ -811,8 +820,12 @@ algorithm continues to sample, trying to get a sample point cloud even closer to
 observed statistic.  We choose such a high proportion for a cutoff to eliminate---or 
 at least, greatly reduce---the possibility of misidentifying a boundary.
 (We deal later with a case where 100\% of the MC sample points form a face which is 
-\emph{not} on the boundary of $C$.)  Eventually this threshold is met (as shown in 
-Figure~\ref{F:MC face} (bottom)).
+\emph{not} on the boundary of $C$.)  The empirical GDOR $\delta$ that we calculate 
+can also be used as an effective search direction when it is not yet determined that 
+$F$ is a boundary of $C$.  If $F$ is in fact a boundary of $C$, then 
+by Theorem~\ref{Thm:LCM}, this threshold will be met.  A sample meeting this requirement 
+is depicted in Figure~\ref{F:MC face} (bottom). 
+
 \begin{figure}[h!]
 \centering
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
@@ -872,7 +885,7 @@ that the algorithm found is one such $\gamma$.
 To construct one-sided 95\% confidence intervals, we need to find the value of 
 $s$ for which the the distribution indexed by $\etaLCM + \gamma + s \delta$ 
 assigns a probability of 0.05 to the event that a sample falls on the 
-face of interest is.  That is, find $s$ such that
+face of interest.  That is, find $s$ such that
 \begin{align*}
 P_{\etaLCM + \gamma + s \delta}(g(Y) \in F ) = 0.05.
 \end{align*}
@@ -880,9 +893,9 @@ We can generate MC samples
 of $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\etaLCM + \gamma + s 
 \delta$ and see for what value of $s$, 5\% of the sample lies in the 
 empirical face we found.  Some numerical calculations show that the original
- exponential family index by $\eta = (9.145, -1.500)$ puts 5\% of
+ exponential family indexed by $\eta = (9.145, -1.500)$ puts 5\% of
   the MC sample on this face.  
-Expressing this as a non-simultaneous 95\% confidence intervals for the components of $\eta$, we get
+Expressing this as non-simultaneous 95\% confidence intervals, we get
 \begin{align*}
 	[9.145, +\infty)\\
 	(-\infty, -1.500],
@@ -896,6 +909,8 @@ because the surface flattens so much, the routine returns a value it perceives a
 \begin{align*}
  	\hat{\eta}_{\textrm{trust}} = (135.6, -22.6).
  \end{align*}
+This value of $\eta$ is well within the confidence region and hence indexes a distribution
+in the neighborhood of the LCM.
 %Alternatively, in mean value parameterization, the
 %non-simultaneous 95\% confidence intervals for the edge and triangle parameters are
 %\begin{align*}
@@ -913,7 +928,7 @@ in the relative interior.  The algorithm then found $\etaLCM$, the
 maximizer of the exponential family
 which has $F$ as its convex support.  Finally, the algorithm used the
 values of $\etaLCM$ and $\delta$ to calculate the end points for 
-one-sided confidence intervals for the natural parameters.
+one-sided confidence intervals for the natural parameter.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -981,7 +996,7 @@ themselves are nearly identical.  Using a trust optimization routine we calculat
 \etaMLE = (28.86, -7.76).
 \end{align*}
 The most problematic aspect of this model for us here, however, is that our algorithm 
-may occasionally conclude---incorrectly---that the MLE does \emph{not} exist, 
+may conclude---incorrectly---that the MLE does \emph{not} exist, 
 and proceeds to 
 calculate the MLE of an LCM as in the previous examples.  In this case, we used
 an MC sample size of 10,000 (recall that we are using a perfect Monte Carlo sampler
@@ -992,14 +1007,14 @@ How does this happen?  Does this make our algorithm not useful in practice?
 Our algorithm begins in the same manner as described previously.  As the algorithm 
 proceeds uphill on the log likelihood function, it eventually iterates $\eta_k$ to a 
 value (for example, $(35.34, -9.56)$) where all 10,000 MC sample points generated 
-from the model with this parameter value fall on the six points on the line segment 
+from the model with this parameter value may fall on the six points on the line segment 
 between $(20,0)$ and $(25,20)$, as depicted in Figure~\ref{F:MC problem}.  
 The observed value $(21,4)$ is one of these six points, and the algorithm concludes
-that it has found an empirical face on the boundary of $C$ and that 
-this observed value lies on the boundary.
+that it has found an empirical face on the boundary of $C$.
 
 In order for the algorithm to have correctly concluded that $(21,4)$ was in the 
-interior, the extreme point $(27,27)$ would need to have occurred in the MC sample
+relative interior of $C$, the extreme point $(27,27)$ 
+would need to have occurred in the MC sample
 (as it occasionally did, in which case the algorithm found the MLE as usual).  
 However, though this point is not far from the end point $(25,20)$ of our line
 segment, the model indexed by the current parameter value 
@@ -1025,11 +1040,10 @@ sampled points used to derive this empirical face.}
 \label{F:MC problem}
 \end{figure}
 
-Our algorithm treats the line segment as a boundary of the 
+Thus in most cases, our algorithm treats the line segment as a boundary of the 
 convex support in which the observed statistic lies in the relative interior, and 
-concludes that the MLE does not exist.  It does not stop there; 
-it proceeds as in the first
-example and seeks to find the MLE of the LCM,
+hence the support of the LCM.  It proceeds as in the first
+example finds the MLE of this LCM,
 \begin{align*}
 	\etaLCM = (35.38, -9.39),
 \end{align*}
@@ -1047,8 +1061,8 @@ If the end goal is to try to interpret meaning out of these numbers by their sig
 magnitude, then we indeed have a problem---our numbers are just wrong.  
 However, if the MLE is viewed as an 
 index to a specific model that assigns the highest probability to the observed data,
-then we claim that the model we have found---the LCM with parameter value $\etaLCM$---
-is in fact remarkably similar to the original model indexed by the true MLE.  A 
+then we claim that the model we have found---the LCM with parameter value 
+$\etaLCM$---is in fact remarkably similar to the original model indexed by the true MLE.  A 
 reasonable metric for this comparison is a sum of the absolute difference in 
 probabilities assigned to each point in the sample space,
 \begin{align*}
@@ -1125,6 +1139,7 @@ one-sided 95\% confidence intervals for $\eta$, we get
 	[20.46, +\infty)\\
 	(-\infty, -4.85].
 \end{align*}
+As expected, $\etaMLE$ is well within these intervals.
 %20.462923 -4.850603 
 
 %\begin{align*}

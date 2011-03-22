@@ -82,10 +82,10 @@ approximation.
 As noted above as well as in Section~\ref{S:MCMC approx}, when the gradient must be approximated
 via MCMC, the curvature condition 
 \eqref{E:Wolfe-ll} becomes increasingly difficult to satisfy as the algorithm nears the
-solution.  One cause of this is that our approach requires two independent MCMC samples, one for
+solution.  Our approach currently generates two independent MCMC samples, one for
 the distribution at $\eta$, the other at $\eta + \alpha p$.  By using simulating tempering
-in the manner of \citep{Geyer:1995}, we might effective introduce a correlation between these
-samples.  Another approach might be to apply MCMC-MLE to this optimization problem itself.
+in the manner of \citep{Geyer:1995}, we might effectively introduce correlation between these
+samples, making \eqref{E:Wolfe-ll} easier to satisfy.  Another approach might be to apply MCMC-MLE to this optimization problem itself.
 
 \subsection{Switch criteria}
 Another remaining issue is the stopping or switching criteria: while our Ising model example
@@ -97,9 +97,8 @@ But when?
 The Faux Magnolia example in Section~\ref{S:Example:FauxMagnolia} showed that using 
 our algorithm for $2d$ steepest ascent updates was not enough (though it was adequate when
  using conjugate gradient directions).
-As noted in Section~\ref{S:Combine} MCMC-MLE converges if and only 
-if the importance weights for the sample in \eqref{E:r_hat} are not too 
-``spread out."  Establishing criteria on these importance weights should make it 
+As noted in Section~\ref{S:Combine}, MCMC-MLE converges if and only 
+if the importance weights for the sample in \eqref{E:r_hat} stabilize.  Establishing criteria on these importance weights should make it 
 possible to switch to MCMC-MLE only when it can attain the MLE in one update.
 
 \subsection{Monte Carlo standard errors}

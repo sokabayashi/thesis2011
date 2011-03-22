@@ -803,10 +803,10 @@ this comes with no theoretical guarantees and can be cumbersome in practice.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Summary of parameter estimation methods}
-Tablse\ref{T:Compare estimation} and \ref{T:Compare MCMCestimation} summarize the advantages and disadvantages of the exact and MCMC parameter estimations discussed.  
+Tables~\ref{T:Compare estimation} and \ref{T:Compare MCMCestimation} summarize the advantages and disadvantages of the exact and MCMC parameter estimations discussed.  
 All methods assume that the MLE exists before the search algorithm is applied.
 
-\begin{table}[h] 
+\begin{table}[h!] 
 \caption[Comparison of exact parameter estimation methods]{Comparison of exact parameter estimation methods. MPLE=Maximum pseudolikelihood estimator, Newton=Newton-Raphson,
 SA=stochastic approximation.\\}
 
@@ -833,7 +833,7 @@ Method & Appeal & Drawbacks \\ [1ex]
 \label{T:Compare estimation}
 \end{table}
 
-\begin{table}[h] 
+\begin{table}[h!] 
 \caption[Comparison of MCMC parameter estimation methods]{Comparison of MCMC parameter estimation methods. MCMC Newton=MCMC Newton-Raphson,
 MCMC-MLE=Markov chain Monte Carlo-maximum likelihood estimator, 
 step MCMC-MLE=steplength MCMC-MLE,
@@ -922,12 +922,14 @@ functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd
 estimation for ERGMs.  These have come to loosely be referred 
 to as \emph{degeneracy}.  Strictly speaking, a distribution in an exponential
 family is degenerate when it concentrates the distribution of the natural statistic
-on a hyperplane.  If the family is minimal, this occurs if and only if the MLE does not
-exist in the conventional sense.  However, the term degeneracy
+on a hyperplane.  If the family is minimal, this occurs if and only if the MLE does not exist in the conventional sense.  This in turn means that the observe
+data lies on the relative boundary of the convex support.  \emph{Nearly} degenerate  
+means that the observed data lies nearly on this relative boundary.
+However, the terms degeneracy and nearly degeneracy
 appears to now be invoked if there are undesirable behaviors of the calibrated model or 
 in the model fitting process itself
 \citep{Handcock:degeneracy,advancesp*,recentp*,statnet-tutorial}.
-We will only use the term for its original meaning here.   
+We will only use the terms for its original meanings here.   
 
 \begin{figure}[h]
 \centering
@@ -952,18 +954,26 @@ edges and triangles
 studied by \citeauthor{Rinaldo:2009} is depicted in Figure~\ref{F:g9-hull}.
 \citeauthor{Rinaldo:2009} showed that the normal cones of this support
 explain which portions of the natural parameter space are more likely to correspond to 
-degenerate and nearly degenerate models, where $\E_\eta(g(Y))$ is nearly 
-on the boundary of the convex support.  Some of the perceived pathologies then, 
+degenerate and nearly degenerate models.  Some of the perceived pathologies then, 
 are explained by exponential family theory.
 
-It is possible for a well-fit model to poorly describe or ``resemble" the observed data 
-\citep{ergm}.
-This is not an issue with the parameter estimation method; instead, it is a result of a poorly specified model---ERGMs give tremendous
-flexibility model specification but with no guarantees that a model will behave exactly as desired.  \citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
+It is still possible for a well-fit model to poorly describe or ``resemble" the 
+observed data \citep{Handcock:degeneracy,ergm}.  This may include cases of multimodality of 
+the distribution of the natural statistic and extreme sensitivity to parameter
+values, which has been well-studied in Ising models. 
+In the multimodality case, the observed data is the average
+of the distribution, but there are multiple modes, none which resemble the observed
+data.  If the distribution is in addition extremely sensitive to parameter values,
+it is possible for a very small change in the parameter value to lead to a 
+very different distribution, perhaps going from multimodal to unimodal.
+Typically this suggests that the model itself
+needs to be changed.  ERGMs give tremendous
+flexibility in model specification but with no guarantees that a model will behave exactly as desired.  \citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
 Their tools, available in the \texttt{statnet} package, compare characteristics of 
-the distribution of networks simulated from the fitted model to the observed data.
-These can be utilized to help choose between network statistics to include in a 
-model. 
+the distribution of networks simulated from the fitted model to the observed data, 
+which can then be utilized to help choose between network statistics to include in a 
+model. The issues described here are not with the parameter estimation method 
+itself and thus are the not focus of this dissertation.  
 
 %\citet{Okabayashi:longrange} present a ``long range" search algorithm to climb the log 
 %likelihood of an exponential family, intended for settings where the initial guess of 
@@ -1025,7 +1035,7 @@ it is actually off ``at infinity" in some direction of the parameter space.
 Our algorithm returns the information necessary to construct one-sided confidence 
 intervals for how close $\eta$ is to infinity.  
 Previous work in this area utilized full knowledge
-of the convex support \citep{Handcock:degeneracy,Rinaldo:2009}, something
+of the convex support \citep{Handcock:degeneracy,Rinaldo:2009,Geyer:gdor}, something
 that is not generally available for ERGMs, and provided no such confidence intervals.
 
 %In \citet{Handcock:degeneracy,Rinaldo:2009}, the authors 
