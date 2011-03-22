@@ -9,7 +9,7 @@ Formally, a \emph{social network} is the collection of \emph{actors} and the
 Social scientists have studied social networks as a discipline since as early as the 
 1930s when Jacob L. Moreno introduced the sociogram, a diagram that corresponds to
 the mathematical graph with individuals in a group 
-represented by nodes or vertices and the presence of a relation between 
+represented by nodes and the presence of a relation between 
 individuals by an edge \citep[Chapter 3]{Wasserman:1994}.  
 A sociogram depicting the marriage network data among sixteen 
 important families in Renaissance Florence \citep{Padgett} is depicted in 
@@ -75,7 +75,7 @@ of social network related papers \citep[Chapter 1]{Knoke:2008}.
 % in the social science literature 
   
 For the statistician, the network perspective means that the model should not break the 
-network down into independent components with each containing two actors.
+network down into independent components, each containing two actors.
 Instead, a good model will consider important relational structures in the observed network 
 and clarify their contribution in shaping the global outcome.   
 Accompanying the model must also be a computational algorithm to calibrate the model 
@@ -122,14 +122,14 @@ can then be used to construct confidence intervals and evaluate hypotheses.
 Finally, it should be noted that although problems from the social sciences provide much of the 
 motivation for social network analysis and our research here, network models can in 
 fact be applied to problems in a broad range of disciplines including political 
-science, biology, epidemiology, and computer science and may be of particular interest
+science, biology, epidemiology, and computer science and may be of interest
 to business practitioners in utilities or transportation.  
 Actors often represent individuals but 
 they may also represent entities like nation-states, protein molecules, airports, 
 computers, or corporations.  The relation that connects actors 
 is often friendship or actor $A$ 
 ``liking'' actor $B$, as in Sampson's monk data depicted in Figure~\ref{F:Sampson}, 
-but the relation can be any kind of relation such as a business transaction or the 
+but the relation can be any kind, such as a business transaction or the 
 Internet connectedness between computers.  Figure~\ref{F:ecoli} depicts the 
 \textit{Escherichia Coli} transcriptional regulation network among 423 operons of
 \citet*{Shen-Orr} based on the RegulonDB data of \citet*{Salgado}. These were 
@@ -155,7 +155,7 @@ have already given one answer to this question in the context of the social scie
 trying to differentiate between competing underlying forces that can shape the global 
 structure of relationships: a network model will allow the researcher to 
 identify if one or more actor specific variables and network structures 
-contribute to the characteristic of the overall network.  A good statistical 
+contribute to the characteristic of the overall network.  That is, a good statistical 
 model can see past noise in the data to
 provide clarity of the underlying forces that shape the structure of an observed network
 \citep*{Goodreau:2009}.   
@@ -339,7 +339,8 @@ whether or not there is an \emph{assortative mixing} effect, that is, whether in
 Suppose we wish to incorporate $p$ such exogenous attributes for our $n$-actor network.  
 This information can be represented by an $n \times n \times p$ matrix $X$, whose 
 $ijk$th element is the value of the $k$th attribute in the potential relation from actor
-$i$ to $j$ \citep*{Fienberg:1981,ergm}.  
+$i$ to $j$ \citep*{Fienberg:1981,ergm}.  We include such factors in our model 
+of an adolescent friendship data set in Section~\ref{S:Example:FauxMagnolia}.
 
 Like the other network statistics discussed, the statistics that comprise $X$ can 
 be transparently calculated from data and hence included in the canonical 
@@ -349,7 +350,8 @@ The parameter estimation methodology is unchanged from before (so long as $p$ is
 excessively large), and while this greatly expands the
 usefulness of ERGMs to the researcher, there are no new issues for us to consider
 from a statistical modeling perspective.
-Thus we will continue to use $g(y)$ instead of $g(y,X)$ for simplicity.
+Thus we will continue to use $g(y)$ instead of $g(y,X)$ for simplicity.  
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -430,7 +432,7 @@ can be viewed as a log-linear model with independent dyad random variables,
 $D_{ij}$.  This makes it possible to use a standard logistic regression to calculate MLEs of the parameters.
 
 The statistical independence at the dyad level, however, means that this model will 
-not capture triangular tie configurations in which dyads are dependent.  Also, to 
+not capture triangular tie configurations (or anything more copmlicated) in which dyads are dependent.  Also, to 
 reduce the number of parameters, the model assume $\rho_{ij} = \rho$ and $\theta_{ij} = \theta$, meaning that the 
 tendency towards reciprocity and forming relations is assumed to be the same across all actors.  This example 
 illustrates how the parameter estimation methodology limits the scope of the model and 
@@ -467,7 +469,7 @@ Markov chain Monte Carlo simulations of the model at multiple values for a param
 to determine which fit the data best.  The authors also obtained 
 \emph{maximum pseudolikelihood estimators (MPLE)} from a standard logistic 
 regression (we discuss the pseudolikelihood approach in Section~\ref{S:pseudolikelihood}) 
-and observed that the MPLEs are close to those they arrived at from their rigorous simulations, leading them to conclude that these MPLEs are acceptable.  
+and observed that the MPLEs are close to those they arrived at from their rigorous simulations.   \citeauthor{Frank:1986} seem to conclude that MPLEs are generally quite acceptable.  
 
 
 %%%%%%%%%%%%%%%%% SECTION %%%%%%%%%%%
@@ -583,14 +585,14 @@ of the following form:
 	\eta_{k+1} = \eta_k - \left[ \nabla^2 \ell(\eta_k) \right ]^{-1} \nabla \ell(\eta_k).
 \end{align}
 The algorithm may fail to 
-converge, which typically occurs when the initial $\eta_k$ is far from the solution.  However,
+converge, when the initial $\eta_k$ is far from the solution.  However,
 when Newton-Raphson does converge, it converges extremely fast, 
 where the number of accurate digits roughly doubles at each step.
 
 We use a stochastic version of Newton-Raphson in Section~\ref{S:Example:Ising} where we wish
 to calculate the MLE and are able to start the algorithm from the known true parameter value.
-Both $\nabla \ell(\eta)$ and $\nabla^2 \ell(\eta)$ are approximated using MCMC 
-in the manner of \citep{Penttinen:1984}.
+Both $\nabla \ell(\eta)$ and $\nabla^2 \ell(\eta)$ can be approximated using MCMC 
+ \citep{Penttinen:1984}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Markov chain Monte Carlo maximum likelihood} \label{S:MCMC-MLE}
 \citet{Geyer:1992, Corander:1998, Snijders:2002} developed Markov chain Monte Carlo 
@@ -652,7 +654,7 @@ $\etaMLE$ exists, \citeauthor{Geyer:1992} show that
  whenever the Markov chain is ergodic. 
  
 This approach has been shown in practice to be sensitive to initial parameter 
-values when used without the trust region methodology recommended in \citep{Geyer:1992}, 
+values when used without the trust region methodology recommended in \citet{Geyer:1992}, 
 and the algorithm may require enormous---sometimes infeasibly large---Monte Carlo sample sizes 
 when the starting value $\eta^0$ is far from the MLE \citep{ergm}.  
 In addition, \citeauthor{Geyer:1992} recommend iterating the algorithm several times, 
@@ -712,23 +714,24 @@ arrive at the MLE of $-0.907$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \subsection{Steplength MCMC-MLE} \label{S:Hummel}
-\citet{Hummel} look to improve the range for which iterated MCMC-MLE will converge by
-allowing for larger steps in $\eta_k$ after each sample.  As noted in the 
-simple example with 
-Sampson's monastery data in Section~\ref{S:MCMC-MLE}, MCMC-MLE can only work 
-if $g(\yobs)$ is inside the range of MCMC samples.  
+\citet{Hummel} expanded the range for which iterated MCMC-MLE will converge by
+making incremental updates in $\eta$ towards $\etaMLE$ possible at each iteration.  
+As noted in the 
+previous example with 
+Sampson's monastery data, $\hat{r}(\eta,\eta^0)$ 
+will have no maximum if $g(\yobs)$ is outside the range of MCMC samples.  
 \citeauthor{Hummel}'s approach involves 
 replacing $g(\yobs)$ with a value $\hat{\xi}_1$ close to $g(\yobs)$ but within
-the range of the current model's MCMC samples,
-and then applying MCMC-MLE to update $\eta_0$.  This allows MCMC-MLE to have
-a maximizer, with the update $\eta_1$ closer to $\etaMLE$.
+the range of the current model's MCMC samples.
+This makes it possible to maximize $\hat{r}(\eta,\eta^0)$ and update $\eta^0$,
+with the resulting $\eta$ necessarily closer to $\etaMLE$.
 
 The approach is effective for Sampson's monastery example discussed, and was also applied
 to the E. Coli transcriptional regulation network data of \citet{Shen-Orr} when 
 starting from the MPLE.  Care is needed in finding a $\hat{\xi}_1$ that is inside
 the range of the current model. In addition, if $\eta_0$ is very far from $\etaMLE$, it is 
 not clear that the steps taken by this approach will be large enough to traverse
-the distance between $\eta_0$ and $\etaMLE$ in any reasonable amount of time.
+the distance between $\eta^0$ and $\etaMLE$ in any reasonable amount of time.
 
 
 
@@ -824,16 +827,15 @@ Method & Appeal & Drawbacks \\ [1ex]
 & 	\textbullet \, Simplicity 				  	& \textbullet \, Maximizes $PL(\eta)$, not $\ell(\eta)$  \\
 & 	\textbullet \, Speed, via logistic regression 	& \textbullet \, MPLE behavior not well understood \\ [1ex]
 \hline
-\multirow{4}{0.5in}{Newton}
-& 	\textbullet \, Converges rapidly when it   	& \textbullet \, May not converge depending on choice of\\ 
-& 	converges 	& starting point \\				
-&				& \textbullet \, Requires second derivative matrix and its\\
+\multirow{3}{0.5in}{Newton}
+& 	\textbullet \, Converges rapidly when it   	& \textbullet \, Highly sensitive to starting point\\ 
+& 	converges 	&  \textbullet \, Requires second derivative matrix and its\\	
 &				& inverse \\[1ex]
 \hline
 \multirow{3}{0.5in}{SA} 		
-& 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Sensitive to starting point \\
-& 	converge to MLE under  & \\
-& 	certain conditions.  & \\[1ex]
+& 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Highly sensitive to starting point \\
+& 	converge to MLE with proper  & \textbullet \,  May converge too slowly to be practical \\
+& 	setup  & \\[1ex]
 \hline 
 \end{tabular} 
 \label{T:Compare estimation}
@@ -852,8 +854,8 @@ Method & Appeal & Drawbacks \\ [1ex]
 \multirow{4}{0.5in}{MCMC Newton}
 & 	\textbullet \, Converges rapidly when it   	& \textbullet \, Requires starting point extremely\\ 
 & 	converges 	& close to solution \\				
-&				& \textbullet \, Requires second derivative matrix and its\\
-&				& inverse \\[1ex]
+&				& \textbullet \, Requires calculation of second derivative \\
+&				& matrix and its inverse \\[1ex]
 \hline
 \multirow{3}{0.5in}{MCMC-MLE}
 & 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Highly sensitive to starting point \\ 
@@ -862,13 +864,13 @@ Method & Appeal & Drawbacks \\ [1ex]
 \hline
 \multirow{3}{0.5in}{step MCMC-MLE}
 & 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Sensitive to starting point \\ 
-& 	converge to MLE 					& \textbullet \, May require setup expertise\\ 
+& 	converge to MLE 					& \textbullet \, Requires setup expertise\\ 
 & \textbullet \, Increased range 		& \textbullet \, May require several iterations\\ [1ex]
 \hline
 \multirow{3}{0.5in}{MCMC SA} 		
 & 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Sensitive to starting point \\
-& 	converge to MLE, though & \\
-& 	under restrictive conditions.  & \\[1ex]
+& 	converge to MLE, though & \textbullet \, Convergence conditions not easily\\
+& 	under restrictive conditions.  & implemented in practice.\\[1ex]
 \hline 
 \end{tabular} 
 \label{T:Compare MCMCestimation}
@@ -883,7 +885,7 @@ Method & Appeal & Drawbacks \\ [1ex]
 %\label{F:mck}
 %\end{figure}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Non-existent MLEs in exponential families} \label{S:Non-existent MLE}
 Parameter estimation via maximum likelihood for exponential family models with 
 complex dependence---already a 
@@ -895,13 +897,14 @@ increasing in some direction of the parameter space, called a
 \emph{direction of recession}, so that the the MLE is actually off ``at infinity".
 The theoretical background 
 for this situation has been understood for many years 
-(see \citep{Barndorff,Brown:1986}): MLE existence is a
+\citep{Barndorff,Brown:1986}: MLE existence is a
 geometric problem relating to properties of the \emph{convex support} of the model,
 which is  the smallest closed convex set 
 that the contains the natural statistic \citep{Geyer:gdor}.  
-As we will discuss Section~\ref{S:MLE existence}, the MLE does not exist
-in the conventional sense if the observed data is on the relative boundary of this 
-convex support.  When this occurs, 
+The MLE does not exist in the conventional sense if the 
+observed data is on the relative boundary of this 
+convex support (see Section~\ref{S:MLE existence}).
+When this occurs, 
 it may exist in the \emph{Barndorff-Nielsen completion} of the family.
 Before this dissertation, there have been no 
 computationally convenient solutions to this problem for social network models
@@ -911,11 +914,11 @@ and other discrete exponential family models with complex dependence.
 with complex dependence into a two-phase algorithm, 
 where phase I determines whether or not an MLE exists in the conventional 
 sense via linear programming, and phase II finds the MLE when it exists.
-The MCMC-MLE method discussed in Section~\ref{S:MCMC-MLE} corresponds to phase II of
+\citeauthor{Geyer:1992}'s MCMC-MLE method discussed in Section~\ref{S:MCMC-MLE} corresponds to phase II of
 this approach.
 In the special case of generalized linear models including logistic regression and contingency 
 tables, \citet{Geyer:gdor} outline a methodology to detect non-existent MLEs and construct 
-one-sided confidence intervals.
+one-sided confidence intervals for the natural parameters.
 The approach applies linear programming to the polyhedral convex support of 
 the model to determine the \emph{face}, or the boundary of the support, 
 on which the observed data lies.  
@@ -928,11 +931,11 @@ functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd
 estimation for ERGMs.  These have come to loosely be referred 
 to as \emph{degeneracy}.  Strictly speaking, a distribution in an exponential
 family is degenerate when it concentrates the distribution of the natural statistic
-on a hyperplane.  If the family is minimal, this occurs if and only if the MLE does not exist in the conventional sense.  This in turn means that the observe
+on a hyperplane.  If the family is minimal, this occurs if and only if the MLE does not exist in the conventional sense.  This in turn means that the observed
 data lies on the relative boundary of the convex support.  \emph{Nearly} degenerate  
 means that the observed data lies nearly on this relative boundary.
 However, the terms degeneracy and nearly degeneracy
-appears to now be invoked if there are undesirable behaviors of the calibrated model or 
+appear to now be invoked if there are undesirable behaviors of the calibrated model or 
 in the model fitting process itself
 \citep{Handcock:degeneracy,advancesp*,recentp*,statnet-tutorial}.
 We will only use the terms for its original meanings here.   
@@ -958,28 +961,28 @@ polyhedral convex support of the model;
 the convex support for the 9-node ERGM with a two-dimensional network statistic of
 edges and triangles
 studied by \citeauthor{Rinaldo:2009} is depicted in Figure~\ref{F:g9-hull}.
-\citeauthor{Rinaldo:2009} showed that the normal cones of this support
+\citeauthor{Rinaldo:2009} showed that the normal cones (see Section~\ref{S:Convex analysis}) of this support
 explain which portions of the natural parameter space are more likely to correspond to 
 degenerate and nearly degenerate models.  Some of the perceived pathologies then, 
-are explained by exponential family theory.
+are fully explained by exponential family theory and are not pathologies at all.
 
-It is still possible for a well-fit model to poorly describe or ``resemble" the 
+However, it is possible for a well-fit model to poorly describe or ``resemble" the 
 observed data \citep{Handcock:degeneracy,ergm}.  This may include cases of multimodality of 
 the distribution of the natural statistic and extreme sensitivity to parameter
-values, which has been well-studied in Ising models. 
+values.  %This has been observed and studied in Ising models \citep{Potts}. 
 In the multimodality case, the observed data is the average
 of the distribution, but there are multiple modes, none which resemble the observed
 data.  If the distribution is in addition extremely sensitive to parameter values,
 it is possible for a very small change in the parameter value to lead to a 
 very different distribution, perhaps going from multimodal to unimodal.
-Typically this suggests that the model itself
+This suggests that the model itself
 needs to be changed.  ERGMs give tremendous
 flexibility in model specification but with no guarantees that a model will behave exactly as desired.  \citet*{GOF} devise graphical tests for evaluating the goodness of fit of ERGMs.
 Their tools, available in the \texttt{statnet} package, compare characteristics of 
 the distribution of networks simulated from the fitted model to the observed data, 
 which can then be utilized to help choose between network statistics to include in a 
 model. The issues described here are not with the parameter estimation method 
-itself and thus are the not focus of this dissertation.  
+itself and thus are not the focus of this dissertation.  
 
 %\citet{Okabayashi:longrange} present a ``long range" search algorithm to climb the log 
 %likelihood of an exponential family, intended for settings where the initial guess of 
@@ -1040,9 +1043,9 @@ In the case where the MLE does not exist in the conventional sense,
 it is actually off ``at infinity" in some direction of the parameter space.
 Our algorithm returns the information necessary to construct one-sided confidence 
 intervals for how close $\eta$ is to infinity.  
-Previous work in this area utilized full knowledge
-of the convex support \citep{Handcock:degeneracy,Rinaldo:2009,Geyer:gdor}, something
-that is not generally available for ERGMs, and provided no such confidence intervals.
+Previous work in this area with ERGMs utilized full knowledge
+of the convex support \citep{Handcock:degeneracy,Rinaldo:2009}, something
+not generally available for ERGMs, and provided no such confidence intervals.
 
 %In \citet{Handcock:degeneracy,Rinaldo:2009}, the authors 
 %authors work with small networks for which they have full knowledge of 
@@ -1057,8 +1060,8 @@ that is not generally available for ERGMs, and provided no such confidence inter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Long range search algorithm overview}  \label{S:algorithm overview}
 
-Our algorithm generates iterated estimates $\eta_k$ of the MLE $\etaMLE$ of the 
-form 
+Our algorithm generates iterated estimates $\eta_k$ of the MLE with the 
+update 
 \begin{align} \label{E:eta update}
 	\eta_{k+1} = \eta_k + \alpha_k p_k
 \end{align}
@@ -1078,7 +1081,7 @@ the global maximum, if it exists.
 %By contrast, there may be steps in SA that result in a decrease of the objective 
 %function.   
 
-Theorem 3.2 in \citep{NW} implies the global convergence of the steepest ascent 
+Theorem 3.2 in \citet{NW} implies the global convergence of the steepest ascent 
 algorithm for a continuously differentiable function, $\ell(\eta)$.  It requires the 
 step length $\alpha_k$ to satisfy 
 the Wolfe conditions for \emph{sufficient increase} and \emph{curvature}:
@@ -1107,8 +1110,7 @@ sufficient increase and convergence to the MLE (if it exists)
 because we have the additional property that the exponential family log likelihood 
 function we consider is strictly 
 concave.  The restrictions on the step size $\alpha_k$ along a particular direction 
-$p_k$ and the resulting values for 
-$\ell(\eta_{k+1})$ are depicted in Figure~\ref{F:alpha_region}.  
+$p_k$ are depicted in Figure~\ref{F:alpha_region}.  
 
 \begin{figure}[h]
 \centering
@@ -1147,14 +1149,15 @@ Euclidean norm function, and $\epsilon$
 a small value greater than 0.  \\
 
 % ALGORITHM 
-{\singlespacing 
-{\small  
+\begin{singlespace} 
+{
 \noindent Get an initial value, $\eta_0$.\\ 
 Set $k=0$. \\
 Calculate $\nabla \ell( \eta_k)$, the direction of steepest ascent. \\
 Set $p_k = \nabla \ell( \eta_k)$. \\
 \textbf{while}  $\lVert \nabla \ell( \eta_k) \rVert > \epsilon$ \\ 
-\hspace{4mm} \indent	 \textbf{Find} a step size $\alpha_k$ that satisfies the modified 
+\hspace{4mm} \indent	 
+\textbf{Find} a step size $\alpha_k$ that satisfies the modified 
 curvature condition
 \begin{align*}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T 
@@ -1171,11 +1174,12 @@ $\eta_{k+1} = \eta_k + \alpha_k p_k$.\\
 direction. \\
 \indent $k = k + 1$.  \\
 \textbf{end while}\\
-}}
+}
+\end{singlespace}
 The exit condition from this algorithm is that $\lVert \nabla \ell( \eta_k) \rVert$
-is close to zero.  As noted earlier, the log likelihood $\ell(\fatdot)$ is a strictly
+is close to zero.  As noted earlier, the log likelihood $\ell(\eta)$ is a strictly
 concave function; when the global maximum $\etaMLE$ exists, $\lVert \nabla \ell( \etaMLE) \rVert = 0$.  
-When the MLE does not exist in the conventional sense, $\ell(\fatdot)$ does not bend
+When the MLE does not exist in the conventional sense, $\ell(\eta)$ does not bend
  back down as depicted in Figure~\ref{F:alpha_region}, but instead continues to increase along some direction.  Hence the maximizer can be thought of as off at infinity.
 The log likelihood function is, however, still bounded by 
 the log likelihood of 
@@ -1187,7 +1191,7 @@ for how close $\eta$ is to infinity,
 our algorithm looks to find the maximizer for this new model.  
 Some modification of this algorithm is necessary, which we discuss in 
 Chapter~\ref{Chapter:Linear programming}.  In particular, the objective function
-$\ell( \fatdot)$ that is being maximized must switch to that of the new model.
+$\ell( \eta)$ that is being maximized must switch to that of the new model.
 However, the overall structure of the algorithm is the same.
 
 %DOES THE REST OF THIS CHAPTER NEED TO BE HERE AT ALL?  It is a well-known theorem of exponential families that the non-existence of the MLE 
