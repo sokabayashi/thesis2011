@@ -19,8 +19,8 @@ plant ecology \citep{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1
 Although motivated by ERGMs, the methods we propose are rooted in fundamental
 exponential family theory and applicable to any 
 exponential family model.  Thus the theory presented in this section is from
-the perspective of this more general setting; in fact, only Theorem~\ref{C-H} and
-Corollaries~\ref{LCM MLE exists} and \ref{Cor:LCM mu-space} require 
+the perspective of this more general setting; in fact, only Theorem~\ref{Thm:C-H} and
+Corollary~\ref{Cor:LCM MLE exists} require 
 the additional assumption of a finite state space.
 
 \section{Exponential Family Theory}
@@ -75,10 +75,14 @@ the relative interior of the convex support.
 Thus mean value parameters are more easily interpretable quantities, since
 they reside in the same space as the natural statistics 
 \citep{Handcock:degeneracy,Rinaldo:2009}.
-In particular, $\mu = g(\yobs)$ is the MLE in the mean value parameterization.  
+In particular, $\mu = g(\yobs)$ is the MLE in the mean value parameterization
+by \eqref{E:Observed-Expected}.  
 Note that a point on the 
 relative boundary of the convex support cannot be the mean of any distribution
-in the original family.
+in the family.  The models with $g(\yobs)$ on the this relative boundary
+are the degenerate models mentioned in Section~\ref{S:Non-existent MLE};
+it is clear from this mean value parameterization perspective that the MLEs
+for these do not exist in the conventional sense.
 
 %\citeauthor{Handcock:degeneracy} observed that mean 
 %value parameters located too close to the boundary of the convex support tend to 
@@ -127,15 +131,15 @@ since no three-dimensional ball will lie in that set.  The closure of a set $C$,
 \begin{align*}
 	\cl C = \bigcap \{C + \epsilon B \mid \epsilon > 0 \}
 \end{align*}
-where $B$ is a Euclidean ball \citep[Chapter 1]{Rockafellar:1970}.  The \emph{relative boundary} of a set $C$, denoted $\rbd C$, is the set difference $\cl C \setminus \rint C$.
+where $B$ is a Euclidean ball \citep[Section 6]{Rockafellar:1970}.  The \emph{relative boundary} of a set $C$, denoted $\rbd C$, is the set difference $\cl C \setminus \rint C$.
 
 A nonempty \emph{face} $F$ of a convex polytope $C$ is a convex subset of $C$ such that 
 every line segment in $C$ with a relative interior point in $F$ has 
-both end points in $F$ \citep{Rockafellar:1970}.  It is itself a convex polytope.
+both end points in $F$ \citep[Section 18]{Rockafellar:1970}.  It is itself a convex polytope.
 A \emph{proper} face is a face that is not the empty set or $C$, and 
 \emph{facets} are proper faces of the highest dimension.
 
-For a polyhedral convex $C$, every face $F$ is \emph{exposed} \citep{Rockafellar:1970}, 
+For a polyhedral convex $C$, every face $F$ is \emph{exposed} \citep[Section 18]{Rockafellar:1970}, 
 meaning there exists a vector $\delta$ such that
 \begin{align*}
 	F = \{ x \in C: \inner{x, \delta} = \sup_{y \in C} \inner{y,\delta}  \}
@@ -660,8 +664,9 @@ we can succinctly summarize the result of Theorem~\ref{Thm:LCM} as
 \end{align*}
 The last part of Theorem~\ref{Thm:LCM} says that for the sequence of distributions with parameter 
 value $\eta+s\delta$, the probability of $g(Y)$ occurring on the hyperplane $H$ is strictly 
-increasing, going to 1.  We may think of this as 
-``probability accumulating on the boundary."
+increasing in $s$, going to 1.  We may think of this as 
+``probability accumulating on the boundary."  This intuition is the basis for our
+extended algorithm in Section~\ref{S:pseudocode new}.
 
 We can express the log likelihood of the LCM as a function of the 
 log likelihood of the original family,
@@ -683,7 +688,7 @@ Another consequence of Theorem~\ref{Thm:LCM} is in the mean parameter space:
 %%%%%%%%%%%%%%%
 \begin{corollary} \label{Cor:LCM mu-space}
 Under the setting of Theorem~\ref{Thm:LCM}, let $\delta$ be a direction of 
-recession that is not a direction of constancy and $\YY$ be a finite space.  Then
+recession that is not a direction of constancy.  Then
 \begin{align} \label{E:LCM mu-space}
 	\E_{\eta+ s\delta} g(Y) \to \E_\eta \left ( g(Y) \mid g(Y) \in H ) \right )
 \end{align}
@@ -694,7 +699,8 @@ By definition,
 \begin{align*}
 	\E_{\eta+ s\delta} g(Y) = \int g(y) f_{\eta+ s\delta}(y) \, d\mu(y).
 \end{align*}
-There exist a constant $M > g(y)$ for all $y \in \YY$ since $\YY$ is finite.  Then
+There exist a constant $M > g(y)$ for all $y \in \YY$ for the family to
+be full.  Then
 by the dominated convergence theorem and the application of Theorem~\ref{Thm:LCM}, 
 the limit of the above expectation gets us \eqref{E:LCM mu-space}.
 \end{proof}
@@ -703,15 +709,16 @@ the limit of the above expectation gets us \eqref{E:LCM mu-space}.
 We now define a special kind of direction of recession called a 
 \emph{generic direction of recession} (GDOR) that facilitates finding the 
 LCM for which the MLE exists.
-The vector $\delta$ is a GDOR if in addition to being a direction of recession,  
+A vector $\delta$ is a GDOR if in addition to being a direction of recession,  
 $\delta \in \rint N_C(g(\yobs))$ and $N_C(g(\yobs))$ is not a vector subspace.
 Since normal cones are convex sets and relative interiors of nonempty convex sets 
 are nonempty, by Theorem~\ref{Thm:MLE existence},
 a GDOR exists if and only if the MLE does not exist.
 
-The following theorems and corollaries provide us with some foundation for
-finding both a GDOR and then the MLE in the LCM.
-This first theorem provides the linear programming framework through
+The following theorems and corollaries provide us with the foundation
+for finding and using GDORs.  In essence, GDORs give us a convenient way
+to find an LCM for which the MLE exists.
+This first theorem provides the framework through
 which we can find a GDOR.  
 %%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}[Theorem 7 from \citet{Geyer:gdor}] \label{Thm:L-GDOR}
@@ -729,8 +736,8 @@ only if
 \end{align*}
 \end{theorem}
 It is not immediately obvious why defining $L$ in such a manner is helpful; in fact,
-the motivation is rooted in linear programming.  We explain the use of this theorem in 
-Chapter~\ref{Chapter:Linear programming}.
+the motivation is rooted in linear programming.  We demonstrate the application of 
+this theorem in Chapter~\ref{Chapter:Linear programming}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{corollary}[Corollary 8 from \citet{Geyer:gdor}]
@@ -814,11 +821,11 @@ $g(\yobs) \in \rint (C \cap H$).  Finally, by Theorem~\ref{Thm:MLE existence},
 the MLE for this model must then exist.
 \end{proof}
 
-When we find the MLE in the LCM, $\etaLCM$, we say we have found an MLE in the Barndorff-Nielsen completion of the original family.  This LCM MLE maximizes the likelihood in 
+When we find the MLE in a LCM, $\etaLCM$, we say we have found an MLE in the Barndorff-Nielsen completion of the original family.  This LCM MLE maximizes the likelihood in 
 the family that is the union of the LCM family and the original family.
 
-The LCM is not identifiable, since the support is necessarily lower dimensional 
-than original model.  That is, there must exist a constancy space, $\Gammalim$, such that 
+Note that the LCM is not identifiable, since its support is necessarily lower dimensional 
+than that of the original model.  That is, there must exist a constancy space, $\Gammalim$, such that 
 \begin{align} \label{E:Gammalim}
 \ell( \eta + \gamma )^{LCM} = \ell( \eta )^{LCM}
 \end{align}
@@ -838,7 +845,8 @@ The MLE for the original model, which we may think of as ``off to infinity", has
 more structure in this context---it is the value $\etaLCM$ sent to 
 infinity in direction $\delta$.
 
-We may be interested in knowing how close we are to the LCM.
+We may be interested in characterizing the
+neighborhood of this LCM MLE distribution by means of a confidence region.
 As $s$ goes from $-\infty$ to $+\infty$, the probability of observing 
 $g(Y) \in H$ strictly increases to 1.  
 From a one-sided $1-\alpha$ confidence interval perspective, 

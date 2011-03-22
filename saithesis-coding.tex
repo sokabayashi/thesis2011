@@ -51,7 +51,7 @@ and refer the interested reader to \citet{Fukuda:2004,Fukuda:2008}.
 %\end{itemize}
 %\newpage
 {\singlespacing 
-{
+{ \small
 \noindent \begin{algorithmic}
 \State Get an initial value, $\eta_1 = (0, \ldots 0)$.
 \State \textbf{Sample} $g(Y_1), \ldots, g(Y_m)$ from distribution with parameter $\eta_{1}$.  
@@ -266,7 +266,8 @@ first, find the unique points in this sample, and then eliminate redundant gener
 which is in the \texttt{base} package of R, the second requires defining a V-representation and then applying the \texttt{redundant} function in the \texttt{rcdd}
 package which eliminates the redundant generators.
 We demonstrate this using 10 samples of a two-dimensional vector:
-{\singlespace \begin{verbatim}
+\begin{singlespace}
+{ \begin{verbatim}
 > sample.gy <- t(matrix( c(
 + 19, 11,
 + 21, 14,
@@ -306,6 +307,7 @@ $new.position
 [1] 0 0 1 2 3 0 4 0
 \end{verbatim}
 }
+\end{singlespace}
 
 In the first step, $(19,11)$ and $(21,13)$ each appear twice and are eliminated
 using \texttt{unique}.  Then, a V-rep of these points is constructed.  Before

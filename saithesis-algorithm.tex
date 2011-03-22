@@ -680,20 +680,22 @@ initial value.
 
 It is well known that when the objective function is quadratic, the conjugate gradient 
 method with exact arithmetic converges to the solution
-in at most $d$ steps, where $d$ is the dimension of the problem \citep{NW}.  As a rule 
+in at most $d$ steps, where $d$ is the dimension of the problem \citep[Chapter 5]{NW}.  As a rule 
 of thumb then, we think using our 
 algorithm for $2d$ steps before switching seems reasonable when using conjugate
 gradient directions.  Determining when we are inside the ``radius of convergence"
 for algorithms like Newton-Raphson or MCMC-MLE is an area for further research.
 
-In the case of MCMC-MLE, it was shown in Section~\ref{S:MCMC-MLE} that getting close
-enough to $g(\yobs)$ so that it is within the convex hull of the MCMC samples is a 
+In the case of MCMC-MLE, it was shown in Section~\ref{S:MCMC-MLE} that getting 
+a distribution close enough to $g(\yobs)$ in mean value parameterization 
+so that it is within the convex hull of the MCMC samples is a 
 necessary condition for this algorithm to converge (in fact, this appears to be the
-impetus for the steplength MCMC-MLE approach of \citep{Hummel}).  However, this is not
+impetus for the steplength MCMC-MLE approach of \citet{Hummel}).  However, this is not
 sufficient.  An effective approach may be to examine the importance sampling weights
-used in \eqref{E:r_hat} in the previous iteration, and look for them to stabilize \citep{Geyer:1992}.
-This ``rearview" approach should inform us if the previous $\eta_k$ was close 
-enough to apply MCMC-MLE directly.
+used in \eqref{E:r_hat} in the previous iteration, and look for them to stabilize.
+This ``rearview" approach should inform us if the previous value for $\eta_k$ 
+was close enough to apply MCMC-MLE; applying MCMC-MLE to the current distribution
+should then converge.
 %\section{Estimating standard error} \label{S:SE}
 %The methods to estimate Monte Carlo standard errors described in 
 %Section~\ref{S:MCMC approx} pertain to estimates of functions of $\nabla \ell(\eta)$.

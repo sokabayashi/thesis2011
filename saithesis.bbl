@@ -1,4 +1,4 @@
-\begin{thebibliography}{88}
+\begin{thebibliography}{89}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -377,6 +377,11 @@
 \newblock Some generalized order-disorder transformations.
 \newblock \textit{Proceedings of the Cambridge Philosphical Society},
   \textbf{48} 106--109.
+
+\bibitem[{{R Development Core Team}(2010)}]{R}
+\textsc{{R Development Core Team}} (2010).
+\newblock R: A language and environment for statistical computing.
+\newblock {ISBN} 3-900051-07-0, \urlprefix\url{http://www.R-project.org/}.
 
 \bibitem[{Rinaldo et~al.(2009)Rinaldo, Fienberg and Zhou}]{Rinaldo:2009}
 \textsc{Rinaldo, A.}, \textsc{Fienberg, S.~E.} and \textsc{Zhou, Y.} (2009).
