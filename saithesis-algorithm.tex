@@ -510,7 +510,7 @@ previous points, the algorithm can make much larger steps (right).}
 \end{figure}
 
 
-\section{Step size}
+\section{Step size} \label{S:Step size}
 We now turn our attention to the optimal step size $\alpha_k$ when our objective 
 function is the log likelihood of an 
 exponential family.  Taking the derivative of $\ell( \eta_k + \alpha_k p_k)$ with 
@@ -531,7 +531,15 @@ the curvature condition \eqref
 search nears the MLE and $\nabla \ell( \eta_k)$ gets smaller, the rightmost term in \eqref{E:Wolfe-ll} gets 
 smaller in magnitude (it equals $c \lVert \nabla \ell(\eta_k) \rVert^2$ if using steepest ascent directions), making a 
 numerical search for $\alpha_k$ 
-more challenging.  
+more challenging.  This issues is exacerbated when the quantities are 
+noisily approximated via MCMC, as discussed in the next section.
+We currently construct a spline to approximate 
+$\nabla \ell( \eta_k + \alpha_k p_k)^T p_k$ as a function of $\alpha_k$ based on 
+previous guesses using the \texttt{gam} function in the \texttt{mgcv}
+package \citep{mgcv:R} in R.  However, this approach does not use the fact that
+we have a strictly concave function of $\alpha_k$ and thus a more effective
+approximation should be possible.
+
 
 %Finally, while the choice of 0.2 for $c$ worked well in the problems we explored 
 %regardless of search 

@@ -51,7 +51,7 @@ and refer the interested reader to \citet{Fukuda:2004,Fukuda:2008}.
 %\end{itemize}
 %\newpage
 {\singlespacing 
-{ \small
+{ 
 \noindent \begin{algorithmic}
 \State Get an initial value, $\eta_1 = (0, \ldots 0)$.
 \State \textbf{Sample} $g(Y_1), \ldots, g(Y_m)$ from distribution with parameter $\eta_{1}$.  
@@ -135,13 +135,25 @@ direction.
 }
 }
 
+The driving question in determining MLE existence is
+whether or not the observed statistic lies on the relative boundary 
+of the convex support.
+The above pseudocode goes about this in a seemingly roundabout way---instead
+of checking if $g(\yobs) \notin gy.hull$, why not directly check 
+if $g(\yobs) \in \rbd (gy.hull)$?  The answer to this question lies
+in the computational efficiency of certain operations.  As we discuss
+in the rest of this chapter, calculating the H-representation of convex hulls
+can be extremely expensive and should thus be avoided.
+Fortunately, there are alternatives, but these require a less direct route.  The 
+above pseudocode avoids calculating H-representations of hulls entirely.  
+
 Note that if it is determined that the MLE does not exist in the conventional sense,
 the algorithm smoothly transitions to looking for the MLE in the LCM, using the 
 face $F$ as the support for this new model.  The approximation for $\nabla \ell (\eta)$
 also switches from one for the original model to one for the LCM based on the restricted
 sample.  
 
-There are several operations in the above pseudocode that involve computational geometry:
+The operations in the above pseudocode that involve computational geometry are the following:
 \begin{itemize}
 \item Find the convex hull of a set of points.
 \item Update a convex hull to incorporate new points.
@@ -156,8 +168,7 @@ operations.  We show in detail how to perform these in the R platform (version 2
 using the \texttt{rcdd} package (version 1.1-3).  While software and syntax may change,
 we think it is still useful to provide actual R output that illustrate the
 inputs and results, and hopefully illuminate the underlying issues.  Most of the  
-\texttt{rcdd} commands have been adapted from the vignette accompanying the package
-or \citet{Geyer:2009}.
+\texttt{rcdd} commands have been adapted from \citet{Geyer:2009} and the vignette accompanying the package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Convex polytope representation}
@@ -239,7 +250,7 @@ of the polygon increases;
 \citet{Fukuda:2008} notes that the number of inequalities often increases 
 exponentially in the number of dimensions.  Thus despite the immediate appeal
 of the H-representation, we look to find more computationally efficient alternatives.
-In fact, the algorithm we have outlined in the pseudocode in Section~\ref{S:pseudocode new} avoids any calls to \texttt{scdd} entirely.
+In fact, the algorithm we have outlined in the pseudocode in Section~\ref{S:pseudocode new} avoids any calls to \texttt{scdd}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

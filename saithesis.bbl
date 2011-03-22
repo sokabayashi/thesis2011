@@ -1,4 +1,4 @@
-\begin{thebibliography}{89}
+\begin{thebibliography}{90}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -532,6 +532,13 @@
 \textsc{Welch, D.}, \textsc{Bansal, S.} and \textsc{Hunter, D.~R.} (to appear).
 \newblock Statistical inference to advance network models in epidemiology.
 \newblock \textit{Epidemics}.
+
+\bibitem[{Wood(2011)}]{mgcv:R}
+\textsc{Wood, S.} (2011).
+\newblock \texttt{mgcv}: {GAMs with GCV/AIC/REML smoothness estimation and
+  GAMMs by PQL}.
+\newblock R pakage version 1.7-4.,
+  \urlprefix\url{http://cran.r-project.org/web/packages/mgcv}.
 
 \bibitem[{Younes(1988)}]{Younes:1988}
 \textsc{Younes, L.} (1988).

@@ -25,10 +25,13 @@ demonstrated by the Ising model and Faux Magnolia High
 examples.  We have also described a way to construct and use confidence intervals to 
 make convergence highly probable.
 
-For the setting where the MLE does not exist, our approach uses MCMC sampling to
+For the setting where the MLE does not exist and the convex support is 
+not known (as in ERGMs), our algorithm uses MCMC sampling to
 both direct the search towards the face in which the observed statistic lies
-while exploring the geometry of the convex support.  
-We know of no other general approaches for dealing with the setting where
+while exploring the geometry of the convex support.  We use
+computationally efficient methods that avoid calculating H-representations
+of convex hulls and only do comparisons with rational arithmetic.
+We know of no other general approach for dealing with the setting where
 the convex support is unknown in advance.
 
 The algorithm can be computationally demanding.  When the current iteration approaches 
@@ -68,7 +71,7 @@ maximum likelihood in exponential families).
 
 \section{Areas for further research}
 \subsection{Convergence}
-There are several outstanding issues.  Most notably, we have not showed convergence of 
+There are several outstanding issues.  We have not showed convergence of 
 the algorithm when the gradient 
 is approximated via MCMC.  This is a more difficult theoretical problem and is the 
 motivation for stochastic 
@@ -79,13 +82,17 @@ approach of \citet{Andrieu:2005} or \citet{Liang:2010} in MCMC stochastic
 approximation.  
 
 \subsection{Step size search}
+The process of finding a step size $\alpha$ to satisfy the curvature condition
+ \eqref{E:Wolfe-ll} can be improved.
+The spline approximation of $\nabla \ell(\eta + \alpha p)^T p$ as a function of $\alpha$ should ideally incorporate the fact that the function is strictly
+concave (Section~\ref{S:Step size}).  
 As noted above as well as in Section~\ref{S:MCMC approx}, when the gradient must be approximated
-via MCMC, the curvature condition 
+via MCMC, 
 \eqref{E:Wolfe-ll} becomes increasingly difficult to satisfy as the algorithm nears the
 solution.  Our approach currently generates two independent MCMC samples, one for
 the distribution at $\eta$, the other at $\eta + \alpha p$.  By using simulating tempering
-in the manner of \citep{Geyer:1995}, we might effectively introduce correlation between these
-samples, making \eqref{E:Wolfe-ll} easier to satisfy.  Another approach might be to apply MCMC-MLE to this optimization problem itself.
+in the manner of \citet{Geyer:1995}, we might effectively introduce correlation between these
+samples, making \eqref{E:Wolfe-ll} easier to satisfy.  
 
 \subsection{Switch criteria}
 Another remaining issue is the stopping or switching criteria: while our Ising model example
