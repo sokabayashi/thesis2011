@@ -1,4 +1,4 @@
-\documentclass[compress, 9pt]{beamer}
+\documentclass[slidestop,compress, 10pt]{beamer}
 
 %\usepackage{beamerthemesplit}
 \graphicspath{{Figures/}}
@@ -21,7 +21,7 @@
 \usepackage[all]{xy}
 \usepackage{url}
 \usepackage{setspace}
-
+%\usepackage{xmpmulti}
 \DeclareMathOperator{\E}{E}
 \DeclareMathOperator{\I}{I}
 \DeclareMathOperator{\Var}{Var}
@@ -65,13 +65,13 @@
 \newcommand{\Gammalim}{\Gamma_{\textrm{lim}}}
 \newcommand{\CLCM}{C_{\textrm{LCM}}}
 
-\setbeamercovered{transparent}
+%\setbeamercovered{transparent}
 
 \title{Parameter Estimation in Social Network Models}
 \author{
-  Saisuke Okabayashi %\\
+  Saisuke Okabayashi 
 %  Charles J. Geyer
-  }
+}
 
 \institute{Department of Statistics \\ University of Minnesota}
 
@@ -93,6 +93,7 @@
 \item directions of recession
 \end{itemize}
 
+\pause
 But that's not how it began!
 }
 
@@ -105,7 +106,6 @@ But that's not how it began!
 \includegraphics[height=3in]{samplike}
 \caption{Sampson's (1969) monastery affinity network.} 
 \end{center} 
-\label{fmh} 
 \end{figure}
 }
 \frame
@@ -128,7 +128,6 @@ But that's not how it began!
 \includegraphics[height=3in]{florentine}
 \caption{Florentine marriage network.} 
 \end{center} 
-\label{fmh} 
 \end{figure}
 }
 \frame
@@ -140,7 +139,6 @@ But that's not how it began!
 \scalebox{.4}{\includegraphics{ecoli}}
 \caption{E. coli network.} 
 \end{center} 
-\label{fmh} 
 \end{figure}
 }
 
@@ -175,27 +173,28 @@ The Florentine marriage network, in matrix form:
 \begin{table}[htdp]
 \begin{center}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline 
-0 & 0 & 0 &     0 &     0 &     0 &     0 &     0 &     1&      0 &      0 &      0 &      0 & 0 &      0 &      0 \\ \hline
-0 & 0 &     0 &     0 &     0 &     1&     1&     0 &     1&      0 &      0 &      0 & 0 &      0 &      0 &      0 \\  \hline
-0 & 0 &     0 &     0 &     1&     0 &     0 &     0 &     1&      0 &      0 &      0 & 0 &      0 &      0 &      0 \\  \hline
-0 & 0 &     0 &     0 &     0 &     0 &     1&     0 &     0 &      0 &      1&      0 & 0 &      0 &      1&      0 \\  \hline
-0 & 0 &     1&     0 &     0 &     0 &     0 &     0 &     0 &      0 &      1&      0 & 0 &      0 &      1&      0 \\  \hline
-0 & 1&     0 &     0 &     0 &     0 &     0 &     0 &     0 &      0 &      0 &      0 & 0 &      0 &      0 &      0 \\   \hline
-0 & 1&     0 &     1&     0 &     0 &     0 &     1&     0 &      0 &      0 &      0 &  0 &      0 &      0 &      1 \\  \hline
-0 & 0 &     0 &     0 &     0 &     0 &     1&     0 &     0 &      0 &      0 &      0 & 0 &      0 &      0 &      0 \\  \hline
-1& 1&     1&     0 &     0 &     0 &     0 &     0 &     0 &      0 &      0 &      0 &  1&      1&      0 &      1\\  \hline
-0 & 0 &     0 &     0 &     0 &     0 &     0 &     0 &     0 &      0 &      0 &      0 & 0 &      1&      0 &      0 \\  \hline
-0 &0 &     0 &     1&     1&     0 &     0 &     0 &     0 &      0 &      0 &      0 &    0 &      0 &      1&      0 \\  \hline
-0 & 0 &     0 &     0 &     0 &     0 &     0 &     0 &     0 &      0 &      0 &      0 & 0 &      0 &      0 &      0 \\  \hline
-0 & 0 &     0 &     0 &     0 &     0 &     0 &     0 &     1&      0 &      0 &      0 & 0 &      0 &      1&      1\\  \hline
-0 & 0 &     0 &     0 &     0 &     0 &     0 &     0 &     1&      1&      0 &      0 & 0 &      0 &      0 &      0 \\   \hline
-0 & 0 &     0 &     1&     1&     0 &     0 &     0 &     0 &      0 &      1&      0 &   1&      0 &      0 &      0 \\  \hline
-0 & 0 &     0 &     0 &     0 &     0 &     1&     0 &     1&      0 &      0 &      0 & 1&      0 &      0 &      0\\ 
+0 & 0 & 0 & 0 &  0 &  0 &0 &0 & 1&0 &      0 &      0 &      0 & 0 &      0 &      0 \\ \hline
+0 & 0 &  0 & 0 &     0 &1&     1&     0 &     1&      0 &      0 &      0 & 0 &0 &0 &0 \\  \hline
+0 & 0 & 0 &0 & 1&     0 &     0 &     0 &     1&      0 &      0 &      0 & 0 &0 &0 &0 \\  \hline
+0 & 0 & 0 &0 & 0 &     0 &     1&     0 &     0 &      0 &      1&      0 & 0 & 0 &1&0 \\  \hline
+0 & 0 & 1& 0 & 0 &     0 &     0 &     0 &     0 &      0 &      1&      0 & 0 & 0 &1&0 \\  \hline
+0 & 1&  0 &0 & 0 &     0 &     0 &     0 &     0 &      0 &      0 &      0 & 0 & 0 &0 &0 \\   \hline
+0 & 1&0 & 1&0 & 0 &     0 &     1&     0 &      0 &      0 &      0 &  0 &      0 & 0 &1 \\  \hline
+0 & 0 &0 & 0 & 0 &     0 &     1&     0 &     0 &      0 &      0 &      0 & 0 & 0 &0 &0 \\  \hline
+1& 1& 1&0 &0 & 0 &     0 &     0 &     0 &      0 &      0 &      0 &  1& 1&0 &      1\\  \hline
+0 & 0 &0 &0 & 0 &     0 &     0 &     0 &     0 &      0 &      0 & 0 & 0 &1&      0 &      0 \\  \hline
+0 &0 &0 &1&1&  0 &     0 &     0 &     0 &      0 &      0 &0 &    0 &      0 &      1&      0 \\  \hline
+0 & 0 & 0 &0 &0 &0 & 0 &     0 &     0 &      0 &      0 &      0 & 0 &      0 &      0 &      0 \\  \hline
+0 & 0 &0 & 0 &0 &0 &0 & 0 &     1&      0 &      0 &      0 & 0 &      0 &      1&      1\\  \hline
+0 & 0 & 0 & 0 & 0 & 0 & 0 &     0 &     1&      1&      0 &      0 & 0 &      0 &      0 &      0 \\   \hline
+0 & 0 &0 & 1& 1& 0 & 0 &     0 &     0 &      0 &      1&      0 &   1&      0 &      0 &      0 \\  \hline
+0 & 0 &0 & 0 & 0 & 0 &     1&     0 &     1&      0 &      0 &      0 & 1&      0 &      0 &      0\\ 
 \hline \end{tabular} 
 \end{center}
 \label{defaulttable}
 \end{table}
 }
+\textbf{NOTE: $Y_{ij}$ are not in general independent.  The complex dependence of $Y_{ij}$ is at the core of this ``network perspective''.}
 }
 
 \frame
@@ -205,9 +204,9 @@ The Florentine marriage network, in matrix form:
 Writing down an expression for a network model is easy.  
 
 Exponential-family Random Graph Models (ERGM) have a log likelihood
-\begin{align*}
+\begin{align} \label{E:loglike}
 	\ell( \eta) = \inner{\eta, g(\yobs)} - c(\eta)
-\end{align*}
+\end{align}
 where
 \begin{align*}
 	c(\eta) = \log \sum_{y \in \YY} e^{\inner{\eta, g(y)}}.
@@ -215,8 +214,8 @@ where
 
 The natural statistic $g(y)$ is a vector of \emph{network statistics} of interest.  Some examples:
 \begin{itemize}
-	\item number of edges, $\sum$
-	\item number of triangles
+	\item number of edges, $\sum_{i,j} Y_{ij}$
+	\item number of triangles, $\sum_{i \neq j \neq k} Y_{ij}Y_{jk}Y_{ki}$
 \end{itemize}
 
 
@@ -230,7 +229,28 @@ The natural statistic $g(y)$ is a vector of \emph{network statistics} of interes
 \frame
 {
 \frametitle{Number of graphs in $\YY$}
+\begin{table}[h!] 
+\caption{Sample space size for undirected networks with different number of 
+actors.}
 
+\begin{tabular}{ccl} 
+\hline 
+Nodes & Possible Edges & Total Graphs \\ [1ex]
+\hline
+5 & ${5 \choose 2} = 10$ & $2^{10} = 1024$ \\ [1ex]
+6 & ${6 \choose 2} = 15$ & $2^{15} = 32,768$ \\ [1ex]
+7 & ${7 \choose 2} = 21$ & $2^{21} = 2,097,152$ \\ [1ex]
+8 & ${8 \choose 2} = 28$ & $2^{28} = 268,435,456$ \\ [1ex]
+9 & ${9 \choose 2} = 36$ & $2^{36} = 68,719,476,736$ \\ [1ex]
+10 & ${10 \choose 2} = 45$ & $2^{45} = 3.518437\times10^{13}$ \\ [1ex]
+\hline 
+\end{tabular} \label{T:number graphs}
+\end{table}
+
+So, the sum in $c(\eta)$ is over an astronomical number of terms for 
+even moderate sized networks.
+
+\textbf{Implication: don't evaluate the log likelihood function \eqref{E:loglike}.}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,59 +268,100 @@ But how do you find this value that maximizes the likelihood if you can't evalua
 \frame
 {
 \frametitle{Methods that are out there}
-\begin{figure}
 \begin{center} 
-\scalebox{.4}{\includegraphics{mck.pdf}}
+\includegraphics[height=3in]{mck-before.png}
 %\caption{Adolescent Health.} 
 \end{center} 
-\label{fmh} 
+}
+\frame
+{
+\frametitle{Methods that are out there}
+\begin{figure}
+\begin{center} 
+\includegraphics[height=3in]{mck-after.png}
+%\caption{Adolescent Health.} 
+\end{center} 
 \end{figure}
 }
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Long range algorithm}
+\section{Long range algorithm (part I)}
 \frame
 {
-\frametitle{Goal for our algorithm}
-Prove that $\lVert \nabla \ell(\eta_k) \rVert \ \to 0$ as $k \to +\infty$.
+\frametitle{Designing an algorithm}
+
+Our algorithm should
+\begin{itemize}
+\item Converge to the MLE $\etaMLE$, if it exists.
+\item Work from any starting point $\eta_0$.
+\item not require any trial-and-error calibration.
+\end{itemize}
+
+Some implications of the above:
+\begin{itemize}
+\item Don't evaluate log likelihood function $\ell( \eta)$
+\item Don't use second derivative of log likelihood $\nabla^2 \ell( \eta)$
+\begin{itemize}
+	\item Can be expensive to compute
+	\item Not informative when $\eta_0$ is far from solution---may be near-singular
+\end{itemize}
+\end{itemize}
 }
 
-
-
 \frame
 {
-\frametitle{Long range algorithm}
-\begin{singlespace} 
-{
-\noindent Get an initial value, $\eta_0$.\\ 
-Set $k=0$. \\
-Calculate $\nabla \ell( \eta_k)$, the direction of steepest ascent. \\
-Set $p_k = \nabla \ell( \eta_k)$. \\
-\textbf{while}  $\lVert \nabla \ell( \eta_k) \rVert > \epsilon$ \\ 
-\hspace{4mm} \indent	 
-\textbf{Find} a step size $\alpha_k$ that satisfies the modified 
-curvature condition
+\frametitle{So what \emph{do} we have??}
+{\large \textbf{We have the \emph{gradient},} $\boldsymbol{\nabla \ell(\eta)}$.}
+\vspace*{2mm}
+
+By a nice property of exponential families,
 \begin{align*}
-	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T 
-p_k
+	\nabla \ell( \eta ) = g(y_{obs}) - \E_{\eta} g(Y).
 \end{align*}
-\indent for some $0 < c < 1$.  
-%This condition requires $\alpha_k$ to fall within \\
-%\indent the acceptable region in Figure \ref{F:alpha_region}. \\
 
-$\eta_{k+1} = \eta_k + \alpha_k p_k$.\\
-\indent Calculate $\nabla \ell( \eta_{k+1})$.\\
-\indent \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent 
-direction. \\
-\indent $k = k + 1$.  \\
-\textbf{end while}\\
-}
-\end{singlespace}
+
+Even when $E_\eta g(Y)$ cannot be calculated exactly, it can be well approximated by
+\begin{align*}
+E_\eta g(Y) \approx \frac{1}{m}\sum_{i = 1}^m g(Y_i),
+\end{align*}
+where $Y_1$, $\ldots$, $Y_m$ are an MCMC sample from distribution with parameter $\eta$.
+\vspace*{4mm}
+
+%\pause
+We need to find a way to use the gradient to: 
+\vspace*{2mm}
+\begin{itemize}
+\item Direct the search  (Determine $p_k$)
+\vspace*{2mm}
+
+\item Ensure that adequate progress is made in each iteration  (Pick $\alpha_k$)
+\vspace*{2mm}
+
+\item Inform us when the MLE is obtained  ($\nabla \ell(\eta) = 0$)
+\end{itemize}
+
 }
 
 \frame
 {
-  \frametitle{Curvature condition in detail}
+\frametitle{Framework for our algorithm}
+Use simple iterated estimates
+\begin{align*}
+	\eta_{k+1} = \eta_k + \alpha_k p_k
+\end{align*}
+where $\alpha_k$ is a \textbf{step size} and  $p_k$ is a \textbf{search direction} that
+is restricted to be an \emph{ascent direction} of the log likelihood.
+
+Taking positive step sizes $\alpha_k$ in an ascent direction $p_k$ gets us ``progress" up the log 
+likelihood surface in the direction of $p_k$, but does not assure us ``sufficient progress".
+
+We need a condition that guarantees good step sizes $\alpha_k$.
+}
+
+
+\frame
+{
+  \frametitle{Curvature condition}
+Find an $\alpha_k$ that satisfies
 \begin{align*}
 	 0 & \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k \leq c \nabla \ell(\eta_k)^T 
 p_k
@@ -311,6 +372,111 @@ p_k
 	\caption{Acceptable region for step size $\alpha_k$ along a search direction $p_k$.}
 \label{F:alpha_region}
 \end{figure}
+}
+
+
+
+\frame
+{
+\frametitle{Search Algorithm}
+\setbeamercovered{transparent}
+\small
+
+Get an initial value, $\eta_0$.\\ 
+Set $k=0$. \\
+Set $p_0 = \nabla \ell( \eta_0)$, the direction of steepest ascent. \\
+\vspace*{2mm}
+
+\uncover<2->{
+\textbf{while}  $\parallel \nabla \ell( \eta_k) \parallel > \epsilon$ \\ 
+\vspace*{1mm}
+
+\uncover<3->{
+\hspace*{4mm} \textbf{Find} \alert{$\alpha_k$} that satisfies the \textbf{curvature condition}
+\begin{align*}
+	 0 & \leq \nabla \ell( \eta_k + \alert{\alpha_k} p_k)^T p_k \leq c \nabla \ell(\eta_k)^T p_k
+\end{align*}
+\hspace*{4mm} \indent for some fixed $0 < c < 1$.  
+\vspace*{1mm}
+} 
+
+\uncover<4->{
+\hspace*{4mm} $\eta_{k+1} = \eta_k + \alert{\alpha_k} p_k$\\
+\vspace*{1mm}
+\hspace*{4mm} $\nabla \ell( \eta_{k+1}) = g( y _{obs}) - \E_{\eta_{k+1}}g(Y)$\\
+\vspace*{2mm}
+} 
+
+\uncover<5->{
+\hspace*{4mm} \indent \textbf{Find} \alert{$p_{k+1}$}
+, which must be an ascent direction. \\
+}
+
+\uncover<6->{
+\hspace*{4mm} \indent $k = k + 1$  \\
+}
+
+\textbf{end(while)}
+}  
+}
+
+
+
+\frame
+{
+\frametitle{Results}
+\begin{theorem}[Exponential family zero gradient attainment] \label{Thm:log like max}
+Consider any line search of the form 
+\begin{align}
+	\eta_{k+1} &= \eta_k + \alpha_k p_k \label{E:eta_update}
+\end{align}
+used to minimize the negative log likelihood function $-\ell(\cdot)$ of a regular 
+exponential family on a finite sample space, where the search direction $p_k$ 
+is a non-zero descent direction.
+%such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
+%direction $-\nabla \ell(\eta_k)$ is 
+%restricted to be less than 90 degrees by
+%\begin{align*}
+%\cos \theta_k \geq \delta > 0
+%\end{align*}
+% for some fixed $\delta > 0$.  
+
+Then, unless $\nabla \ell(\eta_k) = 0$, in which case $\eta_k$ is already the solution 
+and the search is complete, it is 
+possible to find a step length $\alpha_k$ that satisfies the \emph{curvature 
+condition}
+\begin{align}
+	0 \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k  \leq c \nabla \ell(\eta_k)^T p_k  
+\label{E:Wolfe-ll}
+\end{align}
+for some fixed $0 < c < 1$.
+
+Furthermore, repeated iterations of \eqref{E:eta_update} along a descent direction 
+satisfying \eqref{E:Wolfe-ll} will produce a sequence, $\eta_1, \eta_2, \ldots$ such 
+that
+\begin{align*}
+	\lim_{k \to \infty} \lVert \nabla \ell(\eta_k) \rVert = 0.
+\end{align*}
+\end{theorem}
+}
+
+\frame
+{
+\frametitle{MLE attainment}
+Previous theorem gives us using our algorithm gets us 
+$\lVert \nabla \ell(\eta_k) \rVert \to 0$.  
+
+A little more work gets us that 
+this is the same thing as finding the MLE $\etaMLE$.
+
+\begin{theorem}[MLE convergence] \label{Thm:Line Search works}
+For a regular exponential family with minimal representation where the MLE exists, the 
+line search described in 
+Theorem~\ref{Thm:log like max} can be applied to the negative log likelihood function 
+$-\ell(\eta)$ so that a search 
+starting at any $\eta_0 \in \Xi$ will converge to the MLE of $\eta$.
+\end{theorem}
+
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -325,45 +491,208 @@ p_k
   \frametitle{Example: Teenage friendships}  
 }
 
+
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{non-Existent MLEs}
 \frame
 {
-  \frametitle{MLE does not always exist}  
+  \frametitle{Geyer, 2009}  
 
+In 2009, Geyer woofed$^1$ about a way to handle non-existent MLEs in the case of generalized linear models.
+\vspace{2mm}
 
+Log likelihood is strictly concave.  There must be a direction $\delta$ for which
+$\ell(\eta + s\delta)$ is strictly increasing in $s$.
+
+Such a $\delta$ is called a \textbf{direction of recession (DOR)}, 
+and exists if and only if the
+observed data $g(\yobs)$ lies on the relative boundary of the \textbf{convex support} of the model.
+
+So what to do?
+
+The MLE is ``off at infinity" in the direction of $\delta$.
+
+But Geyer showed that it is possible to give a measure of how close the parameter $\eta$ may
+be to infinity using one-sided confidence intervals:
+\begin{align*}
+	[\hat{\eta}_L +\infty)
+\end{align*}
+
+\vspace{0.8in}
+\footnotesize{$^1$Actually, Geyer had been woofing about MLE existence since at least as early as 1990.}
 }
 
 \frame
 {
-  \frametitle{Conditions}  
-Convex support
+  \frametitle{Condition for non-existent MLE--graphically}  
+The \textbf{convex support} $C$ is the smallest closed convex set that contains the natural statistics.
 
-Direction of recession
-}
-
-\frame
-{
-  \frametitle{Studies in ERGM}  
 \begin{figure}[h]
 \centering
-\includegraphics[height=3in]{g9-hull}
-\caption{Acceptable region for step size 
-along a search direction according to modified curvature condition 
-\eqref{E:curvature mod}.}
-\label{F:g9-hull}
+\includegraphics[height=2.6in]{g9-hull}
+\caption{Convex support for 9-node undirected network model with edge and triangle
+statistics.}
+%\label{F:g9-hull}
 \end{figure}
-Cheating!
+}
+
+\frame
+{
+  \frametitle{Condition for non-existent MLE--theoretically}  
+\begin{theorem}[Extension of Theorem 4 (Geyer, 2009)]
+For a full exponential family with with log likelihood \eqref{E:loglike}, convex support $C$, and observed data $\yobs$, the following are equivalent:
+\begin{enumerate}
+\item the MLE exists.
+\item Every direction of recession is direction of constancy.
+\item $N_C(g(\yobs))$ is a vector subspace.
+\item $T_C(g(\yobs))$ is a vector subspace.
+\item $g(\yobs) \in \rint C$.
+\end{enumerate}
+\end{theorem}
+}
+
+\frame
+{
+	\frametitle{Observed data is $(31,50)$.  So then what??}
+
+Define a hyperplane $H$, orthogonal to $\delta$.
+\begin{figure}[h]
+\centering
+\includegraphics[height=2.5in]{g9-H.png}
+%\caption{Convex support for 9-node undirected network model with edge and triangle statistics.}
+%\label{F:g9-hull}
+\end{figure}
+	If $\delta$ is a \textbf{generic} direction of recession (GDOR), then as $s \to +\infty$,
+\begin{align*}
+		P_{\eta + s \delta}( g(Y) \in H) \to 1.
+\end{align*}
+}
+
+\frame
+{
+  \frametitle{Limiting conditional model (LCM)}  
+	The limiting distribution, called the \textbf{limiting conditional model (LCM)}, is another exponential family where
+	\begin{itemize}
+		\item the convex support is the convex hull of $g(\YY) \cap H$.
+		\item $P_{\eta + s \delta}( Y = y) \to P_{\eta}( Y =y \mid g(Y) \in H)$.
+		\item $\ell(\eta) < \ell_{LCM}(\eta)$, where $\ell_{LCM}(\eta)$ is the log likelihood of the LCM.
+		\item the MLE, $\etaLCM$, is guaranteed exists.
+	\end{itemize}
+}
+\frame
+{
+  \frametitle{Measuring closeness to infinity}  
+So,
+\begin{align*}
+	\lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\RR^d} \ell(\eta).
+\end{align*}	
+
+MLE for original model: off at $+\infty$.
+
+Now, some more detail: it is $\etaLCM$ sent to infinity in direction of $\delta$.
+\vspace{2mm}
+
+Can we say anything about how close $\eta$ is to infinity?  
+
+Find unique $s$, call it $\hat{s}$, such that
+\begin{align*}
+		P_{\eta + s \delta}( g(Y) \in H) = \alpha.
+\end{align*}
+Then $[ \hat{s}, +\infty)$ is a $1- \alpha$ confidence interval for the parameter $s$, and
+\begin{align*}
+[ \etaMLE + \hat{s} \delta, + \infty)
+\end{align*}
+gives a $1 - \alpha$ confidence region for the parameter $\etaMLE + \hat{s} \delta$.
+}
+
+%\frame
+%{
+%  \frametitle{Previous work}  
+%
+%\begin{columns}[t]
+%%
+%\begin{column}[2in]
+%Handcock (2003), Rinaldo, Fienberg, and Zhou (2009).
+%\end{column}
+%
+%\begin{column}[4in]
+%\begin{figure}[h]
+%\centering
+%\includegraphics[height=2.6in]{g9-hull}
+%\caption{Convex support for 9-node network model with edge and triangle
+%statistics.}
+%%\label{F:g9-hull}
+%\end{figure}
+%\end{column}
+%\end{columns}
+%}
+\frame
+{
+  \frametitle{Previous work}  
+Handcock (2003), Rinaldo, Fienberg, and Zhou (2009) studied 7 and 9-node undirected networks
+with two statistics.
+\begin{itemize}
+	\item Confirmed condition for relative location of $g(\yobs)$ for MLE to not exist.  
+	%That is, found face of $C$ in which $g(\yobs)$ lies in relative interior.
+	\item Identified cones that bound DORs.% (normal cones of $C$ at $g(\yobs)$).
+\end{itemize}
+
+Authors use full knowledge of convex support of model $C$ to determine above.
+
+\begin{columns}[]
+\begin{column}[T]{0.4\textwidth}
+\includegraphics[width=2in]{g9-basic}
+\end{column}
+\begin{column}[]{0.6\textwidth}
+\begin{itemize}
+\item Vertices of hull
+\item Equations of lines for boundaries
+\end{itemize}
+\end{column}
+\end{columns}
+\textbf{But in a real problem, we don't have this!  So, no general method suggested.}
+
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algorithm extended}
 \frame
 {
-\frametitle{Long range search to a place that doesn't exist}
-How do we find it?
+\frametitle{What do we have?}
+MCMC samples from distribution with parameter $\eta_k$.  
 
-What is ``it"?
+And here, we're trying to do more: find $\etaLCM$ and 
+a GDOR $\delta$.
+\vspace{1ex}
+
+\begin{columns}[t]
+\begin{column}[T]{0.4\textwidth}
+%\includegraphics[height=1.5in]{g9-basic}
+%\pgfputat{\pgfxy(0,0)}{\pgfbox[left,top]{\includegraphics[width=\textwidth]{MCsample-bare} }}
+\includegraphics[width=2in]{MCsample-bare}
+\end{column}
+
+\begin{column}[r]{0.6\textwidth}
+\begin{itemize}
+\item But that's all we needed to find the MLE before! 
+%\vspace{1mm}
+
+
+\item Iterated sampling from distribution with parameter $\eta_k$ until $\nabla \ell(\eta) = 0$.
+
+Or alternatively, until
+\begin{align*}
+	\E_{\eta_k} g(Y) = g(\yobs).
+\end{align*}
+
+\end{itemize}
+\end{column}
+\end{columns}
 }
 
 \frame
@@ -371,22 +700,31 @@ What is ``it"?
 \frametitle{Case: MLE exists}  
 \begin{figure}[h]
 \centering
-\includegraphics[height=2in]{MCsample-far}
-\includegraphics[height=2in]{MCsample-MLE}
-\caption{MCMC samples when MLE exists.}
+\includegraphics[height=2.5in]{MCsample-far}
+\includegraphics[height=2.5in]{MCsample-MLE}
+\caption{MCMC samples from distributions with $\eta = (0,0)$ (left), and $\eta=\etaMLE$ (right).}
 \label{F:MCsample-MLE exists}
 \end{figure}
+%MCMC samples from distributions with $\eta = (0,0)$ (left), and $\eta=\etaMLE$ (right).
 }
 
+
+\frame
+{
+\frametitle{Extended algorithm}  
+\includegraphics[width=2in]{minesweeper}
+
+
+}
 
 \frame
 {
 \frametitle{Case: MLE does not exists}  
 \begin{figure}[h]
 \centering
-\includegraphics[height=2in]{MCsample-boundary}
-\includegraphics[height=2in]{MCsample-77face}
-\caption{MCMC samples when MLE does not exist.}
+\includegraphics[height=2.5in]{MCsample-boundary}
+\includegraphics[height=2.5in]{MCsample-77face}
+\caption{MCMC samples from distributions with $\eta = (0,0)$ (left), and $\eta=$ (right).}
 \label{F:MCsample-MLE nonexistent}
 \end{figure}
 }
@@ -397,8 +735,8 @@ What is ``it"?
 \frametitle{Case: MLE exists, but observed data close to boundary}  
 \begin{figure}[h]
 \centering
-\includegraphics[height=2in]{MCsample-problem}
-\includegraphics[height=2in]{MCsample-fakeface}
+\includegraphics[height=2.5in]{MCsample-problem}
+\includegraphics[height=2.5in]{MCsample-fakeface}
 \caption{MCMC samples when MLE does not exist.}
 \label{F:MCsample-MLE problem}
 \end{figure}
