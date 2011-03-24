@@ -64,13 +64,15 @@ defined on $\RR^d$.
 %\end{theorem}
 
 %\section{Line search for MLE estimation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{theorem}[Exponential family zero gradient attainment] \label{Thm:log like 
 max}
 Consider any line search of the form 
 \begin{align}
 	\eta_{k+1} &= \eta_k + \alpha_k p_k \label{E:eta_update}
 \end{align}
-used to minimize the negative log likelihood function $-\ell(\cdot)$ of a regular 
+used to minimize the negative log likelihood function $-\ell(\fatdot)$ of a regular 
 exponential family on a finite sample space, where the \emph{search direction} $p_k$ 
 is a non-zero \emph{descent direction}
 such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
@@ -428,7 +430,7 @@ or
 
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Refinements of algorithm}
 
 In Theorem~\ref{Thm:log like max}, we restricted our search direction $p_k$ to be a 
@@ -509,7 +511,7 @@ previous points, the algorithm can make much larger steps (right).}
 \label{F:zigzag}
 \end{figure}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Step size} \label{S:Step size}
 We now turn our attention to the optimal step size $\alpha_k$ when our objective 
 function is the log likelihood of an 
@@ -549,7 +551,7 @@ approximation should be possible.
 %phenomenon, but smaller values for 
 %$c$ when using conjugate gradient methods.
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{MCMC approximations} \label{S:MCMC approx}
 Our algorithm requires us to be able to calculate $\nabla \ell(\eta)$ using 
 \eqref{E:nabla ell}.  For many 
@@ -677,7 +679,7 @@ when to increase the MCMC sample size, or when to switch methods, or when to ter
 the algorithm.
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Combining with other algorithms} \label{S:Combine}
 We believe the best use of this algorithm is in combination with other faster methods 
 like MCMC-MLE \citep{Geyer:1992}
