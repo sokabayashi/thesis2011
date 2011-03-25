@@ -92,9 +92,9 @@
 \item relative boundaries of convex hulls
 \item directions of recession
 \end{itemize}
-
-\pause
-But that's not how it began!
+\vspace{1in}
+%\pause
+{\textbf{But that's not how it began!} }
 }
 
 
@@ -103,20 +103,9 @@ But that's not how it began!
   \frametitle{It began with some monks ...}
 \begin{figure}
 \begin{center} 
-\includegraphics[height=3in]{samplike}
-\caption{Sampson's (1969) monastery affinity network.} 
+\includegraphics[height=2.8in]{samplike}
+\caption{Sampson's (1969) monastery affinity network among 18 monks.} 
 \end{center} 
-\end{figure}
-}
-\frame
-{
-  \frametitle{and... }
-\begin{figure}
-\begin{center} 
-\includegraphics[height=3in]{fmh-gradesex2}
-\caption{Adolescent Health friendship network.} 
-\end{center} 
-\label{fmh} 
 \end{figure}
 }
 \frame
@@ -125,9 +114,20 @@ But that's not how it began!
 
 \begin{figure}
 \begin{center} 
-\includegraphics[height=3in]{florentine}
-\caption{Florentine marriage network.} 
+\includegraphics[height=2.7in]{florentine}
+\caption{Padgett's (1994) Florentine marriage network among 16 Florentine families around 1430.} 
 \end{center} 
+\end{figure}
+}
+\frame
+{
+  \frametitle{and... }
+\begin{figure}
+\begin{center} 
+\includegraphics[height=2.7in]{fmh-gradesex2}
+\caption{National Longitudinal Study of Adolescent Health friendship network of 1,461 students in grades 7 -- 12 without isolates.  Squares=Boys, Circles=Girls.} 
+\end{center} 
+\label{fmh} 
 \end{figure}
 }
 \frame
@@ -136,8 +136,9 @@ But that's not how it began!
 
 \begin{figure}
 \begin{center} 
-\scalebox{.4}{\includegraphics{ecoli}}
-\caption{E. coli network.} 
+\includegraphics[height=2.7in]{ecoli}
+\caption{E. Coli transcriptional regulation network of Shen-Orr et al. (2002).  
+Nodes are operons, $i \to j$ indicates that $i$ encodes transcription factor that regulates $j$.} 
 \end{center} 
 \end{figure}
 }
@@ -146,10 +147,22 @@ But that's not how it began!
 {
 \frametitle{Why networks?}
 Networks are a conduit for \emph{flow}.  
+\vspace{2mm}
 
-Flow can be friendship, diseases, data, airplanes, commodities, ideas, advice, association.
+Flow can be friendship, diseases, needle-sharing, money, data, airplanes, commodities, ideas, advice, 
+association (among terrorists), binding (between proteins).
+\vspace{5mm}
 
-Network models can help explain the mechanism of this flow.
+\textbf{Goal}: statistical inference to determine what effects are important
+in global structure of the presence of this flow.
+
+ \vspace{2mm}
+
+Effects can be related to nodes: grade, gender, seniority, GDP.
+
+Or the effect can be the presence of relational structures themselves.
+
+%Network models can help explain the mechanism of this flow.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,8 +170,7 @@ Network models can help explain the mechanism of this flow.
 \frame
 {
 \frametitle{A network as a matrix}
-Formally, a social network is a collection of actors and the relations, or ties, between each 
-pair of actors.  
+A social network is a collection of \emph{actors} and the \emph{relations}, or \emph{ties}, between each pair of actors.  
 
 We can represent a network with $n$ actors as an $n \times n$ matrix $Y$, where each entry
 \begin{align*}
@@ -168,7 +180,7 @@ We can represent a network with $n$ actors as an $n \times n$ matrix $Y$, where 
 	\end{cases}
 \end{align*}
 
-The Florentine marriage network, in matrix form:
+The Florentine marriage network (undirected), in matrix form:
 {\tiny
 \begin{table}[htdp]
 \begin{center}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
@@ -194,7 +206,7 @@ The Florentine marriage network, in matrix form:
 \label{defaulttable}
 \end{table}
 }
-\textbf{NOTE: $Y_{ij}$ are not in general independent.  The complex dependence of $Y_{ij}$ is at the core of this ``network perspective''.}
+\textbf{NOTE: $Y_{ij}$ are not in general independent.  The dependence of the $Y_{ij}$ are at the core of this ``network perspective''.}
 }
 
 \frame
@@ -204,9 +216,9 @@ The Florentine marriage network, in matrix form:
 Writing down an expression for a network model is easy.  
 
 Exponential-family Random Graph Models (ERGM) have a log likelihood
-\begin{align} \label{E:loglike}
+\begin{align*}% \label{E:loglike}
 	\ell( \eta) = \inner{\eta, g(\yobs)} - c(\eta)
-\end{align}
+\end{align*}
 where
 \begin{align*}
 	c(\eta) = \log \sum_{y \in \YY} e^{\inner{\eta, g(y)}}.
@@ -214,9 +226,14 @@ where
 
 The natural statistic $g(y)$ is a vector of \emph{network statistics} of interest.  Some examples:
 \begin{itemize}
-	\item number of edges, $\sum_{i,j} Y_{ij}$
-	\item number of triangles, $\sum_{i \neq j \neq k} Y_{ij}Y_{jk}Y_{ki}$
+	\item number of edges, $\sum_{i<j} Y_{ij}$
+	\item number of triangles, $\sum_{i < j < k} Y_{ij}Y_{jk}Y_{ki}$
 \end{itemize}
+So, in this case,
+\begin{align*}
+	g(y) = \left( \sum_{i<j} Y_{ij}, 
+					\sum_{i < j < k} Y_{ij}Y_{jk}Y_{ki} \right ).
+\end{align*}
 
 
 }
@@ -249,8 +266,9 @@ Nodes & Possible Edges & Total Graphs \\ [1ex]
 
 So, the sum in $c(\eta)$ is over an astronomical number of terms for 
 even moderate sized networks.
+\vspace{2mm}
 
-\textbf{Implication: don't evaluate the log likelihood function \eqref{E:loglike}.}
+\textbf{Implication: don't evaluate the log likelihood function.}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -273,17 +291,17 @@ But how do you find this value that maximizes the likelihood if you can't evalua
 %\caption{Adolescent Health.} 
 \end{center} 
 }
-\frame
-{
-\frametitle{Methods that are out there}
-\begin{figure}
-\begin{center} 
-\includegraphics[height=3in]{mck-after.png}
-%\caption{Adolescent Health.} 
-\end{center} 
-\end{figure}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\frame
+%{
+%\frametitle{Methods that are out there}
+%\begin{figure}
+%\begin{center} 
+%\includegraphics[height=3in]{mck-after.png}
+%%\caption{Adolescent Health.} 
+%\end{center} 
+%\end{figure}
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Long range algorithm (part I)}
 \frame
 {
@@ -425,6 +443,7 @@ Set $p_0 = \nabla \ell( \eta_0)$, the direction of steepest ascent. \\
 \frame
 {
 \frametitle{Results}
+{\small
 \begin{theorem}[Exponential family zero gradient attainment] \label{Thm:log like max}
 Consider any line search of the form 
 \begin{align}
@@ -441,10 +460,8 @@ is a non-zero descent direction.
 %\end{align*}
 % for some fixed $\delta > 0$.  
 
-Then, unless $\nabla \ell(\eta_k) = 0$, in which case $\eta_k$ is already the solution 
-and the search is complete, it is 
-possible to find a step length $\alpha_k$ that satisfies the \emph{curvature 
-condition}
+Then it is possible to find a step length $\alpha_k$ 
+that satisfies the \emph{curvature condition}
 \begin{align}
 	0 \leq \nabla \ell( \eta_k + \alpha_k p_k)^T p_k  \leq c \nabla \ell(\eta_k)^T p_k  
 \label{E:Wolfe-ll}
@@ -458,6 +475,7 @@ that
 	\lim_{k \to \infty} \lVert \nabla \ell(\eta_k) \rVert = 0.
 \end{align*}
 \end{theorem}
+}
 }
 
 \frame
@@ -483,12 +501,100 @@ starting at any $\eta_0 \in \Xi$ will converge to the MLE of $\eta$.
 \section{Examples}
 \frame
 {
-  \frametitle{Example: Monks}  
+  \frametitle{Toy example: Monks}  
+\begin{columns}[t]
+\begin{column}[T]{0.3\textwidth}
+%\includegraphics[height=1.5in]{g9-basic}
+%\pgfputat{\pgfxy(0,0)}{\pgfbox[left,top]{\includegraphics[width=\textwidth]{MCsample-bare} }}
+\includegraphics[width=1.5in]{samplike}
+\end{column}
+
+\begin{column}[r]{0.7\textwidth}
+Use a simple model with only edges.  For this model, $\etaMLE$ can be 
+determined analytically,
+\begin{align*}
+	\etaMLE = -0.9072.
+\end{align*}
+
+MCMC-MLE may struggles to converge when
+starting value $\eta_0$ is far from $\etaMLE$;
+
+starting from $\eta_0 = 1$ took
+10 iterations to converge (default in \texttt{ergm} package is three).
+\end{column}
+\end{columns}
+
+We ran our algorithm starting at same $\eta_0=1$.  Our algorithm converged
+after 21 iterations with 5 parameter updates.
+{\footnotesize
+\begin{table}
+\begin{center}
+\begin{tabular}{rrrrrrlrr}
+  \hline
+    &  &  &  & \multicolumn{1}{c}{inner}\\
+  \multicolumn{1}{c}{$k$} & 
+  \multicolumn{1}{c}{$\eta_k$} &
+  \multicolumn{1}{c}{$\lVert \nabla \ell(\eta_k) \rVert$} &
+  \multicolumn{1}{c}{$\alpha_k$} &
+  \multicolumn{1}{c}{loop }\\
+    &  &  &  & \multicolumn{1}{c}{count}\\
+  \hline
+   0 &  $1.0000$ & 135.64 &  0.012 & 8\\
+   1 & $-0.6649$ & 15.99  &  0.014 & 2 \\
+   2 & $-0.8817$ & 1.57   &  0.014 & 3 \\
+   3 & $-0.9043$ & 0.22   &  0.012 & 8 \\
+   4 & $-0.9069$ & 0.03   &  &  \\
+   \hline
+\end{tabular} \label{T:Sampson redo}
+\end{center}
+\end{table}}
 }
 
 \frame
 {
-  \frametitle{Example: Teenage friendships}  
+  \frametitle{Example: large friendship network}  
+\begin{columns}[t]
+\begin{column}[T]{0.3\textwidth}
+%\includegraphics[height=1.5in]{g9-basic}
+%\pgfputat{\pgfxy(0,0)}{\pgfbox[left,top]{\includegraphics[width=\textwidth]{MCsample-bare} }}
+\includegraphics[width=1.45in]{fmh-gradesex2}
+\end{column}
+
+\begin{column}[T]{0.7\textwidth}
+Fit with a more realistic model that includes terms for actor 
+specific attributes in addition to network structures.  
+%\vspace{1mm}
+
+Actor specific attributes: Grade, Race, Sex.
+\vspace{2mm}
+
+Network structures: edges and geometrically weighted edgewise shared partners (GWESP)
+\vspace{2mm}
+
+Run our algorithm starting at $(0,0,0,0,0)$, compare to MCMC-MLE (starting at a value very close to MLE).
+\end{column}
+\end{columns}
+\vspace{1mm}
+
+Stopped our algorithm after 40 updates.
+\begin{table}
+\begin{center} 
+%\caption[Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example]{Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example.  MCMC-MLE is the default algorithm
+%in \texttt{ergm}, and is run here through 5 iterations starting
+%at the MPLE ($\etaMLE$ below).
+%Our algorithm is run for 40 steps ($\hat{\eta}_{\textrm{Steep}}$ below),
+%starting from $(0,0,0,0,0)$.\\
+%}
+\begin{tabular}{rrrrrr}
+  \hline
+ & edges & Grade & Race & Sex & GWESP \\ 
+  \hline
+$\etaMLE$ & -9.790 & 2.755 & 0.906 & 0.780 & 1.813 \\ 
+$\hat{\eta}_{\textrm{Steep}}$ & -9.879 & 2.810 & 0.942 & 0.786 & 1.809 \\ 
+   \hline
+\end{tabular}\label{T:FauxMagnolia}
+\end{center}
+\end{table}
 }
 
 
@@ -506,44 +612,66 @@ starting at any $\eta_0 \in \Xi$ will converge to the MLE of $\eta$.
 In 2009, Geyer woofed$^1$ about a way to handle non-existent MLEs in the case of generalized linear models.
 \vspace{2mm}
 
-Log likelihood is strictly concave.  There must be a direction $\delta$ for which
+Log likelihood is a strictly concave function.  
+
+For the MLE not to exist, there must be a direction $\delta$ for which
 $\ell(\eta + s\delta)$ is strictly increasing in $s$.
 
 Such a $\delta$ is called a \textbf{direction of recession (DOR)}, 
 and exists if and only if the
 observed data $g(\yobs)$ lies on the relative boundary of the \textbf{convex support} of the model.
+\vspace{2mm}
 
 So what to do?
 
 The MLE is ``off at infinity" in the direction of $\delta$.
 
-But Geyer showed that it is possible to give a measure of how close the parameter $\eta$ may
-be to infinity using one-sided confidence intervals:
+But Geyer showed that it is possible to give a measure of how parameter $\eta$ is to infinity using one-sided confidence intervals:
 \begin{align*}
-	[\hat{\eta}_L +\infty)
+	[\hat{\eta}_L, +\infty)
 \end{align*}
 
-\vspace{0.8in}
+\vspace{0.2in}
 \footnotesize{$^1$Actually, Geyer had been woofing about MLE existence since at least as early as 1990.}
 }
 
 \frame
 {
-  \frametitle{Condition for non-existent MLE--graphically}  
+  \frametitle{Conditions for non-existent MLE---graphically}  
 The \textbf{convex support} $C$ is the smallest closed convex set that contains the natural statistics.
+%\vspace{2mm}
 
+\begin{columns}[T]
+\begin{column}[T]{0.45\textwidth}
+\vspace{4mm}
+
+{\small
+Example: 9-node undirected network with edge and triangle statistics.
+\begin{itemize}
+\item 69 billion possible graphs in $\YY$.
+\item Only 444 possible edge-triangle combinations.
+\item $C$ is a 6-sided polytope.
+\end{itemize}
+
+\textbf{MLE exists if and only if
+$g(\yobs)$ is in interior of $C$.}
+}
+\end{column}
+\begin{column}[T]{0.55\textwidth}
 \begin{figure}[h]
 \centering
 \includegraphics[height=2.6in]{g9-hull}
-\caption{Convex support for 9-node undirected network model with edge and triangle
-statistics.}
+%\caption{Convex support for 9-node undirected network model with edge and triangle
+%statistics.}
 %\label{F:g9-hull}
 \end{figure}
+\end{column}
+\end{columns}
 }
 
 \frame
 {
-  \frametitle{Condition for non-existent MLE--theoretically}  
+  \frametitle{Condition for non-existent MLE---theoretically}  
 \begin{theorem}[Extension of Theorem 4 (Geyer, 2009)]
 For a full exponential family with with log likelihood \eqref{E:loglike}, convex support $C$, and observed data $\yobs$, the following are equivalent:
 \begin{enumerate}
@@ -558,16 +686,16 @@ For a full exponential family with with log likelihood \eqref{E:loglike}, convex
 
 \frame
 {
-	\frametitle{Observed data is $(31,50)$.  So then what??}
+	\frametitle{Observed data is on boundary.  So then what??}
 
-Define a hyperplane $H$, orthogonal to $\delta$.
+Define a hyperplane $H$, orthogonal to $\delta$, a direction of recession.
 \begin{figure}[h]
 \centering
-\includegraphics[height=2.5in]{g9-H.png}
+\includegraphics[height=2.4in]{g9-H.png}
 %\caption{Convex support for 9-node undirected network model with edge and triangle statistics.}
 %\label{F:g9-hull}
 \end{figure}
-	If $\delta$ is a \textbf{generic} direction of recession (GDOR), then as $s \to +\infty$,
+Then as $s \to +\infty$,
 \begin{align*}
 		P_{\eta + s \delta}( g(Y) \in H) \to 1.
 \end{align*}
@@ -601,13 +729,13 @@ Can we say anything about how close $\eta$ is to infinity?
 
 Find unique $s$, call it $\hat{s}$, such that
 \begin{align*}
-		P_{\eta + s \delta}( g(Y) \in H) = \alpha.
+		P_{\etaLCM + s \delta}( g(Y) \in H) = \alpha.
 \end{align*}
 Then $[ \hat{s}, +\infty)$ is a $1- \alpha$ confidence interval for the parameter $s$, and
 \begin{align*}
-[ \etaMLE + \hat{s} \delta, + \infty)
+[ \etaLCM + \hat{s} \delta, + \infty)
 \end{align*}
-gives a $1 - \alpha$ confidence region for the parameter $\etaMLE + \hat{s} \delta$.
+gives a $1 - \alpha$ confidence region for the parameter $\etaLCM + \hat{s} \delta$.
 }
 
 %\frame
@@ -646,13 +774,15 @@ Authors use full knowledge of convex support of model $C$ to determine above.
 
 \begin{columns}[]
 \begin{column}[T]{0.4\textwidth}
-\includegraphics[width=2in]{g9-basic}
+\includegraphics[width=1.9in]{g9-basic}
 \end{column}
-\begin{column}[]{0.6\textwidth}
-\begin{itemize}
-\item Vertices of hull
-\item Equations of lines for boundaries
-\end{itemize}
+\begin{column}[T]{0.6\textwidth}
+In particular, H-representation of $C$:
+\begin{align*}
+	Ax \leq b.
+\end{align*}
+Easy to check if a point is in exterior, interior, or boundary of hull.
+
 \end{column}
 \end{columns}
 \textbf{But in a real problem, we don't have this!  So, no general method suggested.}
@@ -683,7 +813,7 @@ a GDOR $\delta$.
 %\vspace{1mm}
 
 
-\item Iterated sampling from distribution with parameter $\eta_k$ until $\nabla \ell(\eta) = 0$.
+\item Iterated sampling from distribution with parameter $\eta_k$ until $\nabla \ell(\eta_k) = 0$.
 
 Or alternatively, until
 \begin{align*}
@@ -700,8 +830,8 @@ Or alternatively, until
 \frametitle{Case: MLE exists}  
 \begin{figure}[h]
 \centering
-\includegraphics[height=2.5in]{MCsample-far}
-\includegraphics[height=2.5in]{MCsample-MLE}
+\includegraphics[height=2.2in]{MCsample-far}
+\includegraphics[height=2.2in]{MCsample-MLE}
 \caption{MCMC samples from distributions with $\eta = (0,0)$ (left), and $\eta=\etaMLE$ (right).}
 \label{F:MCsample-MLE exists}
 \end{figure}
@@ -711,10 +841,23 @@ Or alternatively, until
 
 \frame
 {
-\frametitle{Extended algorithm}  
-\includegraphics[width=2in]{minesweeper}
+\frametitle{Extend our algorithm}  
+\textbf{Idea}: Use MCMC samplers to explore space of natural statistics and
+determine geometry of convex support $C$.
+\vspace{2mm}
 
+\includegraphics[width=2.2in]{minesweeper}
+\vspace{2mm}
 
+Our algorithm climbs up log likelihood.  So we know that cloud of points will move towards $g(\yobs)$.
+\vspace{2mm}
+
+Need to find a way to determine if
+\begin{enumerate}
+\item $g(\yobs)$ is on the boundary of our sample hull.
+\item If so, on what face of our sample hull does it lie?
+\item Is the boundary of the sample hull also the boundary of $C$?
+\end{enumerate}
 }
 
 \frame
@@ -722,24 +865,92 @@ Or alternatively, until
 \frametitle{Case: MLE does not exists}  
 \begin{figure}[h]
 \centering
-\includegraphics[height=2.5in]{MCsample-boundary}
-\includegraphics[height=2.5in]{MCsample-77face}
+\includegraphics[height=2.2in]{MCsample-boundary}
+\includegraphics[height=2.2in]{MCsample-77face}
 \caption{MCMC samples from distributions with $\eta = (0,0)$ (left), and $\eta=$ (right).}
 \label{F:MCsample-MLE nonexistent}
 \end{figure}
 }
 
+\frame
+{
+\frametitle{\texttt{rcdd} to the rescue}  
+\begin{columns}[T]
+\begin{column}[T]{0.25\textwidth}
+\includegraphics[height=2.5in,trim=3.5in 2in 0.15in 0.05in,clip=true]{MCsample-77face} % l b r t
+\end{column}
+\begin{column}[T]{0.75		\textwidth}
+These are problems in \emph{computational geometry}.  Fortunately, 
+the \texttt{rcdd} package (Geyer and Meeden, 2009) has the linear programming 
+tools we need to answer these questions.
+\vspace{2mm}
+
+\begin{enumerate}
+\item $g(\yobs) \notin$ sample hull.  Look for a strongly separating hyperplane.
+\item Find face $F$ on which $g(\yobs)$ lies in relative interior.
+\item Find a GDOR $\delta$ to $F$.
+\end{enumerate}
+Can do all these while without calculating H-representations of hulls.
+
+
+One thing it does not do: tell us if $F$ of the hull of our samples is also
+on the boundary of $C$.  
+\vspace{2mm}
+
+Our approach: if $>60\%$ of samples land on what we determined is a face, then it is on the boundary.
+\vspace{2mm}
+
+Here, 77\% of the samples fall on three points (including $g(\yobs)$) that define a face, also on the boundary of $C$.
+\end{column}
+\end{columns}
+}
 
 \frame
 {
-\frametitle{Case: MLE exists, but observed data close to boundary}  
-\begin{figure}[h]
-\centering
-\includegraphics[height=2.5in]{MCsample-problem}
-\includegraphics[height=2.5in]{MCsample-fakeface}
-\caption{MCMC samples when MLE does not exist.}
-\label{F:MCsample-MLE problem}
-\end{figure}
+\frametitle{Then what?}  
+Oh right, we wanted one-sided CIs for $\eta$.
+
+We we have found is a GDOR $\delta$ and a face $F$ in which $g(\yobs)$ lies
+in the relative interior.
+
+Theorem says that $F$ is the support for the LCM.  Since MLE for LCM is guaranteed to exist, our algorithm can be applied as before to find it.
+
+Find $\etaLCM$, the MLE in the limiting conditional model.
+
+Finally, one-sided CI.
+Find unique $s$, call it $\hat{s}$, such that
+\begin{align*}
+		P_{\etaLCM + s \delta}( g(Y) \in H) = \alpha.
+\end{align*}
+Then $[ \hat{s}, +\infty)$ is a $1- \alpha$ confidence interval for the parameter $s$, and
+\begin{align*}
+[ \etaLCM + \hat{s} \delta, + \infty)
+\end{align*}
+
+In this example where $g(\yobs) = (31,50)$, 
+\begin{align*}
+	\etaLCM = (126.8, -21.1)\\
+	\delta = (6,-1)
+\end{align*}
+and a one-sided 95\% CI yields
+\begin{align*}
+	[9.145, +\infty) \\
+	(-\infty, -1.500].
+\end{align*}
+
+
 }
+
+%\frame
+%{
+%\frametitle{Case: MLE exists, but observed data close to boundary}  
+%\begin{figure}[h]
+%\centering
+%\includegraphics[height=2.5in]{MCsample-problem}
+%\includegraphics[height=2.5in]{MCsample-fakeface}
+%\caption{MCMC samples when MLE does not exist.}
+%\label{F:MCsample-MLE problem}
+%\end{figure}
+%}
 
 \end{document}
