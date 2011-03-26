@@ -149,27 +149,30 @@ Nodes are operons, $i \to j$ indicates that $i$ encodes transcription factor tha
 Networks are a conduit for \emph{flow}.  
 \vspace{2mm}
 
-Flow can be friendship, diseases, needle-sharing, money, data, airplanes, commodities, ideas, advice, 
-association (among terrorists), binding (between proteins).
-\vspace{5mm}
+Flow can be:
+\begin{itemize}
+\item friendship
+\item diseases
+\item needle-sharing
+\item money
+\item data
+\item airplanes
+\item commodities
+\item ideas
+\item advice 
+\item association (among terrorists)
+\item binding (between proteins)
+\end{itemize}
+\vspace{2mm}
 
-\textbf{Goal}: statistical inference to determine what effects are important
-in global structure of the presence of this flow.
-
- \vspace{2mm}
-
-Effects can be related to nodes: grade, gender, seniority, GDP.
-
-Or the effect can be the presence of relational structures themselves.
-
-%Network models can help explain the mechanism of this flow.
+\textbf{Goal of a network model: explain the mechanism of this flow.} 
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Modeling}
 \frame
 {
-\frametitle{A network as a matrix}
+\frametitle{A network, mathematically}
 A social network is a collection of \emph{actors} and the \emph{relations}, or \emph{ties}, between each pair of actors.  
 
 We can represent a network with $n$ actors as an $n \times n$ matrix $Y$, where each entry
@@ -180,33 +183,57 @@ We can represent a network with $n$ actors as an $n \times n$ matrix $Y$, where 
 	\end{cases}
 \end{align*}
 
-The Florentine marriage network (undirected), in matrix form:
+The Sampson monastery network (directed), in matrix form:
 {\tiny
-\begin{table}[htdp]
-\begin{center}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline 
-0 & 0 & 0 & 0 &  0 &  0 &0 &0 & 1&0 &      0 &      0 &      0 & 0 &      0 &      0 \\ \hline
-0 & 0 &  0 & 0 &     0 &1&     1&     0 &     1&      0 &      0 &      0 & 0 &0 &0 &0 \\  \hline
-0 & 0 & 0 &0 & 1&     0 &     0 &     0 &     1&      0 &      0 &      0 & 0 &0 &0 &0 \\  \hline
-0 & 0 & 0 &0 & 0 &     0 &     1&     0 &     0 &      0 &      1&      0 & 0 & 0 &1&0 \\  \hline
-0 & 0 & 1& 0 & 0 &     0 &     0 &     0 &     0 &      0 &      1&      0 & 0 & 0 &1&0 \\  \hline
-0 & 1&  0 &0 & 0 &     0 &     0 &     0 &     0 &      0 &      0 &      0 & 0 & 0 &0 &0 \\   \hline
-0 & 1&0 & 1&0 & 0 &     0 &     1&     0 &      0 &      0 &      0 &  0 &      0 & 0 &1 \\  \hline
-0 & 0 &0 & 0 & 0 &     0 &     1&     0 &     0 &      0 &      0 &      0 & 0 & 0 &0 &0 \\  \hline
-1& 1& 1&0 &0 & 0 &     0 &     0 &     0 &      0 &      0 &      0 &  1& 1&0 &      1\\  \hline
-0 & 0 &0 &0 & 0 &     0 &     0 &     0 &     0 &      0 &      0 & 0 & 0 &1&      0 &      0 \\  \hline
-0 &0 &0 &1&1&  0 &     0 &     0 &     0 &      0 &      0 &0 &    0 &      0 &      1&      0 \\  \hline
-0 & 0 & 0 &0 &0 &0 & 0 &     0 &     0 &      0 &      0 &      0 & 0 &      0 &      0 &      0 \\  \hline
-0 & 0 &0 & 0 &0 &0 &0 & 0 &     1&      0 &      0 &      0 & 0 &      0 &      1&      1\\  \hline
-0 & 0 & 0 & 0 & 0 & 0 & 0 &     0 &     1&      1&      0 &      0 & 0 &      0 &      0 &      0 \\   \hline
-0 & 0 &0 & 1& 1& 0 & 0 &     0 &     0 &      0 &      1&      0 &   1&      0 &      0 &      0 \\  \hline
-0 & 0 &0 & 0 & 0 & 0 &     1&     0 &     1&      0 &      0 &      0 & 1&      0 &      0 &      0\\ 
-\hline \end{tabular} 
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrrrrrrrrrrrrrrrrr}
+  \hline
+0 & 1 & 1 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 
+0 & 0 & 1 & 0 & 1 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 
+0 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 
+0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+1 & 1 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+0 & 1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 
+1 & 0 & 1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 
+0 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 \\ 
+0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 1 \\ 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 1 \\ 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\ 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 & 1 & 1 & 1 & 0 \\ 
+   \hline
+\end{tabular}
 \end{center}
-\label{defaulttable}
-\end{table}
+\end{table}}
 }
-\textbf{NOTE: $Y_{ij}$ are not in general independent.  The dependence of the $Y_{ij}$ are at the core of this ``network perspective''.}
+\frame
+{
+\frametitle{01101010001 ...}
+Take this matrix and represent element with 0 as white, 1 as Black.
+%\pause
+\begin{figure}
+\begin{center} 
+\includegraphics[height=1.5in]{samplike-matrix}
+%\caption{} 
+\end{center} 
+\end{figure}
+%\pause
+\textbf{$Y_{ij}$ are not in general independent.  This dependence is at the core of the ``network perspective''.}
+\vspace{1mm}
+
+%\pause
+Statistical inference: determine what effects are important in shaping 
+global structure of relations.  
+\vspace{1mm}
+
+``Predictors" may be actor specific attributes: grade or gender.
+But also want to include salient relational structures that capture dependence.
 }
 
 \frame
@@ -238,11 +265,7 @@ So, in this case,
 
 }
 
-\frame
-{
-\frametitle{Choice of network statistics}
 
-}
 \frame
 {
 \frametitle{Number of graphs in $\YY$}
@@ -276,11 +299,19 @@ even moderate sized networks.
 \frame
 {
 \frametitle{Calibrating}
-What are the values for $\eta$ so that the model assigns the highest probability to the observed data?
+What is the value for $\eta$ such that the model assigns the highest probability to the observed data?
+\vspace{2mm}
 
-Maximum likelihood estimators (MLE)!
+Maximum likelihood estimator (MLE)!
+\vspace{2mm}
 
-But how do you find this value that maximizes the likelihood if you can't evaluate the likelihood?
+great.
+\vspace{2mm}
+
+But how do you find this value that maximizes the likelihood if \emph{you can't evaluate the likelihood?}
+\vspace{2mm}
+
+Thanks for nothing.
 }
 
 \frame
@@ -305,14 +336,15 @@ But how do you find this value that maximizes the likelihood if you can't evalua
 \section{Long range algorithm (part I)}
 \frame
 {
-\frametitle{Designing an algorithm}
+\frametitle{Designing an algorithm: wish list}
 
 Our algorithm should
 \begin{itemize}
 \item Converge to the MLE $\etaMLE$, if it exists.
-\item Work from any starting point $\eta_0$.
-\item not require any trial-and-error calibration.
+\item Work from \emph{any} starting point $\eta_0$.
+\item No trial-and-error calibration.
 \end{itemize}
+\vspace{2mm}
 
 Some implications of the above:
 \begin{itemize}
@@ -328,7 +360,7 @@ Some implications of the above:
 \frame
 {
 \frametitle{So what \emph{do} we have??}
-{\large \textbf{We have the \emph{gradient},} $\boldsymbol{\nabla \ell(\eta)}$.}
+{\textbf{We have the \emph{gradient},} $\boldsymbol{\nabla \ell(\eta)}$.}
 \vspace*{2mm}
 
 By a nice property of exponential families,
@@ -368,9 +400,12 @@ Use simple iterated estimates
 \end{align*}
 where $\alpha_k$ is a \textbf{step size} and  $p_k$ is a \textbf{search direction} that
 is restricted to be an \emph{ascent direction} of the log likelihood.
+\vspace{2mm}
 
 Taking positive step sizes $\alpha_k$ in an ascent direction $p_k$ gets us ``progress" up the log 
-likelihood surface in the direction of $p_k$, but does not assure us ``sufficient progress".
+likelihood surface in the direction of $p_k$, but does not assure us 
+``\emph{sufficient} progress".
+\vspace{2mm}
 
 We need a condition that guarantees good step sizes $\alpha_k$.
 }
@@ -451,7 +486,7 @@ Consider any line search of the form
 \end{align}
 used to minimize the negative log likelihood function $-\ell(\cdot)$ of a regular 
 exponential family on a finite sample space, where the search direction $p_k$ 
-is a non-zero descent direction.
+is a descent direction.
 %such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
 %direction $-\nabla \ell(\eta_k)$ is 
 %restricted to be less than 90 degrees by
