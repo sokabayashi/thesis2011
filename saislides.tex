@@ -36,6 +36,7 @@
 %\usepackage[notocbib]{apalike}
 
 \usepackage{color}
+
 \beamertemplatenavigationsymbolsempty
 \usepackage{graphicx}
 \usepackage{color}
@@ -108,6 +109,7 @@
 
 \begin{document}
 %\usefoottemplate{\vbox{\tinycolouredline{structure!75}{\color{white}\textbf{\insertauthor\hfill}}\tinycolouredline{structure}{\color{white}\textbf{\inserttitle}\hfill}}}
+\definecolor{darkblue}{rgb}{0,0.08,0.65}
 
 \frame{\titlepage}
 \section{Background: motivation}
@@ -131,7 +133,7 @@
   \frametitle{It began with some monks ...}
 \begin{figure}
 \begin{center} 
-\includegraphics[height=2.8in]{samplike}
+\includegraphics[height=2.7in]{samplike}
 \caption{Sampson's (1969) monastery affinity network among 18 monks.} 
 \end{center} 
 \end{figure}
@@ -152,8 +154,8 @@
   \frametitle{and... }
 \begin{figure}
 \begin{center} 
-\includegraphics[height=2.7in]{fmh-gradesex2}
-\caption{National Longitudinal Study of Adolescent Health friendship network of 1,461 students in grades 7 -- 12 without isolates.  Squares=Boys, Circles=Girls.} 
+\includegraphics[height=2.6in]{fmh-gradesex2}
+\caption{National Longitudinal Study of Adolescent Health friendship network of 1,461 students in grades 7 -- 12 (without isolates).  Squares = Boys, Circles = Girls.} 
 \end{center} 
 \label{fmh} 
 \end{figure}
@@ -246,7 +248,7 @@ The Sampson monastery network (directed), in matrix form:
 \frame
 {
 \frametitle{01101010001 ...}
-Take this matrix and represent element with 0 as white, 1 as black.
+Take this matrix and represent entries with 0 as white, 1 as black.
 \pause
 \begin{columns}[T]
 \begin{column}[T]{0.4\textwidth}
@@ -267,14 +269,16 @@ This dependence is at the core of the ``network perspective''.
 \pause
 \textbf{Statistical inference:} determine what factors are important in shaping 
 global structure of relations.  
-\vspace{2mm}
+\vspace{1mm}
 
-``Predictors" may be actor specific attributes: seniority or ethnicity.
+``Predictors" may be actor specific: seniority or ethnicity.
 
-But here we want to include ``relational structures" themselves.
-\vspace{2mm}
+But we also want to include ``relational structures" themselves.
 
-Our research is focused on exponential family models that capture dependency by including such factors.
+
+\begin{block}{}
+Our research: focus on models that capture dependency and find a method to calibrate them to data.
+\end{block}
 }
 \section{Background: ERGM}
 \frame
@@ -287,30 +291,30 @@ Our research is focused on exponential family models that capture dependency by 
 
 \textbf{Exponential-family Random Graph Models (ERGM)} have log likelihood
 \begin{align*}% \label{E:loglike}
-	\ell( \eta) = \inner{\eta, g(y)} - c(\eta)
+	\ell( \eta) = \eta^T g(y) - c(\eta)
 \end{align*}
 where 
 \begin{itemize}
 \item $\eta \in \RR^d$ is a natural parameter vector,
-\item $g(y)\in\RR^d$ is a natural statistic vector of the network $y\in \YY$,
-\item $\YY$ is the space of all possible networks for a fixed number of actors,
-\item $\inner{\fatdot,\fatdot}$ is the usual dot product.
+\item $g(y)\in\RR^d$ is a natural statistic vector of the \emph{network} $y\in \YY$,
+\item $\YY$ is the space of all possible networks for a fixed number of actors.
+%\item $\inner{\fatdot,\fatdot}$ is the usual dot product.
 \end{itemize}
 \vspace{2mm}
 
 So that the probability function integrates to 1,
 \begin{align*}
-	c(\eta) = \log \sum_{y \in \YY} e^{\inner{\eta, g(y)}}.
+	c(\eta) = \log \sum_{y \in \YY} e^{\eta^T g(y) }.
 \end{align*}
 }
 
 \frame
 {
-\frametitle{More on $g(y)$}
+\frametitle{How to include dependency}
 The natural statistic $g(y)$ is a vector of \emph{network statistics} of interest.  
 \vspace{2mm}
 
-Some examples include:
+Some examples (for an undirected network):
 \begin{itemize}
 	\item number of edges, $\sum_{i<j} Y_{ij}$
 	\item number of triangles, $\sum_{i < j < k} Y_{ij}Y_{jk}Y_{ki}$
@@ -352,21 +356,26 @@ So, the sum in $c(\eta)$ is over an astronomical number of terms for
 even moderate sized networks.
 \vspace{2mm}
 
-\textbf{Implication: don't evaluate the log likelihood function.}
+\textbf{Implication: don't evaluate the log likelihood function, $\ell(\eta)$.}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Parameter estimation}
 \frame
 {
-\frametitle{Calibrating}
+\frametitle{Calibrating a model}
+We have a model. Let's fit it to an observed network, $\yobs$.
+\vspace{3mm}
+
 What is the value for $\eta$ such that the model assigns the highest probability to the observed data?
 \vspace{2mm}
 
 Maximum likelihood estimator (MLE)!
-\vspace{5mm}
+\vspace{10mm}
 
-But how do you find this value that maximizes the likelihood if \emph{you can't evaluate the likelihood?}
+\pause
+But how do you find $\eta$ that maximizes $\ell(\eta)$ if \emph{you can't 
+evaluate $\ell(\eta)$?}
 }
 
 \frame
@@ -381,15 +390,40 @@ But how do you find this value that maximizes the likelihood if \emph{you can't 
 Overall satisfaction
 \vspace{1mm}
 
-\includegraphics[height=0.13in]{CR5.png} $\quad$ very good\\
+\includegraphics[height=0.13in]{CR5.pdf} $\quad$ very good\\
 \vspace{1mm}
-\includegraphics[height=0.13in]{CR4.png} $\quad$ good\\
+\includegraphics[height=0.13in]{CR4.pdf} $\quad$ good\\
 \vspace{1mm}
-\includegraphics[height=0.13in]{CR3.png} $\quad$ neutral\\
+\includegraphics[height=0.13in]{CR3.pdf} $\quad$ neutral\\
 \vspace{1mm}
-\includegraphics[height=0.13in]{CR2.png} $\quad$ bad\\
+\includegraphics[height=0.13in]{CR2.pdf} $\quad$ bad\\
 \vspace{1mm}
-\includegraphics[height=0.13in]{CR1.png} $\quad$ very bad\\
+\includegraphics[height=0.13in]{CR1.pdf} $\quad$ very bad\\
+
+\end{column}
+\end{columns}
+}
+\frame
+{
+\frametitle{Methods that are out there}
+\begin{columns}[]
+\begin{column}[T]{0.7\textwidth}
+\includegraphics[height=3in]{mck-final-overlay.pdf}
+%\caption{Adolescent Health.} 
+\end{column}
+\begin{column}[t]{0.3\textwidth}
+Overall satisfaction
+\vspace{1mm}
+
+\includegraphics[height=0.13in]{CR5.pdf} $\quad$ very good\\
+\vspace{1mm}
+\includegraphics[height=0.13in]{CR4.pdf} $\quad$ good\\
+\vspace{1mm}
+\includegraphics[height=0.13in]{CR3.pdf} $\quad$ neutral\\
+\vspace{1mm}
+\includegraphics[height=0.13in]{CR2.pdf} $\quad$ bad\\
+\vspace{1mm}
+\includegraphics[height=0.13in]{CR1.pdf} $\quad$ very bad\\
 
 \end{column}
 \end{columns}
@@ -416,21 +450,23 @@ Our algorithm should
 \item Converge to the MLE $\etaMLE$, if it exists.
 \item Work from \emph{any} starting point $\eta_0$.
 \item No trial-and-error calibration.
-\pause
 %\item In short, we want \includegraphics[height=0.13in]{CR5.png}
 \end{itemize}
-\vspace{2mm}
+\vspace{3mm}
 
 \pause
-Some implications of the above:
+This means:
 \begin{itemize}
 \item Don't evaluate log likelihood function $\ell( \eta)$
+\vspace{1mm}
+
 \item Don't use second derivative of log likelihood $\nabla^2 \ell( \eta)$
 \begin{itemize}
 	\item Can be expensive to compute
-	\item Not informative when $\eta_0$ is far from solution---may be near-singular
+	\item May be near singular when $\eta_k$ is far from solution
 \end{itemize}
 \end{itemize}
+
 \textbf{Keep it simple!} %\pause \textbf{(stupid)}
 }
 
@@ -448,7 +484,7 @@ By a nice property of exponential families,
 \end{align*}
 
 \pause
-Even when $E_\eta g(Y)$ cannot be calculated exactly, it can be well approximated by
+When $E_\eta g(Y)$ cannot be calculated exactly, it can be well-approximated by
 \begin{align*}
 E_\eta g(Y) \approx \frac{1}{m}\sum_{i = 1}^m g(Y_i),
 \end{align*}
@@ -456,13 +492,13 @@ where $Y_1$, $\ldots$, $Y_m$ are an MCMC sample from distribution with parameter
 \vspace*{4mm}
 
 \pause
-We need to find a way to use the gradient to: 
+Use gradient to: 
 \vspace*{2mm}
 \begin{itemize}
-\item Direct the search  (Determine $p_k$)
+\item Direct search  (determine $p_k$)
 \vspace*{2mm}
 
-\item Ensure that adequate progress is made in each iteration  (Pick $\alpha_k$)
+\item Ensure adequate progress is made in each iteration  (pick $\alpha_k$)
 \vspace*{2mm}
 
 \item Inform us when the MLE is obtained  ($\nabla \ell(\eta) = 0$)
@@ -473,23 +509,23 @@ We need to find a way to use the gradient to:
 \frame
 {
 \frametitle{Framework for our algorithm}
-Use simple iterated estimates
+Use iterated estimates
 \begin{align*}
 	\eta_{k+1} = \eta_k + \alpha_k p_k
 \end{align*}
 where $\alpha_k$ is a \textbf{step size} and  $p_k$ is a \textbf{search direction} that
-is restricted to be an \emph{ascent direction} of the log likelihood.
+is an \emph{ascent direction} of the log likelihood.
 \vspace{3mm}
 
 \pause
-Taking positive step sizes $\alpha_k$ in an ascent direction $p_k$ gets us ``progress" up the log 
-likelihood surface, but does not assure us 
-``\emph{sufficient} progress".
+\begin{itemize}
+\item Taking steps in an ascent direction gets us progress towards maximum, but does not guarantee \emph{sufficient} progress.
 \vspace{3mm}
 
-We need a condition that guarantees good step sizes $\alpha_k$ for \emph{convergence} to the maximum, if it exists.
-}
+\item Need a condition that guarantees good step sizes and hence \emph{convergence} to maximum, if it exists.
+\end{itemize}
 
+}
 \frame
 {
   \frametitle{Curvature condition}
@@ -533,17 +569,18 @@ Set $p_0 = \nabla \ell( \eta_0)$, the direction of steepest ascent. \\
 
 \uncover<4->{
 \hspace*{4mm} $\eta_{k+1} = \eta_k + \alert{\alpha_k} p_k$\\
+}
 \vspace*{1mm}
-\hspace*{4mm} $\nabla \ell( \eta_{k+1}) = g( y _{obs}) - \E_{\eta_{k+1}}g(Y)$\\
-\vspace*{2mm}
-} 
 
 \uncover<5->{
+\hspace*{4mm} $\nabla \ell( \eta_{k+1}) = g( y _{obs}) - \E_{\eta_{k+1}}g(Y)$\\
+\vspace*{1mm}
+ 
+
 \hspace*{4mm} \indent \textbf{Find} \alert{$p_{k+1}$}
 , which must be an ascent direction. \\
-}
 
-\uncover<6->{
+
 \hspace*{4mm} \indent $k = k + 1$  \\
 }
 
@@ -789,6 +826,7 @@ Improvements
 \item Use ``smarter" search directions (conjugate gradients).
 \item Use fewer MCMC samples early, then increase.
 \item Switch to more efficient algorithm like MCMC-MLE.  
+%\includegraphics[height=0.1in]{CR4.pdf} $\to$ \includegraphics[height=0.1in]{CR5.pdf}
 \end{itemize}
 
 
@@ -806,23 +844,23 @@ Improvements
 {
   \frametitle{Geyer, 2009}  
 In 2009, Geyer woofed$^1$ about a way to handle non-existent MLEs in the case of generalized linear models.
-\vspace{3mm}
+\vspace{2mm}
 
 \uncover<2->{
 Log likelihood is a strictly concave function.  
+\vspace{1mm}
+
+For the MLE not to exist, there must be a \textbf{generic direction of recession (GDOR)}, $\boldsymbol{\delta}$, for which
+$\ell(\eta + s\delta)$ is \emph{strictly increasing} in $s$.
 \vspace{2mm}
 
-For the MLE not to exist, there must be a direction $\delta$, called a  \textbf{generic direction of recession (GDOR)}, for which
-$\ell(\eta + s\delta)$ is \emph{strictly increasing} in $s$.
-\vspace{3mm}
-
 MLE is ``off at infinity" in the direction of $\delta$.
-\vspace{5mm}
+\vspace{4mm}
 
 \uncover<3->{
 Geyer (2009) showed how to 
 \begin{itemize}
-\item Check that MLE does not exist (in conventional sense).  In such a case, MLE exists in a limiting distribution indexed by $\eta + s\delta$, $s \to +\infty$.
+\item Check that MLE does not exist.  In such a case, MLE exists in a limiting distribution indexed by $\eta + s\delta$, $s \to +\infty$.
 \vspace{1mm}
 
 \uncover<4->{
@@ -832,16 +870,21 @@ Geyer (2009) showed how to
 \end{align*}
 \end{itemize}
 }
+\uncover<5->{
+\begin{block}{}
+\textbf{Goal:} Do the same for ERGMs.
+\end{block}
+}
 
-\vspace{0.2in}
+\vspace{0.18in}
 }}
-\footnotesize{$^1$Actually, Geyer had been woofing about MLE existence since at least as early as 1990.}
+\scriptsize{$^1$Actually, Geyer had been woofing about MLE existence since at least as early as 1990.}
 }
 
 \section{non-Existent MLEs: conditions}
 \frame
 {
-  \frametitle{Key ingredient: convex support}  
+  \frametitle{Key ingredient: convex support $C$}  
 %   \setbeamercovered{transparent}
 \begin{block}{Extension of Theorem 4 (Geyer, 2009)}
 \begin{align*}
@@ -855,7 +898,7 @@ The \textbf{convex support} $C$ is the smallest closed convex set that contains 
 \vspace{2mm}
 
 \pause
-Need this to
+Use this to
 \begin{itemize}
 \item Determine MLE existence.
 \item When MLE does not exist in conventional sense, find
@@ -895,6 +938,9 @@ $g(\yobs)$ is in interior of $C$.
 \uncover<2->{
 \alert{\textbf{Problem:} In general, we don't know the geometry of $C$.
 }}
+
+%\alert<2>{\textbf{Problem:} In general, we don't know the geometry of $C$.}
+
 }
 \end{column}
 \begin{column}[T]{0.6\textwidth}
@@ -926,13 +972,13 @@ $g(\yobs)$ is in interior of $C$.
 
 \frame
 {
-	\frametitle{Observed data is $(31,50)$, on boundary.  Now what??}
-%What is this ``limiting distribution"?
-%\vspace{2mm}
+	\frametitle{Observed data is $(31,50)$, on boundary.}
+Pretend we know $C$ for the moment.  How would this work?
+\vspace{2mm}
 
 Define a hyperplane $H$ passing through $g(\yobs)$, orthogonal to $\delta$.
 \begin{columns}[]
-\begin{column}[T]{0.45\textwidth}
+\begin{column}[T]{0.43\textwidth}
 \includegraphics[height=2.2in]{g9-H.png}
 \end{column}
 \begin{column}[t]{0.57\textwidth}
@@ -967,7 +1013,11 @@ The limiting distribution is called the \textbf{limiting conditional model (LCM)
 \end{column} % l b r t
 
 \begin{column}[t]{0.75\textwidth}
-$P_{\eta + s \delta}( Y = y) \to \alert{P_{LCM, \eta}( Y = y)}$ as $s \to +\infty$.
+Limiting distribution: as as $s \to +\infty$,
+\begin{align*}
+P_{\eta + s \delta}( Y = y) \to \alert{P_{LCM, \eta}( Y = y)}.
+\end{align*}
+
 \begin{block}{
 By Theorem 6 (Geyer, 2009)}
 \begin{itemize}
@@ -1018,7 +1068,7 @@ Then
 \begin{align*}
 [ \etaLCM + \hat{s} \delta, + \infty)
 \end{align*}
-gives a $1 - \alpha$ confidence region for the parameter.
+gives a $1 - \alpha$ confidence region.
 \vspace{2mm}
 
 \pause
@@ -1060,7 +1110,6 @@ with two statistics.
 	\item Identified cones that bound GDORs.% (normal cones of $C$ at $g(\yobs)$).
 \end{itemize}
 \pause
-Authors use full knowledge of convex support of model $C$ to determine above.
 
 \begin{columns}[]
 \begin{column}[T]{0.4\textwidth}
@@ -1068,8 +1117,9 @@ Authors use full knowledge of convex support of model $C$ to determine above.
 \end{column}
 
 \begin{column}[t]{0.6\textwidth}
+\vspace{1mm}
 
-In particular, H-representation of $C$:
+Authors use full knowledge of $C$.  In particular, it's H-representation:
 \begin{align*}
 	Ax \leq b.
 \end{align*}
@@ -1078,8 +1128,8 @@ Easy to check if a point is in exterior, interior, or boundary of hull.
 \end{column}
 \end{columns}
 
-\pause
-\textbf{But in a real problem, we don't have this!}
+%\pause
+%\textbf{But in a real problem, we don't have this!}
 
 }
 
@@ -1087,7 +1137,11 @@ Easy to check if a point is in exterior, interior, or boundary of hull.
 \section{Algorithm extended: Intuition}
 \frame
 {
-\frametitle{What do we have?}
+\frametitle{If $C$ is not known}
+What do we have to work with?
+\vspace{4mm}
+
+\pause
 MCMC samples from distribution with parameter $\eta_k$.  
 
 %And here, we're trying to do more: determine if MLE exists, and if not, find $\etaLCM$ and 
@@ -1147,22 +1201,23 @@ Or alternatively, until
 %when $\eta$ is close to MLE in LCM (right).}
 \label{F:MCsample-MLE nonexistent}
 \end{figure}
+\pause
+\emph{``I am transparent. You can see and feel me, but you cannot hold me. I always take the shape of my container. Who am I?"}
 }
-
 
 \frame
 {
 \frametitle{Extend our algorithm}  
-\textbf{Idea}: Use MCMC samplers to explore space of natural statistics and
+\textbf{Idea}: Use MCMC samples to explore space and
 determine geometry of convex support $C$.
-\vspace{2mm}
-\pause
+%\vspace{2mm}
+%\pause
+%
+%\includegraphics[height=1.1in]{minesweeper}
+%\vspace{2mm}
 
-\includegraphics[height=1.1in]{minesweeper}
-\vspace{2mm}
-
-\pause
-Our algorithm climbs up log likelihood.  So we know that cloud of points will move towards $g(\yobs)$.
+%\pause
+%Our algorithm climbs up log likelihood.  So we know that cloud of points will move towards $g(\yobs)$.
 \vspace{2mm}
 \pause
 
@@ -1170,9 +1225,16 @@ Find a way to determine if
 \begin{enumerate}
 \item $g(\yobs)$ is on the boundary of our sample hull.
 \item If so, on what face of our sample hull does it lie?
-\item Find a GDOR $\delta$.
+\item Find a GDOR $\tilde{\delta}$.
 \item Is the boundary of the sample hull also the boundary of $C$?
 \end{enumerate}
+
+\vspace{2mm}
+These are problems in \emph{computational geometry}.  
+
+Fortunately, the \texttt{rcdd} package (Geyer and Meeden, 2009) has the 
+tools we need.
+
 }
 
 \section{Algorithm extended: Issues}
@@ -1182,46 +1244,46 @@ Find a way to determine if
 %\setbeamercovered{transparent}
 
 \frametitle{\texttt{rcdd} to the rescue}  
-These are problems in \emph{computational geometry}.  
 
-Fortunately, the \texttt{rcdd} package (Geyer and Meeden, 2009) has the 
-tools we need.
-\begin{columns}[T]
+\begin{columns}[]
 \begin{column}[T]{0.25\textwidth}
 \includegraphics[height=2.5in,trim=3.5in 2in 0.15in 0.05in,clip=true]{MCsample-77face} % l b r t
 \end{column}
-\begin{column}[T]{0.75\textwidth}
-%\vspace{2mm}
 
+\begin{column}[T]{0.75\textwidth}
 \begin{enumerate}
 \item $g(\yobs) \notin$ sample hull.  
 
 \uncover<2->{
-\emph{Check for existence of a strongly separating hyperplane using \texttt{lpcdd}.}
+\textcolor{darkblue}{Check for existence of a strongly separating hyperplane using \texttt{lpcdd}.}
 }
+\vspace{1mm}
+
 \item Find face $F$ on which $g(\yobs)$ lies in relative interior.  
 
 \uncover<3->{
-\emph{Use \texttt{linearity} function.}
+\textcolor{darkblue}{Use \texttt{linearity} function.}
 }
-\item Find a GDOR $\delta$ orthogonal to $F$.  
+\vspace{1mm}
+
+\item Find a GDOR $\tilde{\delta}$ orthogonal to $F$.  
 
 \uncover<4->{
-\emph{Solve a linear programming problem
-using \texttt{lpcdd} to return a $\delta$.}  
+\textcolor{darkblue}{Solve a linear programming problem
+using \texttt{lpcdd} to return a $\tilde{\delta}$.  }
 
-Here, $\delta = (6,-1)$.
-\alert{(GDOR \checkmark)}
+\textcolor{darkblue}{Here, $\tilde{\delta} = (6,-1)$.}
 }
+\vspace{1mm}
+
 \item Determine if $F$ is also a boundary of $C$.  
 
-If so, then MLE does not exist.
-
 \uncover<5->{
-\emph{Actually, \texttt{rcdd} doesn't give us this.}  
+\textcolor{blue}{Actually, \texttt{rcdd} doesn't give us this.}  
 }
-
 \end{enumerate}
+\vspace{1mm}
+
 \uncover<6->{
 \emph{Can do all these using rational arithmetic and without calculating expensive H-representations of hulls.}
 }
@@ -1232,7 +1294,7 @@ If so, then MLE does not exist.
 \frame
 {
 \frametitle{When is our boundary \emph{the} boundary?}  
-\setbeamercovered{transparent}
+%\setbeamercovered{transparent}
 
 \begin{columns}[T]
 \begin{column}[T]{0.25\textwidth}
@@ -1242,8 +1304,7 @@ If so, then MLE does not exist.
 \begin{column}[T]{0.75\textwidth}
 One thing we can't get from \texttt{rcdd}: 
 
-tell us if $F$ of the hull 
-of our samples is also on the boundary of $C$.  
+tell us if $F$ of our samples is also a boundary of $C$.  
 \vspace{2mm}
 
 \textbf{Our approach:} if $>60\%$ of samples land on our empirical $F$, then $F$ is on the boundary $C$.
@@ -1254,45 +1315,18 @@ Here, 77\% of the samples fall on three points (including $g(\yobs)$) that defin
 \vspace{2mm}
 
 \textbf{Conclude (correctly) that $F$ is a boundary of $C$.}
-
-MLE therefore does not exist in conventional sense (\alert{\checkmark}).
-
+\begin{itemize}
+\item MLE does not exist in conventional sense (\alert{\checkmark}).
+\item $\tilde{\delta}$ is a GDOR $\delta$ (\alert{\checkmark}).
+\end{itemize}
 \end{column}
 \end{columns}
 }
-%\frame
-%{
-%\frametitle{When is our boundary \emph{the} boundary?}  
-%\setbeamercovered{transparent}
-%
-%\begin{columns}[T]
-%\begin{column}[T]{0.25\textwidth}
-%\includegraphics[height=2.5in,trim=3.5in 2in 0.15in 0.05in,clip=true]{MCsample-77face} % l b r t
-%\end{column}
-%
-%\begin{column}[T]{0.75\textwidth}
-%One thing we can't get from \texttt{rcdd}: 
-%
-%tell us if $F$ of the hull 
-%of our samples is also on the boundary of $C$.  
-%\vspace{2mm}
-%
-%\textbf{Our approach:} if $>60\%$ of samples land on our empirical $F$, then $F$ is on the boundary.
-%\vspace{4mm}
-%
-%\pause
-%Here, 77\% of the samples fall on three points (including $g(\yobs)$) that define $F$.  
-%\vspace{2mm}
-%
-%\textbf{Conclude (correctly) that $F$ is a boundary of $C$.}
-%\end{column}
-%\end{columns}
-%}
 
 \section{Algorithm extended: LCM}
 \frame
 {
-\setbeamercovered{transparent}
+%\setbeamercovered{transparent}
 \frametitle{One-sided CI?}  
 Almost---still need MLE $\etaLCM$ for LCM.
 \vspace{1mm}
@@ -1310,13 +1344,13 @@ So, with an adjustment to support, can use our same algorithm to find $\etaLCM$!
 Finally, one-sided CI.
 \pause
 
-Find unique $s$, call it $\hat{s}$, such that
+Find unique $\hat{s}$ such that
 \begin{align*}
-		P_{\etaLCM + s \delta}( g(Y) \in H) = \alpha.
+		P_{\etaLCM + \hat{s} \delta}( g(Y) \in H) = \alpha.
 \end{align*}
 Then a $1- \alpha$ confidence interval is
 \begin{align*}
-[ \etaLCM + \hat{s} \delta, + \infty)
+[ \etaLCM + \hat{s} \delta, + \infty).
 \end{align*}
 
 In this example, we calculate a non-simultaneous 95\% confidence region
@@ -1340,7 +1374,7 @@ Next steps
 \begin{itemize}
 	\item Switch criteria, from our long range algorithm to MCMC-MLE.  
 	\item Step size $\alpha_k$ search for curvature condition.
-	\item Proof of convergence for noisy $\nabla \ell( \eta)$.
+%	\item Proof of convergence for noisy $\nabla \ell( \eta)$.
 \end{itemize}
 }
 
