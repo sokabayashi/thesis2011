@@ -2,70 +2,21 @@
 We now present our basic line search algorithm, which will converge to the MLE for any 
 regular exponential family if the MLE exists.  When the MLE does not exist, the log
 likelihood is strictly increasingly but is bounded above by the log likelihood of the LCM
-as described by \eqref{E:LCM ll bound}, which itself has a maximum.  In such a case,
-this algorithm will climb the log likelihood until the gradient is sufficiently close to zero.
+as described by \eqref{E:LCM ll bound}, which itself has a maximum, $\ell(\etaLCM)^{LCM}$.
+In such a case, this algorithm will climb the log likelihood until the gradient is 
+sufficiently close to zero.
+
 The algorithm and requirements are presented in Theorem~\ref{Thm:log like max} and \ref{Thm:Line Search works}.  The theory is divided into two parts: the first
 guarantees that the log likelihood gradient converges to zero, the second shows that when the MLE exists, this is equivalent to finding the MLE.  
 %Proofs are in Appendix~\ref{Section:Proofs}. 
 
-%We apply the algorithm described in Theorem~\ref{Thm:Line Search works} to the specific setting of finding the MLE in a regular 
-%exponential family when the MLE is known to exist and be unique and the gradient can 
-%be calculated exactly.
 In order to be consistent with the general optimization literature \citep{Fletcher,NW}, 
 we state our algorithm in this 
 section from the perspective of a minimization problem: we wish to minimize a 
 real-valued objective function $-\ell(\eta)$ 
 defined on $\RR^d$.  
 
-%%%%%%%%%%%% BEGIN THEOREM %%%%%%%%%%%%%%
-%\begin{theorem}[Convex function root search] \label{Thm:Line Search}
-%Consider any line search of the form 
-%\begin{align}
-%	x_{k+1} &= x_k + \alpha_k p_k \label{E:x_update}
-%\end{align}
-%used to minimize the objective function $f$, which satisfies the following 
-%assumptions:
-%\begin{enumerate}
-%	\item The objective function $f$ is bounded below in $\RR^d$. \label{ass:one}
-%	\item The objective function $f$ is proper, lower semicontinuous, and strictly 
-%convex.
-%	\item The objective function $f$ is differentiable in an open set $\NN$ containing 
-%the level set $\lev_{\leq f
-%(x_0)} f$, which is bounded, where $x_0$ is the starting point of the iteration.
-%%\item The \emph{step length} $\alpha_k$ is greater than $0$ unless $\nabla f(x_k) = 0$, 
-%% in which case $x_k$ is already the solution and the search is complete.
-%\item The \emph{search direction} $p_k$ is a non-zero \emph{descent direction} \label
-%{ass:four}
-%such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
-%direction $-\nabla f(x_k)$ is 
-%restricted to be less than 90 degrees by
-%\begin{align*}
-%\cos \theta_k \geq \delta > 0
-%\end{align*}
-% for some fixed $\delta > 0$.  
-%\end{enumerate}
-%
-%Then, unless $\nabla f(x_k) = 0$, in which case $x_k$ is already the solution and the 
-%search is complete, it is 
-%possible to find a step length $\alpha_k$ that satisfies the \emph{curvature 
-%condition}
-%\begin{align}
-%	c \nabla f(x_k)^T p_k &\leq \nabla f( x_k + \alpha_k p_k)^T p_k \leq 0 \label
-%{E:Wolfe-mod}
-%\end{align}
-%for some fixed $0 < c < 1$.
-%
-%Furthermore, repeated iterations of \eqref{E:x_update} satisfying assumptions~\ref
-%{ass:one} through~\ref{ass:four} and \eqref{E:Wolfe-mod} will produce 
-%a sequence, $x_1, x_2, \ldots$ such that
-%\begin{align*}
-%	\lim_{k \to \infty} || \nabla f(x_k) || = 0.
-%\end{align*}
-%\end{theorem}
-
-%\section{Line search for MLE estimation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}[Exponential family zero gradient attainment] \label{Thm:log like 
 max}
 Consider any line search of the form 
@@ -97,37 +48,12 @@ Furthermore, repeated iterations of \eqref{E:eta_update} along a descent directi
 satisfying \eqref{E:Wolfe-ll} will produce a sequence, $\eta_1, \eta_2, \ldots$ such 
 that
 \begin{align*}
-	\lim_{k \to \infty} || \nabla \ell(\eta_k) || = 0.
+	\lim_{k \to \infty} \lVert \nabla \ell(\eta_k) \rVert = 0.
 \end{align*}
 \end{theorem}
 
-Before getting to the proof of this theorem, we need the 
-following lemma to transfer global properties of the objective function to the 
-objective function restricted to a 
-search direction.
 
-%%%%%%%%%%% BEGIN LEMMA %%%%%%%%%%%%%%
-\begin{lemma} \label{Lemma:f min} 
-Suppose a function $f:\RR^d \to \RR$ is proper, lower semicontinuous, and strictly 
-convex.  Then the minimum for $f$ 
-exists and is unique if and only if every nonempty level set $\lev_{\leq \alpha} f$ is 
-bounded.
-\end{lemma}
-
-%%%%%%%%%%% PROOF - LEMMA %%%%%%%%%%%%%%
-
-\begin{proof}[Proof of Lemma~\ref{Lemma:f min}]
-Assume every non-empty level set is bounded.  Then by Theorem~1.9 in \citet
-{Rockafellar}, the minimum of $f$ is finite 
-and thus exists.  By strict convexity, this minimum is also unique.
-
-Now assume the minimum for $f$ exists, denoted by $\min f$.  By assumption, the level 
-set $\lev_{\leq \min f} f$ 
-contains exactly one point.  By Corollary~8.7.1 in \citet{Rockafellar:1970}, the level 
-sets $\lev_{\leq \alpha} f$ are 
-bounded for every $\alpha$.  
-\end{proof}
-
+%%%%%%%%%%% PROOF %%%%%%%%%%%%%%
 
 \begin{proof}[Proof of Theorem~\ref{Thm:log like max}]
 Let $f(\cdot)$ represent the negative log likelihood $- \ell(\cdot)$, the objective 
@@ -137,29 +63,28 @@ function $f(\cdot)$ since this is the convention in the optimization literature 
 
 The negative log likelihood function $-\ell(\cdot)$ is strictly convex by 
 \eqref{E:nabla2 ell}, and continuous since it is infinitely differentiable by Theorem~5.8 in \citet{TPE2}.
-It is bounded below by the negative LCM log likelihood as described by \eqref{E:LCM ll bound}.
-
-The objective function $f$ is bounded below, strictly convex, and lower semicontinuous 
-by assumption, and so by Lemma~\ref{Lemma:f min}, the global minimum exists.  
-Then by Lemma~\ref{Lemma:f min}, all level sets of type $\lev_{\leq a} f$, $a \in \RR$ are bounded in $\RR^d$.  Restricting the set to be along a search 
-direction $p_k$ maintains the 
-boundedness of these sets.  By Lemma~\ref{Lemma:f min} again, the minimum in this 
-restriction exists and is unique.     
+It is bounded below by the negative LCM log likelihood as described by \eqref{E:LCM ll bound},
+which is guaranteed to have a global minimum.
 
 Then, unless $\nabla f( x_k ) = 0$ in which case $x_k$ is already the solution, for 
-each $k$, we can uniquely define $
-\alpha_{c_k}$ and $\alpha_{min_k}$ as follows: 
+each $k$, we can uniquely define $\alpha_{c_k}$ as follows: 
 \begin{align}
-%	\theta_k &= \cos^{-1} \left( \frac{ -\nabla f_k^T p_k }{ ||\nabla f_k|| \, ||
-%p_k||} \right) \label{E:cosine} \\
 	\nabla f( x_k + \alpha_{c_k} p_k)^T p_k &= c \nabla f(x_k)^T p_k \label{E:alphac} 
-\\
-	\nabla f( x_k + \alpha_{min_k} p_k)^T p_k &= 0. \label{E:alphamin} 
 \end{align}
-The point $\alpha_{c_k}$ is uniquely defined because it is the minimizer of $\alpha 
-\mapsto f( x_k + \alpha p_k) - 
-\alpha c \nabla f( x_k )^T p_k$.
-These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
+
+The point $\alpha_{c_k}$ is uniquely defined because it is the minimizer of 
+$\alpha \mapsto f( x_k + \alpha p_k) - \alpha c \nabla f( x_k )^T p_k$.
+We may also define $\alpha_{min_k}$ as follows: 
+\begin{align} \label{E:alphamin} 
+\alpha_{min_k} =
+\begin{cases}
+	\alpha \text{ such that } \nabla f( x_k + \alpha p_k)^T p_k = 0  \quad &\text{if a minimizer exist}\\
+	+\infty \quad &\text{otherwise}.
+\end{cases}
+\end{align}
+
+These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod} for the case where a minimizer
+exists for $\alpha \mapsto \nabla f( x_k + \alpha p_k)^T p_k$.
 %%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
 \begin{figure}[h!]
 \centering
@@ -177,7 +102,7 @@ These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.
 %defines \alpha_{c_k} to be the step size that would make the gradient at $x_{k+1}$ 
 %equal to 
 
-By the strict convexity of $f$ and Theorem~2.14 in \citet{Rockafellar}, 
+By the strict convexity of $f$ and Theorem~2.14(b) in \citet{Rockafellar}, 
 \begin{align}
 	f( x_k + \alpha_{c_k} p_k ) &< f(x_k) +  \bigl[ \nabla f(x_k + \alpha_{c_k} p_k) 
 \bigr]^T \alpha_{c_k} p_k. \notag 
@@ -238,7 +163,7 @@ $\nabla f(x)$ is Lipschitz continuous relative to the convex set $\RR^d$.
 %which is contained in $\NN$ by assumption, 
 Thus there exists a constant $L < \infty$ such that
 	\begin{align}
-		|| \nabla f(x) - \nabla f(\tilde{x}) || \leq L || x - \tilde{x} || 
+		\lVert \nabla f(x) - \nabla f(\tilde{x}) \rVert \leq L \lVert x - \tilde{x} \rVert
 		\quad \text
 {for all $x, \tilde{x} \in \RR^d$}. 
 %{for all $x, \tilde{x} \in \lev_{\leq f(x_0)} f$}. 
@@ -247,26 +172,26 @@ Thus there exists a constant $L < \infty$ such that
 
 Applying \eqref{E:Lipschitz} to $x_{c_k}$ and $x_k$, we have
 \begin{align}
-|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || x_{c_k} - x_k || \notag
+\lVert \nabla f(x_{c_k}) - \nabla f(x_k) \rVert &\leq L \lVert x_{c_k} - x_k \rVert \notag
 \intertext{or}
-|| \nabla f(x_{c_k}) - \nabla f(x_k) || &\leq L || \alpha_{c_k} p_k ||. \notag	
+\lVert \nabla f(x_{c_k}) - \nabla f(x_k) \rVert &\leq L \lVert \alpha_{c_k} p_k \rVert. \notag	
 \end{align}
 
 Multiplying both sides by $\lVert p_k \rVert$ gives
 \begin{align}
-	|| \nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || &\leq \alpha_{c_k} L || p_k ||^2 
+	\lVert \nabla f(x_{c_k}) - \nabla f(x_k) \rVert \cdot \lVert p_k \rVert &\leq \alpha_{c_k} L \lVert p_k \rVert^2 
 	\notag \\
 \intertext{and by Cauchy-Schwarz this implies}
-	( \nabla f(x_{c_k}) - \nabla f(x_k) )^T p_k & \leq || 
-	\nabla f(x_{c_k}) - \nabla f(x_k) || \cdot ||p_k || \label{E:from-Lipschitz} \\ 
-	&\leq \alpha_{c_k} L || p_k ||^2. \notag
+	( \nabla f(x_{c_k}) - \nabla f(x_k) )^T p_k & \leq 
+	\lVert \nabla f(x_{c_k}) - \nabla f(x_k) \rVert \cdot \lVert p_k \rVert\label{E:from-Lipschitz} \\ 
+	&\leq \alpha_{c_k} L \lVert p_k \rVert^2. \notag
 \end{align}
 Substituting \eqref{E:c-1} into the left-hand side of this last inequality 
 \eqref{E:from-Lipschitz} gives
 \begin{align}
-( c - 1 ) \nabla f(x_k)^T p_k &\leq \alpha_{c_k} L || p_k ||^2 \notag\\
+( c - 1 ) \nabla f(x_k)^T p_k &\leq \alpha_{c_k} L \lVert p_k \rVert^2 \notag\\
 \intertext{or}
--\alpha_{c_k} &\leq \frac{( 1 - c )}{L} \frac{ \nabla f(x_k)^T p_k}{ || p_k ||^2}. 
+-\alpha_{c_k} &\leq \frac{( 1 - c )}{L} \frac{ \nabla f(x_k)^T p_k}{ \lVert p_k \rVert^2}. 
 \label{E:-alpha}
 \end{align}
 
@@ -291,10 +216,10 @@ Noting that $\nabla f(x_j)^T p_j < 0$, we can substitute our upper bound
 \eqref{E:-alpha} for $-\alpha_{c_j}$ in the right-hand side above,
 \begin{align}
 	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
-	\frac{\nabla f(x_j)^T p_j}{ || p_j ||^2 } \nabla f(x_j)^T p_j \notag \\
+	\frac{\nabla f(x_j)^T p_j}{ \lVert p_j \rVert^2 } \nabla f(x_j)^T p_j \notag \\
 	\intertext{which simplifies to}
 	f( x_{k+1} ) &< f(x_0) - c \sum_{j=0}^{k} \frac{( 1 - c )}{L} 
-	\frac{ (\nabla f(x_j)^T p_j)^2}{ || p_j ||^2 }. 
+	\frac{ (\nabla f(x_j)^T p_j)^2}{ \lVert p_j \rVert ^2 }. 
 \notag
 \end{align}
 
@@ -304,30 +229,30 @@ all $k$. Then rearranging the above yields,
 
 \begin{align*}
 	\frac{c( 1 - c )}{L} \sum_{j=0}^{k}   
-	\frac{ ( \nabla f(x_j)^T p_j )^2}{ || p_j ||^2 } &< M < \infty.
+	\frac{ ( \nabla f(x_j)^T p_j )^2}{ \lVert p_j \rVert ^2 } &< M < \infty.
  \end{align*}
 The angle $\theta_j$ between the search direction $p_k$ and steepest descent direction 
-$-\nabla f_k$ can be expressed 
-by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{||\nabla f_j|| \cdot || p_j||}$.  
+$-\nabla f(x_k)$ can be expressed 
+by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{\lVert \nabla f(x_j)\rVert \cdot \lVert p_j \rVert}$.  
 Substituting this into the equation 
 above and taking $k \to \infty$,
 \begin{align*}
-	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty.
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \lVert \nabla f(x_j)\rVert^2 \cos^2 \theta_j  &< \infty.
 \end{align*}
 Since $0 < c < 1$,
 \begin{align}
-	\sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty. \label{E:Z's}
+	\sum_{j=0}^{\infty}  \lVert \nabla f(x_j) \rVert ^2 \cos^2 \theta_j  &< \infty. \label{E:Z's}
 \end{align}
 
 The convergent series in \eqref{E:Z's} implies that 
 \begin{align*}
-	\cos^2 \theta_k || \nabla f(x_k) ||^2 &\to 0 \text{ as } k \to \infty.
+	\lVert \nabla f(x_k) \rVert ^2 \cos^2 \theta_k  &\to 0 \text{ as } k \to \infty.
 \end{align*}
 With the additional restriction on the search direction $p_k$ such that $\cos \theta_k 
 \geq \delta > 0$ for some choice 
 of $\delta$, for all choices of $k$, we get the desired convergence result of
 \begin{align*}
-	\lim_{k \to \infty} || \nabla f(x_k) || &= 0.
+	\lim_{k \to \infty} \lVert \nabla f(x_k) \rVert &= 0.
 \end{align*}
 
 \end{proof}
@@ -414,7 +339,7 @@ when $\mu = h(\eta)$ and is thus non-singular everywhere, including at the MLE o
 $\eta$, $\etaMLE$.
 
 Thus our algorithm, which concludes that 
-$|| \nabla \ell( \eta_k) ||  = || g(y) - h(\eta_k) || \to 0$, implies that 
+$\lVert \nabla \ell( \eta_k) \rVert  = \lVert g(y) - h(\eta_k) \rVert \to 0$, implies that 
 \begin{align*}
 	\mu_k = h(\eta_k) \to g(y), 
 \end{align*}
