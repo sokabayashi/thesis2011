@@ -213,22 +213,21 @@ all $k$. Then rearranging the above yields,
 	\frac{c( 1 - c )}{L} \sum_{j=0}^{k}   
 	\frac{ ( \nabla f(x_j)^T p_j )^2}{ || p_j ||^2 } &< M < \infty.
  \end{align*}
-The angle $\theta_j$ between the search direction $p_k$ and steepest descent direction 
-$-\nabla f_k$ can be expressed 
-by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{||\nabla f_j|| \cdot || p_j||}$.  
+The angle $\theta_j$ between the search direction $p_k$ and steepest descent direction $-\nabla f(x_k)$ can be expressed 
+by $\cos \theta_j = \frac{ -\nabla f(x_j)^T p_j}{||\nabla f(x_j)|| \cdot || p_j||}$.  
 Substituting this into the equation 
 above and taking $k \to \infty$,
 \begin{align*}
-	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty.
+	\frac{c( 1 - c )}{L} \sum_{j=0}^{\infty}  ||\nabla f(x_j)||^2 \cos^2 \theta_j  &< \infty.
 \end{align*}
 Since $0 < c < 1$,
 \begin{align}
-	\sum_{j=0}^{\infty}  \cos^2 \theta_j ||\nabla f(x_j)||^2 &< \infty. \label{E:Z's}
+	\sum_{j=0}^{\infty}  ||\nabla f(x_j)||^2 \cos^2 \theta_j  &< \infty. \label{E:Z's}
 \end{align}
 
 The convergent series in \eqref{E:Z's} implies that 
 \begin{align*}
-	\cos^2 \theta_k || \nabla f(x_k) ||^2 &\to 0 \text{ as } k \to \infty.
+	\nabla f(x_k) ||^2  \cos^2 \theta_k || &\to 0 \text{ as } k \to \infty.
 \end{align*}
 With the additional restriction on the search direction $p_k$ such that $\cos \theta_k 
 \geq \delta > 0$ for some choice 
