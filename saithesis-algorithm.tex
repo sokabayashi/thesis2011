@@ -1,10 +1,12 @@
 \section{Long range search algorithm} \label{S:Algorithm}
 We now present our basic line search algorithm, which will converge to the MLE for any 
 regular exponential family if the MLE exists.  When the MLE does not exist, the log
-likelihood is strictly increasingly but is bounded above by the log likelihood of the LCM
-as described by \eqref{E:LCM ll bound}, which itself has a maximum, $\ell(\etaLCM)^{LCM}$.
+likelihood is strictly increasing but is bounded above by the log likelihood of the LCM
+as described by \eqref{E:LCM ll bound}, which itself must have a maximum, $\ell(\etaLCM)^{LCM}$.
 In such a case, this algorithm will climb the log likelihood until the gradient is 
-sufficiently close to zero.
+close to zero and hence $\E_{\eta_k}g(Y)$ near $g(\yobs)$.  
+Chapter~\ref{Chapter:Linear programming} discusses how to adapt the algorithm to this setting
+so that the LCM support is identified and the MLE for the LCM subsequently found. 
 
 The algorithm and requirements are presented in Theorem~\ref{Thm:log like max} and \ref{Thm:Line Search works}.  The theory is divided into two parts: the first
 guarantees that the log likelihood gradient converges to zero, the second shows that when the MLE exists, this is equivalent to finding the MLE.  
@@ -78,13 +80,13 @@ We may also define $\alpha_{min_k}$ as follows:
 \begin{align} \label{E:alphamin} 
 \alpha_{min_k} =
 \begin{cases}
-	\alpha \text{ such that } \nabla f( x_k + \alpha p_k)^T p_k = 0  \quad &\text{if a minimizer exist}\\
+	\alpha \text{ s.t. } \nabla f( x_k + \alpha p_k)^T p_k = 0  \quad &\text{if a minimizer exist for $\alpha \mapsto f( x_k + \alpha p_k)$}\\
 	+\infty \quad &\text{otherwise}.
 \end{cases}
 \end{align}
 
 These values appear on the $\alpha$-axis in Figure \ref{F:Wolfe-mod} for the case where a minimizer
-exists for $\alpha \mapsto \nabla f( x_k + \alpha p_k)^T p_k$.
+exists for $\alpha \mapsto f( x_k + \alpha p_k)$.
 %%%%%%%%%%% FIGURE %%%%%%%%%%%%%%
 \begin{figure}[h!]
 \centering
