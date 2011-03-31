@@ -120,9 +120,10 @@
 \item curvature condition
 \item linear programming
 \item relative boundaries of convex hulls
-\item directions of recession
+\item generic directions of recession
 \end{itemize}
 \vspace{1in}
+
 \pause
 {\textbf{But that's not how it began!} }
 }
@@ -134,7 +135,7 @@
 \begin{figure}
 \begin{center} 
 \includegraphics[height=2.7in]{samplike}
-\caption{Sampson's (1969) monastery affinity network among 18 monks.} 
+\caption{Sampson's (1969) monastery affinity network among 18 monks.  Data available in and plotted using \texttt{statnet} package (Handcock et al, 2003) in R.} 
 \end{center} 
 \end{figure}
 }
@@ -154,8 +155,10 @@
   \frametitle{and... }
 \begin{figure}
 \begin{center} 
-\includegraphics[height=2.6in]{fmh-gradesex2}
-\caption{National Longitudinal Study of Adolescent Health friendship network of 1,461 students in grades 7 -- 12 (without isolates).  Squares = Boys, Circles = Girls.} 
+\includegraphics[height=2.55in]{fmh-gradesex2}
+\caption{National Longitudinal Study of Adolescent Health friendship network of 1,461 students in grades 7 -- 12 (without isolates).  Squares = Boys, Circles = Girls.  
+
+Sources: Resnick et al. (1997), Goodreau (2008).} 
 \end{center} 
 \label{fmh} 
 \end{figure}
@@ -268,7 +271,8 @@ This dependence is at the core of the ``network perspective''.
 
 \pause
 \textbf{Statistical inference:} determine what factors are important in shaping 
-global structure of relations.  
+$Y$.
+%global structure of relations.  
 \vspace{1mm}
 
 ``Predictors" may be actor specific: seniority or ethnicity.
@@ -304,7 +308,7 @@ where
 
 So that the probability function integrates to 1,
 \begin{align*}
-	c(\eta) = \log \sum_{y \in \YY} e^{\eta^T g(y) }.
+	c(\eta) = \log \sum_{x \in \YY} e^{\eta^T g(x) }.
 \end{align*}
 }
 
@@ -352,7 +356,7 @@ Nodes & Possible Edges & Total Graphs \\ [1ex]
 \end{table}
 \pause
 
-So, the sum in $c(\eta)$ is over an astronomical number of terms for 
+The sum in $c(\eta)$ is over an astronomical number of terms for 
 even moderate sized networks.
 \vspace{2mm}
 
@@ -382,11 +386,12 @@ evaluate $\ell(\eta)$?}
 {
 \frametitle{Methods that are out there}
 \begin{columns}[]
-\begin{column}[T]{0.7\textwidth}
-\includegraphics[height=3in]{mck-final.pdf}
+\begin{column}[T]{0.6\textwidth}
+\includegraphics[height=2.8in]{mck-final.pdf}
 %\caption{Adolescent Health.} 
 \end{column}
-\begin{column}[t]{0.3\textwidth}
+\begin{column}[t]{0.4\textwidth}
+{\small
 Overall satisfaction
 \vspace{1mm}
 
@@ -399,6 +404,17 @@ Overall satisfaction
 \includegraphics[height=0.13in]{CR2.pdf} $\quad$ bad\\
 \vspace{1mm}
 \includegraphics[height=0.13in]{CR1.pdf} $\quad$ very bad\\
+\vspace{2mm}
+}
+%{\scriptsize
+%\textbf{MCMC-MLE} = Markov chain Monte Carlo Maximum Likelihood Estimator (Geyer and Thompson, 1992)\\
+%\vspace{1mm}
+%\textbf{Steplength MCMC-MLE} = Hummel et al. (2010)\\
+%\vspace{1mm}
+%\textbf{SA} = stochastic approximation \\
+%\vspace{1mm}
+%\textbf{MPLE} = Maximum pseudolikelihood estimator
+%}
 
 \end{column}
 \end{columns}
@@ -407,14 +423,15 @@ Overall satisfaction
 {
 \frametitle{Methods that are out there}
 \begin{columns}[]
-\begin{column}[T]{0.7\textwidth}
-\includegraphics[height=3in]{mck-final-overlay.pdf}
+\begin{column}[T]{0.6\textwidth}
+\includegraphics[height=2.8in]{mck-final-overlay.pdf}
 %\caption{Adolescent Health.} 
 \end{column}
-\begin{column}[t]{0.3\textwidth}
+\begin{column}[t]{0.4\textwidth}
+{\small
 Overall satisfaction
-\vspace{1mm}
 
+\vspace{1mm}
 \includegraphics[height=0.13in]{CR5.pdf} $\quad$ very good\\
 \vspace{1mm}
 \includegraphics[height=0.13in]{CR4.pdf} $\quad$ good\\
@@ -424,9 +441,32 @@ Overall satisfaction
 \includegraphics[height=0.13in]{CR2.pdf} $\quad$ bad\\
 \vspace{1mm}
 \includegraphics[height=0.13in]{CR1.pdf} $\quad$ very bad\\
+\vspace{1mm}
+}
+\pause
 
+{\small
+\begin{block}{
+\textbf{Our approach}}
+\begin{itemize}
+\item Use iterated estimates
+\begin{align*}
+	\eta_{k+1} = \eta_k + \alpha_k p_k
+\end{align*}
+\item Don't evaluate $\ell( \eta)$
+\vspace{1mm}
+
+\item Don't use $\nabla^2 \ell( \eta)$
+%\begin{itemize}
+%	\item Can be expensive
+%	\item May be near singular
+%\end{itemize}
+\end{itemize}
+\end{block}
+}
 \end{column}
 \end{columns}
+
 }
 %\frame
 %{
@@ -440,35 +480,35 @@ Overall satisfaction
 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algorithm: intuition}
-\frame
-{
-\frametitle{Designing an algorithm: wish list}
-%\setbeamercovered{transparent}
-
-Our algorithm should
-\begin{itemize}
-\item Converge to the MLE $\etaMLE$, if it exists.
-\item Work from \emph{any} starting point $\eta_0$.
-\item No trial-and-error calibration.
-%\item In short, we want \includegraphics[height=0.13in]{CR5.png}
-\end{itemize}
-\vspace{3mm}
-
-\pause
-This means:
-\begin{itemize}
-\item Don't evaluate log likelihood function $\ell( \eta)$
-\vspace{1mm}
-
-\item Don't use second derivative of log likelihood $\nabla^2 \ell( \eta)$
-\begin{itemize}
-	\item Can be expensive to compute
-	\item May be near singular when $\eta_k$ is far from solution
-\end{itemize}
-\end{itemize}
-
-\textbf{Keep it simple!} %\pause \textbf{(stupid)}
-}
+%\frame
+%{
+%\frametitle{Designing an algorithm: wish list}
+%%\setbeamercovered{transparent}
+%
+%Our algorithm should
+%\begin{itemize}
+%\item Converge to the MLE $\etaMLE$, if it exists.
+%\item Work from \emph{any} starting point $\eta_0$.
+%\item No trial-and-error calibration.
+%%\item In short, we want \includegraphics[height=0.13in]{CR5.png}
+%\end{itemize}
+%\vspace{3mm}
+%
+%\pause
+%This means:
+%\begin{itemize}
+%\item Don't evaluate log likelihood function $\ell( \eta)$
+%\vspace{1mm}
+%
+%\item Don't use second derivative of log likelihood $\nabla^2 \ell( \eta)$
+%\begin{itemize}
+%	\item Can be expensive to compute
+%	\item May be near singular when $\eta_k$ is far from solution
+%\end{itemize}
+%\end{itemize}
+%
+%\textbf{Keep it simple!} %\pause \textbf{(stupid)}
+%}
 
 \frame
 {
@@ -498,10 +538,10 @@ Use gradient to:
 \item Direct search  (determine $p_k$)
 \vspace*{2mm}
 
-\item Ensure adequate progress is made in each iteration  (pick $\alpha_k$)
+\item Ensure adequate progress  in each step  (pick $\alpha_k$)
 \vspace*{2mm}
 
-\item Inform us when the MLE is obtained  ($\nabla \ell(\eta) = 0$)
+\item Inform us when MLE is obtained  ($\nabla \ell(\eta) = 0$)
 \end{itemize}
 
 }
@@ -669,11 +709,12 @@ found analytically,
 \end{align*}
 
 \pause
-MCMC-MLE may struggles to converge when
-starting value $\eta_0$ is far from $\etaMLE$;
+MCMC-MLE struggles to converge when
+%starting value 
+$\eta_0$ is far from $\etaMLE$;
 
-starting from $\eta_0 = 1$ took
-10 iterations to converge (default in \texttt{ergm} package is three).
+Using $\eta_0 = 1$, took
+10 iterations to converge (default limit in \texttt{ergm} package is three).
 \end{column}
 \end{columns}
 
@@ -718,24 +759,25 @@ after 21 iterations with 5 parameter updates.
 \end{column}
 
 \begin{column}[T]{0.7\textwidth}
-Fit with a more realistic model that includes terms for \textbf{actor 
-specific attributes} in addition to \textbf{network structures}.  
+Fit more realistic model that includes terms for
+% \textbf{actor specific attributes} in addition to \textbf{network structures}.  
+\vspace{1mm}
+\begin{itemize}
+\item Actor specific attributes: Grade, Race, Sex.
 \vspace{1mm}
 
-Actor specific attributes: Grade, Race, Sex.
-\vspace{2mm}
-
-Network structures: edges and geometrically weighted edgewise shared partners (GWESP)
+\item Network structures: edges and geometrically weighted edgewise shared partners (GWESP).
 \vspace{5mm}
+\end{itemize}
 \pause
 
-Run our algorithm starting at $(0,0,0,0,0)$, compare to MCMC-MLE (starting at a value \emph{very close} to MLE).
+Run our algorithm starting at $(0,0,0,0,0)$, compare to MCMC-MLE (starting at MPLE value that is very close to MLE).
 \end{column}
 \end{columns}
-\vspace{10mm}
+\vspace{5mm}
 
 \pause
-Stopped our algorithm after 22 $\eta_k$ updates over 148 iterations, taking 1hr 40min.
+Stopped our algorithm after 22 updates over 148 iterations, taking 1hr 40min.
 \begin{table}
 \begin{center} 
 %\caption[Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example]{Comparison of MLEs for $\eta$ for MCMC-MLE and our algorithm for Faux Magnolia High example.  MCMC-MLE is the default algorithm
@@ -760,7 +802,7 @@ $\hat{\eta}_{\textrm{Steep}}$ & 	$-9.893$	&	2.81	&	0.943	&	0.794	&	1.814\\
 }
 
 \frame{
-\frametitle{Updates on $\eta_k$}
+\frametitle{Algorithm updates on $\eta_k$}
 \begin{columns}[]
 \begin{column}[T]{0.55\textwidth}
 {\tiny
@@ -779,28 +821,28 @@ $\hat{\eta}_{\textrm{Steep}}$ & 	$-9.893$	&	2.81	&	0.943	&	0.794	&	1.814\\
   &  & &  &  &  & \multicolumn{1}{c}{count}\\
 \hline
 0&	0& 0&	0&	0&	0 & - \\% &	89678.2 \\
-1	&	-4.775	&	-0.824	&	-2.65	&	-2.384	&	-5.605	&	39	\\
-2	&	-8.159	&	1.061	&	-0.847	&	-0.89	&	-4.519	&	1	\\
-3	&	-7.35	&	1.836	&	-0.101	&	-0.234	&	-4.135	&	4	\\
-4	&	-7.679	&	2.308	&	0.381	&	0.255	&	-3.225	&	3	\\
-5	&	-7.933	&	2.185	&	0.263	&	0.155	&	-3.111	&	2	\\
-6	&	-9.812	&	3.076	&	1.142	&	1.002	&	1.078	&	19	\\
-7	&	-9.887	&	3.011	&	1.078	&	0.939	&	1.098	&	5	\\
-8	&	-9.913	&	3.007	&	1.065	&	0.888	&	1.494	&	2	\\
-9	&	-9.944	&	2.978	&	1.037	&	0.862	&	1.488	&	4	\\
-10	&	-9.992	&	2.915	&	0.982	&	0.79	&	1.73	&	2	\\
-11	&	-9.984	&	2.92	&	0.988	&	0.795	&	1.737	&	4	\\
-12	&	-9.981	&	2.92	&	0.989	&	0.796	&	1.741	&	6	\\
-13	&	-9.966	&	2.903	&	0.983	&	0.796	&	1.768	&	5	\\
-14	&	-9.969	&	2.898	&	0.979	&	0.793	&	1.766	&	4	\\
-15	&	-9.896	&	2.813	&	0.946	&	0.796	&	1.821	&	5	\\
-16	&	-9.898	&	2.811	&	0.944	&	0.794	&	1.819	&	4	\\
-17	&	-9.896	&	2.811	&	0.944	&	0.795	&	1.818	&	5	\\
-18	&	-9.896	&	2.81	&	0.943	&	0.794	&	1.816	&	2	\\
-19	&	-9.895	&	2.81	&	0.944	&	0.794	&	1.817	&	3	\\
-20	&	-9.895	&	2.81	&	0.943	&	0.794	&	1.816	&	9	\\
-21	&	-9.894	&	2.81	&	0.944	&	0.794	&	1.816	&	13	\\
-22	&	-9.893	&	2.81	&	0.943	&	0.794	&	1.814	&	7	\\
+1	&	-4.775	&	-0.824	&	-2.65	&	-2.384	&	-5.605	& 39	\\
+2	&	-8.159	&	1.061	&	-0.847	&	-0.89	&	-4.519	& 1	\\
+3	&	-7.35	&	1.836	&	-0.101	&	-0.234	&	-4.135	& 4	\\
+4	&	-7.679	&	2.308	&	0.381	&	0.255	&	-3.225	& 3	\\
+5	&	-7.933	&	2.185	&	0.263	&	0.155	&	-3.111	& 2	\\
+6	&	-9.812	&	3.076	&	1.142	&	1.002	&	1.078	& 19	\\
+7	&	-9.887	&	3.011	&	1.078	&	0.939	&	1.098	& 5	\\
+8	&	-9.913	&	3.007	&	1.065	&	0.888	&	1.494	& 2	\\
+9	&	-9.944	&	2.978	&	1.037	&	0.862	&	1.488	& 4	\\
+10	&	-9.992	&	2.915	&	0.982	&	0.79		&	1.73		& 2	\\
+11	&	-9.984	&	2.92		&	0.988	&	0.795	&	1.737	& 4	\\
+12	&	-9.981	&	2.92		&	0.989	&	0.796	&	1.741	& 6	\\
+13	&	-9.966	&	2.903	&	0.983	&	0.796	&	1.768	& 5	\\
+14	&	-9.969	&	2.898	&	0.979	&	0.793	&	1.766	& 4	\\
+15	&	-9.896	&	2.813	&	0.946	&	0.796	&	1.821	& 5	\\
+16	&	-9.898	&	2.811	&	0.944	&	0.794	&	1.819	& 4	\\
+17	&	-9.896	&	2.811	&	0.944	&	0.795	&	1.818	& 5	\\
+18	&	-9.896	&	2.81		&	0.943	&	0.794	&	1.816	& 2	\\
+19	&	-9.895	&	2.81		&	0.944	&	0.794	&	1.817	& 3	\\
+20	&	-9.895	&	2.81		&	0.943	&	0.794	&	1.816	& 9	\\
+21	&	-9.894	&	2.81		&	0.944	&	0.794	&	1.816	& 13	\\
+22	&	-9.893	&	2.81		&	0.943	&	0.794	&	1.814	& 7	\\
 \hline
  $\etaMLE$ & \textbf{-9.790} & \textbf{2.755} & \textbf{0.906} & \textbf{0.780} & \textbf{1.813} \\ [1ex] 
 
@@ -812,11 +854,13 @@ $\hat{\eta}_{\textrm{Steep}}$ & 	$-9.893$	&	2.81	&	0.943	&	0.794	&	1.814\\
 \end{column}
 \begin{column}[T]{0.5\textwidth}
 \pause
+{\small
 Comments
 \begin{itemize}
-\item Large steps early on---good from ``long range".
-\item Slows down as we get closer.  Curvature condition becomes difficult to satisfy.
-\item Exit condition in terms of $\lVert \ell (\eta_k) \rVert < \epsilon.$  What is $\epsilon$?
+\item Good from ``long range".
+\item Curvature condition becomes increasingly more difficult to satisfy.
+\item Exit condition in terms of $\lVert \ell (\eta_k) \rVert < \epsilon.$  
+%What is $\epsilon$?
 \end{itemize}
 \vspace{2mm}
 \pause
@@ -828,7 +872,7 @@ Improvements
 \item Switch to more efficient algorithm like MCMC-MLE.  
 %\includegraphics[height=0.1in]{CR4.pdf} $\to$ \includegraphics[height=0.1in]{CR5.pdf}
 \end{itemize}
-
+}
 
 \end{column}
 \end{columns}
@@ -843,30 +887,30 @@ Improvements
 \frame
 {
   \frametitle{Geyer, 2009}  
-In 2009, Geyer woofed$^1$ about a way to handle non-existent MLEs in the case of generalized linear models.
+In 2009, Geyer woofed$^1$ about a way to handle non-existent MLEs in GLMs.
 \vspace{2mm}
 
 \uncover<2->{
 Log likelihood is a strictly concave function.  
 \vspace{1mm}
 
-For the MLE not to exist, there must be a \textbf{generic direction of recession (GDOR)}, $\boldsymbol{\delta}$, for which
+For MLE not to exist, there must be a \textbf{generic direction of recession (GDOR)}, $\boldsymbol{\delta}$, for which
 $\ell(\eta + s\delta)$ is \emph{strictly increasing} in $s$.
 \vspace{2mm}
 
-MLE is ``off at infinity" in the direction of $\delta$.
+MLE is ``at infinity" in direction of $\delta$.
 \vspace{4mm}
 
 \uncover<3->{
 Geyer (2009) showed how to 
 \begin{itemize}
-\item Check that MLE does not exist.  In such a case, MLE exists in a limiting distribution indexed by $\eta + s\delta$, $s \to +\infty$.
+\item Check that MLE does not exist \textcolor{darkblue}{in the conventional sense}.  In such a case, MLE exists in a limiting distribution indexed by $\eta + s\delta$, $s \to +\infty$.
 \vspace{1mm}
 
 \uncover<4->{
 \item Use this to construct one-sided confidence intervals for how close parameter $\eta$ is to infinity:
 \begin{align*}
-	[\hat{\eta}_L, +\infty)
+	[\hat{\eta}_L, \infty)
 \end{align*}
 \end{itemize}
 }
@@ -897,16 +941,17 @@ where  $C$ is the \emph{convex support} of the model.
 The \textbf{convex support} $C$ is the smallest closed convex set that contains the natural statistics.
 \vspace{2mm}
 
-\pause
+%\pause
 Use this to
 \begin{itemize}
 \item Determine MLE existence.
-\item When MLE does not exist in conventional sense, find
-\begin{itemize}
-	\item	a GDOR $\delta$.
-	\item 	MLE $\etaLCM$ in the limiting distribution.
-\end{itemize}
-	These give us what we need to calculate $[\hat{\eta}_L, +\infty)$.
+\item When MLE does not exist, find $[\hat{\eta}_L, \infty)$.
+%\item When MLE does not exist, find
+%\begin{itemize}
+%	\item	a GDOR $\delta$.
+%	\item 	MLE $\etaLCM$ in the limiting distribution.
+%\end{itemize}
+%	These give us what we need to calculate $[\hat{\eta}_L, +\infty)$.
 \end{itemize}
 
 }
@@ -973,7 +1018,7 @@ $g(\yobs)$ is in interior of $C$.
 \frame
 {
 	\frametitle{Observed data is $(31,50)$, on boundary.}
-Pretend we know $C$ for the moment.  How would this work?
+Pretend we know $C$.  How would this work?
 \vspace{2mm}
 
 Define a hyperplane $H$ passing through $g(\yobs)$, orthogonal to $\delta$.
@@ -1013,7 +1058,7 @@ The limiting distribution is called the \textbf{limiting conditional model (LCM)
 \end{column} % l b r t
 
 \begin{column}[t]{0.75\textwidth}
-Limiting distribution: as as $s \to +\infty$,
+Limiting distribution: as $s \to +\infty$,
 \begin{align*}
 P_{\eta + s \delta}( Y = y) \to \alert{P_{LCM, \eta}( Y = y)}.
 \end{align*}
@@ -1028,7 +1073,7 @@ By Theorem 6 (Geyer, 2009)}
 	\item it is an exponential family with convex support $C \cap H$.
 \vspace{1mm}
 
-	\item the MLE for this LCM, $\etaLCM$, is guaranteed to exists.
+	\item MLE for LCM, $\etaLCM$, is guaranteed to exist.
 \vspace{1mm}
 
 	\item $\ell(\eta) < \ell_{LCM}(\eta)$.
@@ -1048,7 +1093,7 @@ So,
 	\lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\eta \in \RR^d} \ell(\eta).
 \end{align*}	
 
-MLE for original model: off at $+\infty$.
+MLE for original model: at infinity.
 
 Now, some more detail: it is $\etaLCM$ sent to infinity in direction of $\delta$.
 \vspace{2mm}
@@ -1066,14 +1111,14 @@ Find unique $\hat{s}$ such that
 \pause
 Then
 \begin{align*}
-[ \etaLCM + \hat{s} \delta, + \infty)
+[ \etaLCM + \hat{s} \delta, \infty)
 \end{align*}
 gives a $1 - \alpha$ confidence region.
 \vspace{2mm}
 
 \pause
 \begin{block}{}
-Determine that MLE does not exist (\checkmark), find a GDOR $\delta$ (\checkmark) and $\etaLCM$ (\checkmark).
+Determine that MLE does not exist (\checkmark); Find a GDOR $\delta$ (\checkmark) and $\etaLCM$ (\checkmark).
 \end{block}
 }
 
@@ -1102,10 +1147,10 @@ Determine that MLE does not exist (\checkmark), find a GDOR $\delta$ (\checkmark
 \frame
 {
   \frametitle{Previous work}  
-Handcock (2003), Rinaldo, Fienberg, and Zhou (2009) studied 7 and 9-node undirected networks
-with two statistics.
+Handcock (2003), Rinaldo, Fienberg, and Zhou (2009) studied the 9-node network
+with edge and triangle statistics.
 \begin{itemize}
-	\item Confirmed condition for relative location of $g(\yobs)$ for MLE to not exist.  
+	\item Confirmed condition MLE non-existence: $g(\yobs)$ on boundary.  
 	%That is, found face of $C$ in which $g(\yobs)$ lies in relative interior.
 	\item Identified cones that bound GDORs.% (normal cones of $C$ at $g(\yobs)$).
 \end{itemize}
@@ -1123,7 +1168,7 @@ Authors use full knowledge of $C$.  In particular, it's H-representation:
 \begin{align*}
 	Ax \leq b.
 \end{align*}
-Easy to check if a point is in exterior, interior, or boundary of hull.
+Easy to check if $g(\yobs)$ is in exterior, interior, or boundary of $C$.
 
 \end{column}
 \end{columns}
@@ -1149,22 +1194,22 @@ MCMC samples from distribution with parameter $\eta_k$.
 \vspace{1ex}
 
 \begin{columns}[t]
-\begin{column}[T]{0.4\textwidth}
+\begin{column}[T]{0.39\textwidth}
 %\includegraphics[height=1.5in]{g9-basic}
 %\pgfputat{\pgfxy(0,0)}{\pgfbox[left,top]{\includegraphics[width=\textwidth]{MCsample-bare} }}
 \includegraphics[width=2in]{MCsample-bare}
 \end{column}
 
-\begin{column}[r]{0.6\textwidth}
+\begin{column}[r]{0.61\textwidth}
 \pause
 
 \begin{itemize}
-\item But that's all we needed to find the MLE before! 
-%\vspace{1mm}
-
-
-\item Iterated sampling from distribution with parameter $\eta_k$ until $\nabla \ell(\eta_k) = 0$.
+\item But that's all we needed to find MLE before! 
 \vspace{1mm}
+
+
+\item Iterated samples from distribution with parameter $\eta_k$ until $\nabla \ell(\eta_k) = 0$.
+\vspace{2mm}
 
 Or alternatively, until
 \begin{align*}
@@ -1207,9 +1252,11 @@ Or alternatively, until
 
 \frame
 {
-\frametitle{Extend our algorithm}  
+\frametitle{Extending our algorithm}  
+\setbeamercovered{transparent}
+
 \textbf{Idea}: Use MCMC samples to explore space and
-determine geometry of convex support $C$.
+determine geometry of $C$.
 %\vspace{2mm}
 %\pause
 %
@@ -1224,12 +1271,19 @@ determine geometry of convex support $C$.
 Find a way to determine if
 \begin{enumerate}
 \item $g(\yobs)$ is on the boundary of our sample hull.
+\vspace{2mm}
+\pause
 \item If so, on what face of our sample hull does it lie?
+\vspace{2mm}
+\pause
 \item Find a GDOR $\tilde{\delta}$.
+\vspace{2mm}
+\pause
 \item Is the boundary of the sample hull also the boundary of $C$?
 \end{enumerate}
 
-\vspace{2mm}
+\vspace{4mm}
+\pause
 These are problems in \emph{computational geometry}.  
 
 Fortunately, the \texttt{rcdd} package (Geyer and Meeden, 2009) has the 
@@ -1255,16 +1309,16 @@ tools we need.
 \item $g(\yobs) \notin$ sample hull.  
 
 \uncover<2->{
-\textcolor{darkblue}{Check for existence of a strongly separating hyperplane using \texttt{lpcdd}.}
+\textcolor{darkblue}{Check for existence of a strongly separating hyperplane using \texttt{lpcdd} function.}
 }
-\vspace{1mm}
+\vspace{2mm}
 
 \item Find face $F$ on which $g(\yobs)$ lies in relative interior.  
 
 \uncover<3->{
 \textcolor{darkblue}{Use \texttt{linearity} function.}
 }
-\vspace{1mm}
+\vspace{2mm}
 
 \item Find a GDOR $\tilde{\delta}$ orthogonal to $F$.  
 
@@ -1274,7 +1328,7 @@ using \texttt{lpcdd} to return a $\tilde{\delta}$.  }
 
 \textcolor{darkblue}{Here, $\tilde{\delta} = (6,-1)$.}
 }
-\vspace{1mm}
+\vspace{2mm}
 
 \item Determine if $F$ is also a boundary of $C$.  
 
@@ -1282,7 +1336,7 @@ using \texttt{lpcdd} to return a $\tilde{\delta}$.  }
 \textcolor{blue}{Actually, \texttt{rcdd} doesn't give us this.}  
 }
 \end{enumerate}
-\vspace{1mm}
+\vspace{3mm}
 
 \uncover<6->{
 \emph{Can do all these using rational arithmetic and without calculating expensive H-representations of hulls.}
@@ -1311,7 +1365,7 @@ tell us if $F$ of our samples is also a boundary of $C$.
 \vspace{4mm}
 
 \pause
-Here, 77\% of the samples fall on three points (including $g(\yobs)$) that define $F$.  
+Here, 77\% of the samples fall on three points that define $F$.  
 \vspace{2mm}
 
 \textbf{Conclude (correctly) that $F$ is a boundary of $C$.}
@@ -1343,10 +1397,9 @@ So, with an adjustment to support, can use our same algorithm to find $\etaLCM$!
 
 Finally, one-sided CI.
 \pause
-
 Find unique $\hat{s}$ such that
 \begin{align*}
-		P_{\etaLCM + \hat{s} \delta}( g(Y) \in H) = \alpha.
+		P_{\etaLCM + \hat{s} \delta}\left ( g(Y) \in H\right ) = \alpha.
 \end{align*}
 Then a $1- \alpha$ confidence interval is
 \begin{align*}
@@ -1405,6 +1458,35 @@ Next steps
 \end{figure}
 }
 
+\frame
+{
+%\setbeamercovered{transparent}
+\frametitle{What is a one-sided CI}  
+
+Although $\ell(\eta)$ has no maximizer, it is bounded above by $\ell_{LCM}(\eta)$,
+which itself has a maximizer, $\etaLCM$.
+
+As $s \to +\infty$, $\ell(\eta + s \delta)$ converges to a point in LCM.
+The point $\ell(\etaLCM + s \delta)$ converges to $\sup_\eta \ell(\eta)$.
+
+Find unique $\hat{s}$ such that
+\begin{align*}
+		P_{\etaLCM + \hat{s} \delta}( g(Y) \in H) = \alpha.
+\end{align*}
+
+Then a $1- \alpha$ confidence interval for $s$ is 
+\begin{align*}
+[ \hat{s}, + \infty).
+\end{align*}
+
+In turn,
+\begin{align*}
+[ \etaLCM + \hat{s} \delta, + \infty)
+\end{align*}
+is a $1-\alpha$ CI for $\etaLCM + s \delta$.  The values for $\eta$ that fall
+in the region are in the neighborhood of the LCM MLE distribution.
+
+}
 
 
 \frame
