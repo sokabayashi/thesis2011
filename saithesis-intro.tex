@@ -432,8 +432,8 @@ can be viewed as a log-linear model with independent dyad random variables,
 $D_{ij}$.  This makes it possible to use a standard logistic regression to calculate MLEs of the parameters.
 
 The statistical independence at the dyad level, however, means that this model will 
-not capture triangular tie configurations (or anything more copmlicated) in which dyads are dependent.  Also, to 
-reduce the number of parameters, the model assume $\rho_{ij} = \rho$ and $\theta_{ij} = \theta$, meaning that the 
+not capture triangular tie configurations (or anything more complicated) in which dyads are dependent.  Also, to 
+reduce the number of parameters, the model assumes $\rho_{ij} = \rho$ and $\theta_{ij} = \theta$, meaning that the 
 tendency towards reciprocity and forming relations is assumed to be the same across all actors.  This example 
 illustrates how the parameter estimation methodology limits the scope of the model and 
 what types of behavior it can capture.  
@@ -547,7 +547,7 @@ The form of \eqref{E:logodds} in the context of \eqref{E:PL} naturally lends
 itself to the use of logistic regression to find values of $\eta$ that
 maximize $PL(\eta)$.  These values of $\eta$ are called the maximum pseudolikelihood estimators.
 
-In the case where the dyads $Y_{ij}$ are in fact mutually independent, the MPLEs will equal the MLEs.  
+In the case where \hl{the dyads} $Y_{ij}$ are in fact mutually independent, the MPLEs will equal the MLEs.  
 \citet{Strauss:1990} show that in 
 many cases with dyad dependence, MPLE still yield reasonable approximations of the 
 true MLEs.  
@@ -625,13 +625,15 @@ using \eqref{E:kappa} as follows:
 \end{align*}
 
 By the Markov chain strong law of large numbers (or Birkhoff ergodic theorem), this 
-expectation can be approximated by the sample mean for large sample size,
+expectation can be approximated by the sample mean for large Monte Carlo sample 
+size,
 \begin{align*}
 	&\approx \frac{1}{m} \sum_{i=1}^{m}\exp \left ( \inner{ \eta - \eta^0,g(Y_i)} \right )
 \end{align*}
 where $Y_1, \ldots, Y_m$ are draws from the exponential family distribution with 
 parameter $\eta^0$.  This sample can be generated using Markov chain Monte Carlo 
-methods such as Metropolis-Hastings (used for ERGMs) or Swensen-Wang (used for the Ising model example in Section~\ref{S:Example:Ising}); see 
+methods such as Metropolis-Hastings (used for ERGMs) or Swensen-Wang (used for the Ising model example in Section~\ref{S:Example:Ising}); 
+\hl{see} 
 \citep{Brooks} and references cited therein.
 
 Thus \eqref{E:r} can be approximated by
@@ -649,7 +651,7 @@ and
 If we call $\hat{\eta}_m$  the maximizer of \eqref{E:r_hat} and assume that the MLE 
 $\etaMLE$ exists, \citeauthor{Geyer:1992} show that 
 \begin{align*}
-	\hat{\eta}_m \to \etaMLE \text{ a.s.}
+	\hat{\eta}_m \to \etaMLE, \quad \text{a.s.}
 \end{align*}
  whenever the Markov chain is ergodic. 
  
@@ -662,7 +664,7 @@ where each successive maximizing value will be closer to $\etaMLE$ than the prev
 time of this writing, the MCMC-MLE routine in \texttt{statnet} uses by default 10,000 
 Monte Carlo samples spaced 100 samples apart and a maximum of three iterations, using the 
 MPLE as the initial value for $\eta^0$ \citep{statnet:R}.  
-Improvements to the MCMC-MLE approach is an active area of research \citep*{Bartz}.
+Improvement of the MCMC-MLE approach is an active area of research \citep*{Bartz}.
 An extension of this method by \citet{Hummel} is discussed in the next section.
 
 \citet{ergm} illustrate the practical difficulty associated with a poor initial 
@@ -780,7 +782,7 @@ for which the choice of
  is commonly used, where $A$ and $B$ are constants that must be specified by the user.  
 This specification requires experimentation and care: there can be significant 
 variation in performance depending on choice of these constants. 
-A large body of more recent research presents support for a sequence that goes to 0 
+A large body of more recent research \hl{presents support} for a sequence that goes to 0 
 more slowly than $1/k$ 
 for faster convergence \citep[Chapter 11]{Kushner:1997}, but still requires 
 experimentation.  
@@ -797,7 +799,7 @@ See \citep{Andrieu:2005,Liang:2010} for recent developments that impose less
 restrictive conditions using truncated 
 updates.
 
-An issue for any recursive search algorithm including stochastic approximation is the 
+An issue for any recursive search algorithm is the 
 choice of starting point.  It is 
 often the case that algorithms are good at finding the MLE when the starting point is 
 close to it, but of course the 
@@ -824,13 +826,13 @@ SA=stochastic approximation.\\}
 Method & Appeal & Drawbacks \\ [1ex]
 \hline
 \multirow{2}{0.5in}{MPLE}		
-& 	\textbullet \, Simplicity 				  	& \textbullet \, Maximizes $PL(\eta)$, not $\ell(\eta)$  \\
-& 	\textbullet \, Speed, via logistic regression 	& \textbullet \, MPLE behavior not well understood \\ [1ex]
+& 	\textbullet \, Simplicity 				  	& \textbullet \, \hl{Maximizes} $PL(\eta)$, not $\ell(\eta)$  \\
+& 	\textbullet \, Speed, via logistic regression 	& \\ [1ex] % \textbullet \, MPLE behavior not well understood \\ [1ex]
 \hline
 \multirow{3}{0.5in}{Newton}
-& 	\textbullet \, Converges rapidly when it   	& \textbullet \, Highly sensitive to starting point\\ 
-& 	converges 	&  \textbullet \, Requires second derivative matrix and its\\	
-&				& inverse \\[1ex]
+& 	\textbullet \, Converges rapidly when it & \textbullet \, Requires second derivative matrix and its\\	
+%& \textbullet \, Highly sensitive to starting point\\ 
+& 	converges 	&  \\ [1ex] 
 \hline
 \multirow{3}{0.5in}{SA} 		
 & 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Highly sensitive to starting point \\
@@ -852,10 +854,9 @@ MCMC SA=stochastic approximation.\\}
 Method & Appeal & Drawbacks \\ [1ex]
 \hline
 \multirow{4}{0.5in}{MCMC Newton}
-& 	\textbullet \, Converges rapidly when it   	& \textbullet \, Requires starting point extremely\\ 
-& 	converges 	& close to solution \\				
-&				& \textbullet \, Requires calculation of second derivative \\
-&				& matrix and its inverse \\[1ex]
+& 	\textbullet \, Converges rapidly when it  & \textbullet \, Requires calculation of second derivative \\
+& 	converges 	& matrix (computationally expensive) \\				
+&				& and its inverse (positive defniteness) \\[1ex]
 \hline
 \multirow{3}{0.5in}{MCMC-MLE}
 & 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Highly sensitive to starting point \\ 
@@ -868,9 +869,10 @@ Method & Appeal & Drawbacks \\ [1ex]
 & \textbullet \, Increased range 		& \textbullet \, May require several iterations\\ [1ex]
 \hline
 \multirow{3}{0.5in}{MCMC SA} 		
-& 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Sensitive to starting point \\
-& 	converge to MLE, though & \textbullet \, Convergence conditions not easily\\
-& 	under restrictive conditions.  & implemented in practice.\\[1ex]
+& 	\textbullet \, Simple updates & \textbullet \, Requires trial-and-error calibration  \\			
+& 	\textbullet \, Theoretically guaranteed to	 & \textbullet \, Convergence conditions not easily\\
+& 	converge to MLE, though & implemented in practice.\\
+& 	under restrictive conditions.  & \\ [1ex]
 \hline 
 \end{tabular} 
 \label{T:Compare MCMCestimation}
@@ -917,22 +919,22 @@ sense via linear programming, and phase II finds the MLE when it exists.
 \citeauthor{Geyer:1992}'s MCMC-MLE method discussed in Section~\ref{S:MCMC-MLE} corresponds to phase II of
 this approach.
 In the special case of generalized linear models including logistic regression and contingency 
-tables, \citet{Geyer:gdor} outline a methodology to detect non-existent MLEs and construct 
+tables, \citet{Geyer:gdor} outlines a methodology to detect non-existent MLEs and construct 
 one-sided confidence intervals for the natural parameters.
 The approach applies linear programming to the polyhedral convex support of 
-the model to determine the \emph{face}, or the boundary of the support, 
+the model to determine the \emph{face} of the convex support 
 on which the observed data lies.  
 This face in turn defines the convex support for a new exponential family for which the MLE 
 does exist and can be found using conventional methods (see Section~\ref{S:LCM}).
 The linear programming 
-functionality has been implemented into the R package \texttt{rcdd} \citep*{rcdd:R}.
+functionality has been implemented in the R package \texttt{rcdd} \citep*{rcdd:R}.
 
 \citet*{Handcock:degeneracy, Rinaldo:2009} focus on problematic instances of parameter 
 estimation for ERGMs.  These have come to loosely be referred 
 to as \emph{degeneracy}.  Strictly speaking, a distribution in an exponential
 family is degenerate when it concentrates the distribution of the natural statistic
 on a hyperplane.  If the family is minimal, this occurs if and only if the MLE does not exist in the conventional sense.  This in turn means that the observed
-data lies on the relative boundary of the convex support.  \emph{Nearly} degenerate  
+data lies on the relative boundary of the convex support.  \emph{Near} degenerate  
 means that the observed data lies nearly on this relative boundary.
 However, the terms degeneracy and nearly degeneracy
 appear to now be invoked if there are undesirable behaviors of the calibrated model or 
@@ -1008,8 +1010,8 @@ confidence intervals in the manner of \citet{Geyer:gdor}.
 In short, our proposed algorithm, outlined in the next section,
  addresses many of the drawbacks of the methods
 described in Section~\ref{S:ERGM examples} as well as providing a general methodology
-for dealing with non-existent MLEs.  We are not aware of any general approaches for
-handling non-existent MLEs for ERGMs.  
+for dealing with non-existent MLEs.  We are not aware of any other 
+general approaches for handling non-existent MLEs for ERGMs.  
 
 We prove convergence for our algorithm in the case where the MLE exists and the first 
 derivative of the log likelihood can be calculated exactly.
@@ -1040,7 +1042,7 @@ be expedient to switch to another algorithm like Newton-Raphson or MCMC-MLE
 after significant progress is made and the Fisher information matrix becomes useful.  
 
 In the case where the MLE does not exist in the conventional sense, 
-it is actually off ``at infinity" in some direction of the parameter space.
+it is actually ``at infinity" in some direction of the parameter space.
 Our algorithm returns the information necessary to construct one-sided confidence 
 intervals for how close $\eta$ is to infinity.  
 Previous work in this area with ERGMs utilized full knowledge
@@ -1092,7 +1094,7 @@ the Wolfe conditions for \emph{sufficient increase} and \emph{curvature}:
 \end{split}
 \end{equation}
 where $\nabla$ is the gradient operator and $0 < c_1 < c_2 < 1$.   
-Variations of these conditions exist in the numerical optimization literature \citep
+Variations of these conditions exist in the numerical optimization \hl{literature} \citep
 {Fletcher,NW,Sun:2006}, but all 
 require evaluating the objective function.
 
