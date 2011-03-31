@@ -122,10 +122,10 @@
 \item relative boundaries of convex hulls
 \item generic directions of recession
 \end{itemize}
-\vspace{1in}
+\vspace{0.4in}
 
 \pause
-{\textbf{But that's not how it began!} }
+\hspace{0.1in} \emph{\LARGE{\textcolor{orange}{But that's not how it began!} }}
 }
 
 
@@ -135,7 +135,7 @@
 \begin{figure}
 \begin{center} 
 \includegraphics[height=2.7in]{samplike}
-\caption{Sampson's (1969) monastery affinity network among 18 monks.  Data available in and plotted using \texttt{statnet} package (Handcock et al, 2003) in R.} 
+\caption{Sampson's (1969) affinity network among 18 monks in a monastery.  Data available in and plotted using \texttt{statnet} package (Handcock et al, 2003) in R.} 
 \end{center} 
 \end{figure}
 }
@@ -156,7 +156,7 @@
 \begin{figure}
 \begin{center} 
 \includegraphics[height=2.55in]{fmh-gradesex2}
-\caption{National Longitudinal Study of Adolescent Health friendship network of 1,461 students in grades 7 -- 12 (without isolates).  Squares = Boys, Circles = Girls.  
+\caption{National Longitudinal Study of Adolescent Health friendship network of 1,461 students in grades 7 -- 12.  Squares = Boys, Circles = Girls.  
 
 Sources: Resnick et al. (1997), Goodreau (2008).} 
 \end{center} 
@@ -179,7 +179,7 @@ Nodes are operons, $i \to j$ indicates that $i$ encodes transcription factor tha
 \frame
 {
 \frametitle{Why networks?}
-Networks are a conduit for \emph{flow}.  
+{\large Networks are a conduit for \emph{flow}. } 
 \vspace{2mm}
 
 Flow can be:
@@ -264,7 +264,7 @@ Take this matrix and represent entries with 0 as white, 1 as black.
 $Y_{ij}$ are \textbf{not} in general independent.
 \vspace{2mm}
 
-This dependence is at the core of the ``network perspective''.
+This dependence is at the core of the ``network perspective'' in sociology.
 \end{column}
 \end{columns}
 \vspace{2mm}
@@ -275,9 +275,9 @@ $Y$.
 %global structure of relations.  
 \vspace{1mm}
 
-``Predictors" may be actor specific: seniority or ethnicity.
+Factors may be actor specific: seniority or ethnicity.
 
-But we also want to include ``relational structures" themselves.
+But we also want to include relational structures.
 
 
 \begin{block}{}
@@ -378,7 +378,7 @@ Maximum likelihood estimator (MLE)!
 \vspace{10mm}
 
 \pause
-But how do you find $\eta$ that maximizes $\ell(\eta)$ if \emph{you can't 
+\large But how do you find $\eta$ that maximizes $\ell(\eta)$ if \emph{you can't 
 evaluate $\ell(\eta)$?}
 }
 
@@ -419,6 +419,8 @@ Overall satisfaction
 \end{column}
 \end{columns}
 }
+
+\section{Algorithm: intuition}
 \frame
 {
 \frametitle{Methods that are out there}
@@ -479,7 +481,7 @@ Overall satisfaction
 %\end{figure}
 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Algorithm: intuition}
+
 %\frame
 %{
 %\frametitle{Designing an algorithm: wish list}
@@ -562,7 +564,10 @@ is an \emph{ascent direction} of the log likelihood.
 \item Taking steps in an ascent direction gets us progress towards maximum, but does not guarantee \emph{sufficient} progress.
 \vspace{3mm}
 
-\item Need a condition that guarantees good step sizes and hence \emph{convergence} to maximum, if it exists.
+\item Need a way to guarantee good step sizes and hence \emph{convergence} to maximum, if it exists.
+\vspace{2mm}
+
+\emph{But remember, don't use $\ell(\eta)$, only $\nabla \ell(\eta) $!}
 \end{itemize}
 
 }
@@ -609,16 +614,15 @@ Set $p_0 = \nabla \ell( \eta_0)$, the direction of steepest ascent. \\
 
 \uncover<4->{
 \hspace*{4mm} $\eta_{k+1} = \eta_k + \alert{\alpha_k} p_k$\\
-}
+%}
 \vspace*{1mm}
 
-\uncover<5->{
+%\uncover<5->{
 \hspace*{4mm} $\nabla \ell( \eta_{k+1}) = g( y _{obs}) - \E_{\eta_{k+1}}g(Y)$\\
 \vspace*{1mm}
  
 
-\hspace*{4mm} \indent \textbf{Find} \alert{$p_{k+1}$}
-, which must be an ascent direction. \\
+\hspace*{4mm} \indent \textbf{Find} \alert{$p_{k+1}$}, which must be an ascent direction. \\
 
 
 \hspace*{4mm} \indent $k = k + 1$  \\
@@ -887,7 +891,8 @@ Improvements
 \frame
 {
   \frametitle{Geyer, 2009}  
-In 2009, Geyer woofed$^1$ about a way to handle non-existent MLEs in GLMs.
+%In 2009, Geyer woofed$^1$ about a way to handle non-existent MLEs in GLMs.
+Geyer described a way to handle non-existent MLEs in GLMs.
 \vspace{2mm}
 
 \uncover<2->{
@@ -922,7 +927,7 @@ Geyer (2009) showed how to
 
 \vspace{0.18in}
 }}
-\scriptsize{$^1$Actually, Geyer had been woofing about MLE existence since at least as early as 1990.}
+%\scriptsize{$^1$Actually, Geyer had been woofing about MLE existence since at least as early as 1990.}
 }
 
 \section{non-Existent MLEs: conditions}
@@ -980,9 +985,9 @@ MLE exists if and only if
 $g(\yobs)$ is in interior of $C$.
 \vspace{4mm}
 
-\uncover<2->{
-\alert{\textbf{Problem:} In general, we don't know the geometry of $C$.
-}}
+%\uncover<2->{
+%\alert{\textbf{Problem:} In general, we don't know the geometry of $C$.
+%}}
 
 %\alert<2>{\textbf{Problem:} In general, we don't know the geometry of $C$.}
 
@@ -1018,7 +1023,7 @@ $g(\yobs)$ is in interior of $C$.
 \frame
 {
 	\frametitle{Observed data is $(31,50)$, on boundary.}
-Pretend we know $C$.  How would this work?
+How does this work?
 \vspace{2mm}
 
 Define a hyperplane $H$ passing through $g(\yobs)$, orthogonal to $\delta$.
@@ -1035,7 +1040,7 @@ By Theorem 6 (Geyer, 2009), as $s \to +\infty$,
 \item $P_{\eta + s \delta}( g(Y) \in H) \to 1.$
 \vspace{1mm}
 
-``Probability accumulates on the boundary."
+``Probability accumulates on face $F$ on boundary."
 \vspace{3mm}
 
 \pause
@@ -1070,7 +1075,7 @@ By Theorem 6 (Geyer, 2009)}
 \vspace{1mm}
 	
 	%It is the conditional distribution of $Y \mid g(Y) \in H$ with parameter $\eta.$
-	\item it is an exponential family with convex support $C \cap H$.
+	\item it is an exponential family with convex support $F$.
 \vspace{1mm}
 
 	\item MLE for LCM, $\etaLCM$, is guaranteed to exist.
@@ -1108,7 +1113,7 @@ Find unique $\hat{s}$ such that
 		P_{\etaLCM + \hat{s} \delta}( g(Y) \in H) = \alpha.
 \end{align*}
 %Then $[ \hat{s}, +\infty)$ is a $1- \alpha$ confidence interval for the parameter $s$, 
-\pause
+%\pause
 Then
 \begin{align*}
 [ \etaLCM + \hat{s} \delta, \infty)
@@ -1169,7 +1174,12 @@ Authors use full knowledge of $C$.  In particular, it's H-representation:
 	Ax \leq b.
 \end{align*}
 Easy to check if $g(\yobs)$ is in exterior, interior, or boundary of $C$.
+\vspace{1mm}
 
+\pause
+\begin{block}{}
+{\alert{\textbf{Problem:} In general, we don't know the geometry of $C$.} }
+\end{block}
 \end{column}
 \end{columns}
 
@@ -1208,7 +1218,8 @@ MCMC samples from distribution with parameter $\eta_k$.
 \vspace{1mm}
 
 
-\item Iterated samples from distribution with parameter $\eta_k$ until $\nabla \ell(\eta_k) = 0$.
+\item Iterated samples %from distribution with parameter $\eta_k$ 
+until $\nabla \ell(\eta_k) = 0$.
 \vspace{2mm}
 
 Or alternatively, until
@@ -1249,6 +1260,38 @@ Or alternatively, until
 \pause
 \emph{``I am transparent. You can see and feel me, but you cannot hold me. I always take the shape of my container. Who am I?"}
 }
+%\frame
+%{
+%\frametitle{Extending our algorithm}  
+%%\setbeamercovered{transparent}
+%\textbf{Idea}: Use MCMC samples to explore space and
+%determine geometry of $C$.
+%\vspace{2mm}
+%
+%Find a way to determine if
+%\begin{enumerate}
+%\item $g(\yobs)$ is on the boundary of our sample hull.
+%
+%\begin{figure}[h]
+%\centering
+%\includegraphics[height=1.5in]{MCsample-77face}
+%\includegraphics[height=1.5in]{MCsample-interiorptonF}
+%%\includegraphics[height=2.2in, trim=3.5in 2in 0.in 0.0in, clip = true ]{MCsample-77face}
+%%\includegraphics[height=2.2in, trim=2in 2in 0.in 0in, clip = true ]{MCsample-interiorptonF}
+%%\caption{MCMC samples from distributions with $\eta = (0,0)$ (left), and 
+%%when $\eta$ is close to MLE in LCM (right).}
+%%\label{F:MCsample-MLE nonexistent}
+%\end{figure}
+%
+%%\begin{columns}[]
+%%\begin{column}[T]{0.25\textwidth}
+%%\includegraphics[height=2.5in,trim=3.5in 2in 0.15in 0.05in,clip=true]{MCsample-77face} % l b r t
+%%\end{column}
+%%\begin{column}[T]{0.25\textwidth}
+%%\includegraphics[height=2.5in,trim=3.in 2in 0.15in 0.05in,clip=true]{MCsample-interiorptonF} % l b r t
+%%\end{column}
+%%\end{columns}
+%}
 
 \frame
 {
@@ -1268,23 +1311,24 @@ determine geometry of $C$.
 \vspace{2mm}
 \pause
 
-Find a way to determine if
+Find a way to
 \begin{enumerate}
-\item $g(\yobs)$ is on the boundary of our sample hull.
+\item Determine if $g(\yobs)$ is on boundary of our sample hull.
 \vspace{2mm}
 \pause
-\item If so, on what face of our sample hull does it lie?
+\item If so, on what face $\tilde{F}$ \emph{of our sample hull} does it lie?
 \vspace{2mm}
 \pause
-\item Find a GDOR $\tilde{\delta}$.
+\item Find a GDOR $\tilde{\delta}$ to $\tilde{F}$.   
 \vspace{2mm}
 \pause
-\item Is the boundary of the sample hull also the boundary of $C$?
+\item Is $\tilde{F}$ also a boundary of $C$?  That is, is $\tilde{F} = \alert{F}$?
 \end{enumerate}
 
 \vspace{4mm}
 \pause
 These are problems in \emph{computational geometry}.  
+\vspace{1mm}
 
 Fortunately, the \texttt{rcdd} package (Geyer and Meeden, 2009) has the 
 tools we need.
@@ -1313,14 +1357,14 @@ tools we need.
 }
 \vspace{2mm}
 
-\item Find face $F$ on which $g(\yobs)$ lies in relative interior.  
+\item Find face $\tilde{F}$ \emph{of sample hull} on which $g(\yobs)$ lies.  
 
 \uncover<3->{
 \textcolor{darkblue}{Use \texttt{linearity} function.}
 }
 \vspace{2mm}
 
-\item Find a GDOR $\tilde{\delta}$ orthogonal to $F$.  
+\item Find a GDOR $\tilde{\delta}$ orthogonal to $\tilde{F}$.  
 
 \uncover<4->{
 \textcolor{darkblue}{Solve a linear programming problem
@@ -1330,7 +1374,7 @@ using \texttt{lpcdd} to return a $\tilde{\delta}$.  }
 }
 \vspace{2mm}
 
-\item Determine if $F$ is also a boundary of $C$.  
+\item Determine if $\tilde{F}$ is also a boundary of $C$.  
 
 \uncover<5->{
 \textcolor{blue}{Actually, \texttt{rcdd} doesn't give us this.}  
@@ -1339,7 +1383,7 @@ using \texttt{lpcdd} to return a $\tilde{\delta}$.  }
 \vspace{3mm}
 
 \uncover<6->{
-\emph{Can do all these using rational arithmetic and without calculating expensive H-representations of hulls.}
+\emph{Can do 1 -- 3 using rational arithmetic and without calculating expensive H-representations of hulls.}
 }
 \end{column}
 \end{columns}
@@ -1349,32 +1393,48 @@ using \texttt{lpcdd} to return a $\tilde{\delta}$.  }
 {
 \frametitle{When is our boundary \emph{the} boundary?}  
 %\setbeamercovered{transparent}
+\begin{columns}[]
+\begin{column}[T]{0.4\textwidth}
+\begin{figure}[h]
+\centering
+%\includegraphics[height=1.5in]{MCsample-77face}
+%\includegraphics[height=1.5in]{MCsample-interiorptonF}
+\includegraphics[height=1.5in, trim=3.5in 2in 0.in 0.0in, clip = true ]{MCsample-77face}
+\includegraphics[height=1.5in, trim=3.in 2in 0.15in 0.05in, clip = true ]{MCsample-interiorptonF}
+\end{figure}
 
-\begin{columns}[T]
-\begin{column}[T]{0.25\textwidth}
-\includegraphics[height=2.5in,trim=3.5in 2in 0.15in 0.05in,clip=true]{MCsample-77face} % l b r t
+%\begin{columns}[T]
+%\begin{column}[T]{0.25\textwidth}
+%\includegraphics[height=2.5in,trim=3.5in 2in 0.15in 0.05in,clip=true]{MCsample-77face} % l b r t
 \end{column}
 
-\begin{column}[T]{0.75\textwidth}
-One thing we can't get from \texttt{rcdd}: 
+\begin{column}[t]{0.6\textwidth}
+\pause 
 
-tell us if $F$ of our samples is also a boundary of $C$.  
-\vspace{2mm}
-
-\textbf{Our approach:} if $>60\%$ of samples land on our empirical $F$, then $F$ is on the boundary $C$.
+\textbf{Our approach:} if $>60\%$ of samples land on empirical $\tilde{F}$, then $\tilde{F}$ is a boundary of $C$.  Otherwise, keep sampling.
+\pause
 \vspace{4mm}
 
-\pause
-Here, 77\% of the samples fall on three points that define $F$.  
-\vspace{2mm}
+In first case, 77\% of samples fall on three points that define $\tilde{F}$.  
 
-\textbf{Conclude (correctly) that $F$ is a boundary of $C$.}
+In second, 0.0001\% (1 point) falls on $\tilde{F}$.
+
+\end{column}
+\end{columns}
+\vspace{2mm}
+\pause
+
+\textbf{For first case: Conclude (correctly) that $\tilde{F}$ is a boundary of $C$, $\tilde{F} = F$.}
 \begin{itemize}
 \item MLE does not exist in conventional sense (\alert{\checkmark}).
 \item $\tilde{\delta}$ is a GDOR $\delta$ (\alert{\checkmark}).
 \end{itemize}
-\end{column}
-\end{columns}
+\vspace{2mm}
+\pause
+
+\textbf{For second case: keep on truckin'.}
+%\end{column}
+%\end{columns}
 }
 
 \section{Algorithm extended: LCM}
@@ -1453,8 +1513,8 @@ Next steps
 \centering
 \includegraphics[height=2.5in]{MCsample-problem}
 \includegraphics[height=2.5in]{MCsample-fakeface}
-\caption{MCMC samples when MLE does not exist.}
-\label{F:MCsample-MLE problem}
+\caption{Observed data is $(21,4)$, in interior of $C$.  On right, all 10,000 MC samples 
+fall on a ``fake" face $\tilde{F}$.}
 \end{figure}
 }
 
