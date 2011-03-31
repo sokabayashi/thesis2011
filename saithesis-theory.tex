@@ -6,7 +6,7 @@ another.  For example, the Ising
 model \citep{Ising,Potts} is an exponential family model that has been used to model 
 ferromagnetism, where neighboring 
 pixels (representing atoms in a crystal lattice) are more likely to have the same 
-color.  
+spin orientation.  
 %A realized 
 %sample from this model is depicted in Figure~\ref{F:pottsimage},   
 %We explore this model further in Section~\ref{S:Examples:Ising}.
@@ -70,19 +70,21 @@ $\mu$ such that
 \begin{align*}
 	\mu = \E_\eta g(Y).
 \end{align*}
-This maps any $\eta \in \Xi$ for which the expectation exists to a point in
+This maps any $\eta \in \Xi$ for which the expectation exists 
+(and it does exist for all $\eta$ in the relative interior of $\Xi$)
+to a point in
 the relative interior of the convex support.
 Thus mean value parameters are more easily interpretable quantities, since
 they reside in the same space as the natural statistics 
 \citep{Handcock:degeneracy,Rinaldo:2009}.
-In particular, $\mu = g(\yobs)$ is the MLE in the mean value parameterization
+In particular, $\hat{\mu}_{\textrm{MLE}} = g(\yobs)$ is the MLE in the mean value parameterization
 by \eqref{E:Observed-Expected}.  
-Note that a point on the 
+A point on the 
 relative boundary of the convex support cannot be the mean of any distribution
-in the family.  The models with $g(\yobs)$ on the this relative boundary
+in the family.  The models with $g(\yobs)$ on this relative boundary
 are the degenerate models mentioned in Section~\ref{S:Non-existent MLE};
-thus the MLE does not exist in the natural parameterization but does exist 
-in this mean value parameterization.
+thus even if the MLE does not exist in the natural parameterization it does 
+still exist in this mean value parameterization.
 
 %\citeauthor{Handcock:degeneracy} observed that mean 
 %value parameters located too close to the boundary of the convex support tend to 
@@ -122,12 +124,12 @@ equations and inequalities,
 \begin{align*}
 	C = \{x: Ax \leq b \},
 \end{align*}
-where $A$ is a matrix and $b$ a vector.
+where $A$ is a matrix and $b$ a vector (each linear equation expressed as a pair of inequalities).
 
 The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
 relative to its affine hull.  The concept is motivated by the idea that a triangle
-in $\RR^3$ does have a natural interior which does not meet the definition of an interior
-since no three-dimensional ball will lie in that set.  The closure of a set $C$, denoted $\cl C$, is equal to
+in $\RR^3$ has empty interior 
+since no three-dimensional ball lies in the triangle.  The closure of a set $C$, denoted $\cl C$, is equal to
 \begin{align*}
 	\cl C = \bigcap \{C + \epsilon B \mid \epsilon > 0 \}
 \end{align*}
@@ -211,9 +213,9 @@ For a full exponential family with
 %\item observed data $\yobs$ such that $g(\yobs) \in
 \item convex support $C$,
 \item  a non-zero direction $\delta$,
-\item $P_\eta(g(Y) \in H ) > 0$ for some distribution in the family,
 \item $\sigma_C (\delta) = \sup_{g(y) \in C} \inner{ g(y), \delta}$,
 \item $H = \set{w: \inner{w, \delta} = \sigma_C(\delta) }$.
+\item $P_\eta(g(Y) \in H ) > 0$ for some distribution in the family,
 \end{itemize}
 Then
 \begin{align*}
@@ -373,8 +375,8 @@ to the convex support of the distribution.
 %(\theta+s\delta) > -\infty$.  See Theorem 8.6 in \citep{Rockafellar}
 \begin{proof}
 \textbf{From $2 \to 1$}:
-Assume $\inner{g(Y)-g(\yobs), \delta} \leq 0$.  Take expectations of both sides
-with respect to the distribution index by the parameter value $\eta + s \delta$:
+Assume $\inner{g(Y)-g(\yobs), \delta} \leq 0$ almost surely.  Take expectations of both sides
+with respect to the distribution indexed by the parameter value $\eta + s \delta$:
 \begin{align} \label{E:exp_gy}
 \inner{ \E_{\eta + s \delta} g(Y) - g(\yobs), \delta} \leq 0.
 \end{align}
@@ -612,18 +614,14 @@ Let $W = I(g(Y) \in H)$, which has density
 The conditional density of $W \mid Y$ is
 \begin{align*}
 	f_\eta(w \mid y) &= \begin{cases}
- 			\begin{cases}
-			1 	\quad &\text{for $w=0$}\\
-			0 	\quad &\text{for $w=1$}\\
-			\end{cases} \quad &\text{for } g(y) \notin H\\
- 			\begin{cases}
-			0 	\quad &\text{for $w=0$}\\
-			1 	\quad &\text{for $w=1$}\\
-			\end{cases} \quad &\text{for } g(y) \in H.
+			1, 	\quad &\text{for $w=0$ and $g(y) \notin H$}\\
+			0, 	\quad &\text{for $w=1$ and $g(y) \notin H$}\\
+			0, 	\quad &\text{for $w=0$ and $g(y) \in H$}\\
+			1, 	\quad &\text{for $w=1$ and $g(y) \in H$}.\\
  		\end{cases}
 \end{align*}
 
-Then the conditional density for $Y \mid [g(Y)\in H]$ can be expressed
+Then the conditional density for $Y \mid g(Y)\in H$ can be expressed
 \begin{align*}
 	f_\eta(y \mid g(y) \in H) &= f_\eta(y \mid w=1) \\
 					&= \frac{f_\eta(w=1, y)}{f_\eta(w=1)}	
@@ -684,7 +682,7 @@ Thus even though the MLE does not exist for the original family, its log likelih
 $\ell(\eta)$ is bounded by the LCM log likelihood and the function increases strictly
 towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
 
-Another consequence of Theorem~\ref{Thm:LCM} is in the mean parameter space:
+Another consequence of Theorem~\ref{Thm:LCM} is in the mean value parameter space:
 %%%%%%%%%%%%%%%
 \begin{corollary} \label{Cor:LCM mu-space}
 Under the setting of Theorem~\ref{Thm:LCM}, let $\delta$ be a direction of 
@@ -724,7 +722,7 @@ which we can find a GDOR.
 \begin{theorem}[Theorem 7 from \citet{Geyer:gdor}] \label{Thm:L-GDOR}
 For a full exponential family having polyhedral convex support $C$ and observed value 
 of the natural statistic $g(\yobs)$ such that $g(\yobs) \in C$, 
-let $T_C(g(\yobs) = \con(V)$, and define
+let $T_C(g(\yobs) ) = \con(V)$, and define
 \begin{align*}
 	L = \{ v \in V: -v \in T_C(g(\yobs)) \}.
 \end{align*}
@@ -778,7 +776,7 @@ The original model puts 0 probability on any $x \notin C$, including $H \setminu
 	 			&= 0 + P^{LCM} \left( g(Y) \in H \cap C  \right ) = 1.
 \end{align*}
 
-Left to show is that there is no smaller set than $C \cap H$ that 
+It is left to show that there is no smaller set than $C \cap H$ that 
 can be the convex support of the LCM.
 %Let $S = g(\YY)$, and define $A = \con( S \cap H )$.  Does $A = C \cap H )$?
 %Clearly $ A \subset (C \cap H)$.  But is there an $x \in C\cap H$ where $x \notin A$?
@@ -786,7 +784,7 @@ Let $S = g(\YY)$.  The convex support of the LCM by construction is $\con(S \cap
 which is closed since $S$ is finite.  
 %Clearly, $(S \cap H) \subset (C \cap H)$.  
 Is $(C \cap H) = \con(S \cap H)$?
-If a point $x \in C$, it is a convex combination of a finite set points in $S$,
+If a point $x \in C$, it is a convex combination of the points in $S$,
 \begin{align*}
 	x = \alpha_1 w_1 + \alpha_2 w_2 + \cdots + \alpha_n w_n
 \end{align*}
@@ -860,7 +858,7 @@ $s$, and, in turn, $[\etaLCM + \hat{s}\delta, +\infty)$ gives
 a $1-\alpha$ confidence region for the parameter $\etaLCM + s \delta$. 
 These are a range of indices to distributions in the neighborhood of the LCM MLE
 distribution.
-Note that when $\eta$ is multi-dimensional, these are non-simultaneous 
-multiple confidence intervals.
+%Note that when $\eta$ is multi-dimensional, these are non-simultaneous 
+%multiple confidence intervals.
 
 
