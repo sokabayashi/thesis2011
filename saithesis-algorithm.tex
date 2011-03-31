@@ -31,9 +31,9 @@ is a non-zero \emph{descent direction}
 such that the angle $\theta_k$ between the search direction $p_k$ and steepest descent 
 direction $-\nabla \ell(\eta_k)$ is 
 restricted to be less than 90 degrees by
-\begin{align*}
+\begin{align} \label{E:cosine}
 \cos \theta_k \geq \delta > 0
-\end{align*}
+\end{align}
  for some fixed $\delta > 0$.  
 
 Then, unless $\nabla \ell(\eta_k) = 0$, in which case $\eta_k$ is already the solution 
@@ -46,8 +46,8 @@ condition}
 \end{align}
 for some fixed $0 < c < 1$.
 
-Furthermore, repeated iterations of \eqref{E:eta_update} along a descent direction 
-satisfying \eqref{E:Wolfe-ll} will produce a sequence, $\eta_1, \eta_2, \ldots$ such 
+Furthermore, repeated iterations of \eqref{E:eta_update} 
+satisfying \eqref{E:cosine} and \eqref{E:Wolfe-ll} will produce a sequence, $\eta_1, \eta_2, \ldots$ such 
 that
 \begin{align*}
 	\lim_{k \to \infty} \lVert \nabla \ell(\eta_k) \rVert = 0.
@@ -461,7 +461,7 @@ the curvature condition \eqref
 search nears the MLE and $\nabla \ell( \eta_k)$ gets smaller, the rightmost term in \eqref{E:Wolfe-ll} gets 
 smaller in magnitude (it equals $c \lVert \nabla \ell(\eta_k) \rVert^2$ if using steepest ascent directions), making a 
 numerical search for $\alpha_k$ 
-more challenging.  This issues is exacerbated when the quantities are 
+more challenging.  This issue is exacerbated when the quantities are 
 noisily approximated via MCMC, as discussed in the next section.
 We currently construct a spline to approximate 
 $\nabla \ell( \eta_k + \alpha_k p_k)^T p_k$ as a function of $\alpha_k$ based on 
@@ -488,11 +488,10 @@ applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC.  That is,
  	\nabla \ell (\eta) = g(y) - \E_\eta g(Y) \approx g(y) 
 	- \frac{1}{m}\sum_{i=1}^m g(Y_i), 
 \end{align}
-
 where $Y_1, \ldots, Y_m$ are MCMC draws from the distribution with parameter $\eta$.  
 There are many MCMC algorithms 
 such as Metropolis-Hastings or Swensen-Wang (used for the Ising model example in 
-Section~\ref{S:Example:Ising}); see \citep{Brooks} and references cited therein.
+Section~\ref{S:Example:Ising}); \hl{see} \citep{Brooks} and references cited therein.
 We show examples in the next section where $\nabla \ell(\eta)$ can be calculated 
 exactly and where it must be 
 approximated.
