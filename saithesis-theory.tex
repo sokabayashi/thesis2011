@@ -100,7 +100,16 @@ the convex support of the model \citep{Barndorff, Geyer:gdor, Rinaldo:2009}.  We
 describe the relevant theory from convex analysis as it pertains to the case of 
 discrete state space exponential families.
 
-A \emph{convex polytope} $C$ is the \emph{convex hull} of a finite set of points $V$, denoted $\con V$.
+\hl{Define the \emph{convex hull} of a set of points $V$, denoted $\con V$, to be}
+\begin{align*}
+	\left \{ \sum_{i} \alpha_i v_i \mid \alpha_i \in \RR, \alpha_i \geq 0, \sum_i \alpha_i = 1 \right \} .
+\end{align*}
+The \emph{positive hull} of a set of points $V$, denoted $\pos V$, to be
+\begin{align*}
+	\left \{ \sum_{i} \alpha_i v_i \mid \alpha_i \in \RR, \alpha_i \geq 0 \right \} .
+\end{align*}
+
+A \emph{convex polytope} $C$ is the convex hull of a \emph{finite} set of points $V$.
 By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
 set can equivalently be represented as the intersection of a finite collection of 
 closed half-spaces.  These two representations of a convex polytope are referred to 
@@ -118,7 +127,7 @@ as the \emph{V-representation} and \emph{H-representation}, respectively.
 %\begin{align*}
 %	\sum_{i \in I} b_i = 1.
 %\end{align*}
-
+%The positive hull of points $V$, denoted $\pos V$, 
 The H-representation can be expressed as the solution set of a finite set of linear 
 equations and inequalities,
 \begin{align*}
