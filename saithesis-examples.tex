@@ -552,7 +552,7 @@ by \citet{statnet-tutorial} takes only a few minutes,
 we used over 100 iterations over 40 search directions, 
 each iteration using MCMC sample sizes of 
 10,000 spaced 5,000 iterations apart, taking over an hour.  We actually stopped the 
-algorithm at 40 search direction; we did not attain our desired cutoff of 
+algorithm at 40 search directions; we did not attain our desired cutoff of 
 $\lVert \nabla \ell(\eta) \rVert < 0.1$ and were only able to 
 attain values of $\lVert \nabla \ell(\eta) \rVert$ as small as $9.6$.
  
@@ -746,13 +746,13 @@ equal $(29,47)$ (see Figure \ref{F:MC cloud} (bottom)).
 \centering
 %\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-far}
 %\includegraphics[height=2.8in,width=2.8in]{Figures/MCsample-MLE}
-\includegraphics[width=3.4in]{Figures/MCsample-far}
-\includegraphics[width=3.4in]{Figures/MCsample-MLE}
+\includegraphics[width=3.4in]{Figures/MCsample-far-BW}
+\includegraphics[width=3.4in]{Figures/MCsample-MLE-BW}
 \caption[Network statistics for 10,000 Monte Carlo samples when MLE exists]
 {Network statistics for 10,000 Monte Carlo samples generated from models 
 with $\eta= (0,0)$, top, and $\eta = \etaMLE = (-0.389, 0.418)$,
 bottom.  The observed network statistic is $(29,47)$, depicted by the 
-larger point.  When $\eta$ is the MLE, the observed statistic is 
+larger point with triangle.  When $\eta$ is the MLE, the observed statistic is 
 the mean of the MC sample points generated. }
 \label{F:MC cloud}
 % (-0.3890151, 0.4177752) % from trust
@@ -783,72 +783,77 @@ likelihood surface, with successive point clouds moving towards the observed sta
 Eventually, the observed statistic will lie exactly on the boundary of a point cloud.
 When this occurs, the algorithm must 
 \begin{enumerate}
-\item determine empirically the face $F$ in which the observed statistic lies in the 
+\item determine empirically the face $\tilde{F}$ in which the observed statistic lies in the 
 relative interior of,
-\item decide if $F$ is in fact the boundary of the convex support $C$.
+\item decide if $\tilde{F}$ is in fact the boundary of the convex support $C$.
 \end{enumerate}  
+
+We use $\tilde{F}$ and $\tilde{\delta}$ to distinguish that these are empirical
+faces and GDORs which in fact may not be actual faces of $C$ and GDORs.
 
 The first task can be done using the linear programming methods 
 described in Chapter~\ref{Chapter:Linear programming}.  
 In particular, by use of the \texttt{linearity} function, we can identify the 
-extreme points of the empirical face $F$.
+extreme points of the empirical face $\tilde{F}$.
  
 
 The second task turns out to be more difficult.  
 We first calculate an empirical GDOR by the methods in Section~\ref{S:GDOR calc}, which here give us
 \begin{align*}
-	\delta = (6,-1).
+	\tilde{\delta} = (6,-1).
 \end{align*}
 
-If this $\delta$ is a GDOR and $g(\yobs) \in \rbd C$, then 
+If this $\tilde{\delta}$ is a true GDOR $\delta$, $\tilde{F}$ is a true face $F$ of $C$, and $g(\yobs) \in \rbd C$, then 
 \begin{align} \label{E:Face check}
-	\inner{w - g(\yobs), \delta=0}
+	\inner{w - g(\yobs), \tilde{\delta} = 0 }
 \end{align}
-for all $w \in F$.  
+for all $w \in \tilde{F}$.  
 Thus \eqref{E:Face check} gives an easy way to check if 
-any point is in the empirical face $F$.
+any point is in the empirical face $\tilde{F}$.
 We then assume that if a substantial portion of the sample points generated, say 
-more than 60\%, land on this empirically determined face $F$, then it is in fact a boundary of 
-the convex support $C$.  
+more than 60\%, land on this empirically determined face $\tilde{F}$, then it is in fact 
+a boundary of the convex support $C$.  
 
 In this example, the algorithm determines empirically that three points 
 from the MC sample---$(30,44)$, $(31,50)$, and $(32,56)$---lie on a 
-one-dimensional face, as depicted in Figure \ref{F:MC face}.  
+one-dimensional face $\tilde{F}$, as depicted in Figure \ref{F:MC face}.  
 If less than 60\% of the sample points land on this empirical face, the 
 algorithm continues to sample, trying to get a sample point cloud even closer to the 
 observed statistic.  We choose such a high proportion for a cutoff to eliminate---or 
 at least, greatly reduce---the possibility of misidentifying a boundary.
-(We deal later with a case where 100\% of the MC sample points form a face which is 
-\emph{not} on the boundary of $C$.)  The empirical GDOR $\delta$ that we calculate 
+(We deal later with a case where 100\% of the MC sample points form an empirical face $\tilde{F}$ which is 
+\emph{not} on the boundary of $C$.)  The empirical GDOR $\tilde{\delta}$ that we calculate 
 can also be used as an effective search direction when it is not yet determined that 
-$F$ is a boundary of $C$.  If $F$ is in fact a boundary of $C$, then 
+$\tilde{F}$ is in the boundary of $C$.  If $\tilde{F}$ is in fact in the boundary of $C$, then 
 by Theorem~\ref{Thm:LCM}, this threshold will be met.  A sample meeting this requirement 
 is depicted in Figure~\ref{F:MC face}. 
+
+%While 60\% is an arbitrary number, we do not want to set this threshold too high.
 
 \begin{figure}[h!]
 \centering
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-boundary}
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
 %\includegraphics[width=3.5in]{Figures/MCsample-boundary}
-\includegraphics[width=5in]{Figures/MCsample-77face}
+%\includegraphics[width=5in]{Figures/MCsample-77face}
+\includegraphics[width=5in]{Figures/MCsample-74face-BW}
 \caption[Network statistics for 10,000 Monte Carlo samples when MLE does not exist]
 {Network statistics for 10,000 Monte Carlo samples when the MLE does not exist.  
-The observed statistic, $(31,50)$, is the larger point on the boundary.
+The observed statistic, $(31,50)$, is the larger point on the boundary marked with a triangle.
 A face has been identified,
 defined by $(30,44)$, $(31,50)$, and $(32,56)$ and marked 
-by triangles (the triangle for 
-$(31,50)$ is not visible since it is also the observed statistic).  
-Here, 77\% of the MC sample points fall on these three points.
+by triangles.  
+Here, 74\% of the MC sample points fall on these three points.
 The lighter colored polytope is the convex hull of all previously 
-sampled points.
+sampled points.% theta <- c(25,-4)
 }
 \label{F:MC face}
 \end{figure}
 
-By identifying the empirical face $F$ in whose relative interior the observed 
+By identifying the empirical face $\tilde{F}$ in whose relative interior the observed 
 statistic lies, 
 the algorithm has not only concluded that the MLE does not exist in the conventional 
-sense, it has also defined $F$ as the convex support for the new limiting conditional 
+sense, it has also defined $\tilde{F}$ as the convex support for the new limiting conditional 
 model for which the MLE must exist by Corollary~\ref{Cor:LCM MLE exists}.
 The algorithm then maximizes this new exponential family using the same 
 iterative approach as before.  The gradient of the LCM log likelihood is approximated 
@@ -872,7 +877,7 @@ of this new model, $\Gammalim$, such that
 \begin{align} \label{E:Gammalim}
 \ell( \eta + \gamma )^{LCM} = \ell( \eta )^{LCM}
 \end{align}
-for any $\gamma \in \Gammalim$.  By Theorem~\ref{Thm:DOC}, the GDOR $\delta$ 
+for any $\gamma \in \Gammalim$.  By Theorem~\ref{Thm:DOC}, the GDOR $\tilde{\delta}$ 
 that the algorithm found is one such $\gamma$.
 %By Corollary~\ref{Cor:strictly increasing}, a GDOR $\delta$ is a direction along which the log likelihood function is strictly increasing, and by 
 %Theorem~\ref{Thm:LCM}, we know that
@@ -883,11 +888,11 @@ that the algorithm found is one such $\gamma$.
 %s \delta)$ goes off to $+\infty$ as $s$ increases.  
 
 To construct one-sided 95\% confidence intervals, we need to find the value of 
-$s$ for which the the distribution indexed by $\etaLCM + \gamma + s \delta$ 
+$s$ for which the the distribution indexed by $\etaLCM + \tilde{\gamma} + s \delta$ 
 assigns a probability of 0.05 to the event that a sample falls on the 
 face of interest.  That is, find $s$ such that
 \begin{align*}
-P_{\etaLCM + \gamma + s \delta}(g(Y) \in F ) = 0.05.
+P_{\etaLCM + \tilde{\gamma} + s \delta}(g(Y) \in \tilde{F} ) = 0.05.
 \end{align*}
 We can generate MC samples 
 of $g(Y_1), \ldots, g(Y_m)$ from the distribution with parameter $\etaLCM + \gamma + s 
@@ -901,7 +906,7 @@ Expressing this as non-simultaneous 95\% confidence intervals, we get
 	(-\infty, -1.500],
 \end{align*}
 where the direction of the interval for the second component is flipped because the 
-second component of $\delta$ is negative.
+second component of $\tilde{\delta}$ is negative.
 
 We also applied a trust optimization routine on the original log 
 likelihood in attempt to maximize it.  The maximum of course does not exist, but
@@ -919,15 +924,17 @@ in the neighborhood of the LCM.
 %\end{align*}
 %where the upper bounds are the observed data and hence the MLE in this parameterization.
 %%Incidentally, the mean parameterization of $\hat{\eta}_{\textrm{trust}}$ is $(31,50)$, 
+
 To summarize, our algorithm realized correctly that the MLE for 
 this model does not exist in the conventional sense.
-The algorithm first identified a GDOR, $\delta = (6,-1)$, along which 
-the log likelihood is strictly increasing.  It then used this GDOR to determine
-a one-dimensional face $F$ in which the observed statistic lies 
+The algorithm first identified a GDOR, $\tilde{\delta} = (6,-1)$, along which 
+the log likelihood is strictly increasing.  It then used this empirical
+GDOR to determine
+a one-dimensional face $\tilde{F}$ in which the observed statistic lies 
 in the relative interior.  The algorithm then found $\etaLCM$, the 
 maximizer of the exponential family
-which has $F$ as its convex support.  Finally, the algorithm used the
-values of $\etaLCM$ and $\delta$ to calculate the end points for 
+which has $\tilde{F}$ as its convex support.  Finally, the algorithm used the
+values of $\etaLCM$ and $\tilde{\delta}$ to calculate the end points for 
 one-sided confidence intervals for the natural parameter.
 
 
@@ -940,7 +947,7 @@ a square point in Figure~\ref{F:g9-hull}).  In this case, the point is itself th
 face with zero-dimension and the MLE does not exist.  
 
 The algorithm proceeds as before, and concludes that the 
-point $(27,27)$ is the empirical face $F$ and lies on the boundary of $C$, using the
+point $(27,27)$ is the empirical face $\tilde{F}$ and lies on the boundary of $C$, using the
 same 60\% criteria as before.
 In this case, the limiting conditioning model is completely unidentifiable, and thus 
 any value for $\eta$ will be a maximizer.  Our particular implementation found that
@@ -954,7 +961,7 @@ two directions,
 	 \{ (3.857,   -1),	(5.667,   -1) \}.
 \end{align*}
 The linear programming routine in our algorithm found a GDOR of 
-$\delta = (4.4, -1)$, clearly 
+$\tilde{\delta} = (4.4, -1)$, clearly 
 in the relative interior of this normal cone, which is itself not calculated by
 our algorithm but done here for comparison purposes.
 Proceeding as before, we find 95\% one-sided confidence intervals for $\eta$ of 
@@ -1010,7 +1017,7 @@ value (for example, $(35.34, -9.56)$) where all 10,000 MC sample points generate
 from the model with this parameter value may fall on the six points on the line segment 
 between $(20,0)$ and $(25,20)$, as depicted in Figure~\ref{F:MC problem}.  
 The observed value $(21,4)$ is one of these six points, and the algorithm concludes
-that it has found an empirical face on the boundary of $C$.
+that it has found an empirical face $\tilde{F}$ in the boundary of $C$.
 
 In order for the algorithm to have correctly concluded that $(21,4)$ was in the 
 relative interior of $C$, the extreme point $(27,27)$ 
@@ -1044,7 +1051,7 @@ sampled points.}
 Thus in most cases, our algorithm treats the line segment as a boundary of the 
 convex support in which the observed statistic lies in the relative interior, and 
 hence the support of the LCM.  It proceeds as in the first
-example finds the MLE of this LCM,
+example finding the MLE of this LCM,
 \begin{align*}
 	\etaLCM = (35.38, -9.39),
 \end{align*}
@@ -1058,7 +1065,7 @@ A step back should be taken and the goal of the analysis revisited.
 
 What is the purpose in finding the MLE?  In particular, what does one do with these values once they are found?
 
-If the end goal is to try to interpret meaning out of these numbers by their sign and  
+If the end goal is to try to interpret these numbers by their sign and  
 magnitude, then we indeed have a problem---our numbers are just wrong.  
 However, if the MLE is viewed as an 
 index to a specific model that assigns the highest probability to the observed data,
@@ -1114,12 +1121,12 @@ To make matters yet more confusing, it is possible that the
 algorithm does produce the extreme point $(27,27)$ in a sample and finds the MLE
 in the original model.  Thus by randomness the researcher might get either conclusion.
 However, we emphasize again that
-any probability calculations---and hence inference---would be nearly identical, though perhaps not ``out of the box".
+any probability calculations---and hence inference---would be nearly identical.
 
 It may be of interest to note that $\etaLCM$ and $\etaMLE$ index nearly identical 
 models in the LCM, with the difference due almost entirely to the lack of 
 identifiability of the LCM.  A GDOR to the (incorrect) empirical face is 
-$\delta = (4,-1)$, which is also a direction of constancy for the LCM. 
+$\tilde{\delta} = (4,-1)$, which is also a direction of constancy for the LCM. 
 %(that is, $\delta \in \Gammalim$).  
 Then by \eqref{E:Gammalim}, 
 \begin{align*}
