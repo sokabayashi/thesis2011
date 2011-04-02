@@ -641,19 +641,23 @@ MLE search objective.
 
 \citet{Geyer:gdor} defines the \emph{linearity} of a set of points $W$ to be
 \begin{align*}
-	L = \{ w \in W: -w \in \con( W ) \}.
+	L = \{ w \in W: -w \in \con( \pos W ) \}.
 \end{align*}
+
 Let $V$ be the set of extreme points of a polyhedral convex hull and let $q$ be a point of inquiry.
+
 Define 
 \begin{align*}
 W = \{ v - q: v \in V \},
 \end{align*}
-which is in fact $T_V(q)$.  If $\con( V ) = C$, the
+which is \hl{the set of generators for $T_{\con(V)}(q)$.}  
+
+If $\con( V ) = C$, the
 polyhedral convex support of an exponential family, and $q = g(\yobs)$, then the set 
 $L$ here is the same $L$ as in Theorem~\ref{Thm:L-GDOR}.    
 By Theorem~\ref{Thm:C-H} and Corollary~\ref{Cor:spanL}, if a GDOR 
 exists, then $\spanl L$  
-determines the hyperplane $H$ and also the convex support of the LCM by
+determines the convex support of the LCM, $C \cap H$, by
 \begin{align*}
 	C \cap H = C \cap (g(\yobs) + \spanl L).
 \end{align*}
@@ -928,7 +932,8 @@ By Theorem 7, $\delta$ is a GDOR if and only if
 	\inner{w,\delta} & = 0 	\quad w \in L\\
 	\inner{w,\delta} & < 0 	\quad w \in W \setminus L
 \end{align*}
-where $L$ is the linearity set and W is the tangent cone $T_C(g(\yobs))$.
+where $L$ is the linearity set and W is the set of generators of 
+the tangent cone $T_C(g(\yobs))$.
 \citet{Geyer:gdor} describes a linear programming problem based on these
 criteria to find one such GDOR:
 \begin{align}
@@ -939,7 +944,6 @@ criteria to find one such GDOR:
 	&\inner{v,\delta} \leq -\epsilon, \quad v \in W \setminus L,
 	\end{split}
 \end{align}
-
 where $\delta$ is a vector, $\epsilon$ a scalar, and $(\delta, \epsilon)$ the state
 vector of the linear program.  We can again use \texttt{lpcdd} to solve this 
 problem, where constructing the H-representation to represent \eqref{E:GDOR hrep}
@@ -1056,7 +1060,8 @@ normal cone.
 Given a face characterized by an empirical GDOR, we may need to
 find points in a new sample that fall on this face.  This is straightforward to
 do since the GDOR $\delta$ is orthogonal to any point in that face:
-we simply take the dot product of all the new sample points with our GDOR
+we simply take the dot product of all the new sample points (minus the
+observed value) with our GDOR
 and take the points for which this evaluate to zero.
 We demonstrate this at the point $(20, 31/3)$, using the GDOR $\delta = (1, -3/8)$
 that we obtained in Section~\ref{S:GDOR 1dim}.
