@@ -383,7 +383,7 @@ where
 \begin{itemize}
 \item $\eta \in \RR^d$ is a \textcolor{blue}{natural parameter} vector
 \vspace{1mm}
-\item $g(y)\in\RR^d$ is a \textcolor{blue}{natural statistic} vector of the \emph{observed network} $\yobs \in \YY$
+\item $g(\yobs)\in\RR^d$ is a \textcolor{blue}{natural statistic} vector of the \emph{observed network} $\yobs \in \YY$
 \vspace{1mm}
 %\item $\YY$ is the space of all possible networks for a fixed number of actors
 %\vspace{1mm}
@@ -623,9 +623,9 @@ Overall satisfaction
 \frametitle{So what \emph{do} we have??}
 \setbeamercovered{transparent}
 
-We have the  {\textcolor{blue}{\emph{gradient}, $\nabla \ell(\eta)$.} }
+We have the  {\textcolor{blue}{gradient $\nabla \ell(\eta)$.} }
 %\vspace*{2mm}
-For exponential families,
+%For exponential families,
 \begin{align*}
 	\nabla \ell( \eta ) &= g(y_{obs}) - \E_{\eta} g(Y) 
 	\uncover<2->{ \approx  g(y_{obs}) -  \frac{1}{m}\sum_{i = 1}^m g(Y_i) }
@@ -651,9 +651,9 @@ where $Y_1$, $\ldots$, $Y_m$ are an MCMC sample from distribution with parameter
 \begin{align*}
 	\eta_{k+1} = \eta_k + \alpha_k p_k
 \end{align*}
-$\alpha_k =$ scalar \textcolor{black}{step size}\\
-$p_k = $ \textcolor{black}{search direction} %that is an ascent direction of $\ell(\eta)$
-%\vspace*{2mm}
+$\alpha_k$: scalar \textcolor{black}{step size}\\
+$p_k$:\hspace{.1mm} \textcolor{black}{search direction} %that is an ascent direction of $\ell(\eta)$
+\vspace*{2mm}
 \end{column}
 
 %\uncover<3->{
@@ -835,7 +835,7 @@ line search starting at any $\eta_0$ will converge to $\etaMLE$.
 \end{column}
 
 \begin{column}[r]{0.7\textwidth}
-Use a simple model with $g(y) =$ (\# of edges):
+Model: $g(y) =$ (\# of edges).
 %MLE can be found analytically,
 \begin{align*}
 	\etaMLE = -0.9072.
@@ -891,19 +891,19 @@ Our algorithm converged after 21 iterations with 5 parameter updates.
 \end{column}
 
 \begin{column}[T]{0.7\textwidth}
-A more realistic model with $g(y)$ including terms for
+Model with $g(y)$ including terms for
 % \textbf{actor specific attributes} in addition to \textbf{network structures}.  
 \vspace{1mm}
 \begin{itemize}
 \item Grade, Race, Sex
 \vspace{1mm}
 
-\item Edges, GWESP
+\item Edges, GWESP (like triangles)
 \vspace{5mm}
 \end{itemize}
 %\pause
 
-\textcolor{darkblue}{MCMC-MLE:}  \hspace{1mm} $\eta_0 = $ MPLE, very close to MLE
+\textcolor{darkblue}{MCMC-MLE:}  \hspace{1mm} $\eta_0 =$ very close to MLE
 
 \textcolor{darkblue}{Our algorithm:} $\eta_0 = (0,0,0,0,0)$
 \end{column}
@@ -991,7 +991,7 @@ $\hat{\eta}_{\textrm{linesearch}}$ & 	$-9.893$	&	2.81	&	0.943	&	0.794	&	1.814\\
 %\textcolor{darkblue}{To improve}
 %\begin{itemize}
 %\item Use fewer MCMC samples early, then increase
-\item Improve by switching to MCMC-MLE after we get close enough
+\item Can improve by switching to MCMC-MLE after we get close
 %\includegraphics[height=0.1in]{CR4.pdf} $\to$ \includegraphics[height=0.1in]{CR5.pdf}
 \end{itemize}
 }
@@ -1122,7 +1122,7 @@ Geyer (2009) showed how to
 \end{itemize}
 %}
 \uncover<4->{
-\begin{block}{}
+\begin{block}{An issue for ERGMs as well}
 \textcolor{darkblue}{Goal:} Extend our algorithm to do the same for ERGMs.
 \end{block}
 }
@@ -1133,36 +1133,6 @@ Geyer (2009) showed how to
 }
 
 \section{non-Existent MLEs: conditions}
-%\frame
-%{
-%  \frametitle{Key ingredient: convex support $C$}  
-%%   \setbeamercovered{transparent}
-%The \textcolor{blue}{convex support $C$} of a model is the convex hull of 
-%all possible values of $g(y)$.
-%
-%%The \textcolor{blue}{convex support $C$} of a model is the smallest closed convex set that contains 
-%%all possible values of the natural statistic vector.
-%\vspace{2mm}
-%
-%\begin{theorem} %Extension of Theorem 4 (Geyer, 2009)}
-%MLE does not exist $\iff$ a GDOR exists $\iff$ $g(\yobs) \in$ relative boundary $(C)$
-%\end{theorem}
-%\vspace{2mm}
-%
-%%\pause
-%%Use $C$ to
-%%\begin{itemize}
-%%\item Determine MLE existence
-%%%\item When MLE does not exist, find $[\hat{\eta}_L, \infty)$.
-%%\item When MLE does not exist, find
-%%\begin{itemize}
-%%	\item	a GDOR $\delta$
-%%	\item 	MLE $\etaLCM$ in the limiting model
-%%\end{itemize}
-%%	These give us what we need to calculate $[\hat{\eta}_L, \infty)$.
-%%\end{itemize}
-%}
-
 \frame
 {
   \frametitle{Key ingredient: convex support}  
@@ -1180,7 +1150,7 @@ $(C)$
 \textcolor{darkblue}{Example: 9-node undirected network}
 \vspace{1mm}
 
-Choose $g(y) =$ (\# of edges, \# of triangles)
+Model: $g(y) =$ (\# of edges, \# of triangles)
 
 \begin{itemize}
 \item 69 billion graphs in $\YY$
@@ -1249,24 +1219,11 @@ On boundary $\implies$ MLE does not exist.
 %}
 
 
-%\frame
-%{
-%  \frametitle{Condition for non-existent MLE---theoretically}  
-%\begin{theorem}[Extension of Theorem 4 (Geyer, 2009)]
-%For a full exponential family with with log likelihood $\ell(\eta)$, convex support $C$, and observed data $\yobs$, the following are equivalent:
-%\begin{enumerate}
-%\item the MLE exists.
-%\item Every direction of recession is direction of constancy.
-%\item $N_C(g(\yobs))$ is a vector subspace.
-%\item $T_C(g(\yobs))$ is a vector subspace.
-%\item $g(\yobs) \in \rint C$.
-%\end{enumerate}
-%\end{theorem}
-%}
 
+\section{non-Existent MLEs: LCM}
 \frame
 {
-	\frametitle{MLE does not exist.  Then what?}
+	\frametitle{Next ingredient: limiting model}
 Find \textcolor{blue}{limiting model} for which MLE \emph{does} exist.
 \vspace{2mm}
 %\pause
@@ -1296,7 +1253,7 @@ Find \textcolor{blue}{limiting model} for which MLE \emph{does} exist.
 
 %\pause
 \item $P_{\eta + s \delta}(\fatdot) \to$ \textcolor{blue}{$P_{LCM, \eta}(\fatdot)$}
-%as $s \to +\infty$
+\quad as $s \to +\infty$
 %Limiting distributions constitute the 
 
 \hspace{17mm} \textcolor{blue}{limiting conditional model (LCM)}
@@ -1311,12 +1268,12 @@ LCM is an exponential family with convex support \alert{$F$}
 \pause
 
 \item $\ell(\eta) < \ell_{LCM}(\eta)$
-%\vspace{2mm}
+\vspace{2mm}
 \end{itemize}
 \pause
-\begin{align*}
-	\implies \lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\eta \in \RR^d} \ell(\eta)
-\end{align*}	
+%\begin{align*}
+%	\implies \lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\eta \in \RR^d} \ell(\eta)
+%\end{align*}	
 \hspace{2mm} \textcolor{blue}{MLE in original model: $\etaLCM$ sent to infinity in direction $\delta$.}
 \vspace{2mm}
 
@@ -1419,15 +1376,28 @@ LCM is an exponential family with convex support \alert{$F$}
 %Now some more detail: it is $\etaLCM$ sent to infinity in direction $\delta$.
 
 %\vspace{4mm}
+%Think about a parameter $\eta$ an index to a distribution.
 
+%\begin{itemize}
+%\item \textcolor{blue}{$P_{LCM, \etaLCM}(\fatdot)$} is the distribution \emph{in the LCM} indexed by the LCM MLE.  It assigns all its probability to points  $F$.
+%
+%\item In the original model, think about $\etaLCM + s\delta$ as index to distribution $P_{\eta + s\delta}(\fatdot)$.
+%
+%\item Find a neighborhood of distributions to $P_{LCM, \etaLCM}(\fatdot)$ in \emph{the original model}.  
+%
+%\item Find the indices of distributions that assign at least 5\% probability to \alert{$F$}.  
+%\end{itemize}
 
-\emph{\textcolor{darkblue}{How close is} \textcolor{blue}{parameter $\eta$} \textcolor{darkblue}{to infinity?}  }
+%\emph{\textcolor{darkblue}{How close is} \textcolor{blue}{parameter $\eta$} \textcolor{darkblue}{to infinity?}  }
+%\vspace{2mm}
+
+%\pause
+Think about $\etaLCM + s \delta$ as an index to a distribution in the original model.
 \vspace{2mm}
 
-%\pause
 Find $\hat{s}$ such that $P_{\etaLCM + \hat{s} \delta}(\fatdot )$
-assigns probability $\alpha$ to $F$.
-%\pause
+assigns probability $\alpha$ to \alert{$F$}.
+\vspace{1mm}
 
 Then % $[ \etaLCM + \hat{s} \delta, \infty)$
 \begin{align*}
@@ -1435,10 +1405,10 @@ Then % $[ \etaLCM + \hat{s} \delta, \infty)$
 \end{align*}
 
 gives a $1 - \alpha$ CI for how close $\eta$ is to infinity.
-\vspace{1mm}
+\vspace{4mm}
 
 \pause
-\begin{block}{To do}
+\begin{block}{Modify our algorithm to:}
 \begin{itemize}
 \item Determine that MLE does not exist
 \item Find a GDOR $\delta$ and $\etaLCM$
@@ -1696,19 +1666,20 @@ $\implies$ Use our algorithm to find $\etaLCM$!   (\alert{\checkmark})!
 %	\etaLCM = (126.8, -21.1)
 %\end{align*}
 
-\textcolor{darkblue}{Finally, one-sided CI for how close $\eta$ is to infinity.}  
-\vspace{1mm}
+\textcolor{darkblue}{Finally, one-sided CI for how close $\eta$ is to infinity:}  
+%\vspace{1mm}
 
 %Find $\hat{s}$ such that $P_{\etaLCM + \hat{s} \delta}(\fatdot )$
 %assigns probability $\alpha$ to $F$.
 
-Find $\hat{s}$ for $\alpha$,
+%Find $\hat{s}$ for $\alpha$,
 \begin{align*}
 %\left [ \etaLCM + \hat{s} \delta, + \infty \right )
-\left [ \left(\begin{array}{c}120.5 \\-20.06\end{array}\right) + \hat{s} \left(\begin{array}{r}6 \\-1\end{array}\right), + \infty \right )
+%\left [ \left(\begin{array}{c}120.5 \\-20.06\end{array}\right) + \hat{s} \left(\begin{array}{r}6 \\-1\end{array}\right), + \infty \right )
+\left \{ \left(\begin{array}{c}5.66 \\-0.919\end{array}\right) + s \left(\begin{array}{r}6 \\-1\end{array}\right), \quad s \geq 0 \right \}
 \end{align*}
-is a $1- \alpha$ confidence interval for the parameter $\eta^T\delta$.
-
+is a 99\% confidence interval for the parameter $\eta^T\delta$.
+%5.6596853 -0.919
 %In this example,  
 %\begin{align*}
 %	[9.145, +\infty) \\
