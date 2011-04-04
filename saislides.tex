@@ -25,7 +25,7 @@
       \end{beamercolorbox}%
       \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
         \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
-        \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+%        \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
 
       \end{beamercolorbox}}%
       \vskip0pt%
@@ -121,7 +121,7 @@
 \item optimization
 \item a modified curvature condition
 %\item linear programming
-%\item relative boundaries of convex hulls
+\item relative boundaries of convex hulls
 \item limiting distributions of exponential families
 %\item generic directions of recession
 \end{itemize}
@@ -551,19 +551,21 @@ Overall satisfaction
 \vspace{1mm}
 \includegraphics[height=0.13in]{CR1.pdf} $\quad$ very bad\\
 \vspace{1mm}
+
 }
 
 \uncover<3->{\small
-\begin{block}{Our approach}
+\begin{block}{Our approach: line search}
 \begin{itemize}
 \item Use iterated estimates
 \begin{align*}
 	\eta_{k+1} = \eta_k + \alpha_k p_k
 \end{align*}
-\item Don't evaluate $\ell( \eta)$
-\vspace{1mm}
+%\item Don't evaluate $\ell( \eta)$
+%\vspace{1mm}
 
 \item Don't use $\nabla^2 \ell( \eta)$
+\vspace{2mm}
 %\begin{itemize}
 %	\item Can be expensive
 %	\item May be near singular
@@ -573,6 +575,7 @@ Overall satisfaction
 }
 \end{column}
 \end{columns}
+%\hspace{2.5in} {\scriptsize\textcolor{darkblue}{range}: how far $\eta_0$ is from $\etaMLE$} \\
 
 }
 %\frame
@@ -1123,7 +1126,7 @@ Geyer (2009) showed how to
 %}
 \uncover<4->{
 \begin{block}{An issue for ERGMs as well}
-\textcolor{darkblue}{Goal:} Extend our algorithm to do the same for ERGMs.
+\textcolor{darkblue}{Goal:} Extend our algorithm to do same analysis for ERGMs.
 \end{block}
 }
 
@@ -1140,25 +1143,22 @@ The \textcolor{blue}{convex support $C$} is the convex hull of all possible valu
 % is the smallest closed convex set containing all possible values of the natural statistic vector.
 \begin{theorem}[MLE non-existence] %Extension of Theorem 4 (Geyer, 2009)}
 MLE does not exist $\iff$ a GDOR exists $\iff$ $g(\yobs) \in$ relative boundary 
-$(C)$
+(\textcolor{blue}{$C$})
 \end{theorem}
 \pause
 \vspace{1mm}
 
 \begin{columns}[T]
 \begin{column}[T]{0.53\textwidth}
-\textcolor{darkblue}{Example: 9-node undirected network}
-\vspace{1mm}
-
-Model: $g(y) =$ (\# of edges, \# of triangles)
+\textcolor{darkblue}{Example: 9-node undirected network, \\ 
+$g(y) =$ (\# of edges, \# of triangles)}
 
 \begin{itemize}
 \item 69 billion graphs in $\YY$
 \item 444 edge-triangle combinations
-\item $C$ is a 6-sided polytope
 \end{itemize}
-
-\vspace{4mm}
+Here, \textcolor{blue}{$C$} is a 6-sided polytope
+\vspace{8mm}
 
 \uncover<3->{
 \textcolor{darkblue}{Suppose $g(\yobs) = (31,50)$. } 
@@ -1223,13 +1223,13 @@ On boundary $\implies$ MLE does not exist.
 \section{non-Existent MLEs: LCM}
 \frame
 {
-	\frametitle{Next ingredient: limiting model}
-Find \textcolor{blue}{limiting model} for which MLE \emph{does} exist.
-\vspace{2mm}
+	\frametitle{Next ingredient: limiting conditional model}
+%Find \textcolor{blue}{limiting model} for which MLE \emph{does} exist.
+%\vspace{2mm}
 %\pause
 
-%\uncover<2->{Define a \textcolor{darkblue}{hyperplane $H$} passing through $g(\yobs)$, orthogonal to $\delta$.}
-\uncover<2->{Define a face \textcolor{red}{$F$} in which $g(\yobs)$ lies in interior, orthogonal to $\delta$.}
+%\only<1>{Find a GDOR $\delta$.}
+\uncover<2->{Define a face \textcolor{red}{$F$} in which $g(\yobs)$ lies in interior and is orthogonal to $\delta$.}
 \begin{columns}[]
 \begin{column}[T]{0.25\textwidth}
 \centering
@@ -1252,28 +1252,30 @@ Find \textcolor{blue}{limiting model} for which MLE \emph{does} exist.
 %\vspace{6mm}
 
 %\pause
+\vspace{1mm}
 \item $P_{\eta + s \delta}(\fatdot) \to$ \textcolor{blue}{$P_{LCM, \eta}(\fatdot)$}
 \quad as $s \to +\infty$
 %Limiting distributions constitute the 
+\vspace{1mm}
 
 \hspace{17mm} \textcolor{blue}{limiting conditional model (LCM)}
 \vspace{1mm}
 
 LCM is an exponential family with convex support \alert{$F$}
-\vspace{2mm}
+\vspace{5mm}
 
 \pause
 \item MLE $\etaLCM$ is guaranteed to exist
-\vspace{2mm}
+\vspace{5mm}
 \pause
 
 \item $\ell(\eta) < \ell_{LCM}(\eta)$
-\vspace{2mm}
+%\vspace{5mm}
 \end{itemize}
 \pause
-%\begin{align*}
-%	\implies \lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\eta \in \RR^d} \ell(\eta)
-%\end{align*}	
+\begin{align*}
+	\ell(\etaLCM + s\delta) \nearrow \textcolor{blue}{\ell_{LCM}(\etaLCM)}%= \sup_{\eta \in \RR^d} \ell(\eta)
+\end{align*}	
 \hspace{2mm} \textcolor{blue}{MLE in original model: $\etaLCM$ sent to infinity in direction $\delta$.}
 \vspace{2mm}
 
@@ -1389,22 +1391,32 @@ LCM is an exponential family with convex support \alert{$F$}
 %\end{itemize}
 
 %\emph{\textcolor{darkblue}{How close is} \textcolor{blue}{parameter $\eta$} \textcolor{darkblue}{to infinity?}  }
-%\vspace{2mm}
 
 %\pause
-Think about $\etaLCM + s \delta$ as an index to a distribution in the original model.
+\emph{(Think about \textcolor{darkblue}{$\etaLCM + s \delta$} as an index to a distribution in the \textcolor{darkblue}{original model})}
+\vspace{3mm}
+
+By Theorem, as $s \to +\infty$,
+\begin{align*}
+P_{\textcolor{darkblue}{\etaLCM + s \delta}}(\fatdot) \to \textcolor{blue}{P_{LCM, \etaLCM}(\fatdot)},
+\end{align*}
+which assigns 100\% to face $\alert{F}$.
 \vspace{2mm}
 
-Find $\hat{s}$ such that $P_{\etaLCM + \hat{s} \delta}(\fatdot )$
-assigns probability $\alpha$ to \alert{$F$}.
-\vspace{1mm}
+\pause
+Find $\hat{s}$ such that $P_{\textcolor{darkblue}{\etaLCM + \hat{s} \delta}}(\fatdot )$
+assigns 1\% to face \alert{$F$}.  
+\vspace{2mm}
+
+%This probability is strictly increasing in $s$.% since $\ell( \eta + s \delta)$ is strictly increasing in $s$.
+%\vspace{3mm}
 
 Then % $[ \etaLCM + \hat{s} \delta, \infty)$
 \begin{align*}
-[ \etaLCM + \hat{s} \delta, \infty)
+\left [\textcolor{darkblue}{ \etaLCM + \hat{s} \delta}, \infty \right )
 \end{align*}
 
-gives a $1 - \alpha$ CI for how close $\eta$ is to infinity.
+gives a 99\% CI for how close $\eta$ is to infinity.
 \vspace{4mm}
 
 \pause
@@ -1465,11 +1477,20 @@ Authors use full knowledge of $C$.
 %	Ax \leq b.
 %\end{align*}
 %Easy to check if $g(\yobs)$ is in exterior, interior, or boundary of $C$.
-\vspace{5mm}
+\vspace{2mm}
 
 \pause
 \begin{alertblock}{Issue}
-{\alert{In general, we don't know the geometry of $C$.} }
+In general, $C$ is very hard to determine.
+\vspace{2mm}
+
+\textcolor{blue}{Our approach}
+\begin{itemize}
+\item Don't: use knowledge of $C$
+\item Do: \hspace{2.2mm}  make it computationally efficient
+\vspace{2mm}
+\end{itemize}
+\vspace{2mm}
 \end{alertblock}
 \end{column}
 \end{columns}
@@ -1666,7 +1687,7 @@ $\implies$ Use our algorithm to find $\etaLCM$!   (\alert{\checkmark})!
 %	\etaLCM = (126.8, -21.1)
 %\end{align*}
 
-\textcolor{darkblue}{Finally, one-sided CI for how close $\eta$ is to infinity:}  
+\textcolor{darkblue}{Finally, 99\% one-sided CI for how close $\eta$ is to infinity:}  
 %\vspace{1mm}
 
 %Find $\hat{s}$ such that $P_{\etaLCM + \hat{s} \delta}(\fatdot )$
@@ -1676,9 +1697,9 @@ $\implies$ Use our algorithm to find $\etaLCM$!   (\alert{\checkmark})!
 \begin{align*}
 %\left [ \etaLCM + \hat{s} \delta, + \infty \right )
 %\left [ \left(\begin{array}{c}120.5 \\-20.06\end{array}\right) + \hat{s} \left(\begin{array}{r}6 \\-1\end{array}\right), + \infty \right )
-\left \{ \left(\begin{array}{c}5.66 \\-0.919\end{array}\right) + s \left(\begin{array}{r}6 \\-1\end{array}\right), \quad s \geq 0 \right \}
+\left \{ \left(\begin{array}{c}5.66 \\-0.919\end{array}\right) + s \left(\begin{array}{r}6 \\-1\end{array}\right), \quad s \geq 0 \right \}.
 \end{align*}
-is a 99\% confidence interval for the parameter $\eta^T\delta$.
+%is a 99\% confidence interval for the parameter $\eta^T\delta$.
 %5.6596853 -0.919
 %In this example,  
 %\begin{align*}
@@ -1697,7 +1718,7 @@ is a 99\% confidence interval for the parameter $\eta^T\delta$.
 \begin{center}
 {\TINY \textcolor{blue}{one-sided CI}}
 
-\uncover<2->{\scriptsize \textcolor{blue}{LCM MLE distribution}}
+\uncover<2->{\scriptsize \textcolor{blue}{limiting conditional model}}
 
 \uncover<3->{\small \textcolor{blue}{MLE non-existence}}
 
