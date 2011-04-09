@@ -836,16 +836,16 @@ is depicted in Figure~\ref{F:MC face}.
 %\includegraphics[height=2.7in,width=2.7in]{Figures/MCsample-77face}
 %\includegraphics[width=3.5in]{Figures/MCsample-boundary}
 %\includegraphics[width=5in]{Figures/MCsample-77face}
-\includegraphics[width=5in]{Figures/MCsample-74face-BW}
+\includegraphics[width=5in]{Figures/MCsample-60plus-BW} % MC_LCM_60plus.R, 62.76%
 \caption[Network statistics for 10,000 Monte Carlo samples when MLE does not exist]
 {Network statistics for 10,000 Monte Carlo samples when the MLE does not exist.  
-The observed statistic, $(31,50)$, is the larger point on the boundary marked with a triangle.
+The observed statistic, $(31,50)$, is the largest point on the boundary marked with a triangle.
 A face has been identified,
 defined by $(30,44)$, $(31,50)$, and $(32,56)$ and marked 
 by triangles.  
-Here, 74\% of the MC sample points fall on these three points.
+Here, 63\% of the MC sample points fall on these three points.
 The lighter colored polytope is the convex hull of all previously 
-sampled points.% theta <- c(25,-4)
+sampled points.% 
 }
 \label{F:MC face}
 \end{figure}
@@ -1033,17 +1033,18 @@ is assigned very low probability and may not appear in a MC sample of 10,000.
 \begin{figure}[h!]
 \centering
 %%\includegraphics[height=2.4in,width=2.4in]{Figures/MCsample-problem}
-\includegraphics[width=5in]{Figures/MCsample-fakeface}
+\includegraphics[width=5in]{Figures/MCsample-fakeface-BW}
 \caption[Network statistics for 10,000 Monte Carlo samples when the observed 
 statistic is very close to a boundary]
 {Network statistics for 10,000 Monte Carlo samples when the observed 
-statistic is very close to a boundary.  The observed statistic is $(21,4)$.  Here, 
-all 10,000 samples fall on six points (marked by triangles) on a line segment 
+statistic is very close to a boundary.  The observed statistic is $(21,4)$, marked
+by the largest point.  Here, 
+all 10,000 samples fall on six points on a line segment 
 that appears to be on the boundary of the convex support.  However,
 all points except $(20,0)$ are in the interior.  The absence of the 
 extreme point $(27,27)$ in this sample---and all previous samples---leads
 to this misidentification.
-The lighter colored polytope is the convex hull of all previously 
+The light grey polytope is the convex hull of all previously 
 sampled points.}
 \label{F:MC problem}
 \end{figure}
