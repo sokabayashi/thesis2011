@@ -118,10 +118,12 @@
 \frame{
 	\frametitle{My research is about}
 \begin{itemize}
-\item optimization
-\item a modified curvature condition
+\item optimization algorithm
+%\item computational geometry
+%\item modified curvature condition
 %\item linear programming
-\item relative boundaries of convex hulls
+%\item relative boundaries of convex hulls
+\item estimators that don't exist
 \item limiting distributions of exponential families
 %\item generic directions of recession
 \end{itemize}
@@ -342,7 +344,7 @@ Take this matrix and represent entries with 0 as white, 1 as black.
 \begin{column}[T]{0.65\textwidth}
 \vspace{5mm}
 
-$Y_{ij}$ are \alert{not} in general independent.
+$Y_{ij}$ are \alert{not} independent.
 \vspace{2mm}
 
 %This dependence is at the core of the ``network perspective'' in sociology.
@@ -565,6 +567,8 @@ Overall satisfaction
 %\vspace{1mm}
 
 \item Don't use $\nabla^2 \ell( \eta)$
+\vspace{1mm}
+\item Simple set up
 \vspace{2mm}
 %\begin{itemize}
 %	\item Can be expensive
@@ -646,7 +650,7 @@ where $Y_1$, $\ldots$, $Y_m$ are an MCMC sample from distribution with parameter
 
 \uncover<3->{
 
-\begin{block}{Using gradient in algorithm updates}
+\begin{block}{Use of gradient in our algorithm}
 \begin{columns}[]
 \begin{column}[t]{0.32\textwidth}
 %\textcolor{darkblue}{iterated estimates}
@@ -1794,7 +1798,7 @@ $\implies$ Use our algorithm to find $\etaLCM$!   (\alert{\checkmark})!
 
 \uncover<4->{\normalsize \textcolor{blue}{parameter estimation}}
 
-\uncover<5->{\large \textcolor{blue}{ERGMs}}
+\uncover<5->{\large \textcolor{blue}{ERGM}}
 
 \uncover<6->{\Large \textcolor{blue}{discrete exponential families}}
 
