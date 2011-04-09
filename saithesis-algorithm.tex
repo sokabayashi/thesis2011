@@ -380,7 +380,7 @@ transparency.  Although often effective in early steps, steepest descent directi
 can result in an inefficient zigzagging 
 trajectory of the sequence $x_k$ \citep{Sun:2006}  as 
 illustrated in Figure 
-\ref{F:zigzag} (left).  This is especially problematic when the MLE does not exist in the 
+\ref{F:zigzag} (top).  This is especially problematic when the MLE does not exist in the 
 conventional sense---the MLE is actually off at infinity and a zig-zagging route may 
 make it especially difficult to realize this.
 
@@ -403,8 +403,8 @@ guarantees that this method always
 yields a descent direction for $p_{k+1}$ and thus Theorem~\ref{Thm:log like max} still 
 holds.  
 
-Another pragmatic approach may be to use a search direction resulting from a regression
-through the previous few updates (See Figure \ref{F:zigzag} (right)).
+Another pragmatic approach may be to use a search direction resulting from a 
+regression through the previous few updates (see Figure \ref{F:zigzag} (bottom)).
 
 %For ERGMs where the MLE may not exist, we have found a particularly useful approach is 
 %to use the average normal cone vector.  This will only occur if the algorithm 
@@ -425,17 +425,17 @@ through the previous few updates (See Figure \ref{F:zigzag} (right)).
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[height=2.6in,width=2.6in]{Figures/zigzag-eta}
-\includegraphics[height=2.6in,width=2.6in]{Figures/zagplusnorm-eta}
+\includegraphics[height=3.5in]{Figures/zigzag-eta}
+\includegraphics[height=3.5in]{Figures/zagplusnorm-eta}
 \caption[Contour plots of ERGM log likelihood when MLE does not exist]{Contour plots of an ERGM log likelihood when the MLE does not exist.  The surface 
 tends to flatten, though technically it is still concave.  This can cause 
 the steepest descent 
-algorithms to zigzag, which is inefficient (left).  However, by periodically using 
+algorithms to zigzag, which is inefficient (top).  However, by periodically using 
 search directions 
 determined by 
 %normal vectors  derived from the empirical face or 
 a regression through 
-previous points, the algorithm can make much larger steps (right).}
+previous points, the algorithm can make much larger steps (bottom).}
 \label{F:zigzag}
 \end{figure}
 
