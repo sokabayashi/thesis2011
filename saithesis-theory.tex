@@ -690,6 +690,19 @@ and hence $P_\eta(g(Y) \in H)$ cannot equal 1.
 Thus even though the MLE does not exist for the original family, its log likelihood
 $\ell(\eta)$ is bounded by the LCM log likelihood and the function increases strictly
 towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
+This is illustrated in Figure~\ref{F:LCM} for the case of a two-dimensional parameter
+space.
+
+
+\begin{figure}[h]
+\centering
+    \scalebox{.55}{\input{Figures/ll-LCM.pdf_t}}
+	\caption[Log likelihood convergence to LCM]{The log likelihood in the
+	the direction $\delta$, converging to the LCM log likelihood for a two-dimensional parameter space.  The log likelihood for $\ell(\etaLCM + s\delta)$
+	converges to the maximum of $\ell_{LCM}(\eta)$ as $s \to +\infty$.}
+\label{F:LCM}
+\end{figure}
+
 
 Another consequence of Theorem~\ref{Thm:LCM} is in the mean value parameter space:
 %%%%%%%%%%%%%%%
