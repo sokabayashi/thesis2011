@@ -45,7 +45,7 @@ mydat.polygon <- data.frame( rbind( cbind(sample.gy[chull(sample.gy),],1), cbind
 combined.polygon <- data.frame( unique( rbind(sample.gy, sample.gy2 ) ) )
 combined.polygon <- combined.polygon[chull( combined.polygon), ]
 p <- ggplot( mydat, aes(x=X1,y=X2), aspect.ratio = 1 ) 
-figureplot <- p + geom_point(aes(shape=X3)) + geom_polygon(data=mydat.polygon[mydat.polygon$X3==1,],fill=0,colour="blue", linetype = 2 ) + geom_polygon(data=mydat.polygon[mydat.polygon$X3==2,],fill=0,colour="red",  linetype = 2 ) + geom_polygon( data=combined.polygon,fill=0,colour="grey" )
+figureplot <- p + geom_polygon( data=combined.polygon,fill=0,colour="grey" )  + geom_polygon(data=mydat.polygon[mydat.polygon$X3==1,],fill=0,colour="blue", size = 1, linetype = 2 ) + geom_polygon(data=mydat.polygon[mydat.polygon$X3==2,],fill=0,colour="red",  size = 1, linetype = 4 ) + geom_point(aes(shape=X3) )+ theme_bw()+ coord_equal(ratio = 1)
 #ggsave( "~/Tako/THESIS/Figures/combined-hull-norm.pdf" )
 
 
@@ -69,7 +69,7 @@ p + geom_point(aes(shape=X3))
 
 p + geom_polygon(data=mydat[mydat$X3==1,] )
 p <- ggplot( mydat, aes(x=X1,y=X2) ) 
-p + geom_point(aes(shape=X3)) + geom_polygon(data=mydat.polygon[mydat.polygon$X3==1,],fill=0,colour="blue", linetype = 2 ) + geom_polygon(data=mydat.polygon[mydat.polygon$X3==2,],fill=0,colour="red",  linetype = 2 ) + geom_polygon( data=combined.polygon,fill=0,colour="grey" )
+p  + geom_polygon(data=mydat.polygon[mydat.polygon$X3==1,],fill=0,colour="blue", linetype = 2 ) + geom_polygon(data=mydat.polygon[mydat.polygon$X3==2,],fill=0,colour="red",  linetype = 2 ) + geom_polygon( data=combined.polygon,fill=0,colour="grey" ) + geom_point(aes(shape=X3),size=2.5, fill=1 )
 #ggsave( "~/Tako/THESIS/Figures/combined-hull-norm.pdf" )
 
 # the old way was so much easier ...
@@ -178,8 +178,8 @@ q.d2 <- q2d(q )
 ncone.dir2 <- q2d( ncone.Vrep[ ,-c(1:2), drop = FALSE] )
 arrowplot2 <- geom_segment( aes( x=q.d2[1], y = q.d2[2], xend=q.d2[1] + ncone.dir2[,1], yend = q.d2[2] + ncone.dir2[,2] ), colour="blue", arrow= arrow(length=unit(0.2,"cm")) ) 
 
-figureplot + arrowplot + arrowplot2 + coord_equal(ratio = 1) 
-
+figureplot + arrowplot + arrowplot2 + coord_equal(ratio = 1) + theme_bw(base_size = 14 )  + opts( legend.position = "none" ) 
+#ggsave( "~/Tako/THESIS/Figures/combined-hull-norm.pdf" )
 
 
 
