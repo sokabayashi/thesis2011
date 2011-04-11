@@ -5,8 +5,11 @@ exponential families
 can be difficult to estimate when the likelihood is difficult to compute.
 Most methodologies rely on iterated estimates and are sensitive
 to the starting value, often unable to converge if started too far from the
-solution.  In addition, these methods may require significant trial-and-error to 
-work effectively.  
+solution.  
+% 4/7 Sai
+%In addition, these methods may require significant trial-and-error to 
+%work effectively.  
+% old comment out
 %Markov chain Monte Carlo (MCMC) methods based on the MCMC-MLE algorithm in \citep
 %{Geyer:1992} are guaranteed to converge in theory under certain conditions when 
 %starting from any value, but in practice such an algorithm may labor to converge when 
@@ -16,20 +19,26 @@ a situation that occurs with positive probability for ERGMs.
 % for discrete state space exponential families like ERGMs.
 In such a case, the MLE 
 is actually ``at infinity" in some direction of the parameter space.  
-\citet{Geyer:gdor} illustrated an algorithm to detect non-existent MLEs 
-and construct one-sided confidence intervals for how close
-the parameter is to infinity in the case of generalized linear 
-models, where the convex support is known.  
+% 4/7 Sai
+%\citet{Geyer:gdor} illustrated an algorithm to detect non-existent MLEs 
+%and construct one-sided confidence intervals for how close
+%the parameter is to infinity in the case of generalized linear 
+%models, where the convex support is known.  
 
 Here we present a simple line search algorithm to find the MLE of a regular exponential 
 family when the MLE exists and is unique.  
 The algorithm can be started from any 
 initial value and avoids trial-and-error experimentation.  
-We show convergence of the algorithm for the case where the gradient can be 
-calculated exactly.  When it cannot, it has a particularly convenient form that is 
-easily estimable with Markov chain Monte Carlo (MCMC), making the algorithm still useful to a practitioner.  
-Finally, when the MLE does not exist, our algorithm adapts the 
-approach of \citet{Geyer:gdor} to a setting where the convex support is not
-known in advance, which is typically the case for network models.  
-We are able to then calculate one-sided confidence intervals
-for the parameters.
+% 4/7 Sai
+%We show convergence of the algorithm for the case where the gradient can be 
+%calculated exactly.  When it cannot, it has a particularly convenient form that is 
+%easily estimable with Markov chain Monte Carlo (MCMC), making the algorithm still useful to a practitioner.  
+%Finally, w
+When the MLE does not exist, our algorithm adapts
+\citeauthor{Geyer:gdor}'s \citeyearpar{Geyer:gdor} approach
+to detect non-existent MLEs and construct one-sided confidence intervals
+for how close the parameter is to infinity.
+%to a setting where the convex support is not
+%known in advance, which is typically the case for network models.  
+%We are able to then calculate one-sided confidence intervals
+%for the parameters.
