@@ -13,7 +13,7 @@ spin orientation.
 Other examples of phenomena with dependent structure modeled with exponential 
 families include
 plant ecology \citep{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1992}
- and the lifetime fitness of plants \citep
+ and the lifetime fitness of plants \citep*
 {Shaw:2008}.
 
 Although motivated by ERGMs, the methods we propose are rooted in fundamental
@@ -23,17 +23,18 @@ the perspective of this more general setting; in fact, only Theorem~\ref{Thm:C-H
 Corollary~\ref{Cor:LCM MLE exists} require 
 the additional assumption of a finite state space.
 
-\section{Exponential Family Theory}
+\section{Exponential family theory} \label{S:Expfam theory}
 Much of the fundamental background for exponential families has already been
-covered in Section~\ref{S:ERGM setup}: our interest is the properties of
+covered in Section~\ref{S:ERGM setup}: our interest is in the properties of
  regular exponential
 families on a finite sample space $\YY$  with log likelihood \eqref{E:loglike}.
 As noted earlier, when the sample space $\YY$ is even moderately large,
 the cumulant function $c(\eta)$ involves a summation that may be prohibitively 
-expensive to evaluate.  For example, the sample space $\YY$ for an Ising model 
-defined on a $32\times 32$ square lattice where each entry takes values of 0 or 1 
-has $2^{1024} \approx 10^{300}$ elements.  
-A loop with this many iterations takes too long no matter how programmed.
+expensive to evaluate.  
+%For example, the sample space $\YY$ for an Ising model 
+%defined on a $32\times 32$ square lattice where each entry takes values of 0 or 1 
+%has $2^{1024} \approx 10^{300}$ elements.  
+%A loop with this many iterations takes too long no matter how programmed.
 
 A useful property of all exponential families \cite[p.~27]{TPE2} when 
 $\eta$ is in the interior of $\Xi$ is that 
@@ -52,7 +53,7 @@ Thus we can express first and second derivatives of the log likelihood \eqref
 and thereby avoid evaluation of the problematic cumulant function $c$.
 
 
-By the strict concavity of the log likelihood function is assured by \eqref{E:nabla2 
+Strict concavity of the log likelihood function is assured by \eqref{E:nabla2 
 ell} being strictly positive definite, which in turn is assured by the natural statistic
 not being concentrated on a hyperplane.  The global 
 maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \eta ) = 
@@ -63,34 +64,6 @@ maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \et
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Mean value parameterization} \label{S:Mean value parameterization}
-An alternative parameterization of an exponential family is the mean value 
-parameterization.  For a natural parameter $\eta$, we can define the mean parameter 
-$\mu$ such that
-\begin{align*}
-	\mu = \E_\eta g(Y).
-\end{align*}
-This maps any $\eta \in \Xi$ for which the expectation exists 
-(and it does exist for all $\eta$ in the relative interior of $\Xi$)
-to a point in
-the relative interior of the convex support.
-Thus mean value parameters are more easily interpretable quantities, since
-they reside in the same space as the natural statistics 
-\citep{Handcock:degeneracy,Rinaldo:2009}.
-In particular, $\hat{\mu}_{\textrm{MLE}} = g(\yobs)$ is the MLE in the mean value parameterization
-by \eqref{E:Observed-Expected}.  
-A point on the 
-relative boundary of the convex support cannot be the mean of any distribution
-in the family.  The models with $g(\yobs)$ on this relative boundary
-are the degenerate models mentioned in Section~\ref{S:Non-existent MLE};
-thus even if the MLE does not exist in the natural parameterization it does 
-still exist in this mean value parameterization.
-
-%\citeauthor{Handcock:degeneracy} observed that mean 
-%value parameters located too close to the boundary of the convex support tend to 
-%correspond to degenerate distributions; this was corroborated by 
-%\citeauthor{Rinaldo:2009} from the perspective of Shannon's entropy function.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \section{Convex analysis} \label{S:Convex analysis}
@@ -100,18 +73,18 @@ the convex support of the model \citep{Barndorff, Geyer:gdor, Rinaldo:2009}.  We
 describe the relevant theory from convex analysis as it pertains to the case of 
 discrete state space exponential families.
 
-\hl{Define the \emph{convex hull} of a set of points $V$, denoted $\con V$, to be}
+Define the \emph{convex hull} of a set of points $V$, denoted $\con V$, to be
 \begin{align*}
-	\left \{ \sum_{i} \alpha_i v_i \mid \alpha_i \in \RR, \alpha_i \geq 0, \sum_i \alpha_i = 1 \right \} .
+	\left \{ \sum_{i} \alpha_i v_i \mid \alpha_i \in \RR, \alpha_i \geq 0, \sum_i \alpha_i = 1 \right \},
 \end{align*}
-The \emph{positive hull} of a set of points $V$, denoted $\pos V$, to be
+and the \emph{positive hull} of a set of points $V$, denoted $\pos V$, to be
 \begin{align*}
 	\left \{ \sum_{i} \alpha_i v_i \mid \alpha_i \in \RR, \alpha_i \geq 0 \right \} .
 \end{align*}
 
-A \emph{convex polytope} $C$ is the convex hull of a \emph{finite} set of points $V$.
+A \emph{convex polytope} $C$ is the convex hull of a finite set of points $V$.
 By the Minkowski-Weyl theorem \citep[Theorem 19.1]{Rockafellar:1970}, this convex 
-set can equivalently be represented as the intersection of a finite collection of 
+set can be represented equivalently as the intersection of a finite collection of 
 closed half-spaces.  These two representations of a convex polytope are referred to 
 as the \emph{V-representation} and \emph{H-representation}, respectively.  
 %The V-representation of a convex polytope $C$ is the set of all linear combinations
@@ -186,6 +159,34 @@ and the tangent cone at $x$ in terms of the normal cone at $x$ by
 %\citep{Rockafellar:1970} p 69.}
 
 
+\section{Mean value parameterization} \label{S:Mean value parameterization}
+An alternative parameterization of an exponential family is the mean value 
+parameterization.  For a natural parameter $\eta$, we can define the mean parameter 
+$\mu$ such that
+\begin{align*}
+	\mu = \E_\eta g(Y).
+\end{align*}
+This maps any $\eta \in \Xi$ for which the expectation exists 
+(and it does exist for all $\eta \in \rint \Xi$)
+to a point in
+the relative interior of the convex support.
+Thus mean value parameters are more easily interpretable quantities, since
+they reside in the same space as the natural statistics 
+\citep{Handcock:degeneracy,Rinaldo:2009}.
+In particular, $\hat{\mu}_{\textrm{MLE}} = g(\yobs)$ is the MLE in the mean value parameterization
+by \eqref{E:Observed-Expected}.  
+A point on the 
+relative boundary of the convex support cannot be the mean of any distribution
+in the family.  The models with $g(\yobs)$ on this relative boundary
+are the degenerate models mentioned in Section~\ref{S:Non-existent MLE};
+thus even if the MLE does not exist in the natural parameterization it does 
+still exist in this mean value parameterization.
+
+%\citeauthor{Handcock:degeneracy} observed that mean 
+%value parameters located too close to the boundary of the convex support tend to 
+%correspond to degenerate distributions; this was corroborated by 
+%\citeauthor{Rinaldo:2009} from the perspective of Shannon's entropy function.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{MLE existence in exponential families} \label{S:MLE existence}
@@ -690,7 +691,7 @@ and hence $P_\eta(g(Y) \in H)$ cannot equal 1.
 Thus even though the MLE does not exist for the original family, its log likelihood
 $\ell(\eta)$ is bounded by the LCM log likelihood and the function increases strictly
 towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
-This is illustrated in Figure~\ref{F:LCM} for the case of a two-dimensional parameter
+This is illustrated in Figure~\ref{F:LCM} in the case of a two-dimensional parameter
 space.
 
 
