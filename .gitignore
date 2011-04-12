@@ -1,0 +1,13 @@
+*.log
+*.aux
+*.dvi
+*.zip
+*.lof
+*.toc
+*.nav
+*.snm
+*.out
+*.xlsx
+*.eps
+*.lot
+*.docx
