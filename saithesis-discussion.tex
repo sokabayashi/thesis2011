@@ -7,7 +7,8 @@ and calculating one-sided confidence intervals for the parameters when it does n
 %exponential family when the MLE exists.  
 The algorithm avoids the trial and error experimentation of tuning parameters 
 and starting points commonly associated with optimization routines
-not invented by optimization specialists.  Our algorithm is modeled after algorithms 
+not invented by optimization specialists.  Our algorithm is modeled after 
+standard algorithms 
 discussed in optimization textbooks \citep{Fletcher,NW,Sun:2006},
 all of which are safeguarded to ensure rapid automatic convergence.
 %Because it only relies on first order derivatives, this approach avoids problems with 
@@ -34,24 +35,24 @@ of convex hulls and only do comparisons using rational arithmetic.
 We know of no other general approach for dealing with the setting where
 the convex support is unknown in advance.
 
-The algorithm can be computationally demanding.  When the current iteration approaches 
-the solution, the 
+Our algorithm can be computationally demanding.  
+When the log likelihood gradient approaches zero, the 
 curvature condition for step size becomes more difficult to satisfy and the method may 
 require several iterations of 
 MCMC sampling and perhaps an increase in MCMC sample size.  Eventual increase in MCMC 
 sample size is unavoidable,
 because the achievable accuracy is inversely proportional to the square root of the 
 MCMC sample size, as in all Monte Carlo.
-Thus we believe the best use of this algorithm is in combination with other faster 
+Thus when the MLE exists, we believe the best use of this algorithm 
+is in combination with other faster 
 methods like MCMC-MLE \citep{Geyer:1992}
 or Newton-Raphson safeguarded by our line search algorithm.  Our 
 algorithm should be used from ``long range'', when one has no good intuition for an 
 initial value and is concerned about 
-picking one that is far from the MLE.  The switch between types of search direction 
-(steepest ascent, conjugate gradient,
-or Newton) within our algorithm or the switch to another algorithm (such as MCMC-MLE 
-\citep{Geyer:1992})
-need not require manual intervention.  When used in combination in this
+picking one that is far from the MLE.  The switch 
+ to another algorithm such as MCMC-MLE 
+need not require manual intervention, though the criteria for 
+switching needs to be further studied.  When used in combination in this
 manner, we do not think the confidence intervals are necessary as the curvature 
 condition is quite easily satisfied 
 when the current iteration is far from the MLE.
@@ -84,28 +85,29 @@ approximation.
 \subsection{Step size search}
 The process of finding a step size $\alpha$ to satisfy the curvature condition
  \eqref{E:Wolfe-ll} can be improved.
-The spline approximation of $\nabla \ell(\eta + \alpha p)^T p$ as a function of $\alpha$ should ideally incorporate the fact that the function is strictly
-concave (Section~\ref{S:Step size}).  
+The spline approximation of $\nabla \ell(\eta + \alpha p)^T p$ as a function of $\alpha$ should 
+ideally incorporate the strict concavity of the function.  
 As noted above as well as in Section~\ref{S:MCMC approx}, when the gradient must be approximated
 via MCMC, 
-\eqref{E:Wolfe-ll} becomes increasingly difficult to satisfy as the algorithm nears the
-solution.  Our approach currently generates two independent MCMC samples, one for
+\eqref{E:Wolfe-ll} becomes increasingly difficult to satisfy as the gradient approaches zero.
+Our approach currently generates two independent MCMC samples, one for
 the distribution at $\eta$, the other at $\eta + \alpha p$.  By using simulating tempering
 in the manner of \citet{Geyer:1995}, we might effectively introduce correlation between these
 samples, making \eqref{E:Wolfe-ll} easier to satisfy.  
 
 \subsection{Switch criteria}
-Another remaining issue is the stopping or switching criteria: while our Ising model example
+The switching criteria to another algorithm was alluded to above: while our Ising model example
 in Section~\ref{S:Example:Ising} illustrated that it is in fact possible to get reasonable 
 parameter estimates only using our algorithm, we believe it will be more computationally
 efficient to switch to another algorithm like Newton-Raphson or MCMC-MLE.  
 
 But when?  
 The Faux Magnolia example in Section~\ref{S:Example:FauxMagnolia} showed that using 
-our algorithm for $2d$ steepest ascent updates was not enough (though it was adequate when
- using conjugate gradient directions).
+our algorithm for $2d$ steepest ascent updates was enough, but we saw other trials where
+it was not.
 As noted in Section~\ref{S:Combine}, MCMC-MLE converges if and only 
-if the importance weights for the sample in \eqref{E:r_hat} stabilize.  Establishing criteria on these importance weights should make it 
+if the importance weights for the sample in \eqref{E:r_hat} stabilize.  
+Establishing criteria on these importance weights should make it 
 possible to switch to MCMC-MLE only when it can attain the MLE in one update.
 
 \subsection{Monte Carlo standard errors}

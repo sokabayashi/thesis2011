@@ -639,24 +639,23 @@ Here we describe another approach that is not only more computationally efficien
 but also provides us with additional useful information in the context of our
 MLE search objective.
 
-\citet{Geyer:gdor} defines the \emph{linearity} of a set of points $W$ to be
-\begin{align*}
-	L = \{ w \in W: -w \in \con( \pos W ) \}.
-\end{align*}
-
 Let $V$ be the set of extreme points of a polyhedral convex hull and let $q$ be a point of inquiry.
 
 Define 
 \begin{align*}
 W = \{ v - q: v \in V \},
 \end{align*}
-which is \hl{the set of generators for $T_{\con(V)}(q)$.}  
+which generates $T_{\con(V)}(q)$.
+The \emph{linearity} of a set of points $W$ is
+\begin{align*}
+	L = \{ w \in W: -w \in T_{\con(V)}(q) \}.
+\end{align*}
 
-If $\con( V ) = C$, the
+ If $\con( V ) = C$, the
 polyhedral convex support of an exponential family, and $q = g(\yobs)$, then the set 
 $L$ here is the same $L$ as in Theorem~\ref{Thm:L-GDOR}.    
 By Theorem~\ref{Thm:C-H} and Corollary~\ref{Cor:spanL}, if a GDOR 
-exists, then $\spanl L$  
+exists, then $L$  
 determines the convex support of the LCM, $C \cap H$, by
 \begin{align*}
 	C \cap H = C \cap (g(\yobs) + \spanl L).
@@ -798,7 +797,7 @@ needed to determine if $F$ is also a face of $C$.
 %points from $W$ (shifted by $g(\yobs)$) that form what we refer to as the empirical 
 %face $F$.  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Normal and tangent cones}
+\section{Normal and tangent cones} \label{S:ncone tcone}
 We may be interested in the normal cone and tangent cones after it has been
 determined that $q$ is on the boundary of a  hull.  The approaches described
 in this section rely on an H-representation of the convex hull and so we avoid 
