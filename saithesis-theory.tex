@@ -12,9 +12,8 @@ spin orientation.
 %We explore this model further in Section~\ref{S:Examples:Ising}.
 Other examples of phenomena with dependent structure modeled with exponential 
 families include
-plant ecology \citep{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1992}
- and the lifetime fitness of plants \citep*
-{Shaw:2008}.
+plant ecology \citep*{Besag:1974,Besag:1975}, DNA fingerprint data \citep{Geyer:1992}
+ and the lifetime fitness of plants \citep*{Shaw:2008}.
 
 Although motivated by ERGMs, the methods we propose are rooted in fundamental
 exponential family theory and applicable to any 
@@ -69,7 +68,7 @@ maximum, if it is exists, is attained when $\eta$ is such that $\nabla \ell( \et
 \section{Convex analysis} \label{S:Convex analysis}
 The issue of MLE existence in the conventional sense in an exponential family is 
 closely tied to the geometric properties of 
-the convex support of the model \citep{Barndorff, Geyer:gdor, Rinaldo:2009}.  We 
+the convex support of the model \citep[Chapter 9]{Geyer:gdor, Rinaldo:2009, Barndorff}.  We 
 describe the relevant theory from convex analysis as it pertains to the case of 
 discrete state space exponential families.
 
@@ -111,7 +110,7 @@ where $A$ is a matrix and $b$ a vector (each linear equation expressed as a pair
 The \emph{relative interior} of a convex set $C$, denoted $\rint C$, is the interior 
 relative to its affine hull.  The concept is motivated by the idea that a triangle
 in $\RR^3$ has empty interior 
-since no three-dimensional ball lies in the triangle.  The closure of a set $C$, denoted $\cl C$, is equal to
+since no three-dimensional ball lies in the triangle.  The \emph{closure} of a set $C$, denoted $\cl C$, is equal to
 \begin{align*}
 	\cl C = \bigcap \{C + \epsilon B \mid \epsilon > 0 \}
 \end{align*}
@@ -126,7 +125,7 @@ A \emph{proper} face is a face that is not the empty set or $C$, and
 For a polyhedral convex $C$, every face $F$ is \emph{exposed} \citep[Section 18]{Rockafellar:1970}, 
 meaning there exists a vector $\delta$ such that
 \begin{align*}
-	F = \{ x \in C: \inner{x, \delta} = \sup_{y \in C} \inner{y,\delta}  \}
+	F = \{ x \in C: \inner{x, \delta} = \sup_{y \in C} \inner{y,\delta}  \}.
 \end{align*}
 Smooth convex sets like the convex hull of a torus, do not have every face
 exposed; here we deal only with convex polyhedral sets, so all the faces we
@@ -199,21 +198,22 @@ The well-known condition for the existence of the MLE
 relates the relative location of the observed statistic to the boundaries of 
 the convex support and is formally stated as follows:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{theorem}[Corollary 9.6 in \citep{Barndorff}] \label{Thm:MLE rint}
+\begin{theorem}[Corollary 9.6 in \citet{Barndorff}] \label{Thm:MLE rint}
 For a regular exponential family with convex support $C$ and observed statistic $g(\yobs)$, the MLE exists in the conventional sense if and only if 
 $g(\yobs) \in \rint(C)$ and is unique if and only if $\intr(C)$ is nonempty, which
 happens if and only if $\rint(C) = \intr(C)$. 
 \end{theorem}
 
 While the above theorem is concise, we note that in order to apply this result, 
-the geometry of $C$ must be fully known in order for it to be useful.
+the geometry of $C$ must be known.
 
 \subsection{Approach of \citet{Geyer:gdor}}
 \citet{Geyer:1990,Geyer:gdor} related MLE existence to
- not only the boundary of the convex support, but also to behavior of the log likelihood function along certain directions.
+ not only the relative boundary of the convex support, 
+ but also to behavior of the log likelihood function along certain directions.
 
 We retrace the steps leading to this result, and present simpler proofs where possible:
-\begin{theorem}[Theorem 2.2 in \citep{Geyer:1990}]\label{Thm:e_c}
+\begin{theorem}[Theorem 2.2 in \citet{Geyer:1990}]\label{Thm:e_c}
 For a full exponential family with
 \begin{itemize}
 %\item log likelihood function $\ell(\eta)$ as in \eqref{E:loglike},
@@ -224,8 +224,8 @@ For a full exponential family with
 \item convex support $C$,
 \item  a non-zero direction $\delta$,
 \item $\sigma_C (\delta) = \sup_{g(y) \in C} \inner{ g(y), \delta}$,
-\item $H = \set{w: \inner{w, \delta} = \sigma_C(\delta) }$.
-\item $P_\eta(g(Y) \in H ) > 0$ for some distribution in the family,
+\item $H = \set{w: \inner{w, \delta} = \sigma_C(\delta) }$,
+\item $P_\eta(g(Y) \in H ) > 0$ for some distribution in the family.
 \end{itemize}
 Then
 \begin{align*}
@@ -270,7 +270,7 @@ have a monotonically decreasing
 	\lim_{s\to \infty} \E_\eta e^{  s [ \inner{g(Y),\delta} - b ] + c(\eta) } &= E_
 \eta \lim_{s\to \infty} e^{  s [ \inner{g(Y),\delta} - b ] + c(\eta) }. 
 \end{align*}
-Ignoring the expectation and examining the just limit component of the above,
+Ignoring the expectation and examining just the limit component of the above,
 \begin{align*}
 	\lim_{s\to \infty} e^{  s [ \inner{g(Y),\delta} - b ] + c(\eta) } &= 
 			\begin{cases} 
@@ -279,9 +279,9 @@ Ignoring the expectation and examining the just limit component of the above,
 			+\infty							& \inner{g(Y),\delta} > b.
 		\end{cases}
 \end{align*}
-In this first case that we consider, $b = \sigma_C(\delta) = \sup_{g(y) \in C}
+In this first case we consider, $b = \sigma_C(\delta) = \sup_{g(y) \in C}
 \inner{g(y),\delta}$, so $\inner{g(Y),\delta}$ can never be greater than $b$ and 
-thus the $+\infty$ outcome above is not possible.  We can rewrite the result above 
+thus the $+\infty$ outcome above is not possible.  We can rewrite the above result 
 succinctly as
 \begin{align*}
 	\lim_{s\to \infty} e^{  s [ \inner{g(Y),\delta} - b ] + c(\eta) } 
@@ -319,9 +319,9 @@ since $P_\eta(g(Y)\in H) > 0$ by assumption.
 \end{proof}
 
 We now define directions of constancy and recession in terms of Theorems 1
-and 2 of \citep{Geyer:gdor} which we state without complete proofs.
+and 2 of \citet{Geyer:gdor} which we state without complete proofs.
 
-\begin{theorem}[Theorem 1 (Direction of Constancy) from \citet{Geyer:gdor}] \label{Thm:DOC}
+\begin{theorem}[Direction of Constancy: Theorem 1 in \citet{Geyer:gdor}] \label{Thm:DOC}
 For a full exponential family with
 \begin{itemize}
 \item log likelihood function $\ell(\eta)$ as in \eqref{E:loglike},
@@ -351,7 +351,7 @@ Any vector $\delta$ that satisfies any of the conditions above is called a
 The set of all directions of constancy is called the \emph{constancy space} of 
 the log likelihood, which is a vector subspace.
 
-\begin{theorem}[Direction of Recession: Theorem 3 from \cite{Geyer:gdor}] \label{Thm:DOR}
+\begin{theorem}[Direction of Recession: Theorem 3 in \cite{Geyer:gdor}] \label{Thm:DOR}
 For a full exponential family with the same setting as Theorem~\ref{Thm:DOC},
 %\begin{itemize}
 %\item log likelihood function, $\ell(\eta)$, described by \eqref{E:loglike},
@@ -378,8 +378,8 @@ is a direction of recession.
 \citeauthor{Geyer:gdor} uses Corollary 2.4.1 in \citet{Geyer:1990} to prove the 
 equivalence of conditions 1 and 2 of Theorem~\ref{Thm:DOR}.  Here we present
 a more accessible proof without the use of this corollary.  It is the equivalence
-of these two conditions the relates the behavior of the log likelihood function
-to the convex support of the distribution.
+of these two conditions that relates the behavior of the log likelihood function
+to the convex support of the model.
 %The proof requires the following lemma, which a PROOF WILL BE NEEDED.
 %$\ell(\theta+s\delta)$ is non-decreasing if and only if $\lim_{s \to \infty} \ell
 %(\theta+s\delta) > -\infty$.  See Theorem 8.6 in \citep{Rockafellar}
@@ -415,8 +415,8 @@ Thus $\ell(\eta+s\delta)$ is a non-decreasing function of $s$.
 By assumption, $\ell(\eta + s\delta)$ is a non-decreasing function of $s$.  
 Then for $\ell(\eta ) > -\infty$, $\ell(\eta + s\delta) \geq \ell(\eta )  > -\infty$
 for any $s>0$ and thus $\lim_{s \to \infty} \ell(\eta+s\delta) > -\infty$.
-By Theorem~\ref{Thm:e_c}, in order for the righthand side of \eqref{E:expanded ell} 
-to be greater than $-\infty$ as $s \to +\infty$ requires
+By Theorem~\ref{Thm:e_c}, the limit of \eqref{E:expanded ell} is greater than $-\infty$ 
+only if
 \begin{align*}
 	\inner{g(\yobs), \delta} - b \geq 0,
 \end{align*}
@@ -432,9 +432,8 @@ Then
 and recalling that $\sigma_C(\delta) = \sup_{g(y) \in C} \inner{g(y), \delta}$, 
 we conclude that
 \begin{align*}
-	\inner{g(Y) - g(\yobs),\delta } \leq 0
+	\inner{g(Y) - g(\yobs),\delta } \leq 0, \quad \text{almost surely}.
 \end{align*}
-almost surely.
 \end{proof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -442,8 +441,8 @@ Theorems~\ref{Thm:DOC} and \ref{Thm:DOR} induce the following criteria about the
 existence of the MLE in the conventional sense:
 
 %%%%%%%%%%%%%%%%%%%%%
-\begin{theorem}[Extension of Theorem 4, \citep{Geyer:gdor}] \label{Thm:MLE existence}
-For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, the 
+\begin{theorem}[Extension of Theorem 4 in \citet{Geyer:gdor}] \label{Thm:MLE existence}
+For a full exponential family with the setting of Theorem~\ref{Thm:DOC}, the 
 following are equivalent 
 \begin{enumerate}
 \item the MLE exist.
@@ -454,7 +453,7 @@ following are equivalent
 \end{enumerate}
 \end{theorem}
 \begin{proof}
-The equivalence of 1 -- 4 are shown in \citep{Geyer:gdor}.  We have added condition 5 above
+The equivalence of 1 -- 4 are shown in \citet{Geyer:gdor}.  We have added condition 5 above
 and show the equivalency of this condition to condition 4.  By Theorem~6.4 in 
 \citet{Rockafellar:1970}, the point $g(\yobs) \in C$ if and only if 
 $v \in T_C(g(\yobs))$ implies $-v \in T_C(g(\yobs))$.  But by Proposition 3.8 in 
@@ -463,7 +462,7 @@ for  $T_C(g(\yobs))$ to be a vector subspace.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%
-\begin{corollary}[Corollary 5, \citep{Geyer:gdor}] \label{Cor:strictly increasing}
+\begin{corollary}[Corollary 5 in \citet{Geyer:gdor}] \label{Cor:strictly increasing}
 For a full exponential family with the setting as Theorem~\ref{Thm:DOC}, if $\delta$ is a
 direction of recession that is not a direction of constancy, 
 then for all $\eta \in \Xi$, the function $s \mapsto \ell(\eta+s\delta)$ is strictly
@@ -480,7 +479,7 @@ increasing on the interval where it is finite.
 %Theorem~\ref{Thm:MLE rint} relates the non-existence of the MLE to the location
 %of $g(\yobs)$ relative to the boundary of $C$.  
 With the addition of Condition 5 in Theorem~\ref{Thm:MLE existence}, we have now  
-tied this approach to the one previously described of \citet{Barndorff} in 
+tied this approach to the one previously described of \citeauthor{Barndorff} in 
 Theorem~\ref{Thm:MLE rint}.  
 The MLE does not exist in the conventional sense if there exists a vector 
 $\delta$ that is a direction of recession but not a direction of constancy.  
@@ -503,7 +502,7 @@ along which the log likelihood is strictly increasing.  The behavior of the
 density function of the distribution along such a direction 
 is described in the following theorem:
 
-\begin{theorem}[Theorem 6 from \citet{Geyer:gdor}] \label{Thm:LCM}
+\begin{theorem}[Theorem 6 in \citet{Geyer:gdor}] \label{Thm:LCM}
 For a full exponential family with the setting of Theorem~\ref{Thm:DOC}, and 
 additionally,
 \begin{enumerate}
@@ -555,11 +554,11 @@ s } }.
 \end{align*}
 The denominator in the fraction above has the form of the starting expression in 
 Theorem~\ref{Thm:e_c} with $\inner{g(y),\delta}$ in place of $b$.
-Thus we can take the limit of $f(_{\eta+s\delta}(y)$ as
+Thus we can take the limit of $f_{\eta+s\delta}(y) $ as
 $s \to +\infty$ by applying Theorem~\ref{Thm:e_c},
 
 \begin{align*}
-	f_{\eta+s\delta}(y) = f_\eta(\eta) \frac{e^{c(\eta)}}{e^{ c(\eta+s
+	f_{\eta+s\delta}(y) = f_\eta(y) \frac{e^{c(\eta)}}{e^{ c(\eta+s
 \delta) - \inner{g(y),\delta}s } } 
 	\to	
 			\begin{cases} 
@@ -603,7 +602,7 @@ Then taking the limit of $s \to +\infty$ via Theorem~\ref{Thm:e_c} gives
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsection{Remarks on Theorem~\ref{Thm:LCM}}
-There are many implications of Theorem~\ref{Thm:LCM} described in \citep{Geyer:gdor}
+There are many implications of Theorem~\ref{Thm:LCM} described in \citet{Geyer:gdor}
 which we repeat here and go into more detail for further clarity.
 
 The event $\inner{g(Y),\delta} > \inner{g(\yobs),\delta}$ has zero probability by 
@@ -689,7 +688,7 @@ The inequality above is strict: by Corollary~\ref{Cor:strictly increasing}, the
 log likelihood is strictly increasing on the entire interval on which it is finite
 and hence $P_\eta(g(Y) \in H)$ cannot equal 1.
 Thus even though the MLE does not exist for the original family, its log likelihood
-$\ell(\eta)$ is bounded by the LCM log likelihood and the function increases strictly
+$\ell(\fatdot)$ is bounded by the LCM log likelihood and increases strictly
 towards $\ell_{LCM}(\eta)$ for a given $\eta$ as $s$ increases.
 This is illustrated in Figure~\ref{F:LCM} in the case of a two-dimensional parameter
 space.
@@ -699,7 +698,7 @@ space.
 \centering
     \scalebox{.55}{\input{Figures/ll-LCM.pdf_t}}
 	\caption[Log likelihood convergence to LCM]{The log likelihood in the
-	the direction $\delta$, converging to the LCM log likelihood for a two-dimensional parameter space.  The log likelihood for $\ell(\etaLCM + s\delta)$
+	the direction $\delta$, converging to the LCM log likelihood for a two-dimensional parameter space.  The log likelihood $\ell(\etaLCM + s\delta)$
 	converges to the maximum of $\ell_{LCM}(\eta)$ as $s \to +\infty$.}
 \label{F:LCM}
 \end{figure}
@@ -711,7 +710,7 @@ Another consequence of Theorem~\ref{Thm:LCM} is in the mean value parameter spac
 Under the setting of Theorem~\ref{Thm:LCM}, let $\delta$ be a direction of 
 recession that is not a direction of constancy.  Then
 \begin{align} \label{E:LCM mu-space}
-	\E_{\eta+ s\delta} g(Y) \to \E_\eta \left ( g(Y) \mid g(Y) \in H ) \right )
+	\E_{\eta+ s\delta} g(Y) \to \E_\eta \left ( g(Y) \mid g(Y) \in H  \right )
 \end{align}
 as $s \to +\infty$.
 \end{corollary}
@@ -860,25 +859,28 @@ Theorem~\ref{Thm:LCM} and Corollary~\ref{Cor:LCM MLE exists}
 tells us that when $\ell(\fatdot)$ is the log likelihood for the original model,
 $s$ is a scalar, and $\delta$ a GDOR, then
 \begin{align*}
-	\lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \sup_{\RR^d} \ell(\eta).
+	\lim_{s \to +\infty} \ell(\etaLCM + s\delta) = \ell(\etaLCM)^{LCM} = \sup_{\RR^d} \ell(\eta).
 \end{align*}
-The MLE for the original model, which we may think of as ``off to infinity", has
+The MLE for the original model, which we may think of as ``at infinity", has
 more structure in this context---it is the value $\etaLCM$ sent to 
 infinity in direction $\delta$.
 
-This gives us a way to characterize the distributions in the
-neighborhood of this LCM MLE distribution by means of a confidence region.
+We can then characterize the distributions in the original model that are in the
+neighborhood of the LCM MLE distribution by means of a confidence interval.
 As $s$ goes from $-\infty$ to $+\infty$, the probability of observing 
 $g(Y) \in H$ strictly increases to 1.  
-From a one-sided $1-\alpha$ confidence interval perspective, 
-we look to find the unique $s$, 
-call it $\hat{s}$, such that
+To construct a one-sided $1-\alpha$ confidence interval for how ``close"
+distributions in the original model indexed by $\etaLCM + s\delta$ 
+are to the LCM MLE distribution, we find the unique $s$, call it $\hat{s}$, such that
 \begin{align*}
 	P_{\etaLCM + s\delta}\left (g(Y) \in H \right ) = \alpha.
 \end{align*}
 Then $[\hat{s}, +\infty)$ is a $1-\alpha$ confidence interval for the scalar parameter 
-$s$, and, in turn, $[\etaLCM + \hat{s}\delta, +\infty)$ gives 
-a $1-\alpha$ confidence region for the parameter $\etaLCM + s \delta$. 
+$s$, and, in turn, 
+\begin{align*}
+\left \{\etaLCM + t\delta, t \geq \hat{s} \right \}
+\end{align*}
+ gives a $1-\alpha$ confidence interval for the parameter $\etaLCM + s \delta$. 
 These are a range of indices to distributions in the neighborhood of the LCM MLE
 distribution.
 %Note that when $\eta$ is multi-dimensional, these are non-simultaneous 

@@ -1,5 +1,5 @@
 \section{Motivation: social network models}
-Is it possible to build a parsimonious mathematical model that captures the 
+Is it possible to construct a probabilistic model that captures the 
 behavioral tendencies of individuals in how they form relationships?\\  % in a group?
 
 This is the question that led us to study parameter estimation methods for exponential 
@@ -103,13 +103,14 @@ restricted earlier models like $p_1$ and $p^*$ to their simpler modeling capabil
 %In this paper, we describe further advances to these methodologies that address some of the
 %pathologies researchers have encountered with these approaches.
 
-Once model parameters are properly estimated, the completed model can be used to simulate 
+Once model parameters are properly estimated, the fitted model can be used to simulate 
 new random networks whose distribution retains essential characteristics of 
-the observed network.  Researchers can then use this 
+the observed network.  Researchers can then use this distribution 
 to test hypotheses about the process of relationship formation.  
 In this dissertation, we consider the ability to do statistical inference 
-as the end goal of parameter estimation rather than the parameter values 
-themselves.  This requires obtaining the maximum likelihood \emph{distribution} which
+as the end goal of parameter estimation.  
+Although we focus on an algorithm to find MLEs, our end goal  
+is the maximum likelihood \emph{distribution},  which
 can then be used to construct confidence intervals and evaluate hypotheses.
 
 %Similarly, exponential random graph models have a deceptively simple form \eqref
@@ -219,9 +220,9 @@ We rely on many properties of exponential families.  Define
 the \emph{natural parameter space} $\Xi$ as the set of points
 $\eta = (\eta_1, \ldots, \eta_d)$.
 An exponential family is \emph{full} if the natural parameter  space is
-\begin{align*} %\label{E:paramspace}
+\begin{align} \label{E:paramspace}
    \Xi &= \{ \eta \in \RR^d : \kappa(\eta) < \infty \},  
-\end{align*}
+\end{align}
  and \emph{regular} if, in addition, $\Xi$ is an open set.
 %The exponential family is \emph{full} if the natural parameter space is \eqref
 %{E:fullparam}, and \emph{regular} if, in 
@@ -490,8 +491,8 @@ a summation over an astronomical number of terms.
 In this section, we discuss commonly used parameter estimation methods
 used for exponential families with complex dependence like ERGMs.  All approaches avoid evaluating the likelihood function directly but have properties that we
 find undesirable.   The methods are aided by a strictly concave 
-log likelihood function (see Section~\ref{S:Expfam theory}).  Thus there is
-no concern for local maxima, and the global maximum, if it exists, is unique.
+log likelihood function (see Section~\ref{S:Expfam theory}) and thus there is
+no concern for local maxima. The global maximum, if it exists, is unique.
   
 %These provide the backdrop for the new algorithm we propose in this paper.
 
@@ -557,7 +558,7 @@ The form of \eqref{E:logodds} in the context of \eqref{E:PL} naturally lends
 itself to the use of logistic regression to find values of $\eta$ that
 maximize $PL(\eta)$.  These values of $\eta$ are called the maximum pseudolikelihood estimators.
 
-In the case where $Y_{ij}$ are in fact mutually independent, the MPLEs will equal the MLEs.  
+In the case where the $Y_{ij}$ are in fact mutually independent, the MPLEs will equal the MLEs.  
 \citet{Strauss:1990} show that in 
 many cases with dyad dependence, MPLE still yield reasonable approximations of the 
 true MLEs.  
@@ -613,6 +614,8 @@ Both $\nabla \ell(\eta)$ and $\nabla^2 \ell(\eta)$ can be approximated using MCM
 appears to have become the standard approach in the network literature 
 \citep{Hunter:2006, Handcock:2006, GOF} and is the default algorithm in 
 the \texttt{statnet} suite \citep{statnet:R} in the R platform for network models.  
+An additional attraction of MCMC-MLE is that it provides a way to give accurate error 
+estimates \citep{Geyer:1994,Hunter:2006}.
 
 The MCMC-MLE approach is theoretically guaranteed to converge to the MLE if it exists.  
 Rather than maximizing the log likelihood \eqref{E:loglike}
@@ -637,22 +640,22 @@ using \eqref{E:kappa} as follows:
 \end{align*}
 It should be noted that while we choose $\eta_0$ to index a distribution from the same
 family as the one indexed by $\eta$ in \eqref{E:r}, in fact its distribution need 
-only have the same support.
+only have the same support \citep[pp.~251--256]{Gilks:1996}.
 We will continue with this restriction not only for simplicity but also because this is how
 the methodology is implemented for ERGM parameter estimation in the \texttt{statnet} package
-\citep{ergm:R} in R.
+\citep{statnet:R} in R.
 
-By the Markov chain strong law of large numbers (or Birkhoff ergodic theorem), this 
-expectation can be approximated by the sample mean for large Monte Carlo sample 
+By the Markov chain strong law of large numbers \citep[Theorem 17.0.1]{Meyn:2009}, 
+%(or Birkhoff ergodic theorem), 
+this expectation can be approximated by the sample mean for large Monte Carlo sample 
 size,
 \begin{align*}
 	\frac{1}{m} \sum_{i=1}^{m}\exp \left ( \inner{ \eta - \eta^0,g(Y_i)} \right )
 \end{align*}
 where $Y_1, \ldots, Y_m$ are draws from the exponential family distribution with 
 parameter $\eta^0$.  This sample can be generated using MCMC 
-methods such as Metropolis-Hastings (used for ERGMs) or Swendsen-Wang (used for the Ising model example in Section~\ref{S:Example:Ising}); 
-see 
-\citet[Chapter 1]{Brooks} and references cited therein.
+methods such as the Metropolis-Hastings algorithm \citep[Chapter 1]{Brooks}, which
+is typically used for ERGMs.
 
 Thus \eqref{E:r} can be approximated by
 \begin{align}
@@ -678,7 +681,8 @@ values when used without the trust region methodology recommended in \citet{Geye
 and the algorithm may require enormous---sometimes infeasibly large---Monte Carlo sample sizes 
 when the starting value $\eta^0$ is far from the MLE \citep{ergm}.  
 In addition, \citeauthor{Geyer:1992} recommend iterating the algorithm several times, 
-where each successive maximizing value will be closer to $\etaMLE$ than the previous \hl{GALIN: HOW DO WE KNOW THIS?}.  At the 
+where each successive maximizing value will be closer to $\etaMLE$ than the previous
+if sample sizes are sufficiently large.  At the 
 time of this writing, the MCMC-MLE routine in \texttt{statnet} uses by default 10,000 
 Monte Carlo samples spaced 100 samples apart and a maximum of three iterations, using the 
 MPLE as the initial value for $\eta^0$ \citep{statnet:R}.  
@@ -711,7 +715,7 @@ In fact, the probability of obtaining fewer than 88 ties for the $\eta=1$ model 
 {\includegraphics[width=3.2in]{mcmc-mle1-bw}}
 {\includegraphics[width=3.2in]{mcmc-mle-1-bw}}
 \end{center} 
-\caption[Log likelihood ratio approximations for Sampson's monastery data set]{Log likelihood ratio approximations for Sampson's monastery data set.  Top: $\eta^0 = 1$, Bottom: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
+\caption[Log likelihood ratio approximations in Sampson's monastery example]{Log likelihood ratio approximations in Sampson's monastery example.  Top: $\eta^0 = 1$, Bottom: $\eta^0 = -1$. Solid lines are exact log likelihood ratios $\ell(\eta) - \ell(\eta^0)$, dotted lines are the 
 approximation by \eqref{E:r_hat} using 100,000 MCMC samples.  
 MLE is at $-0.9072$.
 Data for plots are produced using code accompanying \citet{Hummel}.} 
@@ -732,7 +736,8 @@ starting with $\eta^0 = 1$ is only able to obtain an estimate for $\eta$ as
 small as $\eta = -0.364$.  With 10 iterations, it does in fact 
 arrive at the MLE of $-0.907$.
 
-\hl{GALIN: what about interval estimates}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \subsection{Steplength MCMC-MLE} \label{S:Hummel}
@@ -769,7 +774,7 @@ the distance between $\eta^0$ and $\etaMLE$ in any reasonable amount of time.
 \subsection{Stochastic approximation}
 
 Variations on the Robbins-Monro \emph{stochastic approximation} (SA) algorithm 
-\citep{Robbins-Monro} have been applied to find the MLE similar contexts: 
+\citep{Robbins-Monro} have been applied to find the MLE in similar contexts: 
 \citet{Younes:1988,Younes:1989,Moyeed:1991,Gu:2001}
 applied MCMC stochastic approximation to spatial models and \citet{Snijders:2002} to 
 ERGMs.
@@ -802,10 +807,10 @@ for which the choice of
  is commonly used, where $A$ and $B$ are constants that must be specified by the user.  
 This specification requires experimentation and care: there can be significant 
 variation in performance depending on choice of these constants. 
-A large body of more recent research \hl{presents support} for a sequence that goes to 0 
-more slowly than $1/k$ 
-for faster convergence \citep[Chapter 11]{Kushner:1997}, but still requires 
-experimentation.  
+Some recent research show that sequences that go to 0 
+slower than $1/k$ can result in an improved rate of convergence,  where rate of
+convergence is measured by the asymptotic covariance of the normalized estimates about 
+their limit point \citep[Chapter 11]{Kushner:1997}.
 %Regardless of the exact form, there is no guarantee the likelihood function will 
 %increase at each update. 
 
@@ -847,18 +852,18 @@ SA=stochastic approximation.\\}
 Method & Appeal & Drawbacks \\ [1ex]
 \hline
 \multirow{2}{0.5in}{MPLE}		
-& 	\textbullet \, Simplicity 				  	& \textbullet \, \hl{Maximizes} $PL(\eta)$, not $\ell(\eta)$  \\
-& 	\textbullet \, Speed, via logistic regression 	& \\ [1ex] % \textbullet \, MPLE behavior not well understood \\ [1ex]
+& 	\textbullet \, Simplicity 				  	& \textbullet \, Maximizes pseudolikelihood, not\\
+& 	\textbullet \, Speed, via logistic regression 	&  likelihood \\ [1ex] % \textbullet \, MPLE behavior not well understood \\ [1ex]
 \hline
 \multirow{3}{0.5in}{Newton}
-& 	\textbullet \, Converges rapidly when it & \textbullet \, Requires second derivative matrix and its\\	
-%& \textbullet \, Highly sensitive to starting point\\ 
-& 	converges 	&  \\ [1ex] 
-\hline
-\multirow{3}{0.5in}{SA} 		
-& 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \, Highly sensitive to starting point \\
-& 	converge to MLE with proper  & \textbullet \,  May converge too slowly to be practical \\
-& 	setup  & \\[1ex]
+& 	\textbullet \, Converges rapidly when it & \textbullet \, Highly sensitive to starting point\\	
+& converges & \textbullet \, Requires second derivative matrix and \\ 
+& 	 	&  its inverse\\ [1ex] 
+%\hline
+%\multirow{3}{0.5in}{SA} 		
+%& 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \,  May converge too slowly to be practical   \\
+%& 	converge to MLE with proper  & \\
+%& 	setup  & \\[1ex]
 \hline 
 \end{tabular} 
 \label{T:Compare estimation}
@@ -874,10 +879,10 @@ MCMC SA=stochastic approximation.\\}
 \hline 
 Method & Appeal & Drawbacks \\ [1ex]
 \hline
-\multirow{4}{0.5in}{MCMC Newton}
+\multirow{3}{0.5in}{MCMC Newton}
 & 	\textbullet \, Converges rapidly when it  & \textbullet \, Requires calculation of second derivative \\
-& 	converges 	& matrix (computationally expensive) \\				
-&				& and its inverse (positive defniteness) \\[1ex]
+& 	converges 	& matrix and its inverse, which typically  \\	
+&				&  requires staring point very close to solution \\[1ex]
 \hline
 \multirow{3}{0.5in}{MCMC-MLE}
 & 	\textbullet \, Theoretically guaranteed to   	& \textbullet \, Highly sensitive to starting point \\ 
@@ -890,10 +895,9 @@ Method & Appeal & Drawbacks \\ [1ex]
 & \textbullet \, Increased range 		& \textbullet \, May require several iterations\\ [1ex]
 \hline
 \multirow{3}{0.5in}{MCMC SA} 		
-& 	\textbullet \, Simple updates & \textbullet \, Requires trial-and-error calibration  \\			
-& 	\textbullet \, Theoretically guaranteed to	 & \textbullet \, Convergence conditions not easily\\
-& 	converge to MLE, though & implemented in practice.\\
-& 	under restrictive conditions.  & \\ [1ex]
+& 	\textbullet \, Simple updates 				& \textbullet \, Requires trial-and-error calibration  \\			& 	\textbullet \, Theoretically guaranteed to		& \textbullet \,  May converge too slowly to be practical   \\
+& 	converge   & \textbullet \,Convergence conditions not easily  \\
+& 	  & implemented in practice \\[1ex]
 \hline 
 \end{tabular} 
 \label{T:Compare MCMCestimation}
@@ -925,7 +929,7 @@ geometric problem relating to properties of the \emph{convex support} of the mod
 which is  the smallest closed convex set 
 that the contains the natural statistic \citep{Geyer:gdor}.  
 The MLE does not exist in the conventional sense if the 
-observed data is on the relative boundary of this 
+observed data is in the relative boundary of this 
 convex support (see Section~\ref{S:MLE existence}).
 When this occurs, 
 it may exist in the \emph{Barndorff-Nielsen completion} of the family.
@@ -944,7 +948,7 @@ tables, \citet{Geyer:gdor} outlines a methodology to detect non-existent MLEs an
 one-sided confidence intervals for the natural parameters.
 The approach applies linear programming to the polyhedral convex support of 
 the model to determine the \emph{face} of the convex support 
-on which the observed data lies.  
+in which the observed data lies.  
 This face in turn defines the convex support for a new exponential family for which the MLE 
 does exist and can be found using conventional methods (see Section~\ref{S:LCM}).
 The linear programming 
@@ -957,7 +961,7 @@ family is degenerate when it concentrates the distribution of the natural statis
 on a hyperplane.  If the family is minimal, this occurs if and only if the MLE does not exist in the conventional sense.  This in turn means that the observed
 data lies on the relative boundary of the convex support.  \emph{Near} degenerate  
 means that the observed data lies nearly on this relative boundary.
-However, the terms degeneracy and nearly degeneracy
+However, the terms degeneracy and near degeneracy
 are now invoked if there are undesirable behaviors of the fitted model or 
 in the model fitting process itself
 \citep{Handcock:degeneracy,advancesp*,recentp*,statnet-tutorial}.
@@ -1115,8 +1119,8 @@ the Wolfe conditions for \emph{sufficient increase} and \emph{curvature}:
 \end{split}
 \end{equation}
 where $\nabla$ is the gradient operator and $0 < c_1 < c_2 < 1$.   
-Variations of these conditions exist in the numerical optimization \hl{literature} \citep
-{Fletcher,NW,Sun:2006}, but all 
+Variations of these conditions exist in the numerical optimization literature 
+(\citet[Chapter 3]{NW}, \citet[Chapter 2]{Sun:2006}), but all 
 require evaluating the objective function.
 
 Exponential families we consider are an unusual case in optimization in that the 

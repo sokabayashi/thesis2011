@@ -75,15 +75,15 @@ and refer the interested reader to \citet{Fukuda:2004,Fukuda:2008}.
 \State $\eta_{k+1} = \eta_k + \alpha_k p_k$.
 \State \textbf{Sample} $g(Y_1), \ldots, g(Y_m)$ from distribution with parameter $\eta_{k+1}$.
 \If{$LCM.flag=$TRUE}
-	\If{Any new points refute claim that $F$ is a face}
+	\If{Any new points refute claim that $\tilde{F}$ is a face}
 		\State Restore $gy.hull$ to its previous state.
 		\State Set $LCM.flag = FALSE$.
 	\Else
-		\State Restrict sample to those on face $F$.
+		\State Restrict sample to those on empirical face $\tilde{F}$.
 	\EndIf
 \EndIf
 \State Call the resulting sample points $g(Y_{(1)}), \ldots, g(Y_{(p)})$.
-\State \textbf{Update} $gy.hull$ to incorporate $g(Y_{(1)}), \ldots, g(Y_{(p)}) $.\\
+\State \textbf{Update} $gy.hull$ to include $g(Y_{(1)}), \ldots, g(Y_{(p)}) $.\\
 %\State \textbf{Question: $g(\yobs) \notin \con(g(Y_{(1)}), \ldots, g(Y_{(p)}) )$? }
 \State \textbf{Question: $g(\yobs) \notin gy.hull$?}
 \If{\textbf{Yes}, $g(\yobs)$ is in exterior of $gy.hull$}
@@ -91,29 +91,29 @@ and refer the interested reader to \citet{Fukuda:2004,Fukuda:2008}.
 %	\State $on.boundary$ = FALSE.
 %	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
 \Else
-\State \textbf{No}, $g(\yobs)$ is in interior or on boundary of $gy.hull$
+\State \textbf{No}, $g(\yobs) \in \rint(gy.hull)$ or $g(\yobs) \in \rbd(gy.hull)$
 %	\State \textbf{The MLE exists}.  Finding it should be straightforward, (except 
 %when 
 %	\State it isn't ...) 
 %	\State $on.boundary$ = FALSE, $on.interior$ = TRUE.
 %	\State Skip to estimating $\nabla \ell( \eta_{k+1})$.
 %\Else 
-	\State \textbf{Find} empirical face $F$ of $gy.hull$ on which $g(\yobs)$ 
+	\State \textbf{Find} empirical face $\tilde{F}$ of $gy.hull$ in which $g(\yobs)$ 
 	lies in relative interior.
-	\If{$F == gy.hull$} 
+	\If{$\tilde{F} == gy.hull$} 
 		\State $g(\yobs) \in \rint( gy.hull )$ \Comment{MLE exists}
 	\Else
-	\State $g(\yobs) \in \rbd( gy.hull )$ and $g(\yobs) \in \rint F$
-		\State \textbf{Find} a GDOR, $\delta$.
+	\State $g(\yobs) \in \rbd( gy.hull )$ and $g(\yobs) \in \rint \tilde{F}$
+		\State \textbf{Find} an empirical GDOR, $\tilde{\delta}$.
 		\State \textbf{Either:}
-		\State (1) MLE exists; samples so far just happen to touch $g(\yobs)$, 
-		\State (2) MLE does \emph{not} exist; both sample points and true $C$ are
-		touching $g(\yobs)$.
+		\State (1) MLE exists; $gy.hull$ just happen to touch $g(\yobs)$, 
+		\State (2) MLE does \emph{not} exist; both $gy.hull$ and true $C$
+		touch $g(\yobs)$.
 
-		\If{$>60\%$ of the sample points are on $F$ (via GDOR)}
+		\If{$>60\%$ of the sample points are in $\tilde{F}$ (via $\tilde{\delta}$)}
 			\State Conclude that we are in case (2); case (1) is very unlikely.
 			\State \textbf{Set} $LCM.flag$ = TRUE.
-			\State \textbf{Set} $gy.hull$ = F.
+			\State \textbf{Set} $gy.hull = \tilde{F}$.
 		\EndIf
 	\EndIf
 \EndIf\\
@@ -128,15 +128,15 @@ and refer the interested reader to \citet{Fukuda:2004,Fukuda:2008}.
 %	\State where if $LCM.flag == TRUE$, sample mean is on subsample.
 \State \textbf{Find} the new search direction $p_{k+1}$, which must be an ascent 
 direction.
-\State This may be a recession or regression direction, or $\nabla \ell( \eta_{k+1})$.
+\State This may be a regression direction, an empirical GDOR $\tilde{\delta}$, or $\nabla \ell( \eta_{k+1})$.
 \State $k = k + 1$.
 \EndWhile
 \end{algorithmic}
 }
 }
 
-The driving question in determining MLE existence is
-whether or not the observed statistic lies on the relative boundary 
+The driving question in determining MLE existence in the conventional sense is
+whether or not the observed statistic lies in the relative boundary 
 of the convex support.
 The above pseudocode goes about this in a seemingly roundabout way---instead
 of checking if $g(\yobs) \notin gy.hull$, why not directly check 
@@ -149,7 +149,8 @@ above pseudocode avoids calculating H-representations of hulls entirely.
 
 Note that if it is determined that the MLE does not exist in the conventional sense,
 the algorithm smoothly transitions to looking for the MLE in the LCM, using the 
-face $F$ as the support for this new model.  The approximation for $\nabla \ell (\eta)$
+empirical face $\tilde{F}$ as the support for this new model.  
+The approximation for $\nabla \ell (\eta)$
 also switches from one for the original model to one for the LCM based on the restricted
 sample.  
 
@@ -158,9 +159,9 @@ The operations in the above pseudocode that involve computational geometry are t
 \item Find the convex hull of a set of points.
 \item Update a convex hull to incorporate new points.
 \item Determine if a point is in the exterior of a convex hull.
-\item Determine the face of a convex hull on which a points lies in the relative interior.
-\item Find a GDOR.
-\item From a sample, find those that lie on a specific face.
+\item Determine the empirical face of a convex hull in which a points lies in the relative interior.
+\item Find an empirical GDOR.
+\item From a sample, find those that lie in a specific face.
 \end{itemize}
 
 The rest of this chapter is devoted to describing how to perform the above
@@ -198,7 +199,7 @@ and
 	\sum_j b_j \lambda_j = 1, \quad \text{unless all $b_j = 0$.}
 \end{align*}
 The entries for $l$ and $b$ in each row define how the linear combination of 
-points in the same row in $V$ should be taken,
+points in the same row in $V$ should be taken:
 \begin{align*}
 	l &= \text{0 or 1.  A 0 indicates nonnegative coefficients only,}\\
 	b &= \text{0 or 1.  A 1 indicates this row should be included in the sum to one.}
@@ -258,10 +259,8 @@ In fact, the algorithm we have outlined in the pseudocode in Section~\ref{S:pseu
 Finding the convex hull of a set of points is a well-studied problem.  It 
 is of interest to us here because we want to ``discover" the convex support $C$
 of our exponential family by repeatedly taking MCMC samples in different 
-areas close to $g(\yobs)$.  The process by which we get these samples 
-to approach $g(\yobs)$ is discussed in more detail in Section~\ref{S:Example:9node}.  The 
-set of points we have to work with then are generated from repeated MCMC
-samples of canonical statistics.
+areas close to $g(\yobs)$.  The process by which these samples 
+approach $g(\yobs)$ is discussed in more detail in Section~\ref{S:Example:9node}.  
 
 We may think of the convex hull in two ways: the extreme points of $C$, that is, 
 a minimal V-representation, or the set of inequalities and equalities of the 
@@ -445,7 +444,7 @@ There are five inequalities here, one for each side of the hull.
 \begin{center}
 \includegraphics[width=5.6in]{combined-hull-norm}
 \end{center}
-\caption[Convex hulls for two separate ten-point samples]
+\caption[Convex hulls for two separate samples]
 {Convex hulls for two separate ten-point samples (dotted lines).  The 
 convex hull for the combined is the solid line.  Boundaries of the normal cones
 at two points, (20,31/3), and (21,13), shifted to start at those two points, are depicted as arrows.}
@@ -772,14 +771,14 @@ is a zero-dimensional face, lying in the relative interior of itself.
 \subsection{Finding an empirical face}
 We began this chapter under the more realistic setting that we do not know
 $C$ and are generating MCMC samples in order to uncover its geometry.  
-The convex hull we have to work with then is that of our combined accumulated samples.
-After ascertaining that $g(\yobs)$ is either in the interior
+The convex hull we have to work with then is that of our accumulated samples.
+After ascertaining that $g(\yobs)$ is either in the relative interior
 or boundary of this hull, we apply \texttt{linearity} to the extreme points of it 
-to identify the face $F$ in which $g(\yobs)$ lies in the relative interior.  
-If \texttt{linearity} returns all indices, then $g(\yobs)$ is an interior point, not just
+to identify the empirical face $\tilde{F}$ in which $g(\yobs)$ lies in the relative interior.  
+If \texttt{linearity} returns all indices, then $g(\yobs)$ is a relative interior point, not just
 of the convex hull of our samples, but of $C$.  Otherwise, \texttt{linearity} returns 
-the indices that characterize the face $F$ on the boundary of our sample hull; more work is 
-needed to determine if $F$ is also a face of $C$.
+the indices that characterize the face $\tilde{F}$ in the boundary of our sample hull; 
+more work is needed to determine if $\tilde{F}$ is in the relative boundary of $C$.
 
 %points in $S = g(\YY)$ that are in the
 %hyperplane $H$, that is, the points on the face of $C$ in which
@@ -828,10 +827,10 @@ We may then use the polarity of the tangent and normal cones to read the
 V-representation of the normal cone off the H-representation 
 of the tangent cone:
 \begin{align*}
-	N_C(x) = \pos( \{ a_i: i \in A \cup E \} \cup \{ -a_i: i \in E \} )
+	N_C(x) = \pos( \{ a_i: i \in A \cup E \} \cup \{ -a_i: i \in E \} ).
 \end{align*}
-We apply this to the same boundary points and convex hull, which has no 
-equality constraints in its H-representation.
+We apply this approach to the same boundary points and convex hull.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary point, one-dimensional face} \label{S:ncone 1dim}
 Let $q = (20, 31/3)$, a point on the line segment of the boundary
@@ -923,10 +922,9 @@ originate at $(21,13)$).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Calculating a GDOR} \label{S:GDOR calc}
-By definition, a GDOR $\delta$ is a vector in the relative interior of $N_C(g(\yobs))$ when
+A GDOR $\delta$ is a vector in the relative interior of $N_C(g(\yobs))$ when
 $N_C(g(\yobs))$ is not a vector subspace.  
-
-By Theorem 7, $\delta$ is a GDOR if and only if
+By Theorem~\ref{Thm:L-GDOR}, $\delta$ is a GDOR if and only if
 \begin{align*}
 	\inner{w,\delta} & = 0 	\quad w \in L\\
 	\inner{w,\delta} & < 0 	\quad w \in W \setminus L
@@ -1054,15 +1052,25 @@ normal cone.
 %\end{verbatim}
 %}
 
+\subsection{Empirical GDORs}
+The examples in this section assumed the convex hull we had previously defined was
+the convex support $C$ of an exponential family model and the various 
+inquiry points were values for $g(\yobs)$.
+If the convex support $C$ was not our convex hull, the determined directions may
+ still be useful.  We refer to these as empirical GDORs and denote them $\tilde{\delta}$.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsampling} \label{S:Subsampling}
-Given a face characterized by an empirical GDOR, we may need to
-find points in a new sample that fall on this face.  This is straightforward to
-do since the GDOR $\delta$ is orthogonal to any point in that face:
-we simply take the dot product of all the new sample points (minus the
-observed value) with our GDOR
-and take the points for which this evaluate to zero.
-We demonstrate this at the point $(20, 31/3)$, using the GDOR $\delta = (1, -3/8)$
+Given an empirical face $\tilde{F}$ characterized by an empirical GDOR $\tilde{\delta}$, 
+we may need to find points in a new sample $g(Y_1), \ldots, g(Y_m)$ that fall on this face.  This is straightforward to
+do since $\tilde{\delta}$ is orthogonal to any point in that face:
+we calculate the dot product of all the new sample points (minus the
+observed value) with $\tilde{\delta}$
+and take the points for which this evaluate to zero.  That is, take $g(Y_i)$ for which
+\begin{align*}
+ \inner{ g(Y_i) - g(\yobs), \tilde{\delta} } = 0.
+\end{align*}
+We demonstrate this at the point $(20, 31/3)$, using $\tilde{\delta} = (1, -3/8)$
 that we obtained in Section~\ref{S:GDOR 1dim}.
 {\singlespace
 \begin{verbatim}
@@ -1095,32 +1103,38 @@ that we obtained in Section~\ref{S:GDOR 1dim}.
 [10,] "-1/4"
 \end{verbatim}
 }
-This method identifies the first six points as being orthogonal to $\delta$.
+This method identifies the first six points as being orthogonal to $\tilde{\delta}$.
 Recalling that our face in this example is the line segment between $(18,5)$ and $(21,13)$,
 this is correct for the second through fifth points, but
 the first and sixth points, $(17, 7/3)$ and $(22,47/3)$, 
-are \emph{not} on this face since they fall outside the line segment.  
-This is not cause for concern in the context of our usage.  From an MCMC sample of points,
-we identify via \texttt{linearity} a face on which $g(\yobs)$ lies in the relative
-interior and then find a GDOR for this face.  It is impossible to generate any
-points outside of $C$, so any additional points we find in a new sample are in fact legitimate 
-points of the face.  
+are \emph{not} in this face since they fall outside the line segment.  
+
+This is not cause for concern in the context of our algorithm
+since it is not possible to generate any MCMC sample points outside of $C$.
+In fact, any new points we find in a sample that meet this criteria
+are points that should have been included in the empirical face $\tilde{F}$ but were missed;
+the definition of $\tilde{F}$ should then be updated to include them
+or it may result in the wrong convex support for the LCM.
 %We may still want to be aware that what we had previously
 %perceived as the face was incomplete; thus we may need to keep track of a 
 %V-representation of the face after all.
 
-If we find a new sample point $w$ for which $\inner{w, \delta} > 0$, then it means that 
-$\delta$ is not a true GDOR of the model, and in turn, that the empirical face we had
-found is not in fact a boundary of the convex support $C$.  The new point $w$ is ``closer"
-to the boundary than at least some of the extreme points characterizing the empirical face.
+If in our algorithm we find a new sample point $w$ for which 
+$\inner{w, \tilde{\delta}} > 0$, then it means that 
+the empirical $\tilde{\delta}$ we calculated is not a true GDOR of the model, 
+and in turn, that the empirical face $\tilde{F}$ we had
+found is not in the relative boundary of the convex support $C$.  
+The new point $w$ is ``closer"
+to the boundary than at least some of the extreme points characterizing our 
+empirical face $\tilde{F}$.
 This may be useful in catching the problem described in 
 Section~\ref{S:Example:9node problematic point}.
 
-When it is determined that a face is in fact the support of the new LCM,
+When it is determined that an empirical face $\tilde{F}$ is in fact the support of the new LCM,
 then the subsample of the draws from the original model with parameter value $\eta$ 
 restricted to the support is a sample from the LCM with 
-parameter value $\eta$.  This comes directly from Theorem~\ref{Thm:LCM}.
- and can be expressed succinctly as
+parameter value $\eta$.  This is a direct consequence of Theorem~\ref{Thm:LCM},
+which tells us that
 \begin{align*}
 P_{LCM, \eta}(\fatdot) = P_\eta( \fatdot \mid g(Y) \in H ).
 \end{align*}
