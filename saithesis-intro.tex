@@ -218,7 +218,8 @@ discrete state space of all possible network configurations.
 
 We rely on many properties of exponential families.  Define 
 the \emph{natural parameter space} $\Xi$ as the set of points
-$\eta = (\eta_1, \ldots, \eta_d)$.
+$\eta = (\eta_1, \ldots, \eta_d)$ that are parameter values indexing
+distributions in the model.
 An exponential family is \emph{full} if the natural parameter  space is
 \begin{align} \label{E:paramspace}
    \Xi &= \{ \eta \in \RR^d : \kappa(\eta) < \infty \},  
@@ -227,8 +228,8 @@ An exponential family is \emph{full} if the natural parameter  space is
 %The exponential family is \emph{full} if the natural parameter space is \eqref
 %{E:fullparam}, and \emph{regular} if, in 
 %addition, $\Xi$ is an open set.  
-We say an exponential family is \emph{minimal} if the natural parameter  and 
-natural statistic are not each concentrated on a hyperplane. 
+We say an exponential family is \emph{minimal} if neither the natural parameter nor 
+the natural statistic is concentrated on a hyperplane. 
 Minimality guarantees that if an MLE, denoted $\etaMLE$, exists, 
 it is unique \citep{Geyer:gdor}.
 
@@ -317,7 +318,7 @@ for our approach for counting simple network statistics in the 9-node network
 relying on numerous tricks in data representation and computation.
 
 \begin{table}[h!] 
-\caption{Sample space size for undirected networks with different number of 
+\caption{Sample space size for undirected networks with different numbers of 
 actors.}
 
 \begin{tabular}{ccl} 
@@ -492,7 +493,8 @@ In this section, we discuss commonly used parameter estimation methods
 used for exponential families with complex dependence like ERGMs.  All approaches avoid evaluating the likelihood function directly but have properties that we
 find undesirable.   The methods are aided by a strictly concave 
 log likelihood function (see Section~\ref{S:Expfam theory}) and thus there is
-no concern for local maxima. The global maximum, if it exists, is unique.
+no worry about local maxima. There can be at most one local maximum, which (if it
+exists) is the global maximum.
   
 %These provide the backdrop for the new algorithm we propose in this paper.
 
@@ -632,18 +634,22 @@ assuming it exists.  In order to avoid evaluating the problematic normalizing co
 this approach equates the ratio of normalizing constants 
 $\exp \left (  c(\eta) - c(\eta^0) \right )$ to an expectation 
 using \eqref{E:kappa} as follows:
-\begin{align*}
-	\exp \left (  c(\eta) - c(\eta^0) \right ) &= \frac{ \int \exp \bigl ( \inner{ \eta, g(x) }\bigr ) \, d\mu(x) }{ \kappa(\eta^0)  } \\
-	&= \frac{ \int \exp \left ( \inner{ \eta - \eta^0, g(x)} + \inner{ \eta^0, g(x)} \right ) \, d\mu(x)  }{ \kappa(\eta^0) } \\
-	&= \int \exp \left( \inner{\eta - \eta^0, g(x} \right ) \frac{ e^ { \inner{ \eta^0, g(x)} } }{ \kappa(\eta^0) } \, d\mu(x)\\
-	&= \E_{\eta^0} \exp \left( \inner{ \eta - \eta^0, g(Y)}  \right ) .
-\end{align*}
-It should be noted that while we choose $\eta_0$ to index a distribution from the same
-family as the one indexed by $\eta$ in \eqref{E:r}, in fact its distribution need 
-only have the same support \citep[pp.~251--256]{Gilks:1996}.
-We will continue with this restriction not only for simplicity but also because this is how
-the methodology is implemented for ERGM parameter estimation in the \texttt{statnet} package
-\citep{statnet:R} in R.
+\begin{align}
+	\exp \left (  c(\eta) - c(\eta^0) \right ) &= \frac{ \int \exp \bigl ( \inner{ \eta, g(x) }\bigr ) \, d\mu(x) }{ \kappa(\eta^0)  } \notag \\
+	&= \frac{ \int \exp \left ( \inner{ \eta - \eta^0, g(x)} + \inner{ \eta^0, g(x)} \right ) \, d\mu(x)  }{ \kappa(\eta^0) } \notag \\
+	&= \int \exp \left( \inner{\eta - \eta^0, g(x} \right ) \frac{ e^ { \inner{ \eta^0, g(x)} } }{ \kappa(\eta^0) } \, d\mu(x) \notag \\
+	&= \E_{\eta^0} \exp \left( \inner{ \eta - \eta^0, g(Y)}  \right ) . \label{E:E eta0}
+\end{align}
+While we choose $\eta_0$ to index a distribution 
+in the same family as the one indexed by $\eta$ in \eqref{E:E eta0}, this can be generalized \citep{Geyer:1996}.  We keep this restriction here
+because the MCMC samplers in the \texttt{statnet} package only simulate from distributions in the model and so can only use this formula.
+          
+%It should be noted that while we choose $\eta_0$ to index a distribution from the same
+%family as the one indexed by $\eta$ in \eqref{E:r}, in fact its distribution need 
+%only have the same support \citep[pp.~251--256]{Geyer:1996}.
+%We will continue with this restriction not only for simplicity but also because this is how
+%the methodology is implemented for ERGM parameter estimation in the \texttt{statnet} package
+%\citep{statnet:R} in R.
 
 By the Markov chain strong law of large numbers \citep[Theorem 17.0.1]{Meyn:2009}, 
 %(or Birkhoff ergodic theorem), 
@@ -654,7 +660,7 @@ size,
 \end{align*}
 where $Y_1, \ldots, Y_m$ are draws from the exponential family distribution with 
 parameter $\eta^0$.  This sample can be generated using MCMC 
-methods such as the Metropolis-Hastings algorithm \citep[Chapter 1]{Brooks}, which
+methods such as the Metropolis-Hastings algorithm \citep{Geyer:2011}, which
 is typically used for ERGMs.
 
 Thus \eqref{E:r} can be approximated by
@@ -844,8 +850,7 @@ All methods assume that the MLE exists before the search algorithm is applied an
 the log likelihood is strictly concave.
 
 \begin{table}[h!] 
-\caption[Comparison of exact parameter estimation methods]{Comparison of exact parameter estimation methods. MPLE=Maximum pseudolikelihood estimator, Newton=Newton-Raphson,
-SA=stochastic approximation.\\}
+\caption[Comparison of exact parameter estimation methods]{Comparison of exact parameter estimation methods. MPLE=Maximum pseudolikelihood estimator, Newton=Newton-Raphson.\\}
 
 \begin{tabular}{|c|l|l|}
 \hline 
