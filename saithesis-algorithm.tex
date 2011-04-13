@@ -76,11 +76,11 @@ each $k$, we can uniquely define $\alpha_{c_k}$ as follows:
 
 The point $\alpha_{c_k}$ is uniquely defined because it is the minimizer of 
 $\alpha \mapsto f( x_k + \alpha p_k) - \alpha c \nabla f( x_k )^T p_k$.
-We may also define $\alpha_{min_k}$ as follows: 
+We may also define $\alpha_{\normalfont \text{min}_k}$ as follows: 
 \begin{align} \label{E:alphamin} 
-\alpha_{min_k} =
+\alpha_{\normalfont \text{min}_k} =
 \begin{cases}
-	\alpha \text{ s.t. } \nabla f( x_k + \alpha p_k)^T p_k = 0  \quad &\text{if a minimizer exist for $\alpha \mapsto f( x_k + \alpha p_k)$}\\
+	\alpha \text{ s.t. } \nabla f( x_k + \alpha p_k)^T p_k = 0  \quad &\text{if such an $\alpha$ exists}\\
 	+\infty \quad &\text{otherwise}.
 \end{cases}
 \end{align}
@@ -97,7 +97,7 @@ exists for $\alpha \mapsto f( x_k + \alpha p_k)$.
 \end{figure}
 
 %These values are illustrated on the $\alpha$-axis in Figure \ref{F:Wolfe-mod}.  
-%Equation \eqref{E:alphamin} defines $\alpha_{min_k}$ to be the step size that would 
+%Equation \eqref{E:alphamin} defines $\alpha_{\normalfont \text{min}_k}$ to be the step size that would 
 %make the 
 %gradient at $x_{k+1}$ equal to zero and hence minimizes $f(x_{k+1})$, equation \eqref
 %{E:alphac} 
@@ -117,7 +117,7 @@ By the strict convexity of $f$ and Theorem~2.14(b) in \citet{Rockafellar},
 
 The subproblem $\alpha \mapsto f(x_k + \alpha p_k)$ is strictly convex and hence 
 monotonically decreasing at $\alpha_k$ 
-such that $\alpha_{c_k} \leq \alpha_k \leq \alpha_{min_k}$ (in Figure \ref{F:Wolfe-mod}, see points $b$ and $c$).  That is,
+such that $\alpha_{c_k} \leq \alpha_k < \alpha_{\normalfont \text{min}_k}$ (in Figure \ref{F:Wolfe-mod}, see points $b$ and $c$).  That is,
 \begin{align}
 	f( x_k + \alpha_{min}p_k) &\leq f( x_k + \alpha_k p_k) \leq f( x_k + \alpha_{c_k} p_k). \label{E:f-sandwich}
 \end{align}
@@ -359,7 +359,7 @@ or
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Refinements of algorithm}
+\section{Refinements of the algorithm}
 
 In Theorem~\ref{Thm:log like max}, we restricted our search direction $p_k$ to be 
 an ascent direction, so that $\nabla \ell(\eta_k)^T p_k > 0$ or, alternatively, the angle $\theta_k$ between the search direction 
@@ -377,7 +377,7 @@ the log likelihood function $\ell(\eta)$, we default to steepest ascent directio
 in our implementation for 
 transparency.  Although often effective in early steps, steepest ascent directions 
 can result in an inefficient zigzagging 
-trajectory of the sequence $\eta_k$ \citep[Chapter 3.1]{Sun:2006}  as 
+trajectory of the sequence $\eta_k$ \citep[Section 3.1]{Sun:2006}  as 
 illustrated in Figure 
 \ref{F:zigzag} (top).  This is especially problematic when the MLE does not exist in the 
 conventional sense---the MLE is actually off at infinity and a zig-zagging route may 
@@ -413,7 +413,7 @@ by \eqref{E:Wolfe-ll}.
 Another pragmatic approach may be to use a search direction resulting from a 
 regression through the previous few values of $\eta_k$.  In the setting where 
 MCMC samples are used to approximate the gradient, an empirically determined generic
-directions of recession, which we discuss how to find in Section~\ref{S:GDOR calc},
+direction of recession, which we discuss how to find in Section~\ref{S:GDOR calc},
 may also be useful (see Figure \ref{F:zigzag} (bottom)).
 
 %For ERGMs where the MLE may not exist, we have found a particularly useful approach is 
@@ -500,7 +500,7 @@ applications, we will need to approximate $\E_{\eta}g(Y)$ using MCMC.  That is,
 \end{align}
 where $Y_1, \ldots, Y_m$ are MCMC draws from the distribution with parameter $\eta$.  
 There are many MCMC algorithms 
-such as Metropolis-Hastings \citep[Chapter 1]{Brooks}, which is typically used for ERGMs, or 
+such as Metropolis-Hastings \citep{Geyer:2011}, which is typically used for ERGMs, or 
 Swendsen-Wang \citep{Swendsen-Wang:1987}, which we use for the Ising model example 
 in Section~\ref{S:Example:Ising}.
 We show examples in the next section where $\nabla \ell(\eta)$ can be calculated 
@@ -564,7 +564,7 @@ such that
 \begin{align*}
 	\sqrt{n} ( B_n - \beta) \stackrel{\DD}{\longrightarrow} N( 0, \Sigma )
 \end{align*}
-and a function $h(\fatdot)$ where $\nabla h(\fatdot)$ is defined and non-zero,
+and a function $h(\fatdot)$ where $\nabla h(\beta)$ is defined and non-zero,
 \begin{align*}
 	\sqrt{n} \left ( h(B_n) - h(\beta) \right ) \stackrel{\DD}{\longrightarrow} N 
 \left ( 0, \nabla h( \beta)^T \Sigma\nabla h( \beta)  \right ).
