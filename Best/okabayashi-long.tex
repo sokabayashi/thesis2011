@@ -1,0 +1,331 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsbsy,amsmath,amsthm,amssymb,verbatim,color}
+
+\usepackage{geometry,graphicx,subfigure}
+\graphicspath{{../Figures/}}
+
+\geometry{hmargin=1in,vmargin={1in,1in},footskip=.5in}
+\usepackage{natbib}
+\usepackage{setspace}
+%\usepackage{hyperref}
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+\fancyhead{}
+\rhead{Saisuke Okabayashi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{center}
+{\normalsize{Parameter Estimation in Social Network Models}} 
+
+\vspace{0.15in}
+{Saisuke Okabayashi} \\
+%\href{http://www.stat.umn.edu/~sai}{www.stat.umn.edu/\textasciitilde sai}\\
+www.stat.umn.edu/\textasciitilde sai\\
+%\vspace{0.05in}
+{Department of Statistics}\\
+\end{center}
+
+\setstretch{2}
+
+\section{Background}
+Is it possible to build a mathematical model that captures the behavioral tendencies of individuals in how they form relationships?
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=4.8in]{fmh-gradesex2}
+\caption{A friendship network of 1,461 students in grade 7--12 derived 
+from the National Longitudinal Study of Adolescent Health \citep{Resnick:1997}.  
+Individuals, represented by nodes, are colored by grade, and boys
+are depicted by squares, girls by circles.  A line is only present between a pair of 
+nodes if a friendship exists.  The data is available in the 
+\texttt{statnet} package \citep{statnet:R} on the R platform \citep{R}.}
+\label{F:fmh}
+\end{figure}
+
+Studies of social networks such as the high school friendship network depicted 
+in Figure~\ref{F:fmh} typically look to identify gender, age, ethnicity, and 
+other individual-specific attributes to explain which relationships form.  
+However, relationships form in an interdependent manner---for example, Alicia 
+and Christina are more likely to become friends if separately Alicia and Christina 
+are each friends with Brad. Indeed, sociologists have long observed that people 
+exhibit a strong tendency to form such triangular structures in friendships.
+This complicates any analysis that attempts to understand the mechanism of 
+relationship formation.   
+In particular, is gender still an important factor in determining whether or not 
+Alicia and Christina become friends if they also share a common friend in Brad? 
+The issue necessitates a more sophisticated statistical methodology that 
+does not treat potential relationships as independent units and instead 
+takes into consideration relationship structures---such as triangles---as 
+important factors in the analysis.
+
+A probabilistic network model can be constructed for exactly this setting
+to clarify which of the underlying forces are important in shaping the 
+overall structure of the network.  
+When appropriately fit to the observed data, such a model can be used to 
+simulate new random networks which retain essential characteristics of 
+the original network.  This allows a researcher to 
+test hypotheses about the process of relationship formation and identify the
+significant contributing factors.  In the example with Alicia and Christina, it 
+may be possible that both gender and the tendency to form triangular 
+friendships are significant factors.
+
+Our research is in methodologies of fitting network models to data.  
+In fact, specifying a network model with factors of interest---both 
+individual-specific attributes as well as network structures---has become 
+relatively straightforward to do \citep{Wasserman:1996}; it is fitting
+the network model to data that is problematic.  This entails calibrating 
+the \emph{parameters}, the values which dictate how the model's predictions 
+are affected by changes in the selected factors.  The science of finding 
+the parameter values that ``best fit" network models to 
+data is a research problem that is still in its infancy.  
+We focus on two particular areas in the current approaches that we look 
+to improve upon:
+\begin{enumerate}
+\item Short range.  Most methodologies rely on iterated updates of the model, 
+where parameters are  adjusted incrementally and the improved model evaluated 
+for fit.  When the initial guesses for the parameters are far away from the 
+``best fit" values (which are not known in advance), however, current 
+methodologies perform poorly and do not arrive at satisfactory values.
+\item Non-existent ``best fit" values.  For particular models and data, it is 
+in fact possible that the ``best fit" parameter values do not exist, a situation 
+that is known as \emph{model degeneracy} \citep{Handcock:degeneracy,Rinaldo:2009}.  
+This been cause for considerable concern in the network literature 
+\citep{advancesp*,recentp*,statnet-tutorial}.  In such a case, current 
+methodologies may return nonsensical values, yielding a model that generates 
+random networks that show no resemblance to the original data and causing 
+confusing for the researcher.
+\end{enumerate}
+In my dissertation, I propose a new algorithm that addresses both of these 
+issues: our algorithm is designed with the goal of working best when the initial 
+guess for parameter values is far from the ``best fit" values.  In addition, its 
+update mechanism utilizes computer simulations  in such a way as 
+to detect the conditions that lead to non-existent ``best fit" models.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Network models}
+A probability model assigns probabilities to outcomes of an event.  For example, 
+the probability model for flipping a coin that is possibly unfair assigns some 
+probability to getting a head, and one minus that probability to getting a tail.  
+In the case of network models, this concept is simply 
+extended to assign probabilities to each of the different networks that could 
+occur for the number of individuals of interest.
+The most commonly used probability model for networks is the 
+\textit{exponential random graph model} (ERGM) 
+\citep{Wasserman:1996,Pattison:1999,logit,Snijders:2002,introp*,ergm} and 
+is the focus of our research.  It has a simple and flexible form:
+to specify a model, a researcher need only handpick \textit{network statistics}, 
+or relationship structures 
+like the triangle described earlier, to accompany the other actor-specific 
+factors like gender or age.  
+
+%This is analogous to picking the predictors for a linear regression model, with the difference being that although we may think of a relationship structure such as a triangle as a predictor in our model, it is in fact a function of the very response variable that we are trying to model.
+In the example of the high school friendship network depicted in 
+Figure~\ref{F:fmh} with 1,461 students in grades 7--12, a researcher may 
+be interested in whether being in the same grade, of the same gender,
+and of the same ethnicity are important factors in friendship formation.  
+However, because of the inherent dependency in friendship formation, the 
+researcher should also include network structures like triangles
+into the analysis.  The inclusion of these network structures in the 
+model ideally prevents a researcher from concluding
+that a factor, say gender, is important in friendship formation when in 
+fact it was due to the interdependence of individuals behaviors.  In order 
+to carry out such an analysis, however, the model needs to be fit the 
+the observed data set.
+
+\subsection{Parameter estimation}
+Our first area of research is to develop a new algorithm for fitting a 
+social network model to data by determining appropriate values for the 
+parameters.  The \emph{likelihood function} is the function that assigns 
+probability to the observed network for a specified parameter value.
+The goal is to find the \textit{maximum likelihood estimates} (MLE), the 
+parameter values that maximize the likelihood function, that is, they 
+maximize the probability of the observed data.
+The model outfitted with these parameter values can then be used to simulate 
+new random networks that resemble the original data and make it possible 
+to test hypotheses about friendship formation.  
+
+%The MLEs are what we earlier referred to as the ``best fit" model parameters.
+
+\subsubsection{Our algorithm}
+%We pursue a simple iterated approach for finding the MLEs for the model parameters: 
+An iterated algorithm for finding the MLE for the model parameters starts 
+from any initial guess.  The algorithm then take a step in a direction that 
+yields a parameter value that assigns higher probability to the observed data.    
+When no higher probability can be found, the MLE has been attained.  
+So far, this is no different than any other optimization algorithm for finding 
+a maximum of a function.
+The particular complication here, however, is that actually calculating a 
+probability using an ERGM---and hence evaluating the likelihood 
+function---is computationally infeasible even with advances in computing: 
+it involves a summation over all the different possible networks which could occur, 
+an astronomical number when there are even 40 individuals in the network 
+(there are 6.36$\times10^{234}$ networks).  
+This inability to calculate probabilities with a probability model may seem 
+like an insurmountable drawback,
+but in fact the analysis of interest---the hypothesis testing of factors---relies 
+only on being able to simulated networks from the ``best fit" model and not 
+actually calculate probabilities themselves.  Thus this is 
+only an issue in finding the MLEs for model parameters and not in the 
+subsequent inference.
+
+In our implementation, we avoid this obstacle by using only the slope of 
+the likelihood function, which can in fact be well-approximated by 
+a computation simulation technique called \emph{Markov chain Monte Carlo} (MCMC).  
+By making sure that
+\begin{enumerate}
+\item the direction of steps are always uphill on the likelihood function
+\item the steps taken in that direction are sufficiently large,
+\end{enumerate}
+our algorithm will converge to the MLE in practice.  The first point can be met 
+simply by using directions that have a positive slope.  The second point is the 
+focus of the first part of my research.
+Figure~\ref{F:curvature} illustrates the likelihood function values 
+for different choices of step sizes along a direction that has already 
+met the first condition.  
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=5.2in]{curvature-layman}
+\caption{The likelihood function for different choices of step sizes along 
+a specified direction.  Our curvature condition forces a step size in the 
+region marked, with end points corresponding to particular slope values.  
+The tangent lines corresponding to these slopes are the dotted lines.
+The smoothness of this function and absence of more than one maximum is guaranteed 
+by theoretical properties of the model.}
+\label{F:curvature}
+\end{figure}
+
+We devised a \emph{curvature condition} which, using only the slope, ensures 
+that the steps taken are large enough to make significant progress up the 
+likelihood function.  The condition operates on just 
+a cross section of the likelihood function in a specified direction, and 
+thus even if the function is maximized in this specified direction, the attained 
+value is typically not the global maximizer.  Hence these updates will need to be 
+repeated several times.
+
+The simplicity of this approach in only using the slope allows it avoid 
+many of the issues related to poor initial guess that plague other 
+more complicated methodologies.  For this reason, we have called our 
+algorithm a ``long range" algorithm.
+The tradeoff is that our methodology is less efficiently computationally
+since it may require many MCMC simulations (in friendship example, about 150), 
+which may take a few hours, and is particularly slower when the maximum 
+is close.  However, this is exactly the area
+where existing methodologies excel, and we advocate combining methodologies, 
+so that our algorithm is used at the outset and it nears to maximum, it 
+switches to a faster approach that can attain the MLE in one or two iterations.
+
+\subsection{Model degeneracy}
+The setting described so far assumed the ``best fit" model parameters---the 
+maximizers of the likelihood function---exist.
+But it is in fact possible that the likelihood function increases in perpetuity;
+that is, unlike the case depicted in Figure~\ref{F:curvature} where 
+the likelihood function bends back downward, it can instead continue 
+to increase to infinity.  This situation, known as model degeneracy, 
+causes significant problems for any parameter estimation method since 
+no maximizer of the likelihood function exists---the MLE
+is ``at infinity".  Model degeneracy occurs frequently enough to be an impediment to 
+researchers using ERGMs.  As a countermeasure, network researchers have been developed
+ new network statistics such as more sophisticated forms of triangles that are 
+less prone to degeneracy though they do not make it impossible 
+\citep{Handcock:degeneracy,advancesp*,recentp*,statnet-tutorial}.
+The second part of my research concerns adapting our algorithm to detect 
+when degeneracy occurs and how to find a new model that can still 
+be used for hypothesis testing when it does.
+
+The theoretical underpinnings for why these instances occur has been 
+understood for many years \citep{Barndorff},
+but these conditions were difficult to check in practice until recently.  
+\citet{Geyer:gdor} showed a to check for this condition using 
+advances in computing \citep{Fukuda:2008} in the case
+of regression models, and demonstrated that hypothesis testing can still be 
+done using a new model, called a \emph{limiting conditional model} (LCM), 
+that is a relative of the original.
+The second part of my research has been to apply similar methodology to 
+the setting of ERGMs.
+
+Model degeneracy is closely related to the value ranges of the factors 
+included in the model.  In the case of ERGMs, the flexibility of 
+choice over the network statistics makes it particularly difficult
+to detect.  However, we showed that the very MCMC simulations used to estimate
+the slope as described earlier can in fact be used to 
+\begin{enumerate}
+\item check for model degeneracy,
+\item if the model is degenerate, define the framework for the LCM.
+\end{enumerate}
+So, our algorithm can be applied in a setting where a maximizer may not exist.  
+In the very process of seeking the maximizer, which requires MCMC simulations 
+to estimate the slope, those same simulation
+results can also be used to check if the model may be degenerate.  If the 
+model is degenerate, these simulation results can then be used to characterize the LCM.
+
+We applied this to the case of a small 9-individual network model, 
+where the setting is still simple enough to confirm the degeneracy conditions.
+
+
+\section{CONCLUSIONS}
+
+%\begin{figure}[!h]
+%\centering
+%\includegraphics[width=5in]{g9-hull-bw}
+%\caption{Convex support?}
+%\label{F:g9-hull}
+%\end{figure}
+\section{Next steps}
+\texttt{statnet} \citet{statnet:R}
+\section{Extension of our research}
+While the motivation for our research is rooted in \emph{social} network models, 
+network models are in fact more general and can be applied to any setting when there is 
+interdependent flow between entities.  This flow may be
+diseases between individuals, the connected of computers, airlines between cities, 
+or the binding between proteins.  
+
+Furthermore, the methodology we have developed to find ``best fit" parameter 
+values for ERGMs and detect when they do not exist can be applied to a 
+broader class of finite \emph{exponential family models}.  These
+can be applied to more general settings of dependency, such as the geographic 
+variation in crop yields \citep{Besag:1974,Besag:1975},
+DNA fingerprint data \citep{Geyer:1992}, or the spin of neighboring 
+atoms in a ferromagnetic model \citep{Ising,Potts}.
+
+
+\newpage
+\bibliographystyle{apalike}
+\bibliography{/Users/saipuck/Tako/THESIS/References}
+
+%\begin{thebibliography}{77}
+
+%
+%\bibitem{kend}
+%Kendall, W. S. 2004.
+%\newblock Geometric ergodicity and perfect simulation,
+%\newblock {\sl Electronic Communications in Probability}, 9:140--151.
+
+%
+
+%\bibitem{jones}
+%Jones, G. L. (2004)
+%\newblock On the {M}arkov chain central limit theorem,
+%\newblock {\sl Probability Surveys}, 1:299--320.
+
+%
+%\bibitem{jone:hobe:2004}
+%Jones, G. L. and Hobert, J. P. (2004).
+%\newblock Sufficient burn-in for {G}ibbs samplers for a hierarchical random effects model, 
+%\newblock {\sl The Annals of Statistics}, 32:784--817.
+
+%\bibitem{prop:wils:1996} 
+%Propp, J. G. and Wilson, D. B. (1996).
+%\newblock Exact sampling with coupled {M}arkov chains and applications to statistical mechanics,
+%\newblock {\sl Random Structures and Algorithms}, 9:223--252.
+% 
+%\end{thebibliography}
+
+
+
+
+\end{document}
+%:
