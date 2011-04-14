@@ -31,145 +31,181 @@ www.stat.umn.edu/\textasciitilde sai\\
 \setstretch{2}
 
 \section{Background}
-Is it possible to build a mathematical model that captures the behavioral tendencies of individuals in how they form relationships?
+Decisions in society today are rarely made in isolation.  Which classmate 
+to befriend, company to acquire, and 
+country to ally with are all decisions that dependent not just on the 
+attributes of the potential target, but on the decisions of others 
+in the same realm.  Analyzing
+data from such settings then necessitates tools that incorporate 
+this interdependent behavior of participants.  
+In my dissertation, I describe a recent class of statistical models 
+that are specifically designed to model complex dependencies between participants.
+These enable a researcher to identify the 
+factors that drive the mechanism of a decision making process.  Due to
+the complexity of the phenomena modeled, however, these tools remain difficult
+to use.  
+The goal of my research is to make these tools more accessible to a practitioner.
 
+%{\color{red} Why do people want to be able to model this behavior?  Who uses these models (in the social sciences and beyond)?}
+%{\color{red} State the goal of your research here: provide tools for practitioners looking to study such relationships (or perhaps at the end of the next sentence).}
+
+
+%Is it possible to build a mathematical model that captures the behavioral tendencies of individuals in how they form relationships?  
+
+\subsection{Motivating example}
 \begin{figure}[h!]
 \centering
-\includegraphics[width=4.8in]{fmh-gradesex2}
-\caption{A friendship network of 1,461 students in grade 7--12 derived 
+\includegraphics[width=4.7in]{fmh-gradesex2}
+\caption{A friendship network of 1,461 students in grades 7--12 derived 
 from the National Longitudinal Study of Adolescent Health \citep{Resnick:1997}.  
 Individuals, represented by nodes, are colored by grade, and boys
-are depicted by squares, girls by circles.  A line is only present between a pair of 
+are depicted by squares, girls by circles.  An edge (line) is only present between a pair of 
 nodes if a friendship exists.  The data is available in the 
 \texttt{statnet} package \citep{statnet:R} on the R platform \citep{R}.}
 \label{F:fmh}
 \end{figure}
 
-Studies of social networks such as the high school friendship network depicted 
-in Figure~\ref{F:fmh} typically look to identify gender, age, ethnicity, and 
-other individual-specific attributes to explain which relationships form.  
-However, relationships form in an interdependent manner---for example, Alicia 
+%Studies of social networks such as the high school friendship network depicted 
+%in Figure~\ref{F:fmh} typically look to identify gender, age, ethnicity, and 
+%other individual-specific attributes to explain which relationships form.  
+The friendship network of 1,461 students in grades 7--12 is depicted
+in Figure~\ref{F:fmh}.  Studies of such networks typically look to 
+identify gender, age, ethnicity, and 
+other individual-specific attributes to explain which relationships form.
+However, friendships form in an interdependent manner---for example, Alicia 
 and Christina are more likely to become friends if separately Alicia and Christina 
 are each friends with Brad. Indeed, sociologists have long observed that people 
-exhibit a strong tendency to form such triangular structures in their friendships.
-This complicates any analysis that attempts to understand the mechanism of 
-relationship formation.   
+exhibit a strong tendency to form such triangular structures in their relationships.
+This complicates any statistical analysis that attempts to explain which
+relationships form.   
 In particular, is gender still an important factor in determining whether or not 
 Alicia and Christina become friends if they also share a common friend in Brad? 
-The issue necessitates a sophisticated statistical methodology that unlike linear regression 
-does not treat the potential relationships between pairs of 
+The issue necessitates a sophisticated statistical methodology 
+that does not treat the relationships between pairs of 
 individuals as independent units.  Instead the analysis must take 
-the dependence between friendships, captured/crystallized/essence in a propensity to
-form relationship structures such as triangles as factors in the analysis.
+the positive dependence between friendships into consideration.
+%, captured in 
+%relationship structures such as triangles, and include them as factors in the analysis. 
+%{\color{red} Replace previous sentence: Instead the analysis must take 
+%the positive dependence between friendships into consideration. }
 
-A probabilistic network model can be constructed for exactly this setting
-to clarify which of the underlying forces are important in shaping the 
-overall structure of the network.  
+A statistical network model can be constructed for exactly this setting.
 When appropriately fit to the observed data, such a model can 
 simulate new random networks which retain essential characteristics of 
-the original network.  The distribution of these enables a researcher to 
-test hypotheses about the mechanism of relationship formation and identify the
-significant contributing factors.  In the example with Alicia and Christina, it 
-may be possible that gender is still important factor even after controlling
-for the tendency to form triangles.
+the original network.  These simulated networks enable a researcher to 
+ test hypotheses about the mechanism of relationship formation.
+For instance, in the friendship network example, we might test that gender is an important factor even after controlling for people's tendency to form triangles.
+% and 
+%clarify which of the underlying forces are important in shaping the 
+%overall structure of the network.
+%{\color{red} For instance, in the friendship network example, we might test that gender is an important factor even after controlling
+%for people's tendency to form triangles.}
 
-Our research is in the methodology of fitting complex dependent network models to data.  
-In fact, specifying a network model with factors of interest---both 
-individual-specific attributes as well as network structures---has become 
-relatively straightforward to do \citep{Wasserman:1996}; it is fitting
-the network model to data that is problematic.  This entails calibrating 
-the \emph{parameters}, the values which dictate how the model's predictions 
-are affected by changes in the selected factors.  
-The parameter values that ``best fit" a network model to data is akin
+\subsection{Overview of our research}
+
+Our research is in the methodology of \emph{fitting} statistical network models to observed datasets.  
+In fact, postulating a network model with factors of interest---both 
+individual-specific attributes as well as relationship structures like
+triangles that capture dependency---has become 
+relatively straightforward \citep{Wasserman:1996,Morris:2008}; it is fitting
+the network model to datasets that is difficult.  This entails calibrating 
+the model \emph{parameters}, the values which control how a model's predictions 
+are affected by changes in the factors.  
+The parameter values that ``best fit" a network model to data are akin
  to the precise quantities of each ingredient in a recipe for the perfect 
- chocolate cake---simply knowing the ingredients themselves does not get one the
+ chocolate cake: simply knowing the ingredients does not achieve the
  desired result.  In statistical models, without these values,
- no inference about which factors are important can be performed.
+ no inference about which factors are important can be performed well.
 The science of finding these ``best fit" parameter values for network models 
-is a research problem that is still in its infancy.  
-We focus on two particular areas in the current approaches that have shown to be 
-particularly problematic and made network models difficult to use in practice:
+is a research problem that is still in its infancy \citep{Hunter:2006}.  
+We focus on two particular areas in the current approaches that are 
+problematic:
 \begin{enumerate}
-\item Short range.  Most methodologies rely on iterated updates of the parameter
-values, where the values are adjusted incrementally and the resulting model evaluated 
-for fit.  When the initial guesses for parameters are far away from the 
-``best fit" values (which are not known in advance), however, current 
-methodologies perform poorly and do not arrive at satisfactory values.
-\item Non-existent ``best fit" values.  For particular models and data sets, it is 
+\item Short range.  Most methodologies rely on iterated estimates of the parameter
+values, where the model is repeatedly fit and evaluated.  
+However, when the initial guesses for the parameters are far from the 
+``best fit" values (which are not known in advance), current 
+methodologies perform poorly and fail to arrive at satisfactory values.
+\item Non-existent ``best fit" values.  For particular models and datasets, it is 
 in fact possible that the ``best fit" parameter values do not exist \citep{Handcock:degeneracy,Rinaldo:2009}.  
 This been cause for considerable concern in the network literature 
-\citep{advancesp*,recentp*,statnet-tutorial}.  In such a case, current 
-methodologies may return nonsensical values, yielding a model that generates 
-random networks that show no resemblance to the original data, making hypothesis
-testing impossible.
+\citep{Handcock:2006,advancesp*,recentp*}.  In such a case, current 
+methodologies may return nonsensical parameter values that lead to a model which generates 
+random networks showing no resemblance to the observed network.  
+%This makes hypothesis testing impossible.
 \end{enumerate}
 In my dissertation, I propose a new algorithm that addresses both of these 
-issues: our algorithm is designed with the goal of working best when the initial 
-guesses for parameter values are far from the ``best fit" values.  In addition, its 
-update mechanism utilizes computer simulations in such a way as 
+issues.  Our algorithm is designed to work best when initial 
+guesses for parameter values are far from the ``best fit" values.  In addition, it 
+utilizes computer simulations in such a way as 
 to detect the conditions that lead to non-existent ``best fit" models.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Network models}
-A probability model assigns probabilities to outcomes of an event.  For example, 
-the probability model for flipping a coin that is possibly unfair assigns some 
+\section{Statistical network models}
+A statistical model assigns probabilities to outcomes of an event.  For example, 
+the model for flipping a coin that is possibly unfair assigns some 
 probability to getting a head, and one minus that probability to getting a tail.  
-In the case of network models, this concept is  
-extended to assign probabilities to each of the different networks that could 
-arise for the number of individuals of in the group.
-The most commonly used probability model for networks is the 
+In the case of a network model, this concept is  
+extended to assign a probability to each network that could 
+arise for the given number of individuals.
+The most commonly used statistical model for networks is the 
 \textit{exponential random graph model} (ERGM) 
 \citep{Wasserman:1996,Pattison:1999,logit,Snijders:2002,introp*,ergm} and 
 is the focus of our research.  It has a simple and flexible form:
-to specify an ERGM, a researcher need only pick \textit{network statistics}, 
-or relationship structures 
-like the triangle described earlier, to accompany the other actor-specific 
-factors like gender or age.  
+to specify an ERGM, a researcher need only input a list of 
+individual-specific factors like gender and age, and also \textit{network statistics}, 
+or relationship structures like the triangle described earlier that capture
+dependency.
+%There is no restriction on the factors one chooses to include,
+%though one should not specify more factors than there are pairs of individuals.
 
 %This is analogous to picking the predictors for a linear regression model, with the difference being that although we may think of a relationship structure such as a triangle as a predictor in our model, it is in fact a function of the very response variable that we are trying to model.
-In the example of the high school friendship network depicted in 
-Figure~\ref{F:fmh} with 1,461 students in grades 7--12, a researcher may 
-be interested in whether being of the same grade, gender,
-and ethnicity are important factors in friendship formation.  
-However, to control for the interdependency of friendships, the 
-researcher should also include network structures like triangles
-into the ERGM.  The inclusion of these network structures
+In the example of the high school friendship network 
+%depicted in Figure~\ref{F:fmh} with 1,461 students in grades 7--12, 
+a researcher may be interested in whether being of the same grade and gender
+ are important factors in friendship formation.
+To control for the interdependency of friendships, the 
+researcher should also include a network statistic for triangles.
+The ERGM then is specified by these three factors.
+The inclusion of the triangle factor
 prevents a researcher from erroneously concluding
 that a factor, say gender, is important in friendship formation when in 
-fact the true underlying driver was the tendency of individuals to form
-clusters of friendships.  In order to carry out make such conclusions, however, 
-the model needs to be fit the observed data set.
+fact the true driver was the tendency of individuals to form
+triangular, or cluster of triangular, friendships.  In order to arrive at 
+such conclusions, however, the model needs to be fit the observed dataset.
+
 
 \subsection{Parameter estimation}
-Our first area of research is to develop a new algorithm for finding the
-parameter values that ``best fit" a network model to a network data set.
-The \emph{likelihood function} associated with a model is the function 
-that assigns probability to the observed network for a specified parameter value.
-The goal in parameter estimation is to find the \textit{maximum likelihood 
-estimates} (MLE), the ``best fit"
-parameter values that maximize this likelihood function.  That is, a model 
-fit with these values assigns the highest probability to the observed data of 
-all possible models: new random networks simulated from this model will give a distribution of scenarios that retain essential characteristics of the network
-that was actually observed.
+The goal in parameter estimation is to find the ``best fit"
+parameter values called \textit{maximum likelihood 
+estimates} (MLE).  
+These values, as their name indicates, maximize
+the \emph{likelihood function} associated with a model, which is the function 
+that assigns probability to the observed network for specified parameter values.
+Thus a model fit with these values assigns the highest probability to the observed data of 
+all possible models.  The randomly simulated networks from this model 
+then retain essential characteristics of the observed network.
 
 %The MLEs are what we earlier referred to as the ``best fit" model parameters.
 
 \subsubsection{Our algorithm}
 %We pursue a simple iterated approach for finding the MLEs for the model parameters: 
-We present a simple iterated algorithm for finding the MLE for the model parameters
-that begins with any initial guess (we often just guessed zeroes). 
-The algorithm then repeatedly takes steps in a direction that 
-yields parameter values that assign higher probability to the observed data.    
-When no higher probability can be found, the MLE has been attained.  
-The particular complication for network models is that 
-actually calculating a probability with an ERGM is computationally infeasible 
-even with advances in computing: 
+We present a simple iterated algorithm for finding the MLEs for model parameters.
+From any initial guess of values (we typically used zeroes), 
+our algorithm repeatedly takes steps in a direction that 
+yields parameter values that increase the likelihood function---that is, the model 
+fit with these new values assigns higher probability to the observed data.    
+When no higher probability can be found, the MLEs have been attained.  
+
+The complication for network models is that 
+calculating a probability with an ERGM is in fact computationally infeasible. 
+Even with advances in computing, 
 it requires a summation over all possible networks which could arise, 
 an astronomical number when there are even 40 individuals in the network 
 (there are 6.36$\times10^{234}$ different networks in that case).  
-The inability to calculate probabilities with a probability model may seem 
+The inability to calculate probabilities with a model may seem 
 like a colossal shortcoming, but in fact the analysis of interest---the 
-hypothesis testing of factors---relies only on the distribution of simulated 
+hypothesis testing of factors---relies only on simulating 
 networks from the ``best fit" model and not actually on the probabilities 
 themselves.  Thus this is only an issue in finding the MLEs and not in 
 the subsequent inference.
@@ -182,17 +218,17 @@ By making sure that
 \item the direction of steps are always uphill on the likelihood function
 \item the steps taken in that direction are sufficiently large,
 \end{enumerate}
-our algorithm will converge to the MLE in practice.  The first condition can be met 
-simply by using directions that have a positive slope.  The second condition is the 
-focus of the first part of my research.
+our algorithm will attain the MLE in practice.  The first requirement can be met 
+easily by using directions that have a positive slope.  The second requirement
+is more complicated. 
 Figure~\ref{F:curvature} illustrates the likelihood function values 
-for different choices of step sizes along a direction that has already 
-met the first condition.  If we think of the likelihood function as hill, this 
+for different step sizes along an uphill direction.  
+If we think of the likelihood function as a hill, this 
 figure illustrates a cross sectional slice of this hill.
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=5.1in]{curvature-layman}
+\includegraphics[width=4.7in]{curvature-layman}
 \caption{A cross section of the likelihood function along a specified search direction.
 Our curvature condition forces a step size in the 
 acceptable region marked, which guarantees significant progress up the likelihood.
@@ -206,94 +242,123 @@ The tangent lines corresponding to these slopes are the dotted lines.
 
 We devised a \emph{curvature condition} which, using only the slope, ensures 
 that the steps taken are large enough to make significant progress up this 
-cross section of the likelihood function.  Because the cross section will generally
-not go exactly through the peak, the updates may need to be repeated several times.
+slice of the likelihood function.  Because the cross sectional slice will generally
+not go exactly through the peak, this process may need to be repeated several times.
 
-The simplicity of this approach in only using the slope allows it avoid 
-many of the issues related to poor initial guesses that plague other 
-more complicated methodologies.  For this reason, we have called our 
-algorithm a ``long range" algorithm.
-The tradeoff is that our methodology is less efficiently computationally
-since it may require hundreds of MCMC simulations (about 150 in the friendship example), 
-which may take a few hours, and is particularly slower when the peak 
+By only using the slope in our algorithm, our approach avoids 
+the issues related to initial guesses far from the peak that plague other 
+more complicated methodologies.  These other approaches attempt to extract
+finer, more detailed information, none is available when the initial guess is far
+from the peak.
+%We have called our algorithm a ``long range" algorithm.
+The tradeoff of our ``long range" methodology is computational efficiency:
+it may require millions of MCMC simulated samples 
+which may take a few hours (two hours for our friendship example). In
+addition, our algorithm is particularly slow when the peak 
 is close.  However, this is exactly the region
-where existing methodologies excel, and we advocate combining methodologies, 
-so that our algorithm is used at the outset, and after it nears the peak, one 
-switches to a faster approach that can attain the MLE in one step.  It would 
+where current methodologies excel.  Thus we advocate combining methodologies, 
+using our algorithm at the outset and switching 
+to a faster approach once the peak is closer.  It would 
 be akin to combining busing and walking to get to one's office on campus---the 
-bus is covers longer distances faster, but walking is better for getting
-to the exact destination. 
+bus covers longer distances faster, but walking is much more effective for getting
+to the exact destination once we are in its vicinity.
 
 \subsection{Model degeneracy}
 The setting described so far assumed the ``best fit" model parameters---the 
-maximizers of the likelihood function---exist.
-But it is in fact possible that the likelihood function increases in perpetuity;
+maximizers of the likelihood function---exist.  All methodologies we know of
+assume this to be the case.
+But in fact it is possible that the likelihood function increases in perpetuity;
 that is, unlike the case depicted in Figure~\ref{F:curvature} where 
 the likelihood function bends back downward, it can instead continue 
 to increase to infinity.  This situation, known as \emph{model degeneracy}, 
 causes significant problems for any parameter estimation method since 
 no maximizer of the likelihood function exists---the MLE
 is ``at infinity".  It is a common enough occurrence to be an impediment to 
-researchers using ERGMs for network analysis.
+researchers using ERGMs.
 As a countermeasure, network researchers have been developed
  new network statistics such as more sophisticated forms of triangles that are 
-less prone to degeneracy \citep{Handcock:degeneracy,advancesp*,recentp*,statnet-tutorial}.
-In our research, we took a different approach, adapting our algorithm to detect 
-when degeneracy occurs and how to find an alternative model that can 
-be used for hypothesis testing when it does.
+less prone to degeneracy \citep{advancesp*,recentp*}.
+In our research, we take a different approach, adapting our algorithm to detect 
+ degeneracy when it occurs.
 
+\subsubsection{Extending our algorithm to detect degeneracy}
 The theoretical underpinnings for why these instances occur has been 
-understood for many years \citep{Barndorff}.  However, the conditions were difficult to check in 
-practice until recently.  
-\citet{Geyer:gdor} showed how to check for this condition
- in the simpler setting of linear regression models, and demonstrated that 
- hypothesis testing can still be done using a new model, called a 
- \emph{limiting conditional model} (LCM), 
-that is a relative of the original.
-The second part of my research has been about applying similar methodology to 
-the more complicated setting of ERGMs.
+understood for many years \citep[Chapter 9]{Barndorff}; it is related to the 
+different possible combinations of factors included in a model.
+These combinations are illustrated in Figure~\ref{F:g9-hull} for a nine-individual network 
+model with only two factors: edges (the presence of a relationship between a pair of individuals)
+and triangles.  It is impossible, for example, for a network to have five 
+triangles exist in the network but only two edges present.
 
-Model degeneracy is closely related to the interrelation of the factors 
-included in the model.  The flexibility in ERGMs in choice of factors make its 
-conditions particularly difficult to detect.  However, we showed that the very MCMC simulations used to estimate the slope as described earlier can in fact be used to 
-\begin{enumerate}
-\item check for model degeneracy,
-\item if the model is degenerate, define the framework for the LCM.
-\end{enumerate}
+%However, until recently, the conditions were difficult to check in 
+%practice.  
+%\citet{Geyer:gdor} showed how to detect degeneracy
+% in the simpler setting of linear regression models, and demonstrated that 
+% hypothesis testing can still be done using a new model, called a 
+% \emph{limiting conditional model} (LCM), 
+%that is a relative of the original.
+%The second part of my research is about using the tools of 
+%\citeauthor{Geyer:gdor} in the more complicated setting of ERGMs.
 
-\section{Results}
-So, our algorithm can be applied in a setting where a maximizer may not exist.  
-In the very process of seeking the maximizer, which requires MCMC simulations 
-to estimate the slope, those same simulation
-results can also be used to check if the model may be degenerate.  If the 
-model is degenerate, these simulation results can then be used to characterize the LCM.
+The flexibility in ERGMs in choice of factors make it 
+infeasible to know the exact outline of this space except in the case of small networks 
+like our nine-individual example.  However, degeneracy is determined by whether or not
+the counts for the observed data falls exactly on the boundary of this outline \citep{Handcock:degeneracy,Rinaldo:2009,Geyer:gdor}.
+In our research, we showed that the very MCMC simulations used to estimate the 
+slope as described earlier can in fact be used to uncover these boundaries, as
+depicted in Figure~\ref{F:g9-sample}.  That is, we can determine ``on the fly"
+where the boundaries are, and whether the counts for the observed data fall on this boundary,
+and ultimately conclude whether or not the ``best fit" parameter values exist.
+We know of no other general methodology that deals with this situation.
 
+\section{Summary}
+In my dissertation, we presented a new algorithm to find the ``best fit" parameter values for a
+network model that enable a researcher to test hypotheses about the 
+process of relationship formation.
+Our algorithm fills a gap in the existing parameter estimation toolbox since it is designed to
+work particularly well when the initial guesses for the parameters is far from the 
+``best fit" values, a setting where current methods perform poorly.  
+In addition, unlike existing approaches, our algorithm can
+detect if such ``best fit" values may actual not exist.
 
-%\begin{figure}[!h]
-%\centering
-%\includegraphics[width=5in]{g9-hull-bw}
-%\caption{Convex support?}
-%\label{F:g9-hull}
-%\end{figure}
-\texttt{statnet} \citet{statnet:R}
-\section{Extension of our research}
-While the motivation for our research is rooted in \emph{social} network models, 
-network models are in fact more general and can be applied to any setting when there is 
-interdependent flow between entities.  This flow may be
-diseases between individuals, the connected of computers, airlines between cities, 
-or the binding between proteins.  
+We have motivated this discussion with a friendship network example.  However, networks are
+a more general concept and can be thought of as a conduit for flow.  That flow
+may be advice, needle-sharing, or diseases between individuals, association between
+terrorists, the negotiating between politicians,
+transactions between companies,
+airplanes between cities,
+trade between nations,
+or binding between proteins.
+A statistical network model is particularly useful for explaining the mechanism of this flow
+when there are complex interdependencies present.
 
-Furthermore, the methodology we have developed to find ``best fit" parameter 
-values for ERGMs and detect when they do not exist can be applied to a 
-broader class of finite \emph{exponential family models}.  These
-can be applied to more general settings of dependency, such as the geographic 
-variation in crop yields \citep{Besag:1974,Besag:1975},
-DNA fingerprint data \citep{Geyer:1992}, or the spin of neighboring 
-atoms in a ferromagnetic model \citep{Ising,Potts}.
-
+%Furthermore, the methodology we have developed to find ``best fit" parameter 
+%values for ERGMs and detect when they do not exist can be applied to a 
+%broader class of finite \emph{exponential family models}.  These
+%can be applied to more general settings of dependency, such as the geographic 
+%variation in crop yields \citep{Besag:1974,Besag:1975},
+%DNA fingerprint data \citep{Geyer:1992}, or the spin of neighboring 
+%atoms in a ferromagnetic model \citep{Ising,Potts}.
 
 \newpage
-\bibliographystyle{apalike}
+\begin{figure}[ht!]
+\centering
+\includegraphics[height=3.5in]{g9-hull-bw}
+\caption{The different edge-triangle combinations that can occur in a 9-individual network.  
+There are 69 billion possible networks that could arise, but only 444 edge-triangle 
+possible combinations.}
+\label{F:g9-hull}
+
+\includegraphics[height=3.5in]{g9-explore-BW}
+\caption{The edge-triangle combinations for 10,000 simulated networks for the same
+parameter values.  In a general problem, we do not know the actual boundary of the 
+space (drawn in here for reference), but can discover it through repeated simulation.}
+\label{F:g9-sample}
+\end{figure}
+
+\newpage
+%\bibliographystyle{apalike}
+\bibliographystyle{/Users/saipuck/Tako/THESIS/ims}
 \bibliography{/Users/saipuck/Tako/THESIS/References}
 
 %\begin{thebibliography}{77}
