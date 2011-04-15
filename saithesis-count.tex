@@ -18,40 +18,40 @@ of two-stars is $3 \cdot 84 = 252$.
 %Now, R (and all other programming platforms at the moment) cannot handle $2^{36}$ as an integer; in fact, casting $2^{31}$ as an integer produces an error.  Thus we do not want to write a \texttt{for} loop going from 1 to $2^{36}$.  So what to do?  
 
 The approach we have implemented requires first creating a collection of graphs,
-one graph for each possible network structure of interest (triangle or two star),
-where each graph is empty except for that particular network structure.  For example,
+one graph for each possible network structure of interest (triangle or two star).
+Each graph in this collection is empty except for one network structure.  For example,
 one graph in this collection is the one representing a triangle between the 1st, 2nd, and 3rd nodes.  In matrix
 form, this network has all zeros except for ones in entires of (1,2), (1,3), (2,3), 
 (2,1), (3,1), (3,2).
 We then compare each of the 69 billion possible graphs to this collection.
 Every time a comparison yields a match, that particular configuration is present
 and the count for that statistic is incremented by one.  
-The reason this is efficient is because we can actually represent the 
+The reason this is efficient is because we can actually represent  
 a graph as a single binary number and do bitwise comparisons for far greater speed.
 
-We can explain this in further detail with triangles.
+We explain this in further detail with triangles.
 We know there are ${9 \choose 3} = 84$ possible triangles, and so we create
 84 graphs, each with only one triangle present among 3 actors.  
-So, the first element corresponds to a graph with ties present between 
-actors 1, 2, and 3, and no other ties present, the second element corresponds 
-to a graph with a ties present between actors 1, 2, and 4.  
+So, the first graph in this collection is a graph with ties present between 
+actors 1, 2, and 3, and no other ties present, the second is 
+a graph with ties present between actors 1, 2, and 4.  
 Because the network is undirected, the adjacency matrix is symmetric and 
-can be fully described by just its upper triangle, which in our convention 
+can be fully described by just its flattened upper triangle, which in our convention 
 of going down vertically and then across is $(1,1,1,0,0,0, \ldots,0)$.  
-We can treat this upper triangular vector as a 36-digit number, 
-111000000000000000000000000000000000.  If we treat this as a number 
-in base 2, we can convert it to base 10 to a number less than $2^{36}$.  
-For this first matrix, it is 60,129,542,144.  Proceeding in this manner up 
-through 84, we have a set of 84 numbers corresponding to all the possible 
-triangle configurations in the network.  
+We can treat this vector as a 36-digit number, 
+\texttt{111000000000000000000000000000000000}.  If we think of this as a number 
+in base 2, we can convert it to a base 10 number less than $2^{36}$.  
+For this first matrix, it is 60,129,542,144.  Proceeding in this manner, 
+we will have a collection of 84 numbers corresponding to all the possible 
+triangles in the network.  
 
 We now turn our attention to iterating through the $2^{36} \approx 69$ billion possible graphs.  
-Using the \texttt{long int} representation in C (on a 64-bit system), 
-we can in fact iterate from 0 to $2^{36}-1$.  By having the index itself 
-correspond to a specific graph,  we can treat its binary form as 
-the collapsed upper triangular vector.
-For example, the last index corresponding to $2^{36}-1$ has binary form of 
- 111111111111111111111111111111111111 which shows every tie present and
+Using the \texttt{long int} representation in C (64-bit), 
+we can in fact loop from 0 to $2^{36}-1$.  
+We can do the reverse process of the above, converting the loop index to a 36-digit 
+number that is the collapsed upper triangle of a specific graph.
+For example, the last number, $2^{36}-1$ has binary form 
+\texttt{111111111111111111111111111111111111} which 
  is the complete graph.
    
 For each graph index, we can loop through our set of 84 triangle numbers
@@ -61,38 +61,43 @@ In binary form, if there are ones in all the digits that the triangle number has
 one in, 
 then the graph has this particular triangle present.
 For example, the operation $(2^{36}-1)$ \& $60,129,542,144$ would return 
-111000000000000000000000000000000000 in binary form, indicating that this 
+\texttt{111000000000000000000000000000000000} in binary form, indicating that this 
 particular triangle is present.  This is confirmed by comparing the
 result of the binary operation back to the original triangle number,
 which would return TRUE.  Proceeding through all the other triangle numbers, 
 we get a count of how many triangles are present for this graph index.
 
 A similar method is employed for counting two-stars, where we would similarly
-first calculate the $3\times84 = 252$ two-stars graph numbers before iterating
-through the graph indices.
+first calculate the $3\times84 = 252$ two-star graph numbers before iterating
+through all 69 billion graphs.
 
 To count edges, there are well-known tricks to count the number of ones 
 in a binary number in C which cleverly use the `\texttt{>>}' shift operator.
 By taking the graph index \texttt{>> 1}, it moves all the digits to the 
 right by dropping off the rightmost digit and adding a 0 to the 
 farthest left digit.  So, 
-\begin{align*}
+\begin{verbatim}
 111111111111111111111111111111111111 >> 1
-\end{align*}
-returns 01111111111111111111111111111111111 (where there are now 35 ones instead of 36).  
+\end{verbatim}
+returns 
+\begin{verbatim}
+01111111111111111111111111111111111 
+\end{verbatim}
+where there are now 35 ones instead of 36.  
 In this manner, the shifts can be continued and ones counted 
 (done by another bit comparison to '01' using the `\texttt{\&}' again) 
 until there are no more ones.  This approach avoids any arithmetic and is thus much faster.  
 It should be noted that a computer stores the \texttt{long int} in binary form 
-and so the 36-digit representation used here is entirely for our benefit only.
+and so the 36-digit representation used in this section is entirely for our benefit---no actual conversions need be programmed by us.
 
-Finally, we can further speed up the calculations by parallelizing this computation.  
+Finally, we can further speed up the calculations by parallelizing this computation,
+in our case across 8 CPUs.  
 We can count the number of edges, two-stars, and triangles in the 
 first $2^{36}/8$ graphs at the same time that we count them in the last $2^{36}/8$ graphs.  
 To do this, we simply use the \texttt{mclapply} function in the \texttt{multicore} \citep{multicore:R} 
-library in R.
+package in R.
 At the time of this writing, we performed this calculation on an 8-CPU 2.9GHz linux box
-which took 2 hour 15 minutes to complete.  
+which took 2 hours 15 minutes to complete.  
 
 
 
