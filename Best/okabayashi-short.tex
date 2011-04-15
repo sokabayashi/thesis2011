@@ -1,0 +1,81 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsbsy,amsmath,amsthm,amssymb,verbatim,color}
+
+\usepackage{geometry,graphicx,subfigure}
+\graphicspath{{../Figures/}}
+
+\geometry{hmargin=1in,vmargin={1in,1in},footskip=.5in}
+\usepackage{natbib}
+\usepackage{setspace}
+%\usepackage{hyperref}
+%\usepackage{fancyhdr,lastpage}
+%\pagestyle{fancy}
+%\fancyhead{}
+%\rhead{Saisuke Okabayashi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{center}
+{\normalsize{\textbf{Parameter Estimation in Social Network Models---one page summary}} }
+
+\vspace{0.15in}
+{Saisuke Okabayashi} \\
+%\href{http://www.stat.umn.edu/~sai}{www.stat.umn.edu/\textasciitilde sai}\\
+www.stat.umn.edu/\textasciitilde sai\\
+%\vspace{0.05in}
+{Department of Statistics}\\
+\end{center}
+
+\setstretch{2}
+%a section on the significance of the research 
+The friendship between individuals, strategic alliances
+between corporations, and trade between countries
+are all phenomena that involve complex dependence, where the 
+decision for one entity to relate with another depends not only on the attributes of 
+the target, but also on the presence of other relations.  
+%These other relations in turn
+% dependent on the presence of yet other relations, including the one we originally considered.  
+ Traditional statistical methodologies like linear regression 
+ignore any influence these relations may 
+have on one another, relying only on the attributes of autonomous individual to explain outcomes.
+Such analysis may lead to wrong conclusions.  For example, 
+one may conclude that ethnicity is an important determinant in friendship formation when
+in fact there is a strong propensity of individuals to form relationships with their friends' friends,
+regardless of ethnicity.
+
+Statistical network models are a powerful tool that have been developed 
+precisely to analyze such dependent phenomena.
+These models make it possible for a researcher to then identify the 
+factors, including those that capture dependency, that contribute to the overall structure 
+of outcomes.  
+However, such statistical inference can only be performed with a network model that is ``best" fit 
+to a dataset, and the methods for fitting these models are still problematic.
+
+In my dissertation, we propose a new algorithm to fit network models to datasets.
+Our approach  is designed to work particularly well in settings that occur frequently but are 
+problematic for existing methods.  As such, we believe our approach fills a gap in the
+existing toolbox of methodologies.
+
+%We have motivated this discussion with a friendship network example.  However, networks are
+%a more general concept and can be thought of as a conduit for flow.  That flow
+%may be advice, needle-sharing, or diseases between individuals, association between
+%terrorists, the negotiating between politicians,
+%transactions between companies,
+%airplanes between cities,
+%trade between nations,
+%or binding between proteins.
+%A statistical network model is particularly useful for explaining the mechanism of this flow
+%when there are complex interdependencies present.
+
+
+\newpage
+\bibliographystyle{/Users/saipuck/Tako/THESIS/ims}
+\bibliography{/Users/saipuck/Tako/THESIS/References}
+
+
+
+
+\end{document}
+%:
