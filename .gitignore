@@ -11,3 +11,7 @@
 *.eps
 *.lot
 *.docx
+Figures*
+RCode*
+*.bst
+*.blg
