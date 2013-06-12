@@ -1,4 +1,4 @@
-\begin{thebibliography}{91}
+\begin{thebibliography}{93}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -38,12 +38,6 @@
 \newblock Statistical analysis of non-lattice data.
 \newblock \textit{The Statistician}, \textbf{24} 179--195.
 
-\bibitem[{Brooks et~al.(forthcoming)Brooks, Gelman, Jones and Meng}]{Brooks}
-\textsc{Brooks, S.~P.}, \textsc{Gelman, A.~E.}, \textsc{Jones, G.~L.} and
-  \textsc{Meng, X.~L.} (forthcoming).
-\newblock \textit{Handbook of {M}arkov Chain {M}onte {C}arlo}.
-\newblock Chapman \& Hall/CRC, Boca Raton, FL.
-
 \bibitem[{Brown(1986)}]{Brown:1986}
 \textsc{Brown, L.~D.} (1986).
 \newblock \textit{Fundamentals of Statistical Exponential Families: with
@@ -52,14 +46,13 @@
 
 \bibitem[{Chan and Geyer(1994)}]{Chan:1994}
 \textsc{Chan, K.~S.} and \textsc{Geyer, C.~J.} (1994).
-\newblock Discussion of the paper by tierny.
+\newblock Discussion of the paper by {T}ierny.
 \newblock \textit{Annals of Statistics}, \textbf{22} 1747--1758.
 
 \bibitem[{Chen(2002)}]{Chen:2002}
 \textsc{Chen, H.-F.} (2002).
 \newblock \textit{Stochastic Approximation and Its Applications}.
 \newblock Kluwer Academic Publishers, Dordrecht.
-\newblock \urlprefix\url{http://bit.ly/gN6bGq}.
 
 \bibitem[{Corander et~al.(1998)Corander, Dahmstr\"{o}m and
   Dahmstr\"{o}m}]{Corander:1998}
@@ -103,7 +96,7 @@
 \bibitem[{Geyer(1990)}]{Geyer:1990}
 \textsc{Geyer, C.~J.} (1990).
 \newblock \textit{Likelihood and Exponential Families}.
-\newblock Ph.D. thesis, University of Washington, http://purl.umn.edu/56330.
+\newblock Ph.D. thesis, University of Washington.
 \newblock \urlprefix\url{http://purl.umn.edu/56330}.
 
 \bibitem[{Geyer(1994)}]{Geyer:1994}
@@ -111,6 +104,13 @@
 \newblock On the convergence of monte carlo maximum likelihood calculations.
 \newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
   \textbf{56} 261--274.
+
+\bibitem[{Geyer(1996)}]{Geyer:1996}
+\textsc{Geyer, C.~J.} (1996).
+\newblock Esitmation and optimization of functions.
+\newblock In \textit{Markov Chain {M}onte {C}arlo in {P}ractice} (W.~R. Gilks,
+  S.~Richardson and D.~J. Spiegelhalter, eds.). Chapman \& Hall, London, UK,
+  241--258.
 
 \bibitem[{Geyer(2009{\natexlab{a}})}]{Geyer:gdor}
 \textsc{Geyer, C.~J.} (2009{\natexlab{a}}).
@@ -133,7 +133,7 @@
 \bibitem[{Geyer(2009{\natexlab{d}})}]{trust:R}
 \textsc{Geyer, C.~J.} (2009{\natexlab{d}}).
 \newblock \texttt{trust}: {T}rust {R}egion {O}ptimization.
-\newblock R pakage version 0.1-2.,
+\newblock R package version 0.1-2.,
   \urlprefix\url{http://www.stat.umn.edu/geyer/trust/}.
 
 \bibitem[{Geyer(2010)}]{aster:R}
@@ -141,6 +141,13 @@
 \newblock \texttt{aster2}: {A}ster models.
 \newblock R pakage version 0.1,
   \urlprefix\url{http://CRAN.R-project.org/package=aster}.
+
+\bibitem[{Geyer(forthcoming)}]{Geyer:2011}
+\textsc{Geyer, C.~J.} (forthcoming).
+\newblock Introduction to {MCMC}.
+\newblock In \textit{Handbook of {M}arkov Chain {M}onte {C}arlo} (S.~P. Brooks,
+  A.~E. Gelman, G.~L. Jones and X.~L. Meng, eds.). Chapman \& Hall/CRC, Boca
+  Raton, FL.
 
 \bibitem[{Geyer and Johnson(2010)}]{Geyer:potts}
 \textsc{Geyer, C.~J.} and \textsc{Johnson, L.~T.} (2010).
@@ -196,14 +203,14 @@
 
 \bibitem[{Goodreau et~al.(2009)Goodreau, Kitts and Morris}]{Goodreau:2009}
 \textsc{Goodreau, S.~M.}, \textsc{Kitts, J.~A.} and \textsc{Morris, M.} (2009).
-\newblock Birds of a feather, or friend of a friend? using exponential random
+\newblock Birds of a feather, or friend of a friend? {U}sing exponential random
   graph models to investigate adolescent social networks.
 \newblock \textit{Demography}, \textbf{46} 103---125.
 
 \bibitem[{Gu and Zhu(2001)}]{Gu:2001}
 \textsc{Gu, M.~G.} and \textsc{Zhu, H.-T.} (2001).
-\newblock Maximum likelihood estimation for spatial models by markov chain
-  monte carlo stochastic approximation.
+\newblock Maximum likelihood estimation for spatial models by {M}arkov chain
+  {M}onte {C}arlo stochastic approximation.
 \newblock \textit{Journal of the Royal Statistical Society, {\rm Series B}},
   \textbf{63} 339--355.
 
@@ -219,7 +226,8 @@
   (2010).
 \newblock \texttt{ergm}: A package to fit, simulate, and diagnose
   exponentail-family models for networks.
-\newblock Version 2.2-7. Project home page at {http://statnetproject.org},
+\newblock Version 2.2-7. Project home page at
+  \texttt{http://statnetproject.org},
   \urlprefix\url{http://CRAN.R-project.org/package=ergm}.
 
 \bibitem[{Handcock et~al.(2003)Handcock, Hunter, Butts, Goodreau and
@@ -228,7 +236,7 @@
   \textsc{Goodreau, S.~M.} and \textsc{Morris, M.} (2003).
 \newblock \texttt{statnet}: Software tools for the statistical modeling of
   network data.
-\newblock Version 2.0. Project home page at {http://statnetproject.org},
+\newblock Version 2.0. Project home page at \texttt{http://statnetproject.org},
   \urlprefix\url{http://CRAN.R-project.org/package=statnet}.
 
 \bibitem[{Holland and Leinhardt(1981)}]{Holland:1981}
@@ -322,6 +330,11 @@
 \textsc{Liang, F.} (2010).
 \newblock Trajectory averaging for stochastic approximation mcmc algorithms.
 \newblock \textit{The Annals of Applied Statistics}, \textbf{38} 2823--2856.
+
+\bibitem[{Meyn and Tweedie(2009)}]{Meyn:2009}
+\textsc{Meyn, S.} and \textsc{Tweedie, R.} (2009).
+\newblock \textit{Markov Chains and Stochastic Stability}.
+\newblock 2nd ed. Cambridge University Press, Cambridge.
 
 \bibitem[{Morris et~al.(2008)Morris, Handcock and Hunter}]{Morris:2008}
 \textsc{Morris, M.}, \textsc{Handcock, M.~S.} and \textsc{Hunter, D.~R.}
@@ -450,9 +463,8 @@
   \textsc{S\'anchez-Solano, F.}, \textsc{P{\'e}rez-Rueda, E.},
   \textsc{Bonavides-Mart{\'\i}nez, C.} and \textsc{Collado-Vides, J.} (2001).
 \newblock Regulondb (version 3.2): Transcriptional regulation and operon
-  organization in escherichia coli k-12.
+  organization in \emph{{E}scherichia coli} k-12.
 \newblock \textit{Nucleic Acids Research}, \textbf{29} 72--74.
-\newblock \urlprefix\url{http://nar.oxfordjournals.org/content/29/1/72.full}.
 
 \bibitem[{Sampson(1968)}]{Sampson}
 \textsc{Sampson, S.~F.} (1968).
@@ -477,13 +489,13 @@
 \bibitem[{Shen-Orr et~al.(2002)Shen-Orr, Milo, Mangan and Alon}]{Shen-Orr}
 \textsc{Shen-Orr, S.~S.}, \textsc{Milo, R.}, \textsc{Mangan, S.} and
   \textsc{Alon, U.} (2002).
-\newblock etwork motifs in the transcriptional regulation network of escerichia
-  coli.
+\newblock Network motifs in the transcriptional regulation network of
+  \emph{Escerichia coli}.
 \newblock \textit{Nature Genetics}, \textbf{31} 64--68.
 
 \bibitem[{Snijders(2002)}]{Snijders:2002}
 \textsc{Snijders, T. A.~B.} (2002).
-\newblock Markov chain monte carlo estimation of exponential random graph
+\newblock {M}arkov chain {M}onte {C}arlo estimation of exponential random graph
   models.
 \newblock \textit{Journal of Social Structure}, \textbf{3}.
 
